@@ -274,3 +274,16 @@ form select {
   background-color: white;
   box-sizing: border-box;
 }
+
+form input[type="text"],
+form select {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  border-radius: 16px;
+}
