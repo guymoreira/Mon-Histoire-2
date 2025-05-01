@@ -134,45 +134,15 @@ button:hover {
 }
 
 
-#accueil {
-  background: url('illustration-accueil.jpg') no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  gap: 1rem;
-}
 
-#accueil h1.titre-accueil {
-  font-size: 2.5rem;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-  margin: 0;
-}
 
-#accueil button {
-  background-color: #f47263;
-  color: white;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border-radius: 40px;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
-}
 
-#accueil button:hover {
-  background-color: #e0554e;
-}
 
-#accueil a {
-  color: #ffffffcc;
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  text-decoration: underline;
-}
+
+
+
+
+
 
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 
@@ -191,41 +161,13 @@ body {
   }
 }
 
-#accueil {
-  background: url('illustration-accueil.jpg') no-repeat center center fixed;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-}
 
-#accueil h1.titre-accueil {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #1e3a8a;
-  margin: 0;
-  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-}
 
-#accueil button {
-  background-color: #f47263;
-  color: white;
-  padding: 1.2rem 2.5rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 40px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
 
-#accueil button:hover {
-  background-color: #e0554e;
-}
+
+
+
+
 
 #resultat {
   background: url('illustration-formulaire.jpg') no-repeat center center fixed;
@@ -286,4 +228,47 @@ form select {
   border: 1px solid #ccc;
   font-size: 1rem;
   border-radius: 16px;
+}
+
+#accueil {
+  background: url('illustration-accueil.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+#accueil h1.titre-accueil {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 0;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+#accueil button {
+  background-color: #f47263;
+  color: white;
+  padding: 1.2rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#accueil button:hover {
+  background-color: #e0554e;
+}
+
+#accueil a {
+  margin-top: 0.5rem;
+  color: white;
+  font-weight: 400;
+  text-decoration: underline;
 }
