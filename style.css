@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(to bottom right, #fdf2f8, #ddd6fe);
+  color: #4c1d95;
+}
+#app {
+  max-width: 500px;
+  margin: 5vh auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+button {
+  background-color: #9333ea;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+button:hover {
+  background-color: #7e22ce;
+}
+#story {
+  margin-top: 2rem;
+  font-style: italic;
+}
