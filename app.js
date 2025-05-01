@@ -5,12 +5,16 @@ function showForm() {
 }
 
 function genererHistoire() {
-  const nom = document.getElementById("nom").value.trim();
-  const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
-  const lieu = document.getElementById("lieu").value.toLowerCase().replace(/\s+/g, '-');
-  const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
-  const compagnon = document.getElementById("compagnon").value.toLowerCase().replace(/\s+/g, '-');
-  const mission = document.getElementById("mission").value.toLowerCase();
+  console.log("Génération de l’histoire déclenchée");
+
+  const nom = document.getElementById("nom")?.value.trim() || "Léo";
+  const personnage = document.getElementById("personnage")?.value.toLowerCase().replace(/\s+/g, '-') || "chevalier";
+  const lieu = document.getElementById("lieu")?.value.toLowerCase().replace(/\s+/g, '-') || "foret";
+  const objet = document.getElementById("objet")?.value.toLowerCase().replace(/\s+/g, '-') || "épée";
+  const compagnon = document.getElementById("compagnon")?.value.toLowerCase().replace(/\s+/g, '-') || "dragon";
+  const mission = document.getElementById("mission")?.value.toLowerCase() || "sauver le village";
+
+  console.log({ nom, personnage, lieu, objet, compagnon, mission });
 
   const baseImg = `illustration-${personnage}-${lieu}`;
 
@@ -44,7 +48,12 @@ function genererHistoire() {
     contenu += `<p>${chapitre.texte}</p>`;
   });
 
-  document.getElementById("histoire").innerHTML = contenu;
-  document.getElementById("formulaire").classList.add("hidden");
-  document.getElementById("resultat").classList.remove("hidden");
+  const cible = document.getElementById("histoire");
+  if (cible) {
+    cible.innerHTML = contenu;
+    document.getElementById("formulaire").classList.add("hidden");
+    document.getElementById("resultat").classList.remove("hidden");
+  } else {
+    console.error("Impossible de trouver #histoire dans le DOM.");
+  }
 }
