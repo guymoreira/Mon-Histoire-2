@@ -1,0 +1,1 @@
+// Code JS compilé fictif
