@@ -308,3 +308,38 @@ form select {
 #login-button:hover {
   background-color: #fbb0a8;
 }
+
+
+
+.user-icon {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background-color: #ffffff;
+  color: #1c3d78;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+  font-size: 1rem;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.logout-modal {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  max-width: 300px;
+  text-align: center;
+}

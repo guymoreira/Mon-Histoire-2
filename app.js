@@ -135,6 +135,7 @@ function updatePreview() {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
   const loginButton = document.getElementById("login-button");
   if (loginButton) {
@@ -143,3 +144,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-button");
+  const userIcon = document.getElementById("user-icon");
+  const myStories = document.getElementById("my-stories-link");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) userIcon.style.display = "flex";
+    if (myStories) myStories.style.display = "block";
+  } else {
+    if (userIcon) userIcon.style.display = "none";
+    if (myStories) myStories.style.display = "none";
+  }
+
+  if (userIcon) {
+    userIcon.addEventListener("click", () => {
+      const modal = document.getElementById("logout-modal");
+      if (modal) modal.style.display = "block";
+    });
+  }
+});
+
+function logout() {
+  localStorage.setItem("loggedIn", "false");
+  window.location.href = "index.html";
+}
