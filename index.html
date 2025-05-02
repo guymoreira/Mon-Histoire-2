@@ -6,55 +6,73 @@
   <title>Mon Histoire</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <main id="accueil" class="screen">
+<body onload="checkConnection()">
+  <header>
     <h1>Mon Histoire</h1>
-    
-    <button onclick="showForm()">Créer une histoire</button>
-    <a href="#">Mes histoires</a>
+    <div id="userMenu" class="user-menu hidden">
+      <span class="user-icon" onclick="toggleLogout()">👤</span>
+    </div>
+  </header>
+
+  <main id="accueil" class="screen">
+    <button id="btn-creer" onclick="goToCreateAccount()">Créer mon compte</button>
+    <button id="btn-login" onclick="goToLogin()">Me connecter</button>
+    <button id="btn-create-story" onclick="genererHistoire()">Créer une histoire</button>
+    <button id="btn-mes-histoires" class="hidden">Mes histoires</button>
   </main>
 
-  <main id="formulaire" class="screen hidden fade-in">
-    <h2>Création de l’histoire</h2>
-    <form onsubmit="event.preventDefault(); generateStory();">
-      <input type="text" id="name" placeholder="Nom du héros" required />
-      <select id="type">
-        <option>Chevalier</option>
-        <option>Princesse</option>
-        <option>Fée</option>
-      </select>
-      <select id="setting">
-        <option>Forêt enchantée</option>
-        <option>Château</option>
-        <option>Plage magique</option>
-      </select>
-      <select id="object">
-        <option>Épée</option>
-        <option>Baguette</option>
-        <option>Livre magique</option>
-      </select>
-      <select id="companion">
-        <option>Dragon</option>
-        <option>Licorne</option>
-        <option>Chat qui parle</option>
-      </select>
-      <select id="goal">
-        <option>Sauver un village</option>
-        <option>Découvrir un trésor</option>
-        <option>Retrouver un ami perdu</option>
-      </select>
-      <button type="submit">Générer</button>
-    </form>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+  <main id="login" class="screen hidden">
+    <h2>Connexion</h2>
+    <input type="email" placeholder="Email"/>
+    <input type="password" placeholder="Mot de passe"/>
+    <a href="#" onclick="goToForgot()">Mot de passe oublié ?</a><br>
+    <button onclick="login()">Se connecter</button>
+  </main>
+
+  <main id="register" class="screen hidden">
+    <h2>Créer un compte</h2>
+    <input type="email" placeholder="Email"/>
+    <input type="password" placeholder="Mot de passe"/><br>
+    <button onclick="register()">Créer mon compte</button>
+  </main>
+
+  <main id="forgot" class="screen hidden">
+    <h2>Mot de passe oublié</h2>
+    <input type="email" placeholder="Votre email"/>
+    <button onclick="alert('Un nouveau mot de passe a été envoyé.')">Envoyer</button>
+    <button onclick="goToLogin()">← Retour</button>
   </main>
 
   <main id="resultat" class="screen hidden fade-in">
-  <img src="illustration-resultat.jpg" alt="Illustration" class="illustration" style="width: 100%; max-width: 600px; margin: 1rem auto; display: block; border-radius: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    <img src="illustration-resultat.jpg" alt="Illustration histoire" class="illustration" />
-    <h3 id="story-title">Titre</h3>
-    <p id="story-text">Texte</p>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+    <img src="illustration-resultat.jpg" class="illustration"/>
+    <h2>Les aventures de Max</h2>
+    <h3>Chapitre 1 : L'appel de l'aventure</h3>
+    <p>Max vit une aventure incroyable...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
+    <h3>Chapitre 2 : La rencontre</h3>
+    <p>Il rencontre une créature magique...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
+    <h3>Chapitre 3 : Le défi</h3>
+    <p>Une épreuve difficile l’attendait...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
+    <h3>Chapitre 4 : Le mystère</h3>
+    <p>Un secret ancien refait surface...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
+    <h3>Chapitre 5 : La révélation</h3>
+    <p>Tout devient clair soudainement...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
+    <h3>Chapitre 6 : Le retour</h3>
+    <p>Max revient transformé...</p>
+    <div class="image-placeholder">Ici il y aura une image générée par IA</div>
   </main>
+
+  <div id="logoutModal" class="modal hidden">
+    <div class="modal-content">
+      <p>Souhaitez-vous vous déconnecter ?</p>
+      <button onclick="logout()">Se déconnecter</button>
+      <button onclick="toggleLogout()">Annuler</button>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
