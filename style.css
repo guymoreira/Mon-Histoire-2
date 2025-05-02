@@ -32,3 +32,8 @@ img.chapitre-illustration {
   border-radius: 1rem;
   margin: 1rem 0;
 }
+
+body {
+  background: url('illustration-accueil.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
