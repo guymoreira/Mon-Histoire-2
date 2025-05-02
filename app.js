@@ -1,8 +1,6 @@
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
-  const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
-  const lieu = document.getElementById("lieu").value.toLowerCase().replace(/\s+/g, '-');
   const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
   const compagnon = document.getElementById("compagnon").value.toLowerCase().replace(/\s+/g, '-');
   const mission = document.getElementById("mission").value.toLowerCase();
@@ -121,15 +119,62 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
   document.getElementById('resultat').classList.remove('hidden');
 }
 
-document.getElementById("personnage").addEventListener("change", updatePreview);
-document.getElementById("lieu").addEventListener("change", updatePreview);
 
 function updatePreview() {
-  const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
-  const lieu = document.getElementById("lieu").value.toLowerCase().replace(/\s+/g, '-');
   const previewImg = document.getElementById("preview");
   if (personnage && lieu) {
     previewImg.src = `illustration-${personnage}-${lieu}-chapitre-1.jpg`;
     previewImg.alt = `illustration de ${personnage} dans ${lieu}`;
   }
 }
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
+  }
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-button");
+  const userIcon = document.getElementById("user-icon");
+  const myStories = document.getElementById("my-stories-link");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) userIcon.style.display = "flex";
+    if (myStories) myStories.style.display = "block";
+  } else {
+    if (userIcon) userIcon.style.display = "none";
+    if (myStories) myStories.style.display = "none";
+  }
+
+  if (userIcon) {
+    userIcon.addEventListener("click", () => {
+      const modal = document.getElementById("logout-modal");
+      if (modal) modal.style.display = "block";
+    });
+  }
+});
+
+function logout() {
+  localStorage.setItem("loggedIn", "false");
+  window.location.href = "index.html";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
+  }
+});
