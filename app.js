@@ -135,32 +135,11 @@ function updatePreview() {
 }
 
 
-let isLoggedIn = localStorage.getItem("loggedIn") === "true";
-
-function loginUser() {
-  localStorage.setItem("loggedIn", "true");
-  window.location.href = "index.html";
-}
-
-function checkLoginState() {
-  const loginBtn = document.getElementById("login-button");
-  const userIcon = document.getElementById("user-icon");
-  if (isLoggedIn && loginBtn) loginBtn.style.display = "none";
-  if (isLoggedIn && userIcon) userIcon.style.display = "flex";
-}
-
-function logout() {
-  localStorage.setItem("loggedIn", "false");
-  window.location.href = "index.html";
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  checkLoginState();
-  const icon = document.getElementById("user-icon");
-  if (icon) {
-    icon.addEventListener("click", () => {
-      const modal = document.getElementById("logout-modal");
-      modal.style.display = "block";
+document.addEventListener("DOMContentLoaded", function () {
+  const loginButton = document.getElementById("login-button");
+  if (loginButton) {
+    loginButton.addEventListener("click", function () {
+      window.location.href = "connexion.html";
     });
   }
 });
