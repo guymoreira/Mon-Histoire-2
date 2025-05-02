@@ -4,7 +4,7 @@ function showForm() {
   document.getElementById("formulaire").classList.remove("hidden");
 }
 
-function genererHistoire() {
+function generateStory() {
   var nomInput = document.getElementById("nom");
   var personnageInput = document.getElementById("personnage");
   var lieuInput = document.getElementById("lieu");
