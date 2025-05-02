@@ -121,8 +121,8 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
   document.getElementById('resultat').classList.remove('hidden');
 }
 
-// document.getElementById("personnage").addEventListener("change", updatePreview);
-// document.getElementById("lieu").addEventListener("change", updatePreview);
+document.getElementById("personnage").addEventListener("change", updatePreview);
+document.getElementById("lieu").addEventListener("change", updatePreview);
 
 function updatePreview() {
   const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
@@ -137,14 +137,13 @@ function updatePreview() {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
+  const loginButton = document.getElementById("login-button");
+  if (loginButton) {
+    loginButton.addEventListener("click", function () {
       window.location.href = "connexion.html";
     });
   }
 });
-
 
 
 
