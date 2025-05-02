@@ -16,7 +16,7 @@
 
   <main id="formulaire" class="screen hidden fade-in">
     <h2>Création de l’histoire</h2>
-    <form onsubmit="event.preventDefault(); generateStory();">
+    <form onsubmit="generateStory(); return false;" onsubmit="event.preventDefault(); generateStory();">
       <input type="text" id="name" placeholder="Nom du héros" required />
       <select id="type">
         <option>Chevalier</option>
