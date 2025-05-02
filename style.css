@@ -292,3 +292,18 @@ form select {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
+
+.login-btn {
+  background-color: #b5d8f0;
+  color: white;
+  font-size: 1.2em;
+  padding: 12px 24px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+.login-btn:hover {
+  background-color: #97c6e9;
+}
