@@ -5,57 +5,45 @@ function showForm() {
 }
 
 function generateStory() {
-  var nomInput = document.getElementById("nom");
-  var personnageInput = document.getElementById("personnage");
-  var lieuInput = document.getElementById("lieu");
-  var objetInput = document.getElementById("objet");
-  var compagnonInput = document.getElementById("compagnon");
-  var missionInput = document.getElementById("mission");
-
-  var nom = nomInput ? nomInput.value.trim() : "Léo";
-  var personnage = personnageInput ? personnageInput.value.toLowerCase().replace(/\s+/g, '-') : "chevalier";
-  var lieu = lieuInput ? lieuInput.value.toLowerCase().replace(/\s+/g, '-') : "foret";
-  var objet = objetInput ? objetInput.value.toLowerCase().replace(/\s+/g, '-') : "épée";
-  var compagnon = compagnonInput ? compagnonInput.value.toLowerCase().replace(/\s+/g, '-') : "dragon";
-  var mission = missionInput ? missionInput.value.toLowerCase() : "sauver le village";
-
-  var baseImg = "illustration-" + personnage + "-" + lieu;
-
-  var chapitres = [
+  const nom = document.getElementById("nom").value || "Léo";
+  const chapitres = [
     {
-      titre: "Chapitre 1 : Le départ",
-      texte: nom + ", un jeune " + personnage + ", vivait près d’une " + lieu + ". Un matin, une voix magique lui confia une mission : " + mission + "."
+      titre: "Chapitre 1 : Le début de l'aventure",
+      texte: `${nom} vivait paisiblement dans un petit village aux abords d'une immense forêt enchantée. Un matin, il découvrit une lettre mystérieuse lui annonçant une quête magique.`
     },
     {
-      titre: "Chapitre 2 : L’objet magique",
-      texte: nom + " découvrit une " + objet + " aux pouvoirs étonnants."
+      titre: "Chapitre 2 : Le passage secret",
+      texte: `En explorant la forêt, ${nom} tomba sur une pierre lumineuse. En la touchant, un portail apparut, menant vers un monde inconnu rempli de créatures étranges et de paysages extraordinaires.`
     },
     {
-      titre: "Chapitre 3 : Le compagnon",
-      texte: "Un " + compagnon + " étrange se joignit à " + nom + " dans sa quête."
+      titre: "Chapitre 3 : Le compagnon inattendu",
+      texte: `Dans ce monde nouveau, ${nom} rencontra une petite licorne qui parlait. Elle proposa son aide, affirmant connaître le chemin jusqu'à l'objet magique que ${nom} devait retrouver.`
     },
     {
-      titre: "Chapitre 4 : Le grand défi",
-      texte: "Au cœur de la " + lieu + ", ils affrontèrent de grands dangers."
+      titre: "Chapitre 4 : Les épreuves du courage",
+      texte: `${nom} et la licorne traversèrent une rivière de feu, escaladèrent une montagne brumeuse et affrontèrent une créature géante pour prouver leur bravoure.`
     },
     {
-      titre: "Chapitre 5 : Le retour en héros",
-      texte: nom + " réussit à " + mission + " grâce à son courage."
+      titre: "Chapitre 5 : La découverte du cristal",
+      texte: `Au sommet de la montagne, ils découvrirent le Cristal du Rêve, une pierre puissante capable d’exaucer un souhait. Mais pour l’obtenir, ${nom} dut résoudre une énigme ancienne.`
+    },
+    {
+      titre: "Chapitre 6 : Le retour triomphant",
+      texte: `${nom} résolut l’énigme avec brio. De retour chez lui, il utilisa le cristal pour protéger son village à jamais. Il fut acclamé comme un héros et sa légende fut racontée dans tous les contes.`
     }
   ];
 
-  var contenu = "";
-  for (var i = 0; i < chapitres.length; i++) {
-    var chapitre = chapitres[i];
-    contenu += "<h2>" + chapitre.titre + "</h2>";
-    contenu += "<img src='" + baseImg + "-chapitre-" + (i + 1) + ".jpg' alt='" + chapitre.titre + "' class='chapitre-illustration' />";
-    contenu += "<p>" + chapitre.texte + "</p>";
-  }
+  let contenu = "";
+  chapitres.forEach((chapitre, i) => {
+    contenu += `<h2>${chapitre.titre}</h2>`;
+    contenu += `<p>${chapitre.texte}</p>`;
+  });
 
-  var cible = document.getElementById("histoire");
-  if (cible) {
-    cible.innerHTML = contenu;
-    document.getElementById("formulaire").classList.add("hidden");
-    document.getElementById("resultat").classList.remove("hidden");
-  }
+  document.getElementById("formulaire").classList.add("hidden");
+  document.getElementById("resultat").classList.remove("hidden");
+  document.getElementById("histoire").innerHTML = contenu;
+}
+
+function goHome() {
+  location.reload();
 }
