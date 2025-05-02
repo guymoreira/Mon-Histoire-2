@@ -1,39 +1,33 @@
 body {
-  font-family: 'Arial', sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
-
-.container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 1rem;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  background: url('images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
 h1 {
   text-align: center;
+  margin-top: 40px;
   color: #1c3d78;
-  font-size: 1.8rem;
-  margin-top: 2rem;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
 }
 
 .button {
-  display: block;
-  width: 80%;
-  margin: 1rem auto;
-  padding: 1rem;
-  font-size: 1.1rem;
-  text-align: center;
-  color: white;
-  background-color: #e15b4f;
+  padding: 15px 30px;
+  margin: 10px 0;
+  font-size: 18px;
   border: none;
   border-radius: 30px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  background-color: #e15b4f;
+  color: white;
   cursor: pointer;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
@@ -41,46 +35,41 @@ h1 {
   background-color: #d04d42;
 }
 
-/* Bouton "Me connecter" */
-#login-button {
-  background-color: #f9a89e; /* plus clair */
-  color: white;
-  font-size: 1rem;
-  padding: 0.6rem 1rem;
-  border: none;
-  border-radius: 20px;
-  margin-top: 0.5rem;
-  width: 60%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Ajout spécifique du bouton "Me connecter" */
+.button.login {
+  background-color: #f5a9a0; /* plus clair que le rouge principal */
+  font-size: 16px;
+  padding: 10px 24px;
 }
 
-/* Lien "Mes histoires" */
+/* Lien Mes histoires */
 #my-stories-link {
-  display: block;
   text-align: center;
+  display: block;
   color: white;
   text-decoration: underline;
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  margin-top: 20px;
+  font-size: 16px;
 }
 
-/* Illustration */
-.illustration {
-  display: block;
+/* Image de personnages en bas */
+.characters {
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  margin: 1rem auto;
-  max-width: 300px;
+  max-width: 400px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
   .button {
-    width: 90%;
-    font-size: 1rem;
+    width: 80%;
+    font-size: 16px;
   }
 
-  #login-button {
-    width: 70%;
-    font-size: 0.9rem;
+  .button.login {
+    width: 60%;
+    font-size: 14px;
   }
 }
