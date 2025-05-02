@@ -137,13 +137,14 @@ function updatePreview() {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  const loginButton = document.getElementById("login-button");
-  if (loginButton) {
-    loginButton.addEventListener("click", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
       window.location.href = "connexion.html";
     });
   }
 });
+
 
 
 
