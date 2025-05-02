@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,42 +9,53 @@
 <body>
   <main id="accueil" class="screen">
     <h1>Mon Histoire</h1>
+    
     <button onclick="showForm()">Créer une histoire</button>
     <a href="#">Mes histoires</a>
   </main>
 
-  <main id="formulaire" class="screen hidden">
+  <main id="formulaire" class="screen hidden fade-in">
     <h2>Création de l’histoire</h2>
-    <form onsubmit="generateStory(); return false;">
-      <input id="nom" placeholder="Nom du héros" />
-      <select id="personnage">
+    <form onsubmit="event.preventDefault(); generateStory();">
+      <input type="text" id="name" placeholder="Nom du héros" required />
+      <select id="type">
         <option>Chevalier</option>
         <option>Princesse</option>
+        <option>Fée</option>
       </select>
-      <select id="lieu">
+      <select id="setting">
         <option>Forêt enchantée</option>
         <option>Château</option>
+        <option>Plage magique</option>
       </select>
-      <select id="objet">
+      <select id="object">
         <option>Épée</option>
         <option>Baguette</option>
+        <option>Livre magique</option>
       </select>
-      <select id="compagnon">
+      <select id="companion">
         <option>Dragon</option>
         <option>Licorne</option>
+        <option>Chat qui parle</option>
       </select>
-      <select id="mission">
+      <select id="goal">
         <option>Sauver un village</option>
-        <option>Retrouver un trésor</option>
+        <option>Découvrir un trésor</option>
+        <option>Retrouver un ami perdu</option>
       </select>
       <button type="submit">Générer</button>
     </form>
-    <a href="#" onclick="window.location.reload()">← Accueil</a>
+    <button class="secondary" onclick="goHome()">← Accueil</button>
   </main>
 
-  <main id="resultat" class="screen hidden">
-    <div id="histoire"></div>
-    <a href="#" onclick="window.location.reload()">← Accueil</a>
+  <main id="resultat" class="screen hidden fade-in">
+    <img src="illustration-resultat.jpg" alt="Illustration histoire" class="illustration" />
+    <h3 id="story-title">Titre</h3>
+    <p id="story-text">Texte</p>
+    <audio controls>
+      <source src="audio.mp3" type="audio/mpeg" />
+    </audio>
+    <button class="secondary" onclick="goHome()">← Accueil</button>
   </main>
 
   <script src="app.js"></script>
