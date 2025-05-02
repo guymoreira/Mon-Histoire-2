@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,55 +10,69 @@
 <body>
   <main id="accueil" class="screen">
     <h1>Mon Histoire</h1>
-    
     <button onclick="showForm()">Créer une histoire</button>
     <a href="#">Mes histoires</a>
   </main>
 
-  <main id="formulaire" class="screen hidden fade-in">
+  <main id="formulaire" class="screen hidden">
     <h2>Création de l’histoire</h2>
-    <form onsubmit="event.preventDefault(); generateStory();">
-      <input type="text" id="name" placeholder="Nom du héros" required />
-      <select id="type">
+    <form onsubmit="generateStory(); return false;">
+      <input id="nom" placeholder="Nom du héros" />
+      <select id="personnage">
         <option>Chevalier</option>
         <option>Princesse</option>
-        <option>Fée</option>
       </select>
-      <select id="setting">
+      <select id="lieu">
         <option>Forêt enchantée</option>
         <option>Château</option>
-        <option>Plage magique</option>
       </select>
-      <select id="object">
+      <select id="objet">
         <option>Épée</option>
         <option>Baguette</option>
-        <option>Livre magique</option>
       </select>
-      <select id="companion">
+      <select id="compagnon">
         <option>Dragon</option>
         <option>Licorne</option>
-        <option>Chat qui parle</option>
       </select>
-      <select id="goal">
+      <select id="mission">
         <option>Sauver un village</option>
-        <option>Découvrir un trésor</option>
-        <option>Retrouver un ami perdu</option>
+        <option>Retrouver un trésor</option>
       </select>
       <button type="submit">Générer</button>
     </form>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+    <a href="#" onclick="window.location.reload()">← Accueil</a>
   </main>
 
-  <main id="resultat" class="screen hidden fade-in">
-    <img src="illustration-resultat.jpg" alt="Illustration histoire" class="illustration" />
-    <h3 id="story-title">Titre</h3>
-    <p id="story-text">Texte</p>
-    <audio controls>
-      <source src="audio.mp3" type="audio/mpeg" />
-    </audio>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+  <main id="resultat" class="screen hidden">
+    <div id="histoire"></div>
+    <a href="#" onclick="window.location.reload()">← Accueil</a>
   </main>
 
   <script src="app.js"></script>
+
+<script>
+function showForm() {
+  document.getElementById("accueil").classList.add("hidden");
+  document.getElementById("formulaire").classList.remove("hidden");
+}
+function generateStory() {
+  const nom = document.getElementById("nom").value || "Maxime";
+  const histoire = `
+    <h2>Chapitre 1 : L'appel</h2>
+    <p>${nom} reçoit une mission mystérieuse.</p>
+    <h2>Chapitre 2 : L'aventure</h2>
+    <p>${nom} traverse des contrées magiques.</p>
+    <h2>Chapitre 3 : La réussite</h2>
+    <p>Grâce à son courage, ${nom} sauve le village.</p>
+  `;
+  document.getElementById("formulaire").classList.add("hidden");
+  document.getElementById("resultat").classList.remove("hidden");
+  document.getElementById("histoire").innerHTML = histoire;
+}
+function goHome() {
+  location.reload();
+}
+</script>
+
 </body>
 </html>
