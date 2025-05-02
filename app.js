@@ -1,8 +1,6 @@
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
-  const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
-  const lieu = document.getElementById("lieu").value.toLowerCase().replace(/\s+/g, '-');
   const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
   const compagnon = document.getElementById("compagnon").value.toLowerCase().replace(/\s+/g, '-');
   const mission = document.getElementById("mission").value.toLowerCase();
@@ -121,12 +119,8 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
   document.getElementById('resultat').classList.remove('hidden');
 }
 
-document.getElementById("personnage").addEventListener("change", updatePreview);
-document.getElementById("lieu").addEventListener("change", updatePreview);
 
 function updatePreview() {
-  const personnage = document.getElementById("personnage").value.toLowerCase().replace(/\s+/g, '-');
-  const lieu = document.getElementById("lieu").value.toLowerCase().replace(/\s+/g, '-');
   const previewImg = document.getElementById("preview");
   if (personnage && lieu) {
     previewImg.src = `illustration-${personnage}-${lieu}-chapitre-1.jpg`;
@@ -175,3 +169,12 @@ function logout() {
   localStorage.setItem("loggedIn", "false");
   window.location.href = "index.html";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
+  }
+});
