@@ -1,28 +1,11 @@
-/* === STYLES GÉNÉRAUX === */
-
+/* --- Styles généraux déjà présents --- */
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: sans-serif;
   background-size: cover;
-  background-repeat: no-repeat;
   background-position: center;
+  background-repeat: no-repeat;
 }
-
-h1,
-h2,
-h3 {
-  text-align: center;
-  color: #333;
-}
-
-p {
-  max-width: 800px;
-  margin: 1rem auto;
-  line-height: 1.6;
-  padding: 0 1rem;
-}
-
-/* === STRUCTURE === */
 
 .screen {
   display: none;
@@ -47,7 +30,24 @@ p {
   to { opacity: 1; }
 }
 
-/* === BOUTONS === */
+h1,
+h2,
+h3 {
+  color: #333;
+  text-align: center;
+}
+
+input,
+select {
+  display: block;
+  width: 80%;
+  max-width: 400px;
+  margin: 0.5rem auto;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
 
 button {
   padding: 1rem 2rem;
@@ -79,28 +79,7 @@ button {
   padding: 0.5rem 1.2rem;
 }
 
-/* === FORMULAIRES === */
-
-input,
-select {
-  display: block;
-  width: 80%;
-  max-width: 400px;
-  margin: 0.5rem auto;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* === ILLUSTRATIONS ET RÉSULTATS === */
-
+/* --- Illustration --- */
 .illustration {
   max-width: 90%;
   height: auto;
@@ -108,16 +87,29 @@ form {
   margin-bottom: 1rem;
 }
 
-/* === ACCUEIL === */
-
+/* --- Page d’accueil --- */
 .titre-accueil {
   margin-top: 60px;
   font-size: 2.5rem;
-  text-align: center;
 }
 
-/* === CONNEXION === */
+/* --- Fond pour les formulaires --- */
+.background-formulaire {
+  background-image: url('illustration-formulaire.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
+/* --- Fond pour l’accueil --- */
+.background-accueil {
+  background-image: url('illustration-accueil.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* --- Connexion --- */
 .login-screen {
   display: flex;
   justify-content: center;
@@ -134,8 +126,7 @@ form {
   max-width: 420px;
 }
 
-/* === BULLE D'UTILISATEUR CONNECTÉ === */
-
+/* --- Bulle utilisateur connecté --- */
 .user-icon {
   position: absolute;
   top: 20px;
@@ -153,8 +144,7 @@ form {
   cursor: pointer;
 }
 
-/* === MODALE DE DÉCONNEXION === */
-
+/* --- Modale de déconnexion --- */
 .logout-modal {
   position: fixed;
   top: 110px;
@@ -170,13 +160,4 @@ form {
 .logout-modal button {
   margin: 0.5rem 0;
   width: 100%;
-}
-
-/* === FOND FORMULAIRE === */
-
-.background-formulaire {
-  background-image: url('illustration-formulaire.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
