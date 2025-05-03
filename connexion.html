@@ -10,15 +10,16 @@
   <main class="login-screen">
   <div class="login-container">
     <h1>Connexion</h1>
-    <form onsubmit="event.preventDefault(); loginUser();">
-      <input type="text" id="prenom" placeholder="Prénom" required class="form-input" />
-      <input type="email" id="email" placeholder="Adresse email" required class="form-input" />
-      
-      <button type="submit" class="button">Se connecter</button>
-      <button type="button" class="button secondary small" onclick="window.location.href='index.html'">Annuler</button>
+<form id="connexion-form" class="form-style">
+  <input type="text" id="prenom" name="prenom" placeholder="Prénom" class="input-style" required>
+  <input type="email" id="email" name="email" placeholder="Adresse email" class="input-style" required>
 
-      <p><a href="#">Mot de passe oublié ?</a></p>
-    </form>
+  <button type="submit" class="btn btn-primary">Se connecter</button>
+  <button type="button" id="cancel-button" class="btn btn-secondary small-btn">Annuler</button>
+
+  <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+</form>
+
   </div>
 </main>
   <script>
