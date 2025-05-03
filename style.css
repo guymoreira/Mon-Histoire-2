@@ -393,3 +393,24 @@ form select {
   width: 90%;
   max-width: 400px;
 }
+.form-input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.button.secondary.small {
+  background-color: #f16a5b;
+  color: white;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+  display: inline-block;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
