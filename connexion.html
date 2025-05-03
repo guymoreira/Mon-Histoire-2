@@ -6,20 +6,27 @@
   <title>Connexion</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="login-screen">
-  <main class="login-container">
-    <h2>Créer un compte</h2>
-    <form onsubmit="event.preventDefault(); loginUser();">
+<body class="background-formulaire">
+  <main class="login-screen">
+    <form class="screen">
+      <h2>Connexion</h2>
+      <input type="text" id="nom" placeholder="Nom" required />
       <input type="text" id="prenom" placeholder="Prénom" required />
-      <input type="email" id="email" placeholder="Adresse email" required />
-      <button type="submit" class="button">Créer mon compte</button>
-      <button onclick="window.location.href='index.html'" class="button secondary">Annuler</button>
-      <p><a href="#">Mot de passe oublié ?</a></p>
+      <input type="email" id="email" placeholder="Email" required />
+      <button type="button" onclick="validerConnexion()">Valider</button>
+      <button type="button" class="secondary">Créer un compte</button>
+      <button type="button" class="secondary" onclick="window.location.href='index.html'">Annuler</button>
     </form>
   </main>
+
   <script>
-    function loginUser() {
+    function validerConnexion() {
+      const nom = document.getElementById('nom').value.trim();
+      const prenom = document.getElementById('prenom').value.trim();
+      const initiales = nom[0].toUpperCase() + prenom[0].toUpperCase();
+
       localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("initiales", initiales);
       window.location.href = "index.html";
     }
   </script>
