@@ -178,3 +178,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) userIcon.style.display = "flex";
+    userIcon.addEventListener("click", function () {
+      const modal = document.getElementById("logout-modal");
+      if (modal) modal.style.display = "block";
+    });
+  } else {
+    if (userIcon) userIcon.style.display = "none";
+  }
+});
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "index.html";
+}
+
