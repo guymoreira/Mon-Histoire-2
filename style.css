@@ -396,3 +396,20 @@ form select {
   color: #1e3a8a;
   text-decoration: underline;
 }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50%;
+  color: #003366;
+  font-weight: bold;
+  font-size: 14px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
