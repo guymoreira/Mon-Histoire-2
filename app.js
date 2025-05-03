@@ -1,4 +1,3 @@
-
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
   const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
@@ -33,7 +32,7 @@ function genererHistoire() {
   let contenu = "";
   chapitres.forEach((chapitre, i) => {
     contenu += `<h2>${chapitre.titre}</h2>`;
-    contenu += `<img src="${baseImg}-chapitre-${i+1}.jpg" alt="${chapitre.titre}" class="chapitre-illustration" />`;
+    contenu += `<img src="${baseImg}-chapitre-${i + 1}.jpg" alt="${chapitre.titre}" class="chapitre-illustration" />`;
     contenu += `<p>${chapitre.texte}</p>`;
   });
 
@@ -42,54 +41,6 @@ function genererHistoire() {
   document.getElementById("resultat").classList.remove("hidden");
 }
 
-
-function showForm() {
-  document.getElementById('accueil').classList.add('hidden');
-  document.getElementById('formulaire').classList.remove('hidden');
-}
-
-function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
-}
-
-function generateStory() {
-  const name = document.getElementById('name').value;
-  const type = document.getElementById('type').value;
-  const setting = document.getElementById('setting').value;
-  const object = document.getElementById('object').value;
-  const companion = document.getElementById('companion').value;
-  const goal = document.getElementById('goal').value;
-
-  const title = `${name} le ${type.toLowerCase()}`;
-
-  const text = `${name} était un(e) ${type.toLowerCase()} très courageux(se) vivant dans ${setting.toLowerCase()}. Un jour, un appel magique le/la poussa à accomplir une mission très importante : ${goal.toLowerCase()}.
-
-Avec son fidèle ${companion.toLowerCase()} et sa ${object.toLowerCase()} en main, ${name} quitta son foyer. La route fut longue et semée d'embûches : rivières mystérieuses, montagnes chantantes, et créatures étranges l'attendaient.
-
-Chaque nuit, autour d’un feu enchanté, ${name} écrivait ses pensées dans un carnet magique. Le jour, il/elle affrontait les énigmes d’un vieux sphinx, traversait des forêts où les arbres chuchotaient des conseils, et recevait l’aide d’animaux doués de parole.
-
-Au cœur de ${setting.toLowerCase()}, ${name} rencontra un peuple oublié qui gardait un passage secret. Grâce à son ${object.toLowerCase()} et l’intelligence de ${companion.toLowerCase()}, ${name} résolut l’énigme finale.
-
-Enfin, après de nombreuses épreuves, il/elle accomplit sa mission : ${goal.toLowerCase()}. Les habitants célébrèrent ${name}, dont le courage, la gentillesse et la magie devinrent légendaires.
-
-Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi merveilleuses les unes que les autres...`;
-
-  document.getElementById('story-title').innerText = title;
-  document.getElementById('story-text').innerText = text;
-
-  document.getElementById('formulaire').classList.add('hidden');
-  document.getElementById('resultat').classList.remove('hidden');
-}function showForm() {
-  document.getElementById('accueil').classList.add('hidden');
-  document.getElementById('formulaire').classList.remove('hidden');
-}
-
-function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
-}
-
 function generateStory() {
   const name = document.getElementById('name').value;
   const type = document.getElementById('type').value;
@@ -118,7 +69,6 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
   document.getElementById('formulaire').classList.add('hidden');
   document.getElementById('resultat').classList.remove('hidden');
 }
-
 
 function updatePreview() {
   const previewImg = document.getElementById("preview");
@@ -128,49 +78,6 @@ function updatePreview() {
   }
 }
 
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-button");
-  const userIcon = document.getElementById("user-icon");
-  const myStories = document.getElementById("my-stories-link");
-
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) userIcon.style.display = "flex";
-    if (myStories) myStories.style.display = "block";
-  } else {
-    if (userIcon) userIcon.style.display = "none";
-    if (myStories) myStories.style.display = "none";
-  }
-
-  if (userIcon) {
-    userIcon.addEventListener("click", () => {
-      const modal = document.getElementById("logout-modal");
-      if (modal) modal.style.display = "block";
-    });
-  }
-});
-
-function logout() {
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("initiales");
-  window.location.href = "index.html";
-}
-
 function showForm() {
   document.getElementById('accueil').classList.add('hidden');
   document.getElementById('formulaire').classList.remove('hidden');
@@ -181,20 +88,41 @@ function goHome() {
   document.getElementById('accueil').classList.remove('hidden');
 }
 
-function generateStory() {
-  const name = document.getElementById('name').value;
-  const type = document.getElementById('type').value;
-  const setting = document.getElementById('setting').value;
-  const object = document.getElementById('object').value;
-  const companion = document.getElementById('companion').value;
-  const goal = document.getElementById('goal').value;
+// Initialisation de l'interface selon le statut connecté
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-button");
+  const userIcon = document.getElementById("user-icon");
+  const myStories = document.getElementById("my-stories-link");
 
-  const title = `${name} le ${type.toLowerCase()}`;
-  const text = `${name} était un(e) ${type.toLowerCase()} très courageux(se)... (histoire)`;
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      userIcon.style.display = "flex";
+      userIcon.textContent = localStorage.getItem("initiales") || "??";
+      userIcon.addEventListener("click", () => {
+        const modal = document.getElementById("logout-modal");
+        if (modal) modal.style.display = "block";
+      });
+    }
+    if (myStories) myStories.style.display = "block";
+  } else {
+    if (userIcon) userIcon.style.display = "none";
+    if (myStories) myStories.style.display = "none";
+  }
+});
 
-  document.getElementById('story-title').innerText = title;
-  document.getElementById('story-text').innerText = text;
-  document.getElementById('formulaire').classList.add('hidden');
-  document.getElementById('resultat').classList.remove('hidden');
+function logout() {
+  localStorage.setItem("loggedIn", "false");
+  localStorage.removeItem("initiales");
+  window.location.href = "index.html";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
+  }
 });
