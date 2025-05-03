@@ -4,26 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion</title>
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="background-formulaire">
-  <main class="screen">
+<body class="login-screen">
+  <main class="login-container">
+    <h2>Créer un compte</h2>
     <form onsubmit="event.preventDefault(); loginUser();">
-      <h2>Connexion</h2>
       <input type="text" id="prenom" placeholder="Prénom" required />
-      <input type="text" id="nom" placeholder="Nom" required />
       <input type="email" id="email" placeholder="Adresse email" required />
-      <button type="submit" class="button">Valider</button>
-      <button type="button" class="button secondary" onclick="window.location.href='index.html'">Annuler</button>
+      <button type="submit" class="button">Créer mon compte</button>
+      <p><a href="#">Mot de passe oublié ?</a></p>
     </form>
   </main>
   <script>
     function loginUser() {
-      const prenom = document.getElementById("prenom").value.trim();
-      const nom = document.getElementById("nom").value.trim();
-      const initiales = (prenom[0] || '') + (nom[0] || '');
       localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("initiales", initiales.toUpperCase());
       window.location.href = "index.html";
     }
   </script>

@@ -4,19 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mon Histoire</title>
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main id="accueil" class="screen">
-    <h1 class="titre-accueil">Mon Histoire</h1>
+    <h1>Mon Histoire</h1>
     <button onclick="showForm()" class="button">Créer une histoire</button>
-    <button onclick="window.location.href='connexion.html'" id="login-button">Me connecter</button>
-    
-    <div id="user-icon" class="user-icon" style="display: none;"></div>
+    <button onclick="window.location.href='connexion.html'" class="button secondaire petit" id="login-btn">Me connecter</button>
+    <div id="user-icon" class="user-icon" style="display: none;">GM</div>
     <div id="logout-modal" class="logout-modal" style="display: none;">
       <p>Voulez-vous vous déconnecter ?</p>
-      <button onclick="logout()" class="button">Se déconnecter</button>
-      <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary">Annuler</button>
+      <button onclick="logout()">Se déconnecter</button>
+      <button onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
     </div>
   </main>
 
@@ -61,6 +60,31 @@
     <button class="button login" onclick="goHome()">← Accueil</button>
   </main>
 
-  <script src="app.js?v=1"></script>
+  <script>
+    const version = new Date().getTime();
+    const script = document.createElement('script');
+    script.src = `app.js?v=${version}`;
+    document.body.appendChild(script);
+  </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) userIcon.style.display = "block";
+    userIcon.addEventListener("click", function () {
+      document.getElementById("logout-modal").style.display = "block";
+    });
+  }
+});
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "index.html";
+}
+</script>
 </body>
 </html>
