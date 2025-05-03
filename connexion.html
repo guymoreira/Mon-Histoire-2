@@ -1,27 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connexion</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Connexion</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
-  <div class="form-container">
-    <h2>Créer un compte</h2>
-    <form onsubmit="connecterUtilisateur(event)">
-      <input type="text" placeholder="Prénom" required />
-      <input type="email" placeholder="Adresse email" required />
-      <button class="main-button" type="submit">Créer mon compte</button>
-      <a href="index.html" class="cancel-link">Annuler</a>
-    </form>
-  </div>
-  <script>
-    function connecterUtilisateur(event) {
-      event.preventDefault();
-      localStorage.setItem("connecte", "true");
-      window.location.href = "index.html";
-    }
-  </script>
+<body class="background-formulaire">
+    <div class="form-container">
+        <h2>Créer un compte</h2>
+        <input type="text" id="prenom" placeholder="Prénom" class="form-input"/>
+        <input type="email" id="email" placeholder="Adresse email" class="form-input"/>
+        <button class="main-button" onclick="connecter()">Valider</button>
+        <button class="secondary-button" onclick="annuler()">Annuler</button>
+    </div>
+    <script>
+        function connecter() {
+            const prenom = document.getElementById("prenom").value;
+            const email = document.getElementById("email").value;
+            if (prenom && email) {
+                localStorage.setItem("connecte", "true");
+                localStorage.setItem("initiales", prenom[0].toUpperCase() + email[0].toUpperCase());
+                window.location.href = "index.html";
+            }
+        }
+        function annuler() {
+            window.location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
