@@ -83,5 +83,16 @@
   </main>
 
   <script src="app.js"></script>
+  <!-- Anti-cache automatique -->
+<script>
+  const timestamp = new Date().getTime();
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    link.href += `?v=${timestamp}`;
+  });
+  document.querySelectorAll('script[src]').forEach(script => {
+    script.src += `?v=${timestamp}`;
+  });
+</script>
+
 </body>
 </html>
