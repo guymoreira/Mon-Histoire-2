@@ -166,15 +166,35 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function logout() {
-  localStorage.setItem("loggedIn", "false");
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("initiales");
   window.location.href = "index.html";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
+function showForm() {
+  document.getElementById('accueil').classList.add('hidden');
+  document.getElementById('formulaire').classList.remove('hidden');
+}
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+  document.getElementById('accueil').classList.remove('hidden');
+}
+
+function generateStory() {
+  const name = document.getElementById('name').value;
+  const type = document.getElementById('type').value;
+  const setting = document.getElementById('setting').value;
+  const object = document.getElementById('object').value;
+  const companion = document.getElementById('companion').value;
+  const goal = document.getElementById('goal').value;
+
+  const title = `${name} le ${type.toLowerCase()}`;
+  const text = `${name} était un(e) ${type.toLowerCase()} très courageux(se)... (histoire)`;
+
+  document.getElementById('story-title').innerText = title;
+  document.getElementById('story-text').innerText = text;
+  document.getElementById('formulaire').classList.add('hidden');
+  document.getElementById('resultat').classList.remove('hidden');
+}
 });
