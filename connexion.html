@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Connexion</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="background-formulaire">
   <main class="login-screen">
-    <form class="screen">
+    <form class="screen login-form" onsubmit="event.preventDefault(); validerConnexion();">
       <h2>Connexion</h2>
+      <input type="text" id="nom" placeholder="Nom" required />
       <input type="text" id="prenom" placeholder="Prénom" required />
       <input type="email" id="email" placeholder="Email" required />
-      <button type="button" onclick="validerConnexion()">Valider</button>
-      <button type="button" class="secondary">Créer un compte</button>
-      <button type="button" class="secondary" onclick="window.location.href='index.html'">Annuler</button>
+      <button type="submit" class="button">Valider</button>
+      <button type="button" class="button secondaire petit">Créer un compte</button>
+      <button type="button" class="button secondaire" onclick="window.location.href='index.html'">Annuler</button>
     </form>
   </main>
 
   <script>
     function validerConnexion() {
-      const prenom = document.getElementById('prenom').value.trim();
-      const initiales = nom[0].toUpperCase() + prenom[0].toUpperCase();
-
+      const nom = document.getElementById("nom").value.trim();
+      const prenom = document.getElementById("prenom").value.trim();
+      const initiales = (nom[0] || "").toUpperCase() + (prenom[0] || "").toUpperCase();
       localStorage.setItem("loggedIn", "true");
       localStorage.setItem("initiales", initiales);
       window.location.href = "index.html";
