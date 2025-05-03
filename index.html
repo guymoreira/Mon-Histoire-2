@@ -17,6 +17,12 @@
       <button onclick="logout()">Se déconnecter</button>
       <button onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
     </div>
+    <div id="user-icon" class="user-icon" style="display: none;"></div>
+<div id="logout-modal" class="logout-modal" style="display: none;">
+  <p>Voulez-vous vous déconnecter ?</p>
+  <button onclick="logout()" class="button">Se déconnecter</button>
+  <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary small">Annuler</button>
+</div>
   </main>
 
   <main id="formulaire" class="screen hidden fade-in">
