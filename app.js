@@ -167,4 +167,8 @@ function logout() {
   localStorage.removeItem("loggedIn");
   window.location.href = "index.html";
 }
+function goBackToForm() {
+  document.getElementById("formulaire").classList.remove("hidden");
+  document.getElementById("resultat").classList.add("hidden");
+}
 
