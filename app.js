@@ -119,6 +119,7 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
 
 
 
+
 function updatePreview() {
   const previewImg = document.getElementById("preview");
   if (personnage && lieu) {
