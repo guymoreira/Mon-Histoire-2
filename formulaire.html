@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulaire</title>
+  <title>Créer une histoire</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="background-formulaire">
   <div class="form-container">
     <h2>Créer une histoire</h2>
-    <form>
-      <input type="text" placeholder="Nom du héros" />
-      <input type="text" placeholder="Objectif" />
-      <button class="main-button" type="submit">Valider</button>
+    <form onsubmit="event.preventDefault(); alert('Histoire générée');">
+      <input type="text" placeholder="Nom du héros" required class="form-input"/>
+      <input type="text" placeholder="Objectif ou mission" class="form-input"/>
+      <select class="form-input"><option>Chevalier</option><option>Princesse</option></select>
+      <button type="submit" class="main-button">Générer</button>
     </form>
+    <button onclick="window.location.href='index.html'" class="secondary-button">Accueil</button>
   </div>
 </body>
 </html>
