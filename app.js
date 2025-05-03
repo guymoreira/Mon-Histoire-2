@@ -178,3 +178,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+  const logoutModal = document.getElementById("logout-modal");
+  const initials = "GM"; // ou extraire depuis localStorage si besoin
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      userIcon.textContent = initials;
+      userIcon.style.display = "flex";
+      userIcon.addEventListener("click", function () {
+        if (logoutModal) logoutModal.style.display = "block";
+      });
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+});
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "index.html";
+}
+
