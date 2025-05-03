@@ -199,4 +199,11 @@ function logout() {
   localStorage.removeItem("loggedIn");
   window.location.href = "index.html";
 }
-
+document.addEventListener("DOMContentLoaded", () => {
+  const cancelButton = document.getElementById("cancel-button");
+  if (cancelButton) {
+    cancelButton.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+  }
+});
