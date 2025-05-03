@@ -53,7 +53,7 @@ function goHome() {
   document.getElementById('accueil').classList.remove('hidden');
 }
 
-function generateStory() {
+() {
   const name = document.getElementById('name').value;
   const type = document.getElementById('type').value;
   const setting = document.getElementById('setting').value;
