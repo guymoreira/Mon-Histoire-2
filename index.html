@@ -9,15 +9,13 @@
 <body>
   <main id="accueil" class="screen">
     <h1 class="titre-accueil">Mon Histoire</h1>
-    <button onclick="showForm()">Créer une histoire</button>
-    <button id="login-button" onclick="window.location.href='connexion.html'">Me connecter</button>
-
-    <div id="user-icon" class="user-icon"></div>
-
+    <button onclick="showForm()" class="button">Créer une histoire</button>
+    <button onclick="window.location.href='connexion.html'" class="button secondaire petit" id="login-button">Me connecter</button>
+    <div id="user-icon" class="user-icon" style="display: none;">GM</div>
     <div id="logout-modal" class="logout-modal" style="display: none;">
       <p>Voulez-vous vous déconnecter ?</p>
-      <button onclick="logout()">Se déconnecter</button>
-      <button onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
+      <button onclick="logout()" class="button">Se déconnecter</button>
+      <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary">Annuler</button>
     </div>
   </main>
 
@@ -50,18 +48,23 @@
         <option>Découvrir un trésor</option>
         <option>Retrouver un ami perdu</option>
       </select>
-      <button type="submit">Générer</button>
+      <button type="submit" class="button">Générer</button>
     </form>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+    <button class="button login" onclick="goHome()">← Accueil</button>
   </main>
 
   <main id="resultat" class="screen hidden fade-in">
     <img src="illustration-resultat.jpg" alt="Illustration" class="illustration" />
     <h3 id="story-title">Titre</h3>
     <p id="story-text">Texte</p>
-    <button class="secondary" onclick="goHome()">← Accueil</button>
+    <button class="button login" onclick="goHome()">← Accueil</button>
   </main>
 
-  <script src="app.js"></script>
+  <script>
+    const version = new Date().getTime();
+    const script = document.createElement('script');
+    script.src = `app.js?v=${version}`;
+    document.body.appendChild(script);
+  </script>
 </body>
 </html>
