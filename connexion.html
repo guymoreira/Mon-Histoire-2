@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Connexion</title>
-    <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="background-formulaire">
-    <div class="form-container">
-        <h2>Créer un compte</h2>
-        <input type="text" id="prenom" placeholder="Prénom" class="form-input"/>
-        <input type="email" id="email" placeholder="Adresse email" class="form-input"/>
-        <button class="main-button" onclick="connecter()">Valider</button>
-        <button class="secondary-button" onclick="window.location.href='index.html'">Annuler</button>
-    </div>
-    <script>
-        function connecter() {
-            const prenom = document.getElementById("prenom").value.trim();
-            const email = document.getElementById("email").value.trim();
-            if (prenom && email) {
-                localStorage.setItem("connecte", "true");
-                localStorage.setItem("initiales", (prenom[0] + email[0]).toUpperCase());
-                window.location.href = "index.html";
-            }
-        }
-    </script>
+<body class="login-screen">
+  <main class="login-container">
+    <h2>Connexion</h2>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="email" id="email" placeholder="Adresse email" required />
+      <input type="password" id="password" placeholder="Mot de passe" required />
+      <button type="submit" class="button">Se connecter</button>
+      <p><a href="#">Mot de passe oublié ?</a></p>
+    </form>
+  </main>
+  <script>
+    function loginUser() {
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "index.html";
+    }
+  </script>
 </body>
 </html>
