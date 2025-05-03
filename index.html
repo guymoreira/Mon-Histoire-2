@@ -2,95 +2,86 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mon Histoire</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <main id="accueil" class="screen">
-    <h1>Mon Histoire</h1>
-    <button onclick="showForm()" class="button">Créer une histoire</button>
+<body class="background-accueil">
+  <main id="accueil" class="screen active">
+    <h1 class="titre-accueil">Bienvenue dans "Mon Histoire"</h1>
+
+    <button onclick="showFormulaire()" class="button">Créer une histoire</button>
     <button onclick="window.location.href='connexion.html'" id="login-btn" class="button secondary">Me connecter</button>
-   <div id="user-icon" class="avatar" style="display: none;">GM</div>
+
+    <!-- Bouton utilisateur + modale déconnexion -->
+    <div id="user-icon" class="avatar" style="display: none;">GM</div>
+
     <div id="logout-modal" class="logout-modal" style="display: none;">
       <p>Voulez-vous vous déconnecter ?</p>
-      <button onclick="logout()">Se déconnecter</button>
-      <button onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
+      <button onclick="logout()" class="button">Se déconnecter</button>
+      <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary small">Annuler</button>
     </div>
-    <div id="user-icon" class="user-icon" style="display: none;"></div>
-<div id="logout-modal" class="logout-modal" style="display: none;">
-  <p>Voulez-vous vous déconnecter ?</p>
-  <button onclick="logout()" class="button">Se déconnecter</button>
-  <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary small">Annuler</button>
-</div>
   </main>
 
-  <main id="formulaire" class="screen hidden fade-in">
-    <h2>Création de l’histoire</h2>
-    <form onsubmit="event.preventDefault(); generateStory();">
-      <input type="text" id="name" placeholder="Nom du héros" required />
-      <select id="type">
-        <option>Chevalier</option>
-        <option>Princesse</option>
-        <option>Fée</option>
+  <main id="formulaire" class="screen background-formulaire">
+    <h2>Créer une histoire</h2>
+    <form id="story-form">
+      <input type="text" id="nom" placeholder="Nom du héros" required />
+      <select id="personnage">
+        <option value="">Choisissez un personnage</option>
+        <option value="chevalier">Chevalier</option>
+        <option value="princesse">Princesse</option>
+        <option value="fée">Fée</option>
+        <option value="personnalisé">Personnalisé</option>
       </select>
-      <select id="setting">
-        <option>Forêt enchantée</option>
-        <option>Château</option>
-        <option>Plage magique</option>
+      <select id="decor">
+        <option value="">Choisissez un décor</option>
+        <option value="forêt enchantée">Forêt enchantée</option>
+        <option value="château">Château</option>
+        <option value="personnalisé">Personnalisé</option>
       </select>
-      <select id="object">
-        <option>Épée</option>
-        <option>Baguette</option>
-        <option>Livre magique</option>
+      <select id="objet">
+        <option value="">Choisissez un objet magique</option>
+        <option value="baguette">Baguette</option>
+        <option value="épée">Épée</option>
+        <option value="personnalisé">Personnalisé</option>
       </select>
-      <select id="companion">
-        <option>Dragon</option>
-        <option>Licorne</option>
-        <option>Chat qui parle</option>
+      <select id="compagnon">
+        <option value="">Choisissez un compagnon (optionnel)</option>
+        <option value="dragon">Dragon</option>
+        <option value="licorne">Licorne</option>
+        <option value="personnalisé">Personnalisé</option>
       </select>
-      <select id="goal">
-        <option>Sauver un village</option>
-        <option>Découvrir un trésor</option>
-        <option>Retrouver un ami perdu</option>
+      <select id="objectif">
+        <option value="">Choisissez un objectif</option>
+        <option value="sauver un village">Sauver un village</option>
+        <option value="découvrir un trésor">Découvrir un trésor</option>
       </select>
-      <button type="submit" class="button">Générer</button>
+      <select id="style">
+        <option value="">Choisissez un style narratif</option>
+        <option value="drôle">Drôle</option>
+        <option value="poétique">Poétique</option>
+        <option value="suspense">Suspense</option>
+        <option value="personnalisé">Personnalisé</option>
+      </select>
+      <select id="duree">
+        <option value="">Choisissez une durée</option>
+        <option value="courte">Courte</option>
+        <option value="moyenne">Moyenne</option>
+        <option value="longue">Longue</option>
+      </select>
+      <button type="submit" class="button">Générer l'histoire</button>
+      <button type="button" onclick="goBack()" class="button secondary small">Retour</button>
     </form>
-    <button class="button login" onclick="goHome()">← Accueil</button>
   </main>
 
-  <main id="resultat" class="screen hidden fade-in">
-    <img src="illustration-resultat.jpg" alt="Illustration" class="illustration" />
-    <h3 id="story-title">Titre</h3>
-    <p id="story-text">Texte</p>
-    <button class="button login" onclick="goHome()">← Accueil</button>
+  <main id="resultat" class="screen background-formulaire">
+    <h2>Votre histoire</h2>
+    <div id="story-container"></div>
+    <button onclick="goBackToForm()" class="button secondary small">Retour</button>
+    <button onclick="goHome()" class="button secondary small">Accueil</button>
   </main>
 
-  <script>
-    const version = new Date().getTime();
-    const script = document.createElement('script');
-    script.src = `app.js?v=${version}`;
-    document.body.appendChild(script);
-  </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-btn");
-  const userIcon = document.getElementById("user-icon");
-
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) userIcon.style.display = "block";
-    userIcon.addEventListener("click", function () {
-      document.getElementById("logout-modal").style.display = "block";
-    });
-  }
-});
-
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
-}
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
