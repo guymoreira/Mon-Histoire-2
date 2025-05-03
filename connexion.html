@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion</title>
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="stylesheet" href="style.css?v=1">
 </head>
 <body class="background-formulaire">
-  <main class="login-screen">
-    <form class="screen login-form" onsubmit="event.preventDefault(); validerConnexion();">
+  <main class="screen">
+    <form onsubmit="event.preventDefault(); loginUser();">
       <h2>Connexion</h2>
-      <input type="text" id="nom" placeholder="Nom" required />
       <input type="text" id="prenom" placeholder="Prénom" required />
-      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="nom" placeholder="Nom" required />
+      <input type="email" id="email" placeholder="Adresse email" required />
       <button type="submit" class="button">Valider</button>
-      <button type="button" class="button secondaire petit">Créer un compte</button>
-      <button type="button" class="button secondaire" onclick="window.location.href='index.html'">Annuler</button>
+      <button type="button" class="button secondary" onclick="window.location.href='index.html'">Annuler</button>
     </form>
   </main>
-
   <script>
-    function validerConnexion() {
-      const nom = document.getElementById("nom").value.trim();
+    function loginUser() {
       const prenom = document.getElementById("prenom").value.trim();
-      const initiales = (nom[0] || "").toUpperCase() + (prenom[0] || "").toUpperCase();
+      const nom = document.getElementById("nom").value.trim();
+      const initiales = (prenom[0] || '') + (nom[0] || '');
       localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("initiales", initiales);
+      localStorage.setItem("initiales", initiales.toUpperCase());
       window.location.href = "index.html";
     }
   </script>
