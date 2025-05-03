@@ -10,13 +10,7 @@
   <main id="accueil" class="screen">
     <h1>Mon Histoire</h1>
     <button onclick="showForm()" class="button">Créer une histoire</button>
-    <button onclick="window.location.href='connexion.html'" class="button secondaire petit" id="login-btn">Me connecter</button>
-    <div id="user-icon" class="user-icon" style="display: none;">GM</div>
-    <div id="logout-modal" class="logout-modal" style="display: none;">
-      <p>Voulez-vous vous déconnecter ?</p>
-      <button onclick="logout()">Se déconnecter</button>
-      <button onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
-    </div>
+    <button onclick="showForm()" class="button secondaire petit">Créer une histoire</button>
   </main>
 
   <main id="formulaire" class="screen hidden fade-in">
@@ -66,25 +60,51 @@
     script.src = `app.js?v=${version}`;
     document.body.appendChild(script);
   </script>
+
+    <div id="user-icon" class="user-icon" style="display:none;"></div>
+    <div id="logout-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <p>Voulez-vous vous déconnecter ?</p>
+            <button onclick="deconnexion()" class="main-button">Se déconnecter</button>
+            <button onclick="fermerModal()" class="secondary-button">Annuler</button>
+        </div>
+    </div>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-btn");
-  const userIcon = document.getElementById("user-icon");
+    function checkConnexion() {
+        const connecte = localStorage.getItem("connecte");
+        const initiales = localStorage.getItem("initiales");
+        const loginBtn = document.getElementById("btn-login");
+        const userIcon = document.getElementById("user-icon");
 
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) userIcon.style.display = "block";
-    userIcon.addEventListener("click", function () {
-      document.getElementById("logout-modal").style.display = "block";
-    });
-  }
-});
+        if (connecte === "true") {
+            if (loginBtn) loginBtn.style.display = "none";
+            if (userIcon) {
+                userIcon.style.display = "flex";
+                userIcon.innerText = initiales || "??";
+            }
+        }
+    }
 
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
-}
+    function ouvrirModal() {
+        document.getElementById("logout-modal").style.display = "flex";
+    }
+
+    function fermerModal() {
+        document.getElementById("logout-modal").style.display = "none";
+    }
+
+    function deconnexion() {
+        localStorage.removeItem("connecte");
+        localStorage.removeItem("initiales");
+        window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+        checkConnexion();
+        const icon = document.getElementById("user-icon");
+        if (icon) icon.addEventListener("click", ouvrirModal);
+    }
 </script>
+    
 </body>
 </html>
