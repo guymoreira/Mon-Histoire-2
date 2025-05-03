@@ -80,10 +80,8 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
 
   document.getElementById('formulaire').classList.add('hidden');
   document.getElementById('resultat').classList.remove('hidden');
-}function showForm() {
-  document.getElementById('accueil').classList.add('hidden');
-  document.getElementById('formulaire').classList.remove('hidden');
 }
+
 
 function goHome() {
   document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
@@ -118,6 +116,7 @@ Et c’est ainsi que ${name} vécut encore de nombreuses aventures, toutes aussi
   document.getElementById('formulaire').classList.add('hidden');
   document.getElementById('resultat').classList.remove('hidden');
 }
+
 
 
 function updatePreview() {
