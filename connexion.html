@@ -9,12 +9,13 @@
 <body class="login-screen">
   <main class="login-container">
     <h2>Créer un compte</h2>
-    <form onsubmit="event.preventDefault(); loginUser();">
-      <input type="text" id="prenom" placeholder="Prénom" required />
-      <input type="email" id="email" placeholder="Adresse email" required />
-      <button type="submit" class="button">Créer mon compte</button>
-      <p><a href="#">Mot de passe oublié ?</a></p>
-    </form>
+<form onsubmit="event.preventDefault(); loginUser();">
+  <input type="text" id="prenom" placeholder="Prénom" required />
+  <input type="email" id="email" placeholder="Adresse email" required />
+  <button type="submit" class="button">Créer mon compte</button>
+  <button type="button" class="button secondary" onclick="window.location.href='index.html'">Annuler</button>
+  <p><a href="#">Mot de passe oublié ?</a></p>
+</form>
   </main>
   <script>
     function loginUser() {
