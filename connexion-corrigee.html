@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-screen">
+  <main class="login-container">
+    <h2>Créer un compte</h2>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="text" id="prenom" placeholder="Prénom" required />
+      <input type="email" id="email" placeholder="Adresse email" required />
+      <button type="submit" class="button">Créer mon compte</button>
+      <p><a href="#">Mot de passe oublié ?</a></p>
+    <button onclick="window.location.href='index.html'" class="button secondary">Annuler</button>
+    </form>
+  </main>
+  <script>
+    function loginUser() {
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
