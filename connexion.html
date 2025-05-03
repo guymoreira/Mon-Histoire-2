@@ -6,19 +6,20 @@
   <title>Connexion</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="login-screen">
-  <main class="login-container">
-    <h2>Connexion</h2>
-    <form onsubmit="event.preventDefault(); loginUser();">
-      <input type="email" id="email" placeholder="Adresse email" required />
-      <input type="password" id="password" placeholder="Mot de passe" required />
-      <button type="submit" class="button">Se connecter</button>
-      <p><a href="#">Mot de passe oublié ?</a></p>
+<body>
+  <div class="form-container">
+    <h2>Créer un compte</h2>
+    <form onsubmit="connecterUtilisateur(event)">
+      <input type="text" placeholder="Prénom" required />
+      <input type="email" placeholder="Adresse email" required />
+      <button class="main-button" type="submit">Créer mon compte</button>
+      <a href="index.html" class="cancel-link">Annuler</a>
     </form>
-  </main>
+  </div>
   <script>
-    function loginUser() {
-      localStorage.setItem("loggedIn", "true");
+    function connecterUtilisateur(event) {
+      event.preventDefault();
+      localStorage.setItem("connecte", "true");
       window.location.href = "index.html";
     }
   </script>
