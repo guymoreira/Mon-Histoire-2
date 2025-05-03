@@ -7,21 +7,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-screen">
-  <main class="login-screen">
-  <div class="login-container">
-    <h1>Connexion</h1>
-<form id="connexion-form" class="form-style">
-  <input type="text" id="prenom" name="prenom" placeholder="Prénom" class="input-style" required>
-  <input type="email" id="email" name="email" placeholder="Adresse email" class="input-style" required>
-
-  <button type="submit" class="btn btn-primary">Se connecter</button>
-  <button type="button" id="cancel-button" class="btn btn-secondary small-btn">Annuler</button>
-
-  <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-</form>
-
-  </div>
-</main>
+  <main class="login-container">
+    <h2>Créer un compte</h2>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="text" id="prenom" placeholder="Prénom" required />
+      <input type="email" id="email" placeholder="Adresse email" required />
+      <button type="submit" class="button">Créer mon compte</button>
+      <p><a href="#">Mot de passe oublié ?</a></p>
+    </form>
+  </main>
   <script>
     function loginUser() {
       localStorage.setItem("loggedIn", "true");
