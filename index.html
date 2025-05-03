@@ -8,10 +8,12 @@
 </head>
 <body>
   <main id="accueil" class="screen">
-    <h1>Mon Histoire</h1>
-    <button onclick="showForm()" class="button">Créer une histoire</button>
-    <button onclick="window.location.href='connexion.html'" class="button secondaire petit" id="login-btn">Me connecter</button>
-    <div id="user-icon" class="user-icon" style="display: none;">GM</div>
+    <h1 class="titre-accueil">Mon Histoire</h1>
+    <button onclick="showForm()">Créer une histoire</button>
+    <button id="login-button" onclick="window.location.href='connexion.html'">Me connecter</button>
+
+    <div id="user-icon" class="user-icon"></div>
+
     <div id="logout-modal" class="logout-modal" style="display: none;">
       <p>Voulez-vous vous déconnecter ?</p>
       <button onclick="logout()">Se déconnecter</button>
@@ -48,43 +50,18 @@
         <option>Découvrir un trésor</option>
         <option>Retrouver un ami perdu</option>
       </select>
-      <button type="submit" class="button">Générer</button>
+      <button type="submit">Générer</button>
     </form>
-    <button class="button login" onclick="goHome()">← Accueil</button>
+    <button class="secondary" onclick="goHome()">← Accueil</button>
   </main>
 
   <main id="resultat" class="screen hidden fade-in">
     <img src="illustration-resultat.jpg" alt="Illustration" class="illustration" />
     <h3 id="story-title">Titre</h3>
     <p id="story-text">Texte</p>
-    <button class="button login" onclick="goHome()">← Accueil</button>
+    <button class="secondary" onclick="goHome()">← Accueil</button>
   </main>
 
-  <script>
-    const version = new Date().getTime();
-    const script = document.createElement('script');
-    script.src = `app.js?v=${version}`;
-    document.body.appendChild(script);
-  </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-btn");
-  const userIcon = document.getElementById("user-icon");
-
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) userIcon.style.display = "block";
-    userIcon.addEventListener("click", function () {
-      document.getElementById("logout-modal").style.display = "block";
-    });
-  }
-});
-
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
-}
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
