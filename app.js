@@ -245,10 +245,30 @@ function loginUser() {
 
     // Animation de transition
     document.body.classList.add("fade-out");
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 400);
-  } else {
+  const current = document.querySelector(".screen:not(.hidden)");
+  const accueil = document.getElementById("accueil");
+
+  if (current && current !== accueil) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+
+      accueil.classList.remove("hidden");
+      accueil.classList.add("fade-in");
+    });
+  }
+
+  const userIcon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-btn");
+  if (userIcon) {
+    const initials = localStorage.getItem("initials") || "??";
+    userIcon.textContent = initials;
+    userIcon.style.display = "flex";
+  }
+  if (loginBtn) loginBtn.style.display = "none";
+ else {
     alert("Veuillez remplir tous les champs.");
   }
 }
