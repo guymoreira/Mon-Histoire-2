@@ -266,6 +266,9 @@ function loginUser() {
 
   const userIcon = document.getElementById("user-icon");
   const loginBtn = document.getElementById("login-btn");
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+
   if (loginBtn) loginBtn.style.display = "none";
   if (userIcon) {
     const initials = localStorage.getItem("initials") || "??";
