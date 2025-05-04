@@ -175,8 +175,12 @@ function logout() {
   // cacher pastille
   const userIcon = document.getElementById("user-icon");
   const loginBtn = document.getElementById("login-btn");
+  const logoutModal = document.getElementById("logout-modal");
+
   if (userIcon) userIcon.style.display = "none";
   if (loginBtn) loginBtn.style.display = "inline-block";
+  if (logoutModal) logoutModal.style.display = "none";
+
 }
 
 
