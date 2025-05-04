@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document.body.style.opacity = "1";
+  document.body.style.display = "block";
+  setTimeout(() => {
+    document.body.style.opacity = "1";
+  }, 10); // laisse le temps à l'affichage de se faire avant le fade-in
 });
+
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
