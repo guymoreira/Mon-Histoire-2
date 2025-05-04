@@ -133,7 +133,6 @@ function logout() {
   if (logoutModal) logoutModal.style.display = "none";
 }
 
-});
 function goBackToForm() {
   resultat.classList.add("fade-out");
   resultat.addEventListener("animationend", function handler() {
