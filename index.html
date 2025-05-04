@@ -99,12 +99,12 @@
 <script>
   const timestamp = new Date().getTime();
 
-  // Forcer rechargement du CSS
+  // Appliquer version au CSS
   document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
     link.href += `?v=${timestamp}`;
   });
 
-  // Forcer rechargement du JS
+  // Charger dynamiquement le JS avec version
   const script = document.createElement("script");
   script.src = "app.js?v=" + timestamp;
   document.head.appendChild(script);
