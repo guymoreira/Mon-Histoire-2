@@ -3,6 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.body.style.opacity = "1";
   }, 10);
+  updateInterface();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.display = "block";
+  setTimeout(() => {
+    document.body.style.opacity = "1";
+  }, 10);
 
   updateInterface(); // ✅ appel obligatoire pour lancer l'app
 });
@@ -80,8 +88,6 @@ function genererHistoire() {
 
 
 function showForm() {
-  const accueil = document.getElementById("accueil");
-  const formulaire = document.getElementById("formulaire");
 
   accueil.classList.add("fade-out");
   accueil.addEventListener("animationend", function handler() {
@@ -97,8 +103,6 @@ function showForm() {
 
 
 function goHome() {
-  const current = document.querySelector(".screen:not(.hidden)");
-  const accueil = document.getElementById("accueil");
 
   if (current && current !== accueil) {
     current.classList.add("fade-out");
@@ -128,8 +132,6 @@ function generateStory() {
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
 
-const formulaire = document.getElementById("formulaire");
-const resultat = document.getElementById("resultat");
 
 formulaire.classList.add("fade-out");
 formulaire.addEventListener("animationend", function handler() {
@@ -159,8 +161,6 @@ function updatePreview() {
 function logout() {
   localStorage.setItem("loggedIn", "false");
 
-  const current = document.querySelector(".screen:not(.hidden)");
-  const accueil = document.getElementById("accueil");
 
   if (current && current !== accueil) {
     current.classList.add("fade-out");
@@ -175,8 +175,6 @@ function logout() {
   }
 
   // cacher pastille
-  const userIcon = document.getElementById("user-icon");
-  const logoutModal = document.getElementById("logout-modal");
 
   if (userIcon) userIcon.style.display = "none";
   if (loginBtn) loginBtn.style.display = "inline-block";
@@ -191,8 +189,6 @@ else {
 });
 
 function goBackToForm() {
-  const resultat = document.getElementById("resultat");
-  const formulaire = document.getElementById("formulaire");
 
   resultat.classList.add("fade-out");
   resultat.addEventListener("animationend", function handler() {
@@ -226,8 +222,6 @@ function loginUser() {
     updateInterface();
     // Animation de transition
     document.body.classList.add("fade-out");
-  const current = document.querySelector(".screen:not(.hidden)");
-  const accueil = document.getElementById("accueil");
 
   if (current && current !== accueil) {
     current.classList.add("fade-out");
@@ -241,12 +235,9 @@ function loginUser() {
     });
   }
 
-const userIcon = document.getElementById("user-icon");
-const loginBtn = document.getElementById("login-btn");
 
 if (loginBtn) loginBtn.style.display = "none";
 if (userIcon) {
-  const initials = localStorage.getItem("initials") || "??";
   userIcon.textContent = initials;
   userIcon.style.display = "flex";
 }
@@ -261,7 +252,6 @@ if (creerBtn) creerBtn.style.display = "inline-block";
 
 
 function showConnexion() {
-  const current = document.querySelector(".screen:not(.hidden)");
   const connexion = document.getElementById("connexion");
 
   if (current && current !== connexion) {
@@ -276,5 +266,4 @@ function showConnexion() {
     });
   }
 }
-
 
