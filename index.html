@@ -11,8 +11,7 @@
     <h1 class="titre-accueil">"Mon Histoire"</h1>
 
     <button onclick="showForm()" class="button">Créer une histoire</button>
-    <button onclick="allerConnexion()" id="login-btn" class="button secondary">Me connecter</button>
-
+    <button onclick="showConnexion()" id="login-btn" class="button secondary">Me connecter</button>
     <!-- Bouton utilisateur + modale déconnexion -->
     <div id="user-icon" class="avatar" style="display: none;">GM</div>
 
@@ -70,6 +69,17 @@
 
     </form>
   </main>
+<main id="connexion" class="screen hidden">
+  <h2>Connexion</h2>
+  <form onsubmit="event.preventDefault(); loginUser();">
+    <input type="email" id="email" placeholder="Adresse email" class="input-style" required />
+    <input type="password" id="password" placeholder="Mot de passe" class="input-style" required />
+
+    <button type="submit" class="button">Se connecter</button>
+    <button type="button" onclick="goHome()" class="button small">Annuler</button>
+    <p><a href="#" class="forgot-link">Mot de passe oublié ?</a></p>
+  </form>
+</main>
 
   <main id="resultat" class="screen background-formulaire hidden">
     <h2>Votre histoire</h2>
