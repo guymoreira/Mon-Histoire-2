@@ -159,28 +159,32 @@ function closeLogoutModal() {
     modal.classList.remove("fade-out");
   });
 }
-function loginUser() {
-  // ⚠️ Ici, tu peux ajouter une vraie vérification si tu veux
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  // Exemple de vérification simplifiée
-  if (email && password) {
+function loginUser(event) {
+  event.preventDefault();
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  const accueil = document.getElementById("accueil");
+  const connexion = document.getElementById("connexion");
+  const userIcon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-btn"); // ✅ à ajouter
+
+  if (email.value === "test@exemple.com" && password.value === "motdepasse") {
     localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("initials", "GM"); // à remplacer par vraies initiales
-    updateInterface();
-    // Animation de transition
-    document.body.classList.add("fade-out");
-  const current = getCurrentScreen();
-  if (current && current !== accueil) {
-    current.classList.add("fade-out");
-    current.addEventListener("animationend", function handler() {
-      current.removeEventListener("animationend", handler);
-      current.classList.add("hidden");
-      current.classList.remove("fade-out");
+    connexion.classList.add("fade-out");
+    connexion.addEventListener("animationend", function handler() {
+      connexion.removeEventListener("animationend", handler);
+      connexion.classList.add("hidden");
+      connexion.classList.remove("fade-out");
       accueil.classList.remove("hidden");
       accueil.classList.add("fade-in");
+
+      if (loginBtn) loginBtn.style.display = "none";
+      if (userIcon) userIcon.style.display = "inline-block";
     });
+  } else {
+    alert("Identifiants incorrects");
   }
+}
 if (loginBtn) loginBtn.style.display = "none";
 if (userIcon) {
   userIcon.textContent = initials;
