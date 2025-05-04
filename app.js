@@ -182,16 +182,21 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoutModal = document.getElementById("logout-modal");
   const initials = "GM"; // ou extraire depuis localStorage si besoin
 
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) {
-      userIcon.textContent = initials;
-      userIcon.style.display = "flex";
-      userIcon.addEventListener("click", function () {
-        if (logoutModal) logoutModal.style.display = "block";
-      });
-    }
-  } else {
+if (isLoggedIn) {
+  if (loginBtn) loginBtn.style.display = "none";
+  if (userIcon) {
+    userIcon.textContent = initials;
+    userIcon.style.display = "flex";
+    userIcon.addEventListener("click", function () {
+      if (logoutModal) {
+        logoutModal.style.display = "block";
+        logoutModal.classList.remove("fade-out");
+        logoutModal.classList.add("fade-in");
+      }
+    });
+  }
+}
+else {
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
@@ -214,6 +219,16 @@ function goBackToForm() {
 
     formulaire.classList.remove("hidden");
     formulaire.classList.add("fade-in");
+  });
+}
+function closeLogoutModal() {
+  const modal = document.getElementById("logout-modal");
+  modal.classList.remove("fade-in");
+  modal.classList.add("fade-out");
+  modal.addEventListener("animationend", function handler() {
+    modal.removeEventListener("animationend", handler);
+    modal.style.display = "none";
+    modal.classList.remove("fade-out");
   });
 }
 
