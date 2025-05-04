@@ -121,16 +121,6 @@ function updatePreview() {
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
-});
-
-
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -158,17 +148,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function logout() {
   localStorage.setItem("loggedIn", "false");
-  window.location.href = "index.html";
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 400);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
-});
+
 document.addEventListener("DOMContentLoaded", function () {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
   const loginBtn = document.getElementById("login-btn");
@@ -197,9 +183,7 @@ else {
   }
 });
 
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
+
 }
 function goBackToForm() {
   const resultat = document.getElementById("resultat");
