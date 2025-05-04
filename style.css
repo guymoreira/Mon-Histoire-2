@@ -404,5 +404,11 @@ body, html {
   overflow-y: auto;
   height: auto;
 }
+.screen {
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 
 
