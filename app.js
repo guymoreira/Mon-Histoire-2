@@ -177,11 +177,11 @@ function logout() {
   // cacher pastille
 
   if (userIcon) userIcon.style.display = "none";
+} else {
   if (loginBtn) loginBtn.style.display = "inline-block";
+  if (userIcon) userIcon.style.display = "none";
   if (logoutModal) logoutModal.style.display = "none";
-
 }
-else {
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
