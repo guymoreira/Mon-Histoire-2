@@ -4,6 +4,33 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1";
   }, 10); // laisse le temps à l'affichage de se faire avant le fade-in
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const userIcon = document.getElementById("user-icon");
+  const logoutModal = document.getElementById("logout-modal");
+  const loginBtn = document.getElementById("login-btn");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      const initials = localStorage.getItem("initials") || "??";
+      userIcon.textContent = initials;
+      userIcon.style.display = "flex";
+
+      userIcon.addEventListener("click", function () {
+        if (logoutModal) {
+          logoutModal.style.display = "block";
+          logoutModal.classList.remove("fade-out");
+          logoutModal.classList.add("fade-in");
+        }
+      });
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+});
 
 
 function genererHistoire() {
@@ -188,6 +215,26 @@ function closeLogoutModal() {
     modal.classList.remove("fade-out");
   });
 }
+function loginUser() {
+  // ⚠️ Ici, tu peux ajouter une vraie vérification si tu veux
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  // Exemple de vérification simplifiée
+  if (email && password) {
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("initials", "GM"); // à remplacer par vraies initiales
+
+    // Animation de transition
+    document.body.classList.add("fade-out");
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 400);
+  } else {
+    alert("Veuillez remplir tous les champs.");
+  }
+}
+
 
 function showConnexion() {
   const current = document.querySelector(".screen:not(.hidden)");
