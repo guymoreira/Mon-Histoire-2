@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.style.display = "block";
   setTimeout(() => {
     document.body.style.opacity = "1";
-  }, 10); // laisse le temps à l'affichage de se faire avant le fade-in
+  }, 10);
+  updateInterface(); // <== appel ajouté ici
 });
 function updateInterface() {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
