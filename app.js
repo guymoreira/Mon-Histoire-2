@@ -3,20 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.body.style.opacity = "1";
   }, 10);
-  updateInterface();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.style.display = "block";
-  setTimeout(() => {
-    document.body.style.opacity = "1";
-  }, 10);
-  updateInterface();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.style.display = "block";
-  setTimeout(() => {
-    document.body.style.opacity = "1";
-  }, 10);
   updateInterface(); // ✅ appel obligatoire pour lancer l'app
 });
 function updateInterface() {
@@ -145,11 +131,30 @@ function logout() {
   }
   // cacher pastille
   if (userIcon) userIcon.style.display = "none";
-} else {
+function logout() {
+  localStorage.setItem("loggedIn", "false");
+
+  if (current && current !== accueil) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+      accueil.classList.remove("hidden");
+      accueil.classList.add("fade-in");
+    });
+  }
+
+  // cacher pastille et bouton
+  const userIcon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-btn");
+  const logoutModal = document.getElementById("logout-modal");
+
   if (loginBtn) loginBtn.style.display = "inline-block";
   if (userIcon) userIcon.style.display = "none";
   if (logoutModal) logoutModal.style.display = "none";
 }
+
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
