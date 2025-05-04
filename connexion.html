@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion</title>
   <link rel="stylesheet" href="style.css" />
-  <script>
-  const timestamp = new Date().getTime();
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    link.href += `?v=${timestamp}`;
-  });
-</script>
+
 </head>
 <body class="login-screen fade-in">
   <main class="login-container">
@@ -53,7 +48,12 @@
     }, 400); // 400 ms pour laisser l'animation se jouer
   }
 </script>
-
+  <script>
+  const timestamp = new Date().getTime();
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    link.href += `?v=${timestamp}`;
+  });
+</script>
 <script src="app.js"></script>
   
 </body>
