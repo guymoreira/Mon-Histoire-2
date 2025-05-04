@@ -44,9 +44,20 @@ function genererHistoire() {
 
 
 function showForm() {
-  document.getElementById('accueil').classList.add('hidden');
-  document.getElementById('formulaire').classList.remove('hidden');
+  const accueil = document.getElementById("accueil");
+  const formulaire = document.getElementById("formulaire");
+
+  accueil.classList.add("fade-out");
+  accueil.addEventListener("animationend", function handler() {
+    accueil.removeEventListener("animationend", handler);
+    accueil.classList.add("hidden");
+    accueil.classList.remove("fade-out");
+
+    formulaire.classList.remove("hidden");
+    formulaire.classList.add("fade-in");
+  });
 }
+
 
 function goHome() {
   document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
@@ -56,9 +67,22 @@ function goHome() {
 
 
 function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
+  const current = document.querySelector(".screen:not(.hidden)");
+  const accueil = document.getElementById("accueil");
+
+  if (current && current !== accueil) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+
+      accueil.classList.remove("hidden");
+      accueil.classList.add("fade-in");
+    });
+  }
 }
+
 
 function generateStory() {
   const nom = document.getElementById("nom").value;
@@ -74,8 +98,19 @@ function generateStory() {
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
 
-  document.getElementById("formulaire").classList.add("hidden");
-  document.getElementById("resultat").classList.remove("hidden");
+const formulaire = document.getElementById("formulaire");
+const resultat = document.getElementById("resultat");
+
+formulaire.classList.add("fade-out");
+formulaire.addEventListener("animationend", function handler() {
+  formulaire.removeEventListener("animationend", handler);
+  formulaire.classList.add("hidden");
+  formulaire.classList.remove("fade-out");
+
+  resultat.classList.remove("hidden");
+  resultat.classList.add("fade-in");
+});
+
 }
 
 
@@ -168,7 +203,18 @@ function logout() {
   window.location.href = "index.html";
 }
 function goBackToForm() {
-  document.getElementById("formulaire").classList.remove("hidden");
-  document.getElementById("resultat").classList.add("hidden");
+  const resultat = document.getElementById("resultat");
+  const formulaire = document.getElementById("formulaire");
+
+  resultat.classList.add("fade-out");
+  resultat.addEventListener("animationend", function handler() {
+    resultat.removeEventListener("animationend", handler);
+    resultat.classList.add("hidden");
+    resultat.classList.remove("fade-out");
+
+    formulaire.classList.remove("hidden");
+    formulaire.classList.add("fade-in");
+  });
 }
+
 
