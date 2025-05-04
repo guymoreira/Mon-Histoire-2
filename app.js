@@ -155,10 +155,6 @@ function logout() {
   if (logoutModal) logoutModal.style.display = "none";
 }
 
-    if (loginBtn) loginBtn.style.display = "inline-block";
-    if (userIcon) userIcon.style.display = "none";
-    if (logoutModal) logoutModal.style.display = "none";
-  }
 });
 function goBackToForm() {
   resultat.classList.add("fade-out");
