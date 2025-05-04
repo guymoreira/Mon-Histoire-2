@@ -59,12 +59,6 @@ function showForm() {
 }
 
 
-function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
-}
-
-
 
 function goHome() {
   const current = document.querySelector(".screen:not(.hidden)");
