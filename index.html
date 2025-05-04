@@ -90,16 +90,16 @@
 
 <script>
   const timestamp = new Date().getTime();
+
+  // Forcer rechargement du CSS
   document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
     link.href += `?v=${timestamp}`;
   });
-</script>
-<!-- NE PAS retarder le chargement du JS -->
-<script>
-  const timestamp = new Date().getTime();
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    link.href += `?v=${timestamp}`;
-  });
+
+  // Forcer rechargement du JS
+  const script = document.createElement("script");
+  script.src = "app.js?v=" + timestamp;
+  document.head.appendChild(script);
 </script>
 
 <script>
