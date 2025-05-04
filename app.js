@@ -195,7 +195,6 @@ const creerBtn = document.getElementById("creer-btn");
 if (creerBtn) creerBtn.style.display = "inline-block";
   }else {
     alert("Veuillez remplir tous les champs.");
-  }
 }
 function showForm() {
   const accueil = document.getElementById("accueil");
@@ -210,7 +209,6 @@ function showForm() {
       formulaire.classList.add("fade-in");
     });
   }
-}
 function showConnexion() {
   const accueil = document.getElementById("accueil");
   const connexion = document.getElementById("connexion");
