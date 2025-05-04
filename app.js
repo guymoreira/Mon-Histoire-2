@@ -182,7 +182,7 @@ else {
     if (logoutModal) logoutModal.style.display = "none";
   }
 });
-}
+
 function goBackToForm() {
   const resultat = document.getElementById("resultat");
   const formulaire = document.getElementById("formulaire");
