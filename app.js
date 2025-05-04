@@ -225,5 +225,11 @@ function closeLogoutModal() {
     modal.classList.remove("fade-out");
   });
 }
+function allerConnexion() {
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "connexion.html";
+  }, 400); // attendre l'animation
+}
 
 
