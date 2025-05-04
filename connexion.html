@@ -27,9 +27,13 @@
     const password = document.getElementById("password").value.trim();
 
     if (email && password) {
-      localStorage.setItem("loggedIn", "true");
-      window.location.href = "index.html";
-    } else {
+  localStorage.setItem("loggedIn", "true");
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 400);
+}
+ else {
       alert("Veuillez remplir tous les champs.");
     }
   }
