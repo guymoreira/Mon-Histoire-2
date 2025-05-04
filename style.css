@@ -409,6 +409,33 @@ body, html {
   overflow-y: auto;
   overflow-x: hidden;
 }
+/* Animations douces entre les écrans et les modales */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out forwards;
+  opacity: 0;
+}
+
+.fade-out {
+  animation: fadeOut 0.4s ease-in-out forwards;
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Cache le modal par défaut */
+#logout-modal {
+  display: none;
+}
 
 
 
