@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion</title>
   <link rel="stylesheet" href="style.css" />
+  <script>
+  const timestamp = new Date().getTime();
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    link.href += `?v=${timestamp}`;
+  });
+</script>
 </head>
 <body class="login-screen fade-in">
   <main class="login-container">
