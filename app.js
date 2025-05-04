@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1";
   }, 10); // laisse le temps à l'affichage de se faire avant le fade-in
 });
-document.addEventListener("DOMContentLoaded", function () {
+function updateInterface() {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
   const userIcon = document.getElementById("user-icon");
   const logoutModal = document.getElementById("logout-modal");
@@ -30,7 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
   }
-});
+}
+
+// appel au chargement
+document.addEventListener("DOMContentLoaded", updateInterface);
+
 
 
 function genererHistoire() {
@@ -246,7 +250,7 @@ function loginUser() {
   if (email && password) {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("initials", "GM"); // à remplacer par vraies initiales
-
+    updateInterface();
     // Animation de transition
     document.body.classList.add("fade-out");
   const current = document.querySelector(".screen:not(.hidden)");
