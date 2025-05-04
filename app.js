@@ -184,7 +184,6 @@ else {
 });
 
 
-}
 function goBackToForm() {
   const resultat = document.getElementById("resultat");
   const formulaire = document.getElementById("formulaire");
