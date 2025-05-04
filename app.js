@@ -68,16 +68,7 @@ function genererHistoire() {
   document.getElementById("formulaire").classList.add("hidden");
   document.getElementById("resultat").classList.remove("hidden");
 }
-function showForm() {
-  accueil.classList.add("fade-out");
-  accueil.addEventListener("animationend", function handler() {
-    accueil.removeEventListener("animationend", handler);
-    accueil.classList.add("hidden");
-    accueil.classList.remove("fade-out");
-    formulaire.classList.remove("hidden");
-    formulaire.classList.add("fade-in");
-  });
-}
+
 function goHome() {
   if (current && current !== accueil) {
     current.classList.add("fade-out");
@@ -117,20 +108,7 @@ function updatePreview() {
     previewImg.alt = `illustration de ${personnage} dans ${lieu}`;
   }
 }
-function logout() {
-  localStorage.setItem("loggedIn", "false");
-  if (current && current !== accueil) {
-    current.classList.add("fade-out");
-    current.addEventListener("animationend", function handler() {
-      current.removeEventListener("animationend", handler);
-      current.classList.add("hidden");
-      current.classList.remove("fade-out");
-      accueil.classList.remove("hidden");
-      accueil.classList.add("fade-in");
-    });
-  }
-  // cacher pastille
-  if (userIcon) userIcon.style.display = "none";
+
 function logout() {
   localStorage.setItem("loggedIn", "false");
 
@@ -236,4 +214,14 @@ function showConnexion() {
       connexion.classList.add("fade-in");
     });
   }
+}
+
+function goBackAccueil() {
+  const accueil = document.getElementById("accueil");
+  const formulaire = document.getElementById("formulaire");
+  const connexion = document.getElementById("connexion");
+
+  if (formulaire) formulaire.classList.add("hidden");
+  if (connexion) connexion.classList.add("hidden");
+  accueil.classList.remove("hidden");
 }
