@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 10);
   updateInterface(); // ✅ appel obligatoire pour lancer l'app
 });
+
+function getCurrentScreen() {
+  return document.querySelector(".screen:not(.hidden)");
+}
 function updateInterface() {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
   const userIcon = document.getElementById("user-icon");
@@ -70,6 +74,7 @@ function genererHistoire() {
 }
 
 function goHome() {
+  const current = getCurrentScreen();
   if (current && current !== accueil) {
     current.classList.add("fade-out");
     current.addEventListener("animationend", function handler() {
@@ -112,6 +117,7 @@ function updatePreview() {
 function logout() {
   localStorage.setItem("loggedIn", "false");
 
+  const current = getCurrentScreen();
   if (current && current !== accueil) {
     current.classList.add("fade-out");
     current.addEventListener("animationend", function handler() {
@@ -164,6 +170,7 @@ function loginUser() {
     updateInterface();
     // Animation de transition
     document.body.classList.add("fade-out");
+  const current = getCurrentScreen();
   if (current && current !== accueil) {
     current.classList.add("fade-out");
     current.addEventListener("animationend", function handler() {
