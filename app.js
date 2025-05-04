@@ -1,3 +1,6 @@
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.opacity = "1";
+});
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
