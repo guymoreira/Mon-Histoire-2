@@ -95,7 +95,18 @@
   });
 </script>
 <!-- NE PAS retarder le chargement du JS -->
-<script src="app.js"></script>
+<script>
+  const timestamp = new Date().getTime();
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    link.href += `?v=${timestamp}`;
+  });
+</script>
+
+<script>
+  const script = document.createElement("script");
+  script.src = "app.js?v=" + new Date().getTime();
+  document.head.appendChild(script);
+</script>
 
 
 
