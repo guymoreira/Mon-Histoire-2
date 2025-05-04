@@ -224,6 +224,7 @@ function showConnexion() {
   }
 }
 
+}}
 function goBackAccueil() {
   const accueil = document.getElementById("accueil");
   const formulaire = document.getElementById("formulaire");
