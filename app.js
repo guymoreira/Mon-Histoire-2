@@ -233,3 +233,5 @@ function goBackAccueil() {
   if (connexion) connexion.classList.add("hidden");
   accueil.classList.remove("hidden");
 }
+
+  
