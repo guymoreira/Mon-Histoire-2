@@ -272,7 +272,7 @@ function loginUser() {
     userIcon.style.display = "flex";
   }
   if (loginBtn) loginBtn.style.display = "none";
- else {
+  else {
     alert("Veuillez remplir tous les champs.");
   }
 }
@@ -296,4 +296,3 @@ function showConnexion() {
 }
 
 
-}
