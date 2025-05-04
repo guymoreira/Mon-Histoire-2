@@ -178,7 +178,6 @@ function logout() {
 
   // cacher pastille
   const userIcon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-btn");
   const logoutModal = document.getElementById("logout-modal");
 
   if (userIcon) userIcon.style.display = "none";
@@ -191,7 +190,6 @@ function logout() {
 
 document.addEventListener("DOMContentLoaded", function () {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-btn");
   const userIcon = document.getElementById("user-icon");
   const logoutModal = document.getElementById("logout-modal");
   const initials = "GM"; // ou extraire depuis localStorage si besoin
@@ -269,8 +267,6 @@ function loginUser() {
   }
 
   const userIcon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-btn");
-  const loginBtn = document.getElementById("login-btn");
   const userIcon = document.getElementById("user-icon");
 
   if (loginBtn) loginBtn.style.display = "none";
