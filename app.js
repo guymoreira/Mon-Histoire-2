@@ -184,18 +184,18 @@ function loginUser(event) {
   } else {
     alert("Identifiants incorrects");
   }
-}
-if (loginBtn) loginBtn.style.display = "none";
-if (userIcon) {
-  userIcon.textContent = initials;
-  userIcon.style.display = "flex";
-}
-// 👇 forcer les boutons d'accueil à apparaître immédiatement
-const creerBtn = document.getElementById("creer-btn");
-if (creerBtn) creerBtn.style.display = "inline-block";
-  }else {
+  if (email && password) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      userIcon.textContent = initials;
+      userIcon.style.display = "flex";
+    }
+    // 👇 forcer les boutons d'accueil à apparaître immédiatement
+    const creerBtn = document.getElementById("creer-btn");
+    if (creerBtn) creerBtn.style.display = "inline-block";
+  } else {
     alert("Veuillez remplir tous les champs.");
-}
+  }
 function showForm() {
   const accueil = document.getElementById("accueil");
   const formulaire = document.getElementById("formulaire");
