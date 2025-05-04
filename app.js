@@ -266,12 +266,16 @@ function loginUser() {
 
   const userIcon = document.getElementById("user-icon");
   const loginBtn = document.getElementById("login-btn");
+  if (loginBtn) loginBtn.style.display = "none";
   if (userIcon) {
     const initials = localStorage.getItem("initials") || "??";
     userIcon.textContent = initials;
     userIcon.style.display = "flex";
   }
-  if (loginBtn) loginBtn.style.display = "none";
+
+  // 👇 forcer les boutons d'accueil à apparaître immédiatement
+  const creerBtn = document.getElementById("creer-btn");
+  if (creerBtn) creerBtn.style.display = "inline-block";
   }else {
     alert("Veuillez remplir tous les champs.");
   }
