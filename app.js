@@ -512,34 +512,37 @@ if (creerBtn) creerBtn.style.display = "inline-block";
 
 
 
+function showForm() {
+  const accueil = document.getElementById("accueil");
+  const formulaire = document.getElementById("formulaire");
+  if (accueil && formulaire) {
+    accueil.classList.add("fade-out");
+    accueil.addEventListener("animationend", function handler() {
+      accueil.removeEventListener("animationend", handler);
+      accueil.classList.add("hidden");
+      accueil.classList.remove("fade-out");
+
+      formulaire.classList.remove("hidden");
+      formulaire.classList.add("fade-in");
+    });
+  }
+}
+
 function showConnexion() {
-
+  const accueil = document.getElementById("accueil");
   const connexion = document.getElementById("connexion");
-
-
-
-  if (current && current !== connexion) {
-
-    current.classList.add("fade-out");
-
-    current.addEventListener("animationend", function handler() {
-
-      current.removeEventListener("animationend", handler);
-
-      current.classList.add("hidden");
-
-      current.classList.remove("fade-out");
-
-
+  if (accueil && connexion) {
+    accueil.classList.add("fade-out");
+    accueil.addEventListener("animationend", function handler() {
+      accueil.removeEventListener("animationend", handler);
+      accueil.classList.add("hidden");
+      accueil.classList.remove("fade-out");
 
       connexion.classList.remove("hidden");
-
       connexion.classList.add("fade-in");
-
     });
-
   }
-
 }
+
 
 
