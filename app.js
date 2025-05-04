@@ -188,11 +188,22 @@ function closeLogoutModal() {
     modal.classList.remove("fade-out");
   });
 }
-function allerConnexion() {
-  document.body.classList.add("fade-out");
-  setTimeout(() => {
-    window.location.href = "connexion.html";
-  }, 400); // attendre l'animation
+
+function showConnexion() {
+  const current = document.querySelector(".screen:not(.hidden)");
+  const connexion = document.getElementById("connexion");
+
+  if (current && current !== connexion) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+
+      connexion.classList.remove("hidden");
+      connexion.classList.add("fade-in");
+    });
+  }
 }
 
 
