@@ -1,3 +1,5 @@
+let initials = 'GM';
+
 document.addEventListener("DOMContentLoaded", () => {
   document.body.style.display = "block";
   setTimeout(() => {
