@@ -54,6 +54,13 @@ function updateInterface() {
     if (logoutModal) logoutModal.style.display = "none";
   }
 }
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+}
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
@@ -147,7 +154,7 @@ function generateStory() {
   const style = document.getElementById("style").value;
   const duree = document.getElementById("duree").value;
 
-  const storyText = `${nom} Ã©tait un(e) ${personnage} trÃ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃ¨le ${compagnon} et sa ${objet}, ${nom} partit Ã  lâ€™aventure.`;
+  const storyText = `${nom} ÃƒÂ©tait un(e) ${personnage} trÃƒÂ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃƒÂ¨le ${compagnon} et sa ${objet}, ${nom} partit Ãƒ  lÃ¢â‚¬â„¢aventure.`;
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
 
