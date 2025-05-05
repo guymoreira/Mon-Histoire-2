@@ -438,6 +438,34 @@ body, html {
 #logout-modal {
   display: none;
 }
+#user-icon {
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+  pointer-events: auto;
+  z-index: 1000;
+}
 
+#logout-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 1001;
+}
 
-
+#logout-modal.hidden {
+  display: none !important;
+}
