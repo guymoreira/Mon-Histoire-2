@@ -259,3 +259,8 @@ function showConnexion() {
   }
 }
 
+
+function showLogoutModal() {
+  const modal = document.getElementById("logout-modal");
+  if (modal) modal.classList.remove("hidden");
+}
