@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.body.style.opacity = "1";
   }, 10);
-  updateInterface(); // ✅ appel obligatoire pour lancer l'app
+  updateInterface(); // âœ… appel obligatoire pour lancer l'app
 });
 
 function getCurrentScreen() {
@@ -41,24 +41,24 @@ function genererHistoire() {
   const baseImg = `illustration-${personnage}-${lieu}`;
   const chapitres = [
     {
-      titre: "Chapitre 1 : Le départ",
-      texte: `${nom}, un jeune ${personnage}, vivait paisiblement dans un village près d’une ${lieu}. Un matin, une voix magique lui confia une mission : ${mission}.`,
+      titre: "Chapitre 1 : Le dÃ©part",
+      texte: `${nom}, un jeune ${personnage}, vivait paisiblement dans un village prÃ¨s dâ€™une ${lieu}. Un matin, une voix magique lui confia une mission : ${mission}.`,
     },
     {
-      titre: "Chapitre 2 : L’objet magique",
-      texte: `En chemin, ${nom} découvrit une mystérieuse ${objet}. Dès qu’il la toucha, il sentit une puissance magique l’envahir.`,
+      titre: "Chapitre 2 : Lâ€™objet magique",
+      texte: `En chemin, ${nom} dÃ©couvrit une mystÃ©rieuse ${objet}. DÃ¨s quâ€™il la toucha, il sentit une puissance magique lâ€™envahir.`,
     },
     {
       titre: "Chapitre 3 : Le compagnon",
-      texte: `Soudain, un ${compagnon} surgit de la forêt. Loin d’être menaçant, il proposa à ${nom} de l’aider dans sa quête.`,
+      texte: `Soudain, un ${compagnon} surgit de la forÃªt. Loin dâ€™Ãªtre menaÃ§ant, il proposa Ã  ${nom} de lâ€™aider dans sa quÃªte.`,
     },
     {
       titre: "Chapitre 4 : Le danger dans la ${lieu}",
-      texte: `${nom} et son ${compagnon} affrontèrent mille épreuves au cœur de la ${lieu}, déterminés à réussir leur mission.`,
+      texte: `${nom} et son ${compagnon} affrontÃ¨rent mille Ã©preuves au cÅ“ur de la ${lieu}, dÃ©terminÃ©s Ã  rÃ©ussir leur mission.`,
     },
     {
       titre: "Chapitre 5 : Le triomphe",
-      texte: `Grâce à son courage, sa ${objet} et l’aide de son fidèle ${compagnon}, ${nom} réussit à ${mission} et devint un héros.`,
+      texte: `GrÃ¢ce Ã  son courage, sa ${objet} et lâ€™aide de son fidÃ¨le ${compagnon}, ${nom} rÃ©ussit Ã  ${mission} et devint un hÃ©ros.`,
     }
   ];
   let contenu = "";
@@ -94,7 +94,7 @@ function generateStory() {
   const objectif = document.getElementById("objectif").value;
   const style = document.getElementById("style").value;
   const duree = document.getElementById("duree").value;
-  const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
+  const storyText = `${nom} Ã©tait un(e) ${personnage} trÃ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃ¨le ${compagnon} et sa ${objet}, ${nom} partit Ã  lâ€™aventure.`;
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
 formulaire.classList.add("fade-out");
 formulaire.addEventListener("animationend", function handler() {
@@ -165,7 +165,7 @@ function loginUser(event) {
   const accueil = document.getElementById("accueil");
   const connexion = document.getElementById("connexion");
   const userIcon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-btn"); // ✅ à ajouter
+  const loginBtn = document.getElementById("login-btn"); // âœ… Ã  ajouter
 
   if (email.value === "test@exemple.com" && password.value === "motdepasse") {
     localStorage.setItem("loggedIn", "true");
@@ -179,6 +179,12 @@ function loginUser(event) {
 
       if (loginBtn) loginBtn.style.display = "none";
       if (userIcon) userIcon.style.display = "inline-block";
+    showForm();
+    const userIcon = document.getElementById("user-icon");
+    if (userIcon) {
+        userIcon.addEventListener("click", showLogoutModal);
+    }
+    localStorage.setItem("isLoggedIn", "true");
     });
   } else {
   }
@@ -189,7 +195,7 @@ function loginUser(event) {
       userIcon.textContent = initials;
       userIcon.style.display = "flex";
     }
-    // 👇 forcer les boutons d'accueil à apparaître immédiatement
+    // ðŸ‘‡ forcer les boutons d'accueil Ã  apparaÃ®tre immÃ©diatement
     const creerBtn = document.getElementById("creer-btn");
     if (creerBtn) creerBtn.style.display = "inline-block";
   } else {
