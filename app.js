@@ -38,6 +38,16 @@ function updateInterface() {
     if (userIcon) {
       userIcon.textContent = initials;
       userIcon.style.display = "flex";
+      userIcon.replaceWith(userIcon.cloneNode(true));
+      const newUserIcon = document.getElementById("user-icon");
+      newUserIcon.addEventListener("click", showLogoutModal);
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+}
     }
   } else {
     if (loginBtn) loginBtn.style.display = "inline-block";
