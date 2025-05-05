@@ -6,6 +6,20 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.body.style.opacity = "1";
   }, 10);
+
+  document.getElementById("btn-creer")?.addEventListener("click", showForm);
+  document.getElementById("login-btn")?.addEventListener("click", showConnexion);
+  document.getElementById("btn-accueil-form")?.addEventListener("click", goHome);
+  document.getElementById("btn-accueil-resultat")?.addEventListener("click", goHome);
+  document.getElementById("btn-retour-resultat")?.addEventListener("click", goBackToForm);
+  document.getElementById("logout-btn")?.addEventListener("click", logoutUser);
+  document.getElementById("logout-cancel-btn")?.addEventListener("click", hideLogoutModal);
+  document.getElementById("user-icon")?.addEventListener("click", showLogoutModal);
+  document.getElementById("story-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    generateStory();
+  });
+
   updateInterface();
 });
 
@@ -24,7 +38,6 @@ function updateInterface() {
     if (userIcon) {
       userIcon.textContent = initials;
       userIcon.style.display = "flex";
-      userIcon.addEventListener("click", showLogoutModal);
     }
   } else {
     if (loginBtn) loginBtn.style.display = "inline-block";
@@ -78,6 +91,36 @@ function showConnexion() {
   }
 }
 
+function goHome() {
+  const current = getCurrentScreen();
+  const accueil = document.getElementById("accueil");
+
+  if (current && current !== accueil) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+      accueil.classList.remove("hidden");
+      accueil.classList.add("fade-in");
+    });
+  }
+}
+
+function goBackToForm() {
+  const resultat = document.getElementById("resultat");
+  const formulaire = document.getElementById("formulaire");
+
+  resultat.classList.add("fade-out");
+  resultat.addEventListener("animationend", function handler() {
+    resultat.removeEventListener("animationend", handler);
+    resultat.classList.add("hidden");
+    resultat.classList.remove("fade-out");
+    formulaire.classList.remove("hidden");
+    formulaire.classList.add("fade-in");
+  });
+}
+
 function generateStory() {
   const nom = document.getElementById("nom").value;
   const personnage = document.getElementById("personnage").value;
@@ -103,36 +146,6 @@ function generateStory() {
     resultat.classList.remove("hidden");
     resultat.classList.add("fade-in");
   });
-}
-
-function goBackToForm() {
-  const formulaire = document.getElementById("formulaire");
-  const resultat = document.getElementById("resultat");
-
-  resultat.classList.add("fade-out");
-  resultat.addEventListener("animationend", function handler() {
-    resultat.removeEventListener("animationend", handler);
-    resultat.classList.add("hidden");
-    resultat.classList.remove("fade-out");
-    formulaire.classList.remove("hidden");
-    formulaire.classList.add("fade-in");
-  });
-}
-
-function goHome() {
-  const current = getCurrentScreen();
-  const accueil = document.getElementById("accueil");
-
-  if (current && current !== accueil) {
-    current.classList.add("fade-out");
-    current.addEventListener("animationend", function handler() {
-      current.removeEventListener("animationend", handler);
-      current.classList.add("hidden");
-      current.classList.remove("fade-out");
-      accueil.classList.remove("hidden");
-      accueil.classList.add("fade-in");
-    });
-  }
 }
 
 function logoutUser() {
