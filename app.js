@@ -55,7 +55,8 @@ function loginUser(event) {
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("initials", initials);
     updateInterface();
-    showForm();
+    goHome();
+    document.getElementById("user-icon")?.addEventListener("click", showLogoutModal);
   } else {
     alert("Veuillez remplir tous les champs.");
   }
@@ -131,7 +132,7 @@ function generateStory() {
   const style = document.getElementById("style").value;
   const duree = document.getElementById("duree").value;
 
-  const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
+  const storyText = `${nom} Ã©tait un(e) ${personnage} trÃ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃ¨le ${compagnon} et sa ${objet}, ${nom} partit Ã  lâ€™aventure.`;
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
 
