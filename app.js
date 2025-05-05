@@ -264,3 +264,14 @@ function showLogoutModal() {
   const modal = document.getElementById("logout-modal");
   if (modal) modal.classList.remove("hidden");
 }
+
+window.onload = function() {
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    showForm();
+    const userIcon = document.getElementById("user-icon");
+    if (userIcon) {
+      userIcon.style.display = "inline-block";
+      userIcon.addEventListener("click", showLogoutModal);
+    }
+  }
+};
