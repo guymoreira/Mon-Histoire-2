@@ -183,8 +183,6 @@ function loginUser(event) {
     alert("Veuillez remplir tous les champs.");
   }
 }
-  event.preventDefault();
-  const email = document.getElementById("email");
   const password = document.getElementById("password");
   const accueil = document.getElementById("accueil");
   const connexion = document.getElementById("connexion");
