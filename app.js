@@ -36,10 +36,10 @@ function updateInterface() {
   if (isLoggedIn) {
     if (loginBtn) loginBtn.style.display = "none";
     if (userIcon) {
-      userIcon.textContent = initials;
-      userIcon.style.display = "flex";
-      userIcon.replaceWith(userIcon.cloneNode(true));
-      const newUserIcon = document.getElementById("user-icon");
+      const newUserIcon = userIcon.cloneNode(true);
+      userIcon.parentNode.replaceChild(newUserIcon, userIcon);
+      newUserIcon.textContent = initials;
+      newUserIcon.style.display = "flex";
       newUserIcon.addEventListener("click", showLogoutModal);
     }
   } else {
@@ -48,8 +48,6 @@ function updateInterface() {
     if (logoutModal) logoutModal.style.display = "none";
   }
 }
-    }
-  } else {
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
@@ -180,5 +178,3 @@ window.onload = function () {
     updateInterface();
   }
 };
-}
-
