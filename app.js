@@ -275,3 +275,20 @@ window.onload = function() {
     }
   }
 };
+
+function logoutUser() {
+  localStorage.removeItem("isLoggedIn");
+  const accueil = document.getElementById("accueil");
+  const formulaire = document.getElementById("formulaire");
+  const userIcon = document.getElementById("user-icon");
+  const logoutModal = document.getElementById("logout-modal");
+  if (formulaire) formulaire.classList.add("hidden");
+  if (logoutModal) logoutModal.classList.add("hidden");
+  if (userIcon) userIcon.style.display = "none";
+  accueil.classList.remove("hidden");
+}
+
+function hideLogoutModal() {
+  const modal = document.getElementById("logout-modal");
+  if (modal) modal.classList.add("hidden");
+}
