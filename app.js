@@ -18,7 +18,6 @@ function updateInterface() {
     if (loginBtn) loginBtn.style.display = "none";
     if (userIcon) {
       const initials = localStorage.getItem("initials") || "??";
-    const initials = localStorage.getItem("initials") || "??";
       userIcon.textContent = initials;
       userIcon.style.display = "flex";
       userIcon.addEventListener("click", function () {
