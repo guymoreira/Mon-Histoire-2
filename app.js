@@ -181,7 +181,6 @@ function loginUser(event) {
       if (userIcon) userIcon.style.display = "inline-block";
     });
   } else {
-    alert("Identifiants incorrects");
   }
   if (email && password) {
     if (loginBtn) loginBtn.style.display = "none";
