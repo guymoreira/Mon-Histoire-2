@@ -68,9 +68,8 @@
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
       link.href += `?v=${timestamp}`;
     });
-    const script = document.createElement("script");
-    script.src = "app.js?v=" + timestamp;
     document.head.appendChild(script);
   </script>
+  <script src="app.js?v=1" defer></script>
 </body>
 </html>
