@@ -47,6 +47,13 @@ function updateInterface() {
     if (logoutModal) logoutModal.style.display = "none";
   }
 }
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+}
     if (loginBtn) loginBtn.style.display = "inline-block";
     if (userIcon) userIcon.style.display = "none";
     if (logoutModal) logoutModal.style.display = "none";
@@ -63,6 +70,7 @@ function loginUser(event) {
     localStorage.setItem("initials", initials);
     updateInterface();
     goHome();
+  updateInterface();
     document.getElementById("user-icon")?.addEventListener("click", showLogoutModal);
   } else {
     alert("Veuillez remplir tous les champs.");
@@ -160,6 +168,7 @@ function logoutUser() {
   localStorage.removeItem("isLoggedIn");
   updateInterface();
   goHome();
+  updateInterface();
 }
 
 function hideLogoutModal() {
