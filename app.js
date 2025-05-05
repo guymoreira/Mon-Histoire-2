@@ -160,6 +160,28 @@ function closeLogoutModal() {
 }
 function loginUser(event) {
   event.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+  const creerBtn = document.getElementById("creer-btn");
+  if (email && password) {
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("initials", "GM");
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      userIcon.textContent = "GM";
+      userIcon.style.display = "flex";
+      userIcon.addEventListener("click", showLogoutModal);
+    }
+    if (creerBtn) creerBtn.style.display = "inline-block";
+    showForm();
+    updateInterface();
+  } else {
+    alert("Veuillez remplir tous les champs.");
+  }
+}
+  event.preventDefault();
   const email = document.getElementById("email");
   const password = document.getElementById("password");
   const accueil = document.getElementById("accueil");
@@ -244,18 +266,6 @@ function goBackAccueil() {
   
 
 }
-function showConnexion() {
-  const accueil = document.getElementById("accueil");
-  const connexion = document.getElementById("connexion");
-  if (accueil && connexion) {
-    accueil.classList.add("fade-out");
-    accueil.addEventListener("animationend", function handler() {
-      accueil.removeEventListener("animationend", handler);
-      accueil.classList.add("hidden");
-      accueil.classList.remove("fade-out");
-      connexion.classList.remove("hidden");
-      connexion.classList.add("fade-in");
-    });
   }
 }
 
