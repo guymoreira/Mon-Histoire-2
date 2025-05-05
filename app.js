@@ -36,11 +36,10 @@ function updateInterface() {
   if (isLoggedIn) {
     if (loginBtn) loginBtn.style.display = "none";
     if (userIcon) {
-      const newUserIcon = userIcon.cloneNode(true);
-      userIcon.parentNode.replaceChild(newUserIcon, userIcon);
-      newUserIcon.textContent = initials;
-      newUserIcon.style.display = "flex";
-      newUserIcon.addEventListener("click", showLogoutModal);
+      userIcon.textContent = initials;
+      userIcon.style.display = "flex";
+      userIcon.removeEventListener("click", showLogoutModal);
+      userIcon.addEventListener("click", showLogoutModal);
     }
   } else {
     if (loginBtn) loginBtn.style.display = "inline-block";
