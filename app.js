@@ -196,6 +196,8 @@ function loginUser(event) {
   } else {
     alert("Veuillez remplir tous les champs.");
   }
+}
+
 function showForm() {
   const accueil = document.getElementById("accueil");
   const formulaire = document.getElementById("formulaire");
@@ -236,4 +238,19 @@ function goBackAccueil() {
 
   
 
-}}
+}
+function showConnexion() {
+  const accueil = document.getElementById("accueil");
+  const connexion = document.getElementById("connexion");
+  if (accueil && connexion) {
+    accueil.classList.add("fade-out");
+    accueil.addEventListener("animationend", function handler() {
+      accueil.removeEventListener("animationend", handler);
+      accueil.classList.add("hidden");
+      accueil.classList.remove("fade-out");
+      connexion.classList.remove("hidden");
+      connexion.classList.add("fade-in");
+    });
+  }
+}
+
