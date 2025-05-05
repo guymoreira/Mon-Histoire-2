@@ -16,8 +16,8 @@ function getCurrentScreen() {
 function updateInterface() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   const userIcon = document.getElementById("user-icon");
-  const logoutModal = document.getElementById("logout-modal");
   const loginBtn = document.getElementById("login-btn");
+  const logoutModal = document.getElementById("logout-modal");
 
   if (isLoggedIn) {
     if (loginBtn) loginBtn.style.display = "none";
@@ -35,26 +35,14 @@ function updateInterface() {
 
 function loginUser(event) {
   event.preventDefault();
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const loginBtn = document.getElementById("login-btn");
-  const userIcon = document.getElementById("user-icon");
-  const creerBtn = document.getElementById("creer-btn");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   if (email && password) {
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("initials", "GM");
-
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) {
-      userIcon.textContent = "GM";
-      userIcon.style.display = "flex";
-      userIcon.addEventListener("click", showLogoutModal);
-    }
-    if (creerBtn) creerBtn.style.display = "inline-block";
-
-    showForm();
+    localStorage.setItem("initials", initials);
     updateInterface();
+    showForm();
   } else {
     alert("Veuillez remplir tous les champs.");
   }
@@ -90,21 +78,6 @@ function showConnexion() {
   }
 }
 
-function goHome() {
-  const current = getCurrentScreen();
-  const accueil = document.getElementById("accueil");
-  if (current && current !== accueil) {
-    current.classList.add("fade-out");
-    current.addEventListener("animationend", function handler() {
-      current.removeEventListener("animationend", handler);
-      current.classList.add("hidden");
-      current.classList.remove("fade-out");
-      accueil.classList.remove("hidden");
-      accueil.classList.add("fade-in");
-    });
-  }
-}
-
 function generateStory() {
   const nom = document.getElementById("nom").value;
   const personnage = document.getElementById("personnage").value;
@@ -114,6 +87,7 @@ function generateStory() {
   const objectif = document.getElementById("objectif").value;
   const style = document.getElementById("style").value;
   const duree = document.getElementById("duree").value;
+
   const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
@@ -132,8 +106,8 @@ function generateStory() {
 }
 
 function goBackToForm() {
-  const resultat = document.getElementById("resultat");
   const formulaire = document.getElementById("formulaire");
+  const resultat = document.getElementById("resultat");
 
   resultat.classList.add("fade-out");
   resultat.addEventListener("animationend", function handler() {
@@ -145,19 +119,26 @@ function goBackToForm() {
   });
 }
 
+function goHome() {
+  const current = getCurrentScreen();
+  const accueil = document.getElementById("accueil");
+
+  if (current && current !== accueil) {
+    current.classList.add("fade-out");
+    current.addEventListener("animationend", function handler() {
+      current.removeEventListener("animationend", handler);
+      current.classList.add("hidden");
+      current.classList.remove("fade-out");
+      accueil.classList.remove("hidden");
+      accueil.classList.add("fade-in");
+    });
+  }
+}
+
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
-  const accueil = document.getElementById("accueil");
-  const formulaire = document.getElementById("formulaire");
-  const connexion = document.getElementById("connexion");
-  const userIcon = document.getElementById("user-icon");
-  const logoutModal = document.getElementById("logout-modal");
-
-  if (formulaire) formulaire.classList.add("hidden");
-  if (connexion) connexion.classList.add("hidden");
-  if (logoutModal) logoutModal.classList.add("hidden");
-  if (userIcon) userIcon.style.display = "none";
-  accueil.classList.remove("hidden");
+  updateInterface();
+  goHome();
 }
 
 function hideLogoutModal() {
@@ -172,11 +153,6 @@ function showLogoutModal() {
 
 window.onload = function () {
   if (localStorage.getItem("isLoggedIn") === "true") {
-    showForm();
-    const userIcon = document.getElementById("user-icon");
-    if (userIcon) {
-      userIcon.style.display = "inline-block";
-      userIcon.addEventListener("click", showLogoutModal);
-    }
+    updateInterface();
   }
 };
