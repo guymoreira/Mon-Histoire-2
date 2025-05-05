@@ -180,3 +180,5 @@ window.onload = function () {
     updateInterface();
   }
 };
+}
+
