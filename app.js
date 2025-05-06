@@ -1,174 +1,36 @@
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function loginUser() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if (email && password) {
+    localStorage.setItem("user", email);
+    showScreen('accueil');
+  }
+}
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
-  const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
-  const compagnon = document.getElementById("compagnon").value.toLowerCase().replace(/\s+/g, '-');
-  const mission = document.getElementById("mission").value.toLowerCase();
-
-  const baseImg = `illustration-${personnage}-${lieu}`;
-
-  const chapitres = [
-    {
-      titre: "Chapitre 1 : Le départ",
-      texte: `${nom}, un jeune ${personnage}, vivait paisiblement dans un village près d’une ${lieu}. Un matin, une voix magique lui confia une mission : ${mission}.`,
-    },
-    {
-      titre: "Chapitre 2 : L’objet magique",
-      texte: `En chemin, ${nom} découvrit une mystérieuse ${objet}. Dès qu’il la toucha, il sentit une puissance magique l’envahir.`,
-    },
-    {
-      titre: "Chapitre 3 : Le compagnon",
-      texte: `Soudain, un ${compagnon} surgit de la forêt. Loin d’être menaçant, il proposa à ${nom} de l’aider dans sa quête.`,
-    },
-    {
-      titre: "Chapitre 4 : Le danger dans la ${lieu}",
-      texte: `${nom} et son ${compagnon} affrontèrent mille épreuves au cœur de la ${lieu}, déterminés à réussir leur mission.`,
-    },
-    {
-      titre: "Chapitre 5 : Le triomphe",
-      texte: `Grâce à son courage, sa ${objet} et l’aide de son fidèle ${compagnon}, ${nom} réussit à ${mission} et devint un héros.`,
-    }
-  ];
-
-  let contenu = "";
-  chapitres.forEach((chapitre, i) => {
-    contenu += `<h2>${chapitre.titre}</h2>`;
-    contenu += `<img src="${baseImg}-chapitre-${i+1}.jpg" alt="${chapitre.titre}" class="chapitre-illustration" />`;
-    contenu += `<p>${chapitre.texte}</p>`;
-  });
-
-  document.getElementById("histoire").innerHTML = contenu;
-  document.getElementById("formulaire").classList.add("hidden");
-  document.getElementById("resultat").classList.remove("hidden");
-}
-
-
-function showForm() {
-  document.getElementById('accueil').classList.add('hidden');
-  document.getElementById('formulaire').classList.remove('hidden');
-}
-
-function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
-}
-
-
-
-function goHome() {
-  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
-  document.getElementById('accueil').classList.remove('hidden');
-}
-
-function generateStory() {
-  const nom = document.getElementById("nom").value;
-  const personnage = document.getElementById("personnage").value;
-  const decor = document.getElementById("decor").value;
-  const objet = document.getElementById("objet").value;
-  const compagnon = document.getElementById("compagnon").value || "compagnon";
-  const objectif = document.getElementById("objectif").value;
+  const personnage = document.getElementById("personnage").value.trim();
+  const lieu = document.getElementById("lieu").value.trim();
+  const objet = document.getElementById("objet").value.trim();
+  const compagnon = document.getElementById("compagnon").value.trim();
+  const mission = document.getElementById("mission").value.trim();
   const style = document.getElementById("style").value;
   const duree = document.getElementById("duree").value;
 
-  const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
+  const texte = `Voici l'histoire de ${nom}, un ${personnage} courageux qui vivait près de ${lieu}. Sa mission : ${mission}. Avec l'aide d'un(e) ${
+    compagnon || 'ami mystérieux'
+  }, et une ${objet} magique, l'aventure commence ! (Style : ${style}, Durée : ${duree})`;
 
-  document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
-
-  document.getElementById("formulaire").classList.add("hidden");
-  document.getElementById("resultat").classList.remove("hidden");
+  document.getElementById("histoire").innerText = texte;
+  showScreen('resultat');
 }
 
-
-
-
-
-function updatePreview() {
-  const previewImg = document.getElementById("preview");
-  if (personnage && lieu) {
-    previewImg.src = `illustration-${personnage}-${lieu}-chapitre-1.jpg`;
-    previewImg.alt = `illustration de ${personnage} dans ${lieu}`;
-  }
+// Reconnexion automatique si utilisateur connu
+if (localStorage.getItem("user")) {
+  showScreen('accueil');
 }
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-button");
-  const userIcon = document.getElementById("user-icon");
-  const myStories = document.getElementById("my-stories-link");
-
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) userIcon.style.display = "flex";
-    if (myStories) myStories.style.display = "block";
-  } else {
-    if (userIcon) userIcon.style.display = "none";
-    if (myStories) myStories.style.display = "none";
-  }
-
-  if (userIcon) {
-    userIcon.addEventListener("click", () => {
-      const modal = document.getElementById("logout-modal");
-      if (modal) modal.style.display = "block";
-    });
-  }
-});
-
-function logout() {
-  localStorage.setItem("loggedIn", "false");
-  window.location.href = "index.html";
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  const btnConnexion = document.getElementById("btn-connexion");
-  if (btnConnexion) {
-    btnConnexion.addEventListener("click", function () {
-      window.location.href = "connexion.html";
-    });
-  }
-});
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const loginBtn = document.getElementById("login-btn");
-  const userIcon = document.getElementById("user-icon");
-  const logoutModal = document.getElementById("logout-modal");
-  const initials = "GM"; // ou extraire depuis localStorage si besoin
-
-  if (isLoggedIn) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userIcon) {
-      userIcon.textContent = initials;
-      userIcon.style.display = "flex";
-      userIcon.addEventListener("click", function () {
-        if (logoutModal) logoutModal.style.display = "block";
-      });
-    }
-  } else {
-    if (loginBtn) loginBtn.style.display = "inline-block";
-    if (userIcon) userIcon.style.display = "none";
-    if (logoutModal) logoutModal.style.display = "none";
-  }
-});
-
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
-}
-function goBackToForm() {
-  document.getElementById("formulaire").classList.remove("hidden");
-  document.getElementById("resultat").classList.add("hidden");
-}
-
