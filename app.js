@@ -1,3 +1,4 @@
+// Correction du bug de fermeture de blocs - 6 mai 2025
 
 let initials = "GM";
 
