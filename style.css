@@ -81,7 +81,60 @@ h1, h2 {
   box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
 
-#formulaire.screen, #resultat.screen {
-  background: url('illustration-formulaire.jpg') no-repeat center center fixed;
-  background-size: cover;
+/* Centrage du titre */
+#accueil h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Boutons sur la page d'accueil */
+#accueil .button {
+  display: block;
+  margin: 1rem auto;
+  width: 80%;
+  max-width: 300px;
+}
+
+#login-button {
+  font-size: 1rem;
+  padding: 0.8rem;
+}
+
+/* Centrage du formulaire de connexion */
+#connexion.screen {
+  background-color: rgba(255, 255, 255, 0.85);
+  max-width: 360px;
+  margin: 5vh auto;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Centrage des boutons de déconnexion */
+.logout-modal button {
+  display: block;
+  margin: 1rem auto;
+}
+
+/* Formulaire de création */
+#formulaire form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#formulaire input,
+#formulaire select {
+  width: 100%;
+  max-width: 300px;
+}
+#formulaire button {
+  width: 140px;
+  margin: 0.5rem;
+}
+
+/* Résultat : centrer le bouton */
+#resultat button {
+  display: block;
+  margin: 2rem auto;
 }
