@@ -1,94 +1,63 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Histoire</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="background-accueil">
-  <main id="accueil" class="screen active">
-    <h1 class="titre-accueil">"Mon Histoire"</h1>
+<body>
+  <!-- Accueil -->
+  <section id="accueil" class="screen active">
+    <h1>Mon Histoire</h1>
+    <button class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
+    <button class="button" onclick="showScreen('connexion')">Me connecter</button>
+  </section>
 
-    <button onclick="showForm()" class="button">Créer une histoire</button>
-    <button onclick="window.location.href='connexion.html'" id="login-btn" class="button secondary">Me connecter</button>
+  <!-- Connexion (intégrée ici) -->
+  <section id="connexion" class="screen">
+    <h2>Connexion</h2>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="email" id="email" placeholder="Adresse email" class="input-style" required>
+      <input type="password" id="password" placeholder="Mot de passe" class="input-style" required>
+      <button type="submit" class="button">Se connecter</button>
+      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+    </form>
+  </section>
 
-    <!-- Bouton utilisateur + modale déconnexion -->
-    <div id="user-icon" class="avatar" style="display: none;">GM</div>
-
-    <div id="logout-modal" class="logout-modal" style="display: none;">
-      <p>Voulez-vous vous déconnecter ?</p>
-      <button onclick="logout()" class="button">Se déconnecter</button>
-      <button onclick="document.getElementById('logout-modal').style.display = 'none'" class="button secondary small">Annuler</button>
-    </div>
-  </main>
-
-  <main id="formulaire" class="screen background-formulaire hidden">
-    <h2>Créer une histoire</h2>
-    <form id="story-form" onsubmit="event.preventDefault(); generateStory();">
-      <input type="text" id="nom" placeholder="Nom du héros" required />
-      <select id="personnage">
-        <option value="">Choisissez un personnage</option>
-        <option value="chevalier" selected>Chevalier</option>
-        <option value="princesse">Princesse</option>
-        <option value="fée">Fée</option>
-      </select>
-      <select id="decor">
-        <option value="">Choisissez un décor</option>
-        <option value="forêt enchantée" selected>Forêt enchantée</option>
-        <option value="château">Château</option>
-      </select>
-      <select id="objet">
-        <option value="">Choisissez un objet magique</option>
-        <option value="baguette" selected>Baguette</option>
-        <option value="épée">Épée</option>
-      </select>
-      <select id="compagnon">
-        <option value="">Choisissez un compagnon (optionnel)</option>
-        <option value="dragon" selected>Dragon</option>
-        <option value="licorne">Licorne</option>
-      </select>
-      <select id="objectif">
-        <option value="">Choisissez un objectif</option>
-        <option value="sauver un village" selected>Sauver un village</option>
-        <option value="découvrir un trésor">Découvrir un trésor</option>
-      </select>
-      <select id="style">
-        <option value="">Choisissez un style narratif</option>
-        <option value="drôle" selected>Drôle</option>
+  <!-- Formulaire de création -->
+  <section id="formulaire" class="screen">
+    <h2>Créer une Histoire</h2>
+    <form onsubmit="event.preventDefault(); genererHistoire();">
+      <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
+      <input type="text" id="personnage" placeholder="Type de personnage (ex : chevalier)" class="input-style" required>
+      <input type="text" id="lieu" placeholder="Lieu (ex : forêt enchantée)" class="input-style" required>
+      <input type="text" id="objet" placeholder="Objet magique" class="input-style" required>
+      <input type="text" id="compagnon" placeholder="Compagnon (facultatif)" class="input-style">
+      <input type="text" id="mission" placeholder="Objectif ou mission" class="input-style" required>
+      <select id="style" class="input-style">
+        <option value="drôle">Drôle</option>
         <option value="poétique">Poétique</option>
         <option value="suspense">Suspense</option>
+        <option value="personnalisé">Personnalisé</option>
       </select>
-      <select id="duree">
-        <option value="">Choisissez une durée</option>
-        <option value="courte" selected>Courte</option>
+      <select id="duree" class="input-style">
+        <option value="courte">Courte</option>
         <option value="moyenne">Moyenne</option>
         <option value="longue">Longue</option>
       </select>
-      <button type="submit" class="button">Générer l'histoire</button>
-      <button type="button" onclick="location.href='index.html'" class="button secondary small">Accueil</button>
-
+      <button type="submit" class="button">Générer</button>
+      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
     </form>
-  </main>
+  </section>
 
-  <main id="resultat" class="screen background-formulaire hidden">
-    <h2>Votre histoire</h2>
-    <div id="story-container"></div>    
-    <button onclick="goBackToForm()" class="button secondary small">Retour</button>
-    <button onclick="goHome()" class="button secondary small">Accueil</button>
-  </main>
+  <!-- Résultat -->
+  <section id="resultat" class="screen">
+    <h2>Ton Histoire</h2>
+    <div id="histoire"></div>
+    <button class="button" onclick="showScreen('accueil')">Accueil</button>
+  </section>
 
   <script src="app.js"></script>
-  <!-- Anti-cache automatique -->
-<script>
-  const timestamp = new Date().getTime();
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    link.href += `?v=${timestamp}`;
-  });
-  document.querySelectorAll('script[src]').forEach(script => {
-    script.src += `?v=${timestamp}`;
-  });
-</script>
-
 </body>
 </html>
