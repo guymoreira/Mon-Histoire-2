@@ -38,8 +38,14 @@ function updateInterface() {
     loginBtn?.classList.add("hidden");
     userIcon.textContent = initials;
     userIcon.style.display = "flex";
+    userIcon.removeEventListener("click", showLogoutModal);
+    userIcon.addEventListener("click", showLogoutModal);
   } else {
     loginBtn?.classList.remove("hidden");
+    if (userIcon) userIcon.style.display = "none";
+    logoutModal?.classList.add("hidden");
+  }
+}
     userIcon.style.display = "none";
     logoutModal?.classList.add("hidden");
   }
@@ -53,7 +59,7 @@ function loginUser(e) {
   if (email && password) {
     localStorage.setItem("isLoggedIn", "true");
     updateInterface();
-    showForm();
+    goHome();
   } else {
     alert("Veuillez remplir tous les champs.");
   }
