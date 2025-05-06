@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,14 +8,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Accueil -->
+  <!-- Écran d'accueil -->
   <section id="accueil" class="screen active">
     <h1>Mon Histoire</h1>
     <button class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
-    <button class="button" onclick="showScreen('connexion')">Me connecter</button>
+    <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
+    <div id="user-icon" style="display:none;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
+    <div id="logout-modal" class="logout-modal" style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
+      <p>Voulez-vous vous déconnecter ?</p>
+      <button class="button" onclick="logoutUser()">Se déconnecter</button>
+      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
+    </div>
   </section>
 
-  <!-- Connexion (intégrée ici) -->
+  <!-- Écran de connexion -->
   <section id="connexion" class="screen">
     <h2>Connexion</h2>
     <form onsubmit="event.preventDefault(); loginUser();">
@@ -25,33 +32,66 @@
     </form>
   </section>
 
-  <!-- Formulaire de création -->
+  <!-- Écran de création d’histoire -->
   <section id="formulaire" class="screen">
     <h2>Créer une Histoire</h2>
     <form onsubmit="event.preventDefault(); genererHistoire();">
       <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
-      <input type="text" id="personnage" placeholder="Type de personnage (ex : chevalier)" class="input-style" required>
-      <input type="text" id="lieu" placeholder="Lieu (ex : forêt enchantée)" class="input-style" required>
-      <input type="text" id="objet" placeholder="Objet magique" class="input-style" required>
-      <input type="text" id="compagnon" placeholder="Compagnon (facultatif)" class="input-style">
-      <input type="text" id="mission" placeholder="Objectif ou mission" class="input-style" required>
+
+      <select id="personnage" class="input-style">
+        <option value="chevalier">Chevalier</option>
+        <option value="princesse">Princesse</option>
+        <option value="fée">Fée</option>
+        <option value="explorateur">Explorateur</option>
+      </select>
+
+      <select id="lieu" class="input-style">
+        <option value="forêt enchantée">Forêt enchantée</option>
+        <option value="château">Château</option>
+        <option value="plaine magique">Plaine magique</option>
+        <option value="volcan endormi">Volcan endormi</option>
+      </select>
+
+      <select id="objet" class="input-style">
+        <option value="baguette">Baguette</option>
+        <option value="épée">Épée</option>
+        <option value="livre magique">Livre magique</option>
+        <option value="amulette">Amulette</option>
+      </select>
+
+      <select id="compagnon" class="input-style">
+        <option value="dragon">Dragon</option>
+        <option value="licorne">Licorne</option>
+        <option value="chat parlant">Chat parlant</option>
+        <option value="">Aucun</option>
+      </select>
+
+      <select id="mission" class="input-style">
+        <option value="sauver un village">Sauver un village</option>
+        <option value="découvrir un trésor">Découvrir un trésor</option>
+        <option value="réparer la nature">Réparer la nature</option>
+        <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
+      </select>
+
       <select id="style" class="input-style">
         <option value="drôle">Drôle</option>
         <option value="poétique">Poétique</option>
         <option value="suspense">Suspense</option>
         <option value="personnalisé">Personnalisé</option>
       </select>
+
       <select id="duree" class="input-style">
         <option value="courte">Courte</option>
         <option value="moyenne">Moyenne</option>
         <option value="longue">Longue</option>
       </select>
+
       <button type="submit" class="button">Générer</button>
       <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
     </form>
   </section>
 
-  <!-- Résultat -->
+  <!-- Écran de résultat -->
   <section id="resultat" class="screen">
     <h2>Ton Histoire</h2>
     <div id="histoire"></div>
