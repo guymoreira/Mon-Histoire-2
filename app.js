@@ -1,57 +1,174 @@
 
-document.addEventListener("DOMContentLoaded", () => {
-  bindEvents();
-  if (localStorage.getItem("isLoggedIn") === "true") {
-    showUserUI();
+function genererHistoire() {
+  const nom = document.getElementById("nom").value.trim();
+  const objet = document.getElementById("objet").value.toLowerCase().replace(/\s+/g, '-');
+  const compagnon = document.getElementById("compagnon").value.toLowerCase().replace(/\s+/g, '-');
+  const mission = document.getElementById("mission").value.toLowerCase();
+
+  const baseImg = `illustration-${personnage}-${lieu}`;
+
+  const chapitres = [
+    {
+      titre: "Chapitre 1 : Le départ",
+      texte: `${nom}, un jeune ${personnage}, vivait paisiblement dans un village près d’une ${lieu}. Un matin, une voix magique lui confia une mission : ${mission}.`,
+    },
+    {
+      titre: "Chapitre 2 : L’objet magique",
+      texte: `En chemin, ${nom} découvrit une mystérieuse ${objet}. Dès qu’il la toucha, il sentit une puissance magique l’envahir.`,
+    },
+    {
+      titre: "Chapitre 3 : Le compagnon",
+      texte: `Soudain, un ${compagnon} surgit de la forêt. Loin d’être menaçant, il proposa à ${nom} de l’aider dans sa quête.`,
+    },
+    {
+      titre: "Chapitre 4 : Le danger dans la ${lieu}",
+      texte: `${nom} et son ${compagnon} affrontèrent mille épreuves au cœur de la ${lieu}, déterminés à réussir leur mission.`,
+    },
+    {
+      titre: "Chapitre 5 : Le triomphe",
+      texte: `Grâce à son courage, sa ${objet} et l’aide de son fidèle ${compagnon}, ${nom} réussit à ${mission} et devint un héros.`,
+    }
+  ];
+
+  let contenu = "";
+  chapitres.forEach((chapitre, i) => {
+    contenu += `<h2>${chapitre.titre}</h2>`;
+    contenu += `<img src="${baseImg}-chapitre-${i+1}.jpg" alt="${chapitre.titre}" class="chapitre-illustration" />`;
+    contenu += `<p>${chapitre.texte}</p>`;
+  });
+
+  document.getElementById("histoire").innerHTML = contenu;
+  document.getElementById("formulaire").classList.add("hidden");
+  document.getElementById("resultat").classList.remove("hidden");
+}
+
+
+function showForm() {
+  document.getElementById('accueil').classList.add('hidden');
+  document.getElementById('formulaire').classList.remove('hidden');
+}
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+  document.getElementById('accueil').classList.remove('hidden');
+}
+
+
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+  document.getElementById('accueil').classList.remove('hidden');
+}
+
+function generateStory() {
+  const nom = document.getElementById("nom").value;
+  const personnage = document.getElementById("personnage").value;
+  const decor = document.getElementById("decor").value;
+  const objet = document.getElementById("objet").value;
+  const compagnon = document.getElementById("compagnon").value || "compagnon";
+  const objectif = document.getElementById("objectif").value;
+  const style = document.getElementById("style").value;
+  const duree = document.getElementById("duree").value;
+
+  const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
+
+  document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
+
+  document.getElementById("formulaire").classList.add("hidden");
+  document.getElementById("resultat").classList.remove("hidden");
+}
+
+
+
+
+
+function updatePreview() {
+  const previewImg = document.getElementById("preview");
+  if (personnage && lieu) {
+    previewImg.src = `illustration-${personnage}-${lieu}-chapitre-1.jpg`;
+    previewImg.alt = `illustration de ${personnage} dans ${lieu}`;
+  }
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
   }
 });
 
-function bindEvents() {
-  document.getElementById("btn-creer").addEventListener("click", () => showScreen("formulaire"));
-  document.getElementById("login-btn").addEventListener("click", loginUser);
-  document.getElementById("btn-accueil-form").addEventListener("click", () => showScreen("accueil"));
-  document.getElementById("btn-retour-resultat").addEventListener("click", () => showScreen("formulaire"));
-  document.getElementById("btn-accueil-resultat").addEventListener("click", () => showScreen("accueil"));
-  document.getElementById("logout-btn").addEventListener("click", logoutUser);
-  document.getElementById("logout-cancel-btn").addEventListener("click", hideLogoutModal);
-  document.getElementById("user-icon").addEventListener("click", showLogoutModal);
-  document.getElementById("story-form").addEventListener("submit", createStory);
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-button");
+  const userIcon = document.getElementById("user-icon");
+  const myStories = document.getElementById("my-stories-link");
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) userIcon.style.display = "flex";
+    if (myStories) myStories.style.display = "block";
+  } else {
+    if (userIcon) userIcon.style.display = "none";
+    if (myStories) myStories.style.display = "none";
+  }
+
+  if (userIcon) {
+    userIcon.addEventListener("click", () => {
+      const modal = document.getElementById("logout-modal");
+      if (modal) modal.style.display = "block";
+    });
+  }
+});
+
+function logout() {
+  localStorage.setItem("loggedIn", "false");
+  window.location.href = "index.html";
 }
 
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+document.addEventListener("DOMContentLoaded", function () {
+  const btnConnexion = document.getElementById("btn-connexion");
+  if (btnConnexion) {
+    btnConnexion.addEventListener("click", function () {
+      window.location.href = "connexion.html";
+    });
+  }
+});
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const loginBtn = document.getElementById("login-btn");
+  const userIcon = document.getElementById("user-icon");
+  const logoutModal = document.getElementById("logout-modal");
+  const initials = "GM"; // ou extraire depuis localStorage si besoin
+
+  if (isLoggedIn) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userIcon) {
+      userIcon.textContent = initials;
+      userIcon.style.display = "flex";
+      userIcon.addEventListener("click", function () {
+        if (logoutModal) logoutModal.style.display = "block";
+      });
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (userIcon) userIcon.style.display = "none";
+    if (logoutModal) logoutModal.style.display = "none";
+  }
+});
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "index.html";
+}
+function goBackToForm() {
+  document.getElementById("formulaire").classList.remove("hidden");
+  document.getElementById("resultat").classList.add("hidden");
 }
 
-function loginUser() {
-  localStorage.setItem("isLoggedIn", "true");
-  showUserUI();
-}
-
-function logoutUser() {
-  localStorage.removeItem("isLoggedIn");
-  document.getElementById("user-icon").style.display = "none";
-  hideLogoutModal();
-}
-
-function showUserUI() {
-  document.getElementById("user-icon").style.display = "inline-flex";
-}
-
-function showLogoutModal() {
-  document.getElementById("logout-modal").style.display = "block";
-}
-
-function hideLogoutModal() {
-  document.getElementById("logout-modal").style.display = "none";
-}
-
-function createStory(e) {
-  e.preventDefault();
-  const name = document.getElementById("prenom").value;
-  const theme = document.getElementById("univers").value;
-  const story = `Il était une fois un héros nommé ${name} dans l'univers ${theme}.`;
-  document.getElementById("story-output").textContent = story;
-  document.getElementById("story-image").src = "illustration-resultat.jpg";
-  showScreen("resultat");
-}
