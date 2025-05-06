@@ -80,3 +80,8 @@ h1, h2 {
   border-radius: 16px;
   box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
+
+#formulaire.screen, #resultat.screen {
+  background: url('illustration-formulaire.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
