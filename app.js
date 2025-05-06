@@ -1,126 +1,57 @@
-// app.js corrigé automatiquement - 6 mai 2025
-// app.js restructuré - 6 mai 2025
-
-let initials = "GM";
 
 document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   if (localStorage.getItem("isLoggedIn") === "true") {
-    updateInterface();
-    goHome();
-  } else {
-    resetToHome();
+    showUserUI();
   }
 });
 
 function bindEvents() {
-  document.getElementById("btn-creer")?.addEventListener("click", showForm);
-  document.getElementById("login-btn")?.addEventListener("click", showConnexion);
-  document.getElementById("btn-accueil-form")?.addEventListener("click", goHome);
-  document.getElementById("btn-accueil-resultat")?.addEventListener("click", goHome);
-  document.getElementById("btn-retour-resultat")?.addEventListener("click", goBackToForm);
-  document.getElementById("logout-btn")?.addEventListener("click", logoutUser);
-  document.getElementById("logout-cancel-btn")?.addEventListener("click", hideLogoutModal);
-  document.getElementById("user-icon")?.addEventListener("click", showLogoutModal);
-  document.getElementById("story-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    generateStory();
-  });
-  document.getElementById("login-form")?.addEventListener("submit", loginUser);
-  document.getElementById("cancel-login-btn")?.addEventListener("click", resetToHome);
+  document.getElementById("btn-creer").addEventListener("click", () => showScreen("formulaire"));
+  document.getElementById("login-btn").addEventListener("click", loginUser);
+  document.getElementById("btn-accueil-form").addEventListener("click", () => showScreen("accueil"));
+  document.getElementById("btn-retour-resultat").addEventListener("click", () => showScreen("formulaire"));
+  document.getElementById("btn-accueil-resultat").addEventListener("click", () => showScreen("accueil"));
+  document.getElementById("logout-btn").addEventListener("click", logoutUser);
+  document.getElementById("logout-cancel-btn").addEventListener("click", hideLogoutModal);
+  document.getElementById("user-icon").addEventListener("click", showLogoutModal);
+  document.getElementById("story-form").addEventListener("submit", createStory);
 }
 
-function updateInterface() {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const userIcon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-btn");
-  const logoutModal = document.getElementById("logout-modal");
-
-  if (isLoggedIn) {
-    loginBtn?.classList.add("hidden");
-    userIcon.textContent = initials;
-    userIcon.style.display = "flex";
-    userIcon.removeEventListener("click", showLogoutModal);
-    userIcon.addEventListener("click", showLogoutModal);
-  } else {
-    loginBtn?.classList.remove("hidden");
-    if (userIcon) userIcon.style.display = "none";
-    logoutModal?.classList.add("hidden");
-  }
-}
-    userIcon.style.display = "none";
-    logoutModal?.classList.add("hidden");
-  }
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-function loginUser(e) {
-  e.preventDefault();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (email && password) {
-    localStorage.setItem("isLoggedIn", "true");
-    updateInterface();
-    goHome();
-  } else {
-    alert("Veuillez remplir tous les champs.");
-  }
+function loginUser() {
+  localStorage.setItem("isLoggedIn", "true");
+  showUserUI();
 }
 
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
-  updateInterface();
-  resetToHome();
+  document.getElementById("user-icon").style.display = "none";
+  hideLogoutModal();
 }
 
-function resetToHome() {
-  showScreen("accueil");
-}
-
-function showConnexion() {
-  showScreen("connexion");
-}
-
-function showForm() {
-  showScreen("formulaire");
-}
-
-function goHome() {
-  showScreen("accueil");
-}
-
-function goBackToForm() {
-  showScreen("formulaire");
+function showUserUI() {
+  document.getElementById("user-icon").style.display = "inline-flex";
 }
 
 function showLogoutModal() {
-  document.getElementById("logout-modal")?.classList.remove("hidden");
+  document.getElementById("logout-modal").style.display = "block";
 }
+
 function hideLogoutModal() {
-  document.getElementById("logout-modal")?.classList.add("hidden");
+  document.getElementById("logout-modal").style.display = "none";
 }
 
-function showScreen(id) {
-  const allScreens = document.querySelectorAll(".screen");
-  allScreens.forEach((screen) => screen.classList.add("hidden"));
-
-  const target = document.getElementById(id);
-  if (target) {
-    target.classList.remove("hidden");
-    target.classList.add("fade-in");
-  }
-}
-
-function generateStory() {
-  const nom = document.getElementById("nom")?.value;
-  const personnage = document.getElementById("personnage")?.value;
-  const decor = document.getElementById("decor")?.value;
-  const objet = document.getElementById("objet")?.value;
-  const compagnon = document.getElementById("compagnon")?.value || "compagnon";
-  const objectif = document.getElementById("objectif")?.value;
-
-  const storyText = `${nom} Ã©tait un(e) ${personnage} trÃ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃ¨le ${compagnon} et sa ${objet}, ${nom} partit Ã  lâ€™aventure.`;
-
-  document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
+function createStory(e) {
+  e.preventDefault();
+  const name = document.getElementById("prenom").value;
+  const theme = document.getElementById("univers").value;
+  const story = `Il était une fois un héros nommé ${name} dans l'univers ${theme}.`;
+  document.getElementById("story-output").textContent = story;
+  document.getElementById("story-image").src = "illustration-resultat.jpg";
   showScreen("resultat");
 }
