@@ -12,10 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach((el) => {
-    el.classList.remove("active");
-  });
-  document.getElementById(id).classList.add("active");
+  const current = document.querySelector(".screen.active");
+  const next = document.getElementById(id);
+  if (current && next && current !== next) {
+    current.classList.remove("active");
+    setTimeout(() => {
+      next.classList.add("active");
+    }, 50); // courte pause pour activer la transition
+  } else if (next) {
+    next.classList.add("active");
+  }
 }
 
 function loginUser() {
