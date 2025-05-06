@@ -1,47 +1,102 @@
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: url('illustration-accueil.jpg') center/cover fixed no-repeat;
-  color: #2c2c2c;
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Histoire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Accueil -->
+  <section id="accueil" class="screen active">
+    <h1>Mon Histoire</h1>
+    <button class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
+    <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
+    <div id="user-icon" class="button" style="display:none; float:right;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
+    <div id="logout-modal" class="screen" style="position: absolute; top: 30%; left: 50%; transform: translateX(-50%); display: none;">
+      <p>Voulez-vous vous déconnecter ?</p>
+      <button class="button" onclick="logoutUser()">Se déconnecter</button>
+      <button class="button" onclick="document.getElementById('logout-modal').style.display = 'none'">Annuler</button>
+    </div>
+  </section>
 
-.screen {
-  display: none;
-  padding: 2rem;
-  max-width: 480px;
-  margin: auto;
-  min-height: 100vh;
-  background-color: rgba(255,255,255,0.9);
-  border-radius: 16px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  animation: fadeIn 0.5s ease-in-out;
-}
+  <!-- Connexion (intégrée ici) -->
+  <section id="connexion" class="screen">
+    <h2>Connexion</h2>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="email" id="email" placeholder="Adresse email" class="input-style" required>
+      <input type="password" id="password" placeholder="Mot de passe" class="input-style" required>
+      <button type="submit" class="button">Se connecter</button>
+      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+    </form>
+  </section>
 
-.screen.active {
-  display: block;
-}
+  <!-- Formulaire de création -->
+  <section id="formulaire" class="screen">
+    <h2>Créer une Histoire</h2>
+    <form onsubmit="event.preventDefault(); genererHistoire();">
+      <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+      <select id="personnage" class="input-style">
+        <option value="chevalier">Chevalier</option>
+        <option value="princesse">Princesse</option>
+        <option value="fée">Fée</option>
+        <option value="explorateur">Explorateur</option>
+      </select>
 
-.button {
-  background: linear-gradient(to bottom, #cce4f6, #99c9f1);
-  color: #0a3d62;
-  font-weight: bold;
-  padding: 1rem;
-  font-size: 1rem;
-  border-radius: 40px;
-  border: none;
-  cursor: pointer;
-  margin-top: 1rem;
-}
+      <select id="lieu" class="input-style">
+        <option value="forêt enchantée">Forêt enchantée</option>
+        <option value="château">Château</option>
+        <option value="plaine magique">Plaine magique</option>
+        <option value="volcan endormi">Volcan endormi</option>
+      </select>
 
-.input-style {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 1rem;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-}
+      <select id="objet" class="input-style">
+        <option value="baguette">Baguette</option>
+        <option value="épée">Épée</option>
+        <option value="livre magique">Livre magique</option>
+        <option value="amulette">Amulette</option>
+      </select>
+
+      <select id="compagnon" class="input-style">
+        <option value="dragon">Dragon</option>
+        <option value="licorne">Licorne</option>
+        <option value="chat parlant">Chat parlant</option>
+        <option value="">Aucun</option>
+      </select>
+
+      <select id="mission" class="input-style">
+        <option value="sauver un village">Sauver un village</option>
+        <option value="découvrir un trésor">Découvrir un trésor</option>
+        <option value="réparer la nature">Réparer la nature</option>
+        <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
+      </select>
+
+      <select id="style" class="input-style">
+        <option value="drôle">Drôle</option>
+        <option value="poétique">Poétique</option>
+        <option value="suspense">Suspense</option>
+        <option value="personnalisé">Personnalisé</option>
+      </select>
+
+      <select id="duree" class="input-style">
+        <option value="courte">Courte</option>
+        <option value="moyenne">Moyenne</option>
+        <option value="longue">Longue</option>
+      </select>
+
+      <button type="submit" class="button">Générer</button>
+      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+    </form>
+  </section>
+
+  <!-- Résultat -->
+  <section id="resultat" class="screen">
+    <h2>Ton Histoire</h2>
+    <div id="histoire"></div>
+    <button class="button" onclick="showScreen('accueil')">Accueil</button>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
