@@ -64,10 +64,18 @@
   </main>
 
   <script>
-    const timestamp = new Date().getTime();
     document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
       link.href += `?v=${timestamp}`;
     });
+  </script>
+  <script>
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+      link.href += `?v=${timestamp}`;
+    });
+    const script = document.createElement("script");
+    script.src = `app.js?v=${timestamp}`;
+    script.defer = true;
+    document.body.appendChild(script);
   </script>
   <script>
     const timestamp = new Date().getTime();
