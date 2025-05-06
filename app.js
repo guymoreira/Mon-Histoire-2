@@ -49,7 +49,6 @@ function updateInterface() {
 }
     userIcon.style.display = "none";
     logoutModal?.classList.add("hidden");
-  }
 }
 
 function loginUser(e) {
