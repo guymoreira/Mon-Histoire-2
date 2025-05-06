@@ -81,19 +81,19 @@ h1, h2 {
   box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
 
-/* Centrage du titre */
+/* Accueil */
 #accueil h1 {
   text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 2rem;
+  margin-top: 7rem;
 }
 
-/* Boutons sur la page d'accueil */
 #accueil .button {
   display: block;
-  margin: 1rem auto;
+  margin: 2rem auto;
   width: 80%;
   max-width: 300px;
+  font-size: 1.2rem;
 }
 
 #login-button {
@@ -101,23 +101,39 @@ h1, h2 {
   padding: 0.8rem;
 }
 
-/* Centrage du formulaire de connexion */
+/* Connexion */
 #connexion.screen {
   background-color: rgba(255, 255, 255, 0.85);
-  max-width: 360px;
-  margin: 5vh auto;
+  max-width: 320px;
+  margin: auto;
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* Centrage des boutons de déconnexion */
-.logout-modal button {
-  display: block;
-  margin: 1rem auto;
+#connexion form {
+  width: 100%;
 }
 
-/* Formulaire de création */
+#connexion form button {
+  margin: 1rem 0.5rem;
+}
+
+#connexion form .button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Formulaire */
 #formulaire form {
   display: flex;
   flex-direction: column;
@@ -133,8 +149,23 @@ h1, h2 {
   margin: 0.5rem;
 }
 
-/* Résultat : centrer le bouton */
+/* Résultat */
 #resultat button {
   display: block;
   margin: 2rem auto;
+}
+
+/* Fond image visible sur formulaire et résultat */
+#formulaire.screen, #resultat.screen {
+  background: url('illustration-formulaire.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* Boutons modale déconnexion */
+.logout-modal button {
+  display: block;
+  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
