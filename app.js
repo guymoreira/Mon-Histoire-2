@@ -1,4 +1,4 @@
-//correction
+
 let initials = "GM";
 
 document.addEventListener("DOMContentLoaded", () => {
