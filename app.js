@@ -1,10 +1,17 @@
+
 let initials = "GM";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  updateInterface();
+  bindEvents();
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    updateInterface();
+    goHome();
+  } else {
+    resetToHome();
+  }
+});
 
-  // Écouteurs globaux
+function bindEvents() {
   document.getElementById("btn-creer")?.addEventListener("click", showForm);
   document.getElementById("login-btn")?.addEventListener("click", showConnexion);
   document.getElementById("btn-accueil-form")?.addEventListener("click", goHome);
@@ -17,9 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     generateStory();
   });
-
-  if (isLoggedIn) showForm();
-});
+  document.getElementById("login-form")?.addEventListener("submit", loginUser);
+  document.getElementById("cancel-login-btn")?.addEventListener("click", resetToHome);
+}
 
 function updateInterface() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -40,8 +47,9 @@ function updateInterface() {
 
 function loginUser(e) {
   e.preventDefault();
-  const email = document.getElementById("email")?.value.trim();
-  const password = document.getElementById("password")?.value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
   if (email && password) {
     localStorage.setItem("isLoggedIn", "true");
     updateInterface();
@@ -54,7 +62,27 @@ function loginUser(e) {
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
   updateInterface();
-  goHome();
+  resetToHome();
+}
+
+function resetToHome() {
+  showScreen("accueil");
+}
+
+function showConnexion() {
+  showScreen("connexion");
+}
+
+function showForm() {
+  showScreen("formulaire");
+}
+
+function goHome() {
+  showScreen("accueil");
+}
+
+function goBackToForm() {
+  showScreen("formulaire");
 }
 
 function showLogoutModal() {
@@ -64,38 +92,15 @@ function hideLogoutModal() {
   document.getElementById("logout-modal")?.classList.add("hidden");
 }
 
-function showForm() {
-  switchScreen("accueil", "formulaire");
-}
+function showScreen(id) {
+  const allScreens = document.querySelectorAll(".screen");
+  allScreens.forEach((screen) => screen.classList.add("hidden"));
 
-function showConnexion() {
-  switchScreen("accueil", "connexion");
-}
-
-function goHome() {
-  const current = getCurrentScreen();
-  switchScreen(current.id, "accueil");
-}
-
-function goBackToForm() {
-  switchScreen("resultat", "formulaire");
-}
-
-function switchScreen(fromId, toId) {
-  const from = document.getElementById(fromId);
-  const to = document.getElementById(toId);
-  from?.classList.add("fade-out");
-  from?.addEventListener("animationend", function handler() {
-    from.removeEventListener("animationend", handler);
-    from.classList.add("hidden");
-    from.classList.remove("fade-out");
-    to?.classList.remove("hidden");
-    to?.classList.add("fade-in");
-  });
-}
-
-function getCurrentScreen() {
-  return document.querySelector(".screen:not(.hidden)");
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.remove("hidden");
+    target.classList.add("fade-in");
+  }
 }
 
 function generateStory() {
@@ -106,8 +111,8 @@ function generateStory() {
   const compagnon = document.getElementById("compagnon")?.value || "compagnon";
   const objectif = document.getElementById("objectif")?.value;
 
-  const storyText = `${nom} était un(e) ${personnage} très courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidèle ${compagnon} et sa ${objet}, ${nom} partit à l’aventure.`;
+  const storyText = `${nom} Ã©tait un(e) ${personnage} trÃ¨s courageux(se), vivant dans un(e) ${decor}. Un jour, sa mission fut de ${objectif}. Avec son fidÃ¨le ${compagnon} et sa ${objet}, ${nom} partit Ã  lâ€™aventure.`;
 
   document.getElementById("story-container").innerHTML = `<p>${storyText}</p>`;
-  switchScreen("formulaire", "resultat");
+  showScreen("resultat");
 }
