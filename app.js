@@ -1,3 +1,4 @@
+// app.js corrigé automatiquement - 6 mai 2025
 // app.js restructuré - 6 mai 2025
 
 let initials = "GM";
