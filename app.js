@@ -1,9 +1,13 @@
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Au chargement, restaurer l'état de connexion si existant
-  if (localStorage.getItem("isLoggedIn") === "true") {
-    afficherUtilisateurConnecté();
-  } else {
-    afficherUtilisateurDéconnecté();
+  try {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      afficherUtilisateurConnecté();
+    } else {
+      afficherUtilisateurDéconnecté();
+    }
+  } catch (e) {
+    console.warn("Initialisation échouée :", e);
   }
 });
 
@@ -14,12 +18,11 @@ function showScreen(id) {
   document.getElementById(id).classList.add("active");
 }
 
-// Connexion simulée
 function loginUser() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
 
-  if (email && password) {
+  if (email && password && email.value.trim() && password.value.trim()) {
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
     showScreen("accueil");
@@ -29,21 +32,25 @@ function loginUser() {
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
   afficherUtilisateurDéconnecté();
-  document.getElementById("logout-modal").style.display = "none";
+  const modal = document.getElementById("logout-modal");
+  if (modal) modal.style.display = "none";
   showScreen("accueil");
 }
 
 function afficherUtilisateurConnecté() {
-  document.getElementById("user-icon").style.display = "inline-block";
-  document.getElementById("login-button").style.display = "none";
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  if (icon) icon.style.display = "inline-block";
+  if (loginBtn) loginBtn.style.display = "none";
 }
 
 function afficherUtilisateurDéconnecté() {
-  document.getElementById("user-icon").style.display = "none";
-  document.getElementById("login-button").style.display = "inline-block";
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  if (icon) icon.style.display = "none";
+  if (loginBtn) loginBtn.style.display = "inline-block";
 }
 
-// Génération d'histoire simple
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
