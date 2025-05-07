@@ -234,3 +234,8 @@ body {
 }
 
 #connexion:not(.active) { display: none; }
+
+
+#accueil:not(.active) #login-button {
+  display: none;
+}
