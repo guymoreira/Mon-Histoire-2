@@ -8,12 +8,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran d'accueil -->
+
+  <!-- Accueil -->
   <section id="accueil" class="screen active">
-    <h1>Mon Histoire</h1>
-    <button class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
-    <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
-    <div id="user-icon" style="display:none;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
+    <div id="accueil-content">
+      <h1>Mon Histoire</h1>
+      <button id="create-button" class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
+      <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
+      <div id="user-icon" style="display:none;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
+    </div>
     <div id="logout-modal" class="logout-modal" style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
       <p>Voulez-vous vous déconnecter ?</p>
       <button class="button" onclick="logoutUser()">Se déconnecter</button>
@@ -21,81 +24,81 @@
     </div>
   </section>
 
-  <!-- Écran de connexion -->
+  <!-- Connexion -->
   <section id="connexion" class="screen">
-    <h2>Connexion</h2>
-    <form onsubmit="event.preventDefault(); loginUser();">
-      <input type="email" id="email" placeholder="Adresse email" class="input-style" required>
-      <input type="password" id="password" placeholder="Mot de passe" class="input-style" required>
-      <button type="submit" class="button">Se connecter</button>
-      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
-    </form>
+    <div class="bloc-centre">
+      <h2>Connexion</h2>
+      <form onsubmit="event.preventDefault(); loginUser();">
+        <input type="email" id="email" placeholder="Adresse email" class="input-style" required>
+        <input type="password" id="password" placeholder="Mot de passe" class="input-style" required>
+        <div class="button-group">
+          <button type="submit" class="button">Se connecter</button>
+          <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+        </div>
+      </form>
+    </div>
   </section>
 
-  <!-- Écran de création d’histoire -->
+  <!-- Formulaire de création -->
   <section id="formulaire" class="screen">
-    <h2>Créer une Histoire</h2>
-    <form onsubmit="event.preventDefault(); genererHistoire();">
-      <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
-
-      <select id="personnage" class="input-style">
-        <option value="chevalier">Chevalier</option>
-        <option value="princesse">Princesse</option>
-        <option value="fée">Fée</option>
-        <option value="explorateur">Explorateur</option>
-      </select>
-
-      <select id="lieu" class="input-style">
-        <option value="forêt enchantée">Forêt enchantée</option>
-        <option value="château">Château</option>
-        <option value="plaine magique">Plaine magique</option>
-        <option value="volcan endormi">Volcan endormi</option>
-      </select>
-
-      <select id="objet" class="input-style">
-        <option value="baguette">Baguette</option>
-        <option value="épée">Épée</option>
-        <option value="livre magique">Livre magique</option>
-        <option value="amulette">Amulette</option>
-      </select>
-
-      <select id="compagnon" class="input-style">
-        <option value="dragon">Dragon</option>
-        <option value="licorne">Licorne</option>
-        <option value="chat parlant">Chat parlant</option>
-        <option value="">Aucun</option>
-      </select>
-
-      <select id="mission" class="input-style">
-        <option value="sauver un village">Sauver un village</option>
-        <option value="découvrir un trésor">Découvrir un trésor</option>
-        <option value="réparer la nature">Réparer la nature</option>
-        <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
-      </select>
-
-      <select id="style" class="input-style">
-        <option value="drôle">Drôle</option>
-        <option value="poétique">Poétique</option>
-        <option value="suspense">Suspense</option>
-        <option value="personnalisé">Personnalisé</option>
-      </select>
-
-      <select id="duree" class="input-style">
-        <option value="courte">Courte</option>
-        <option value="moyenne">Moyenne</option>
-        <option value="longue">Longue</option>
-      </select>
-
-      <button type="submit" class="button">Générer</button>
-      <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
-    </form>
+    <div class="bloc-centre">
+      <h2>Créer une Histoire</h2>
+      <form onsubmit="event.preventDefault(); genererHistoire();">
+        <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
+        <select id="personnage" class="input-style">
+          <option value="chevalier">Chevalier</option>
+          <option value="princesse">Princesse</option>
+          <option value="fée">Fée</option>
+          <option value="explorateur">Explorateur</option>
+        </select>
+        <select id="lieu" class="input-style">
+          <option value="forêt enchantée">Forêt enchantée</option>
+          <option value="château">Château</option>
+          <option value="plaine magique">Plaine magique</option>
+          <option value="volcan endormi">Volcan endormi</option>
+        </select>
+        <select id="objet" class="input-style">
+          <option value="baguette">Baguette</option>
+          <option value="épée">Épée</option>
+          <option value="livre magique">Livre magique</option>
+          <option value="amulette">Amulette</option>
+        </select>
+        <select id="compagnon" class="input-style">
+          <option value="dragon">Dragon</option>
+          <option value="licorne">Licorne</option>
+          <option value="chat parlant">Chat parlant</option>
+          <option value="">Aucun</option>
+        </select>
+        <select id="mission" class="input-style">
+          <option value="sauver un village">Sauver un village</option>
+          <option value="découvrir un trésor">Découvrir un trésor</option>
+          <option value="réparer la nature">Réparer la nature</option>
+          <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
+        </select>
+        <select id="style" class="input-style">
+          <option value="drôle">Drôle</option>
+          <option value="poétique">Poétique</option>
+          <option value="suspense">Suspense</option>
+          <option value="personnalisé">Personnalisé</option>
+        </select>
+        <select id="duree" class="input-style">
+          <option value="courte">Courte</option>
+          <option value="moyenne">Moyenne</option>
+          <option value="longue">Longue</option>
+        </select>
+        <button type="submit" class="button">Générer</button>
+        <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+      </form>
+    </div>
   </section>
 
-  <!-- Écran de résultat -->
+  <!-- Résultat -->
   <section id="resultat" class="screen">
-    <h2>Ton Histoire</h2>
-    <div id="histoire"></div>
-    <button class="button" onclick="showScreen('accueil')">Accueil</button>
+    <div class="bloc-centre">
+      <h2>Ton Histoire</h2>
+      <div id="histoire"></div>
+      <button class="button" onclick="showScreen('accueil')">Accueil</button>
+    </div>
   </section>
 
   <script src="app.js"></script>
