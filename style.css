@@ -160,3 +160,55 @@ body {
   background: url('illustration-formulaire.jpg') no-repeat center center fixed;
   background-size: cover;
 }
+
+/* 1. Pastille GM */
+#user-icon {
+  background-color: white;
+  color: #0a3d62;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  line-height: 48px;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Bloc modale déconnexion */
+#logout-modal.logout-modal {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  max-width: 300px;
+  margin: auto;
+}
+
+/* 3. Bouton Me connecter plus proche */
+#login-button {
+  margin-top: 1rem;
+}
+
+/* 4. Créer une histoire encore plus large */
+#create-button {
+  max-width: 340px;
+  width: 100%;
+}
+
+/* 5. Centrage vertical du bloc de connexion */
+#connexion.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Réduire la hauteur des champs sur mobile si besoin */
+@media screen and (max-width: 500px) {
+  .input-style {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+}
