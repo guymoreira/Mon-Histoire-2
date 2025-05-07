@@ -244,3 +244,16 @@ body {
 #connexion:not(.active) * {
   display: none !important;
 }
+
+
+.illustration-chapitre {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.illustration-chapitre img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
