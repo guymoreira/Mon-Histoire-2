@@ -246,14 +246,10 @@ body {
 }
 
 
-.illustration-chapitre {
-  text-align: center;
-  margin: 1rem 0;
-}
-
-.illustration-chapitre img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+.actions-resultat {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
 }
