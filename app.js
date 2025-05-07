@@ -225,3 +225,70 @@ function sendReset() {
   alert("Un lien de réinitialisation a été envoyé (simulation).");
   toggleReset(false);
 }
+
+
+// Confirmation avant sauvegarde
+function demanderSauvegarde() {
+  if (confirm("Souhaitez-vous sauvegarder cette histoire ?")) {
+    sauvegarderHistoire();
+  }
+}
+
+// Sauvegarde locale simulée avec limite à 10
+function sauvegarderHistoire() {
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+
+  if (histoires.length >= 10) {
+    afficherGestionSuppression();
+    return;
+  }
+
+  const contenu = document.getElementById("histoire").innerHTML;
+  const histoire = {
+    titre: "Histoire du " + new Date().toLocaleDateString(),
+    contenu: contenu,
+    date: new Date().toISOString()
+  };
+
+  histoires.push(histoire);
+  localStorage.setItem("histoires", JSON.stringify(histoires));
+  alert("Histoire sauvegardée !");
+}
+
+// Afficher une page temporaire pour supprimer des histoires
+function afficherGestionSuppression() {
+  const container = document.getElementById("liste-histoires");
+  container.innerHTML = "";
+
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+
+  histoires.forEach((histoire, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = \`
+      <label style="display:flex; align-items:center; gap:0.5rem;">
+        <input type="checkbox" value="\${index}">
+        <span>\${histoire.titre}</span>
+      </label>
+    \`;
+    container.appendChild(li);
+  });
+
+  const boutonSupp = document.createElement("button");
+  boutonSupp.className = "button";
+  boutonSupp.textContent = "Supprimer la sélection";
+  boutonSupp.onclick = supprimerHistoiresSelectionnees;
+
+  container.appendChild(boutonSupp);
+  showScreen("mes-histoires");
+}
+
+function supprimerHistoiresSelectionnees() {
+  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
+  const indicesASupprimer = Array.from(checkboxes).map(cb => parseInt(cb.value));
+  let histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+
+  histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
+  localStorage.setItem("histoires", JSON.stringify(histoires));
+  alert("Histoires supprimées. Vous pouvez réessayer de sauvegarder.");
+  showScreen("formulaire");
+}
