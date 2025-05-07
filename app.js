@@ -71,35 +71,37 @@ function genererHistoire() {
     <h3>Chapitre 1 : Le départ</h3>
     <p>${nom}, un jeune ${personnage}, vivait paisiblement dans une région proche de la ${lieu}.
     Un jour, une mission importante lui fut confiée : ${mission}.</p>
+    <div class="illustration-chapitre">
+      <img src="illustration-chevalier-chateau-chapitre-1.jpg" alt="Illustration chapitre 1">
+    </div>
 
     <h3>Chapitre 2 : L'objet magique</h3>
     <p>En explorant les environs, ${nom} découvrit une ${objet} brillante. Elle semblait dotée de pouvoirs mystérieux.</p>
+    <div class="illustration-chapitre">
+      <img src="illustration-chevalier-chateau-chapitre-2.jpg" alt="Illustration chapitre 2">
+    </div>
 
     <h3>Chapitre 3 : La rencontre</h3>
     <p>Sur son chemin, ${nom} rencontra un(e) ${compagnon}. Ensemble, ils se mirent en route avec courage et détermination.</p>
+    <div class="illustration-chapitre">
+      <img src="illustration-chevalier-chateau-chapitre-3.jpg" alt="Illustration chapitre 3">
+    </div>
 
     <h3>Chapitre 4 : L'aventure</h3>
     <p>L’histoire se déroula dans un style ${style}, avec des rebondissements captivants et une durée ${duree}.</p>
+    <div class="illustration-chapitre">
+      <img src="illustration-chevalier-chateau-chapitre-4.jpg" alt="Illustration chapitre 4">
+    </div>
 
     <h3>Chapitre 5 : La réussite</h3>
     <p>Grâce à sa bravoure, ${nom} réussit à ${mission.toLowerCase()} et revint triomphant dans son village.</p>
+    <div class="illustration-chapitre">
+      <img src="illustration-chevalier-chateau-chapitre-5.jpg" alt="Illustration chapitre 5">
+    </div>
   `;
 
   document.getElementById("histoire").innerHTML = texte;
   showScreen("resultat");
-}
-
-
-function toggleSignup(show) {
-  const loginFields = document.getElementById("login-fields");
-  const signupForm = document.getElementById("signup-form");
-  if (show) {
-    loginFields.style.display = "none";
-    signupForm.style.display = "block";
-  } else {
-    loginFields.style.display = "block";
-    signupForm.style.display = "none";
-  }
 }
 
 function registerUser() {
