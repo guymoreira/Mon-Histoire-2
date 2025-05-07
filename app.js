@@ -264,9 +264,9 @@ function afficherGestionSuppression() {
 
   histoires.forEach((histoire, index) => {
     const li = document.createElement("li");
-    li.innerHTML = \`
+    li.innerHTML = `
       <label style="display:flex; align-items:center; gap:0.5rem;">
-        <input type="checkbox" value="\${index}">
+        <input type="checkbox" value="${index}">
         <span>\${histoire.titre}</span>
       </label>
     \`;
