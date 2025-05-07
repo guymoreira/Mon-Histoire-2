@@ -248,3 +248,13 @@ body {
 .bloc-centre {
   overflow: hidden;
 }
+
+.bloc-centre {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.illustration-chapitre img {
+  margin: 0 auto;
+  display: block;
+}
