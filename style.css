@@ -235,8 +235,12 @@ body {
 
 #connexion:not(.active) { display: none; }
 
-
 /* Masquer toute section non active */
 .screen:not(.active) {
+  display: none !important;
+}
+
+/* Masquer tous les éléments de #connexion si elle n'est pas active */
+#connexion:not(.active) * {
   display: none !important;
 }
