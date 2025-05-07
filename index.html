@@ -122,7 +122,6 @@
 <h2>Ton Histoire</h2>
 <div id="histoire"></div>
 <button class="button" onclick="showScreen('accueil')">Accueil</button>
-
 <div class="actions-resultat">
 <button class="button" onclick="showScreen('formulaire')">Retour</button>
 <button class="button" onclick="showScreen('accueil')">Accueil</button>
@@ -137,6 +136,17 @@
 <section class="screen" id="mes-histoires">
 <div class="bloc-centre">
 <h2>Mes Histoires</h2>
+<!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
+<div class="actions-suppression" style="display:none;" id="barre-suppression">
+  <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
+  <img src="croix-rouge.png" alt="Annuler sélection" id="btn-annuler-selection">
+</div>
+<!-- Case tout sélectionner -->
+<label style="margin-bottom: 1rem; display: block;">
+  <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
+  Tout sélectionner
+</label>
+
 <ul id="liste-histoires" style="list-style: none; padding: 0;">
 <li><button class="button" onclick="afficherHistoireParDefaut()">L'aventure du dragon</button></li>
 <li><button class="button" onclick="afficherHistoireParDefaut()">La licorne et le volcan</button></li>
