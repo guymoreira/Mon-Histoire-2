@@ -42,16 +42,7 @@
        <br><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
      </p>
     </form>
-    <form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
-      <input type="text" id="prenom" placeholder="Prénom" class="input-style" required>
-      <input type="email" id="signup-email" placeholder="Adresse email" class="input-style" required>
-      <input type="password" id="signup-password" placeholder="Mot de passe" class="input-style" required>
-      <input type="password" id="signup-confirm" placeholder="Confirmer le mot de passe" class="input-style" required>
-      <div class="button-group">
-        <button type="submit" class="button">Valider</button>
-        <button type="button" class="button" onclick="toggleSignup(false)">Annuler</button>
-      </div>
-    </form>
+    
     </div>
   </section>
 
@@ -110,7 +101,22 @@
        <br><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
      </p>
     </form>
-    <form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
+
+<form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
+  <div class="bloc-centre">
+    <h2>Créer un compte</h2>
+    <input type="text" id="prenom" placeholder="Prénom" class="input-style" required>
+    <input type="email" id="signup-email" placeholder="Adresse email" class="input-style" required>
+    <input type="password" id="signup-password" placeholder="Mot de passe" class="input-style" required>
+    <input type="password" id="signup-confirm" placeholder="Confirmer le mot de passe" class="input-style" required>
+    <div class="button-group">
+      <button type="submit" class="button">Valider</button>
+      <button type="button" class="button" onclick="toggleSignup(false)">Annuler</button>
+    </div>
+  </div>
+</form>
+
+<form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
       <input type="text" id="prenom" placeholder="Prénom" class="input-style" required>
       <input type="email" id="signup-email" placeholder="Adresse email" class="input-style" required>
       <input type="password" id="signup-password" placeholder="Mot de passe" class="input-style" required>
