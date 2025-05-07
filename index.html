@@ -15,6 +15,7 @@
       <h1>Mon Histoire</h1>
       <button id="create-button" class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
       <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
+    <button id="my-stories-button" class="button" style="display:none;" onclick="showScreen('mes-histoires')">Mes Histoires</button>
       <div id="user-icon" style="display:none;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
     </div>
     <div id="logout-modal" class="logout-modal" style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
@@ -28,14 +29,29 @@
   <section id="connexion" class="screen">
     <div class="bloc-centre">
       <h2>Connexion</h2>
-      <form onsubmit="event.preventDefault(); loginUser();">
+      <form onsubmit="event.preventDefault(); loginUser();"><div id="login-fields">
         <input type="email" id="email" placeholder="Adresse email" class="input-style" required>
         <input type="password" id="password" placeholder="Mot de passe" class="input-style" required>
         <div class="button-group">
           <button type="submit" class="button">Se connecter</button>
           <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
         </div>
-      </form>
+      </div>
+      <p style="text-align:center;">
+       <button type="button" class="button small" onclick="toggleSignup(true)">Créer un compte</button>
+       <br><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+     </p>
+    </form>
+    <form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
+      <input type="text" id="prenom" placeholder="Prénom" class="input-style" required>
+      <input type="email" id="signup-email" placeholder="Adresse email" class="input-style" required>
+      <input type="password" id="signup-password" placeholder="Mot de passe" class="input-style" required>
+      <input type="password" id="signup-confirm" placeholder="Confirmer le mot de passe" class="input-style" required>
+      <div class="button-group">
+        <button type="submit" class="button">Valider</button>
+        <button type="button" class="button" onclick="toggleSignup(false)">Annuler</button>
+      </div>
+    </form>
     </div>
   </section>
 
@@ -88,7 +104,22 @@
         </select>
         <button type="submit" class="button">Générer</button>
         <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
-      </form>
+      </div>
+      <p style="text-align:center;">
+       <button type="button" class="button small" onclick="toggleSignup(true)">Créer un compte</button>
+       <br><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+     </p>
+    </form>
+    <form id="signup-form" style="display:none;" onsubmit="event.preventDefault(); registerUser();">
+      <input type="text" id="prenom" placeholder="Prénom" class="input-style" required>
+      <input type="email" id="signup-email" placeholder="Adresse email" class="input-style" required>
+      <input type="password" id="signup-password" placeholder="Mot de passe" class="input-style" required>
+      <input type="password" id="signup-confirm" placeholder="Confirmer le mot de passe" class="input-style" required>
+      <div class="button-group">
+        <button type="submit" class="button">Valider</button>
+        <button type="button" class="button" onclick="toggleSignup(false)">Annuler</button>
+      </div>
+    </form>
     </div>
   </section>
 
@@ -104,3 +135,34 @@
   <script src="app.js"></script>
 </body>
 </html>
+
+<form id="reset-form" style="display:none;" onsubmit="event.preventDefault(); sendReset();">
+  <div class="bloc-centre">
+    <h2>Réinitialisation</h2>
+    <input type="email" id="reset-email" placeholder="Votre adresse email" class="input-style" required>
+    <div class="button-group">
+      <button type="submit" class="button">Envoyer</button>
+      <button type="button" class="button" onclick="toggleReset(false)">Annuler</button>
+    </div>
+  </div>
+</form>
+
+<!-- Mes Histoires -->
+<section id="mes-histoires" class="screen">
+  <div class="bloc-centre">
+    <h2>Mes Histoires</h2>
+    <ul id="liste-histoires" style="list-style: none; padding: 0;">
+      <li><button class="button" onclick="afficherHistoireParDefaut()">L'aventure du dragon</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">La licorne et le volcan</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">Le château oublié</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">L’épée magique</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">La forêt enchantée</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">Le mystère de la plaine</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">La mission royale</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">L’amulette perdue</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">Le compagnon invisible</button></li>
+      <li><button class="button" onclick="afficherHistoireParDefaut()">La grotte de lumière</button></li>
+    </ul>
+    <button class="button" onclick="showScreen('accueil')">Accueil</button>
+  </div>
+</section>
