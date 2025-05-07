@@ -88,3 +88,97 @@ function genererHistoire() {
   document.getElementById("histoire").innerHTML = texte;
   showScreen("resultat");
 }
+
+
+function toggleSignup(show) {
+  const loginFields = document.getElementById("login-fields");
+  const signupForm = document.getElementById("signup-form");
+  if (show) {
+    loginFields.style.display = "none";
+    signupForm.style.display = "block";
+  } else {
+    loginFields.style.display = "block";
+    signupForm.style.display = "none";
+  }
+}
+
+function registerUser() {
+  const prenom = document.getElementById("prenom").value.trim();
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  const confirm = document.getElementById("signup-confirm").value;
+
+  if (!prenom || !email || !password || !confirm) {
+    alert("Merci de remplir tous les champs.");
+    return;
+  }
+  if (password !== confirm) {
+    alert("Les mots de passe ne correspondent pas.");
+    return;
+  }
+
+  alert("Compte créé avec succès ! (fonctionnalité simulée)");
+  toggleSignup(false);
+}
+
+
+function toggleReset(show) {
+  const loginFields = document.getElementById("login-fields");
+  const signupForm = document.getElementById("signup-form");
+  const resetForm = document.getElementById("reset-form");
+  if (show) {
+    loginFields.style.display = "none";
+    signupForm.style.display = "none";
+    resetForm.style.display = "block";
+  } else {
+    loginFields.style.display = "block";
+    resetForm.style.display = "none";
+  }
+}
+
+function sendReset() {
+  const email = document.getElementById("reset-email").value.trim();
+  if (!email) {
+    alert("Veuillez saisir votre adresse email.");
+    return;
+  }
+
+  alert("Un lien de réinitialisation a été envoyé (simulation).");
+  toggleReset(false);
+}
+
+
+function afficherHistoireParDefaut() {
+  document.getElementById("histoire").innerHTML = `
+    <h3>Chapitre 1 : Le départ</h3>
+    <p>Un jeune héros vivait paisiblement dans une région magique.</p>
+    <h3>Chapitre 2 : La découverte</h3>
+    <p>Il découvrit un objet mystérieux au cœur d'une forêt enchantée.</p>
+    <h3>Chapitre 3 : La rencontre</h3>
+    <p>Un compagnon fabuleux l'accompagna dans sa quête pleine de surprises.</p>
+    <h3>Chapitre 4 : L'aventure</h3>
+    <p>Des épreuves, du courage, et une aventure inoubliable l’attendaient.</p>
+    <h3>Chapitre 5 : La réussite</h3>
+    <p>Grâce à sa bravoure, il accomplit sa mission et rentra triomphant.</p>
+  `;
+  showScreen("resultat");
+}
+
+// Modifier afficherUtilisateurConnecté pour aussi afficher le bouton "Mes Histoires"
+function afficherUtilisateurConnecté() {
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  const storiesBtn = document.getElementById("my-stories-button");
+  if (icon) icon.style.display = "inline-block";
+  if (loginBtn) loginBtn.style.display = "none";
+  if (storiesBtn) storiesBtn.style.display = "inline-block";
+}
+
+function afficherUtilisateurDéconnecté() {
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  const storiesBtn = document.getElementById("my-stories-button");
+  if (icon) icon.style.display = "none";
+  if (loginBtn) loginBtn.style.display = "inline-block";
+  if (storiesBtn) storiesBtn.style.display = "none";
+}
