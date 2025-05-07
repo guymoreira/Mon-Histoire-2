@@ -292,3 +292,49 @@ function supprimerHistoiresSelectionnees() {
   alert("Histoires supprimées. Vous pouvez réessayer de sauvegarder.");
   showScreen("formulaire");
 }
+
+// Affiche ou masque la corbeille et la croix rouge en fonction de la sélection
+function mettreAJourBarreSuppression() {
+  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
+  const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
+  document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
+}
+
+// Cocher/Décocher toutes les histoires
+function toutSelectionner(source) {
+  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = source.checked);
+  mettreAJourBarreSuppression();
+}
+
+// Réinitialise la sélection en quittant la page
+function reinitialiserSelectionHistoires() {
+  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = false);
+  const selectAll = document.getElementById('tout-selectionner');
+  if (selectAll) selectAll.checked = false;
+  mettreAJourBarreSuppression();
+}
+
+// Quand on quitte la page des histoires
+function showScreen(nouvelEcran) {
+  const anciens = document.querySelectorAll('.screen.active');
+  anciens.forEach(section => section.classList.remove('active'));
+
+  const cible = document.getElementById(nouvelEcran);
+  if (cible) {
+    cible.classList.add('active');
+
+    // réinitialiser sélection si on quitte la page des histoires
+    if (nouvelEcran !== 'mes-histoires') {
+      reinitialiserSelectionHistoires();
+    }
+  }
+}
+
+// Réagir quand on clique sur une case histoire
+document.addEventListener("change", function (e) {
+  if (e.target.matches('#liste-histoires input[type="checkbox"]')) {
+    mettreAJourBarreSuppression();
+  }
+});
