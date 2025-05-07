@@ -267,9 +267,9 @@ function afficherGestionSuppression() {
     li.innerHTML = `
       <label style="display:flex; align-items:center; gap:0.5rem;">
         <input type="checkbox" value="${index}">
-        <span>\${histoire.titre}</span>
+        <span>${histoire.titre}</span>
       </label>
-    \`;
+    `;
     container.appendChild(li);
   });
 
