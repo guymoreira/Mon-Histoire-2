@@ -227,3 +227,8 @@ body {
   margin-top: 1rem;
   animation: fadein 0.3s ease;
 }
+
+#signup-form, #reset-form {
+  margin-top: 2rem;
+  animation: fadein 0.3s ease;
+}

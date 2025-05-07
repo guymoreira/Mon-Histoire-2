@@ -182,3 +182,44 @@ function afficherUtilisateurDéconnecté() {
   if (loginBtn) loginBtn.style.display = "inline-block";
   if (storiesBtn) storiesBtn.style.display = "none";
 }
+
+
+function toggleSignup(show) {
+  document.getElementById("signup-form").style.display = show ? "block" : "none";
+  document.getElementById("reset-form").style.display = "none";
+}
+
+function toggleReset(show) {
+  document.getElementById("reset-form").style.display = show ? "block" : "none";
+  document.getElementById("signup-form").style.display = "none";
+}
+
+function registerUser() {
+  const prenom = document.getElementById("prenom").value.trim();
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  const confirm = document.getElementById("signup-confirm").value;
+
+  if (!prenom || !email || !password || !confirm) {
+    alert("Merci de remplir tous les champs.");
+    return;
+  }
+  if (password !== confirm) {
+    alert("Les mots de passe ne correspondent pas.");
+    return;
+  }
+
+  alert("Compte créé avec succès ! (simulation)");
+  toggleSignup(false);
+}
+
+function sendReset() {
+  const email = document.getElementById("reset-email").value.trim();
+  if (!email) {
+    alert("Veuillez saisir votre adresse email.");
+    return;
+  }
+
+  alert("Un lien de réinitialisation a été envoyé (simulation).");
+  toggleReset(false);
+}
