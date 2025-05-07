@@ -236,6 +236,7 @@ body {
 #connexion:not(.active) { display: none; }
 
 
-#accueil:not(.active) #login-button {
-  display: none;
+/* Masquer toute section non active */
+.screen:not(.active) {
+  display: none !important;
 }
