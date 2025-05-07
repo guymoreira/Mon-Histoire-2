@@ -245,11 +245,6 @@ body {
   display: none !important;
 }
 
-
-.actions-resultat {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
+.bloc-centre {
+  overflow: hidden;
 }
