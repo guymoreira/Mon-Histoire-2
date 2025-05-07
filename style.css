@@ -258,3 +258,83 @@ body {
   margin: 0 auto;
   display: block;
 }
+
+/* === Responsive mobile === */
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* === Transitions fondues === */
+.screen {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* === Boutons histoires uniformes === */
+#liste-histoires button {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: left;
+  padding-right: 3rem;
+  position: relative;
+}
+
+#liste-histoires input[type="checkbox"] {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  scale: 1.5;
+}
+
+/* === Corbeille & croix en haut === */
+.actions-suppression {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.actions-suppression img {
+  width: 32px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* === Boutons page résultat === */
+.actions-resultat {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.actions-resultat + .button {
+  display: block;
+  margin: 1rem auto 0;
+}
