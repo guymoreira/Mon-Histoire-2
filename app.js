@@ -275,7 +275,7 @@ function afficherGestionSuppression() {
 
   const boutonSupp = document.createElement("button");
   boutonSupp.className = "button";
-  boutonSupp.textContent = "Supprimer la sélection";
+  boutonSupp.textContent = "";
   boutonSupp.onclick = supprimerHistoiresSelectionnees;
 
   container.appendChild(boutonSupp);
