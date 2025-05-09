@@ -229,7 +229,10 @@ function sendReset() {
 
 // Confirmation avant sauvegarde
 function demanderSauvegarde() {
-  if (confirm("Souhaitez-vous sauvegarder cette histoire ?")) {
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  if (histoires.length >= 5) {
+    document.getElementById("modal-limite").style.display = "block";
+  } else {
     sauvegarderHistoire();
   }
 }
@@ -338,3 +341,22 @@ document.addEventListener("change", function (e) {
     mettreAJourBarreSuppression();
   }
 });
+
+function fermerModaleLimite() {
+  document.getElementById("modal-limite").style.display = "none";
+}
+
+function validerModaleLimite() {
+  document.getElementById("modal-limite").style.display = "none";
+  showScreen("mes-histoires");
+}
+
+function retourDepuisMesHistoires() {
+  if (previousScreen === "resultat") {
+    showScreen("resultat");
+  } else {
+    showScreen("accueil");
+  }
+}
+
+
