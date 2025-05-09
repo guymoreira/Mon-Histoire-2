@@ -1,164 +1,83 @@
 
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Mon Histoire</title>
-<link href="style.css" rel="stylesheet"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon Histoire</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<!-- Accueil -->
-<section class="screen active" id="accueil">
-<div id="accueil-content">
-<h1>Mon Histoire</h1>
-<button class="button" id="create-button" onclick="showScreen('formulaire')">Créer une histoire</button>
-<button class="button" id="login-button" onclick="showScreen('connexion')">Me connecter</button>
-<button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">Mes Histoires</button>
-<div id="user-icon" onclick="document.getElementById('logout-modal').style.display = 'block'" style="display:none;">GM</div>
-</div>
-<div class="logout-modal" id="logout-modal" style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
-<p>Voulez-vous vous déconnecter ?</p>
-<button class="button" onclick="logoutUser()">Se déconnecter</button>
-<button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
-</div>
-</section>
-<!-- Connexion -->
-<section class="screen" id="connexion">
-<div class="bloc-centre">
-<h2>Connexion</h2>
-<form onsubmit="event.preventDefault(); loginUser();"><div id="login-fields">
-<input class="input-style" id="email" placeholder="Adresse email" required="" type="email"/>
-<input class="input-style" id="password" placeholder="Mot de passe" required="" type="password"/>
-<div class="button-group">
-<button class="button" type="submit">Se connecter</button>
-<button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
-</div>
-</div>
-<p style="text-align:center;">
-<button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
-<br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
-</p>
-</form>
-<div class="bloc-centre" id="signup-form" style="display:none;">
-<h2>Créer un compte</h2>
-<input class="input-style" id="prenom" placeholder="Prénom" required="" type="text"/>
-<input class="input-style" id="signup-email" placeholder="Adresse email" required="" type="email"/>
-<input class="input-style" id="signup-password" placeholder="Mot de passe" required="" type="password"/>
-<input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required="" type="password"/>
-<div class="button-group">
-<button class="button" onclick="registerUser()">Valider</button>
-<button class="button" onclick="toggleSignup(false)">Annuler</button>
-</div>
-</div>
-<div class="bloc-centre" id="reset-form" style="display:none;">
-<h2>Réinitialisation</h2>
-<input class="input-style" id="reset-email" placeholder="Votre adresse email" required="" type="email"/>
-<div class="button-group">
-<button class="button" onclick="sendReset()">Envoyer</button>
-<button class="button" onclick="toggleReset(false)">Annuler</button>
-</div>
-</div>
-</div>
-</section>
-<!-- Formulaire de création -->
-<section class="screen" id="formulaire">
-<div class="bloc-centre">
-<h2>Créer une Histoire</h2>
-<form onsubmit="event.preventDefault(); genererHistoire();">
-<input class="input-style" id="nom" placeholder="Nom du héros" required="" type="text"/>
-<select class="input-style" id="personnage">
-<option value="chevalier">Chevalier</option>
-<option value="princesse">Princesse</option>
-<option value="fée">Fée</option>
-<option value="explorateur">Explorateur</option>
-</select>
-<select class="input-style" id="lieu">
-<option value="forêt enchantée">Forêt enchantée</option>
-<option value="château">Château</option>
-<option value="plaine magique">Plaine magique</option>
-<option value="volcan endormi">Volcan endormi</option>
-</select>
-<select class="input-style" id="objet">
-<option value="baguette">Baguette</option>
-<option value="épée">Épée</option>
-<option value="livre magique">Livre magique</option>
-<option value="amulette">Amulette</option>
-</select>
-<select class="input-style" id="compagnon">
-<option value="dragon">Dragon</option>
-<option value="licorne">Licorne</option>
-<option value="chat parlant">Chat parlant</option>
-<option value="">Aucun</option>
-</select>
-<select class="input-style" id="mission">
-<option value="sauver un village">Sauver un village</option>
-<option value="découvrir un trésor">Découvrir un trésor</option>
-<option value="réparer la nature">Réparer la nature</option>
-<option value="retrouver un ami perdu">Retrouver un ami perdu</option>
-</select>
-<select class="input-style" id="style">
-<option value="drôle">Drôle</option>
-<option value="poétique">Poétique</option>
-<option value="suspense">Suspense</option>
-<option value="personnalisé">Personnalisé</option>
-</select>
-<select class="input-style" id="duree">
-<option value="courte">Courte</option>
-<option value="moyenne">Moyenne</option>
-<option value="longue">Longue</option>
-</select>
-<button class="button" type="submit">Générer</button>
-<button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
-</form></div>
-<p style="text-align:center;">
-<br/>
-</p>
-</section>
-<!-- Résultat -->
-<section class="screen" id="resultat">
-<div class="bloc-centre">
-<h2>Ton Histoire</h2>
-<div id="histoire"></div>
-<button class="button" onclick="showScreen('accueil')">Accueil</button>
-<div class="actions-resultat">
-<button class="button" onclick="showScreen('formulaire')">Retour</button>
-<button class="button" onclick="showScreen('accueil')">Accueil</button>
-<button class="button" onclick="demanderSauvegarde()">Sauvegarder</button>
-</div>
-</div>
-</section>
-<script src="app.js"></script>
+  <section id="accueil" class="screen active">
+    <h1>Mon Histoire</h1>
+    <button class="button" onclick="showScreen('formulaire')">Créer une histoire</button>
+    <button id="login-button" class="button" onclick="showScreen('connexion')">Me connecter</button>
+    <button id="my-stories-button" class="button" style="display:none;" onclick="showScreen('mes-histoires')">Mes Histoires</button>
+    <div id="user-icon" style="display:none;" onclick="document.getElementById('logout-modal').style.display = 'block'">GM</div>
+    <div id="logout-modal" class="logout-modal" style="display:none;">
+      <p>Voulez-vous vous déconnecter ?</p>
+      <button class="button" onclick="logoutUser()">Se déconnecter</button>
+      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
+    </div>
+  </section>
+
+  <section id="formulaire" class="screen">
+    <div class="bloc-centre">
+      <h2>Créer une Histoire</h2>
+      <form onsubmit="event.preventDefault(); genererHistoire();">
+        <input type="text" id="nom" placeholder="Nom du héros" class="input-style" required>
+        <select id="personnage" class="input-style">
+          <option value="princesse">Princesse</option>
+          <option value="chevalier">Chevalier</option>
+        </select>
+        <select id="lieu" class="input-style">
+          <option value="forêt enchantée">Forêt enchantée</option>
+        </select>
+        <select id="objet" class="input-style">
+          <option value="baguette">Baguette</option>
+        </select>
+        <select id="compagnon" class="input-style">
+          <option value="licorne">Licorne</option>
+        </select>
+        <select id="mission" class="input-style">
+          <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
+        </select>
+        <select id="style" class="input-style">
+          <option value="poétique">Poétique</option>
+        </select>
+        <select id="duree" class="input-style">
+          <option value="moyenne">Moyenne</option>
+        </select>
+        <button type="submit" class="button">Générer</button>
+        <button type="button" class="button" onclick="showScreen('accueil')">Annuler</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="resultat" class="screen">
+    <div class="bloc-centre">
+      <h2>Ton Histoire</h2>
+      <div id="histoire"></div>
+      <div class="actions-resultat">
+        <button class="button" onclick="showScreen('accueil')">Accueil</button>
+        <button class="button" onclick="showScreen('mes-histoires')">Retour</button>
+      </div>
+      <button class="button" onclick="demanderSauvegarde()">Sauvegarder</button>
+    </div>
+  </section>
+
+  <section id="mes-histoires" class="screen">
+    <div class="bloc-centre">
+      <h2>Mes Histoires</h2>
+      <div class="actions-suppression" style="display:none;" id="barre-suppression">
+        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
+        <img src="croix-rouge.png" alt="Annuler sélection" id="btn-annuler-selection">
+      </div>
+      <label><input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)"> Tout sélectionner</label>
+      <ul id="liste-histoires" style="list-style:none; padding:0;"></ul>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
 </body>
 </html>
-<!-- Mes Histoires -->
-<section class="screen" id="mes-histoires">
-<div class="bloc-centre">
-<h2>Mes Histoires</h2>
-<!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
-<div class="actions-suppression" style="display:none;" id="barre-suppression">
-  <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
-  <img src="croix-rouge.png" alt="Annuler sélection" id="btn-annuler-selection">
-</div>
-<!-- Case tout sélectionner -->
-<label style="margin-bottom: 1rem; display: block;">
-  <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
-  Tout sélectionner
-</label>
-
-<ul id="liste-histoires" style="list-style: none; padding: 0;">
-<li><button class="button" onclick="afficherHistoireParDefaut()">L'aventure du dragon</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">La licorne et le volcan</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">Le château oublié</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">L’épée magique</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">La forêt enchantée</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">Le mystère de la plaine</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">La mission royale</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">L’amulette perdue</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">Le compagnon invisible</button></li>
-<li><button class="button" onclick="afficherHistoireParDefaut()">La grotte de lumière</button></li>
-</ul>
-<button class="button" onclick="showScreen('accueil')">Accueil</button>
-</div>
-</section>
