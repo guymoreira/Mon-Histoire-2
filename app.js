@@ -29,6 +29,10 @@ function loginUser() {
   const password = document.getElementById("password");
 
   if (email && password && email.value.trim() && password.value.trim()) {
+
+    // Réinitialiser les histoires à chaque nouvelle connexion
+    localStorage.removeItem("histoires");
+
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
     showScreen("accueil");
