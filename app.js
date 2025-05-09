@@ -29,40 +29,74 @@ function loginUser() {
   const password = document.getElementById("password");
 
   if (email && password && email.value.trim() && password.value.trim()) {
-
-    // RÃ©initialiser les histoires Ã  chaque nouvelle connexion
-    localStorage.removeItem("histoires");
-
     localStorage.setItem("isLoggedIn", "true");
-    afficherUtilisateurConnectÃ©();
+    afficherUtilisateurConnecté();
     showScreen("accueil");
   }
 }
 
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
-  afficherUtilisateurDÃ©connectÃ©();
-  const modal = document.getElementById("logout-modal");
-  if (modal) modal.style.display = "none";
+  afficherUtilisateurConnecté();
   showScreen("accueil");
 }
 
-function afficherUtilisateurConnectÃ©() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  if (icon) icon.style.display = "inline-block";
-  if (loginBtn) loginBtn.style.display = "none";
+function afficherUtilisateurConnecté() {
+  const userIcon = document.getElementById("user-icon");
+  const loginButton = document.getElementById("login-button");
+  const myStoriesButton = document.getElementById("my-stories-button");
+
+  const connected = localStorage.getItem("isLoggedIn") === "true";
+  userIcon.style.display = connected ? "inline-block" : "none";
+  loginButton.style.display = connected ? "none" : "inline-block";
+  myStoriesButton.style.display = connected ? "inline-block" : "none";
 }
 
-function afficherUtilisateurDÃ©connectÃ©() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  if (icon) icon.style.display = "none";
-  if (loginBtn) loginBtn.style.display = "inline-block";
+function toggleCreateAccount() {
+  document.getElementById("signup-form").style.display = "block";
+  document.getElementById("login-form").style.display = "none";
+}
+
+function createAccount() {
+  const name = document.getElementById("signup-name").value;
+  const email = document.getElementById("signup-email").value;
+
+  if (name && email) {
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("isLoggedIn", "true");
+    afficherUtilisateurConnecté();
+    showScreen("accueil");
+  }
+}
+
+function resetPassword() {
+  const modal = document.getElementById("reset-modal");
+  modal.style.display = "block";
+}
+
+function confirmReset() {
+  document.getElementById("reset-modal").style.display = "none";
+  alert("Un lien de réinitialisation a été envoyé à votre adresse e-mail.");
+}
+
+function cancelReset() {
+  document.getElementById("reset-modal").style.display = "none";
+}
+
+let previousScreen = "accueil";
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  const cible = document.getElementById(id);
+  if (cible) cible.classList.add("active");
+  if (id !== "mes-histoires") previousScreen = id;
+  if (id === "mes-histoires") afficherHistoiresSauvegardees();
+  if (id !== "mes-histoires") reinitialiserSelectionHistoires();
 }
 
 function genererHistoire() {
-  const nom = document.getElementById("nom").value.trim();
+  const nom = document.getElementById("nom").value;
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
   const objet = document.getElementById("objet").value;
@@ -72,166 +106,21 @@ function genererHistoire() {
   const duree = document.getElementById("duree").value;
 
   const texte = `
-    <h3>Chapitre 1 : Le dÃ©part</h3>
-    <p>${nom}, un jeune ${personnage}, vivait paisiblement dans une rÃ©gion proche de la ${lieu}.
-    Un jour, une mission importante lui fut confiÃ©e : ${mission}.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-1.jpg" alt="Illustration chapitre 1">
-    </div>
-
-    <h3>Chapitre 2 : L'objet magique</h3>
-    <p>En explorant les environs, ${nom} dÃ©couvrit une ${objet} brillante. Elle semblait dotÃ©e de pouvoirs mystÃ©rieux.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-2.jpg" alt="Illustration chapitre 2">
-    </div>
-
-    <h3>Chapitre 3 : La rencontre</h3>
-    <p>Sur son chemin, ${nom} rencontra un(e) ${compagnon}. Ensemble, ils se mirent en route avec courage et dÃ©termination.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-3.jpg" alt="Illustration chapitre 3">
-    </div>
-
-    <h3>Chapitre 4 : L'aventure</h3>
-    <p>Lâ€™histoire se dÃ©roula dans un style ${style}, avec des rebondissements captivants et une durÃ©e ${duree}.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-4.jpg" alt="Illustration chapitre 4">
-    </div>
-
-    <h3>Chapitre 5 : La rÃ©ussite</h3>
-    <p>GrÃ¢ce Ã  sa bravoure, ${nom} rÃ©ussit Ã  ${mission.toLowerCase()} et revint triomphant dans son village.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-5.jpg" alt="Illustration chapitre 5">
-    </div>
+    <h3>Chapitre 1</h3>
+    <p>${nom}, un(e) ${personnage}, vivait dans un(e) ${lieu} magique. Sa mission : ${mission}.</p>
+    <div class="illustration-chapitre"><img src="illustration-chapitre-1.jpg" alt="Chapitre 1"></div>
+    <h3>Chapitre 2</h3>
+    <p>Il trouva une ${objet} et fit équipe avec un(e) ${compagnon}.</p>
+    <div class="illustration-chapitre"><img src="illustration-chapitre-2.jpg" alt="Chapitre 2"></div>
+    <h3>Chapitre 3</h3>
+    <p>Ils vécurent ensemble une aventure pleine de ${style} pendant une durée ${duree}.</p>
+    <div class="illustration-chapitre"><img src="illustration-chapitre-3.jpg" alt="Chapitre 3"></div>
   `;
 
   document.getElementById("histoire").innerHTML = texte;
   showScreen("resultat");
 }
 
-function registerUser() {
-  const prenom = document.getElementById("prenom").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const confirm = document.getElementById("signup-confirm").value;
-
-  if (!prenom || !email || !password || !confirm) {
-    alert("Merci de remplir tous les champs.");
-    return;
-  }
-  if (password !== confirm) {
-    alert("Les mots de passe ne correspondent pas.");
-    return;
-  }
-
-  alert("Compte crÃ©Ã© avec succÃ¨s ! (fonctionnalitÃ© simulÃ©e)");
-  toggleSignup(false);
-}
-
-
-function toggleReset(show) {
-  const loginFields = document.getElementById("login-fields");
-  const signupForm = document.getElementById("signup-form");
-  const resetForm = document.getElementById("reset-form");
-  if (show) {
-    loginFields.style.display = "none";
-    signupForm.style.display = "none";
-    resetForm.style.display = "block";
-  } else {
-    loginFields.style.display = "block";
-    resetForm.style.display = "none";
-  }
-}
-
-function sendReset() {
-  const email = document.getElementById("reset-email").value.trim();
-  if (!email) {
-    alert("Veuillez saisir votre adresse email.");
-    return;
-  }
-
-  alert("Un lien de rÃ©initialisation a Ã©tÃ© envoyÃ© (simulation).");
-  toggleReset(false);
-}
-
-
-function afficherHistoireParDefaut() {
-  document.getElementById("histoire").innerHTML = `
-    <h3>Chapitre 1 : Le dÃ©part</h3>
-    <p>Un jeune hÃ©ros vivait paisiblement dans une rÃ©gion magique.</p>
-    <h3>Chapitre 2 : La dÃ©couverte</h3>
-    <p>Il dÃ©couvrit un objet mystÃ©rieux au cÅ“ur d'une forÃªt enchantÃ©e.</p>
-    <h3>Chapitre 3 : La rencontre</h3>
-    <p>Un compagnon fabuleux l'accompagna dans sa quÃªte pleine de surprises.</p>
-    <h3>Chapitre 4 : L'aventure</h3>
-    <p>Des Ã©preuves, du courage, et une aventure inoubliable lâ€™attendaient.</p>
-    <h3>Chapitre 5 : La rÃ©ussite</h3>
-    <p>GrÃ¢ce Ã  sa bravoure, il accomplit sa mission et rentra triomphant.</p>
-  `;
-  showScreen("resultat");
-}
-
-// Modifier afficherUtilisateurConnectÃ© pour aussi afficher le bouton "Mes Histoires"
-function afficherUtilisateurConnectÃ©() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  const storiesBtn = document.getElementById("my-stories-button");
-  if (icon) icon.style.display = "inline-block";
-  if (loginBtn) loginBtn.style.display = "none";
-  if (storiesBtn) storiesBtn.style.display = "inline-block";
-}
-
-function afficherUtilisateurDÃ©connectÃ©() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  const storiesBtn = document.getElementById("my-stories-button");
-  if (icon) icon.style.display = "none";
-  if (loginBtn) loginBtn.style.display = "inline-block";
-  if (storiesBtn) storiesBtn.style.display = "none";
-}
-
-
-function toggleSignup(show) {
-  document.getElementById("signup-form").style.display = show ? "block" : "none";
-  document.getElementById("reset-form").style.display = "none";
-}
-
-function toggleReset(show) {
-  document.getElementById("reset-form").style.display = show ? "block" : "none";
-  document.getElementById("signup-form").style.display = "none";
-}
-
-function registerUser() {
-  const prenom = document.getElementById("prenom").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const confirm = document.getElementById("signup-confirm").value;
-
-  if (!prenom || !email || !password || !confirm) {
-    alert("Merci de remplir tous les champs.");
-    return;
-  }
-  if (password !== confirm) {
-    alert("Les mots de passe ne correspondent pas.");
-    return;
-  }
-
-  alert("Compte crÃ©Ã© avec succÃ¨s ! (simulation)");
-  toggleSignup(false);
-}
-
-function sendReset() {
-  const email = document.getElementById("reset-email").value.trim();
-  if (!email) {
-    alert("Veuillez saisir votre adresse email.");
-    return;
-  }
-
-  alert("Un lien de rÃ©initialisation a Ã©tÃ© envoyÃ© (simulation).");
-  toggleReset(false);
-}
-
-
-// Confirmation avant sauvegarde
 function demanderSauvegarde() {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
   if (histoires.length >= 5) {
@@ -241,111 +130,44 @@ function demanderSauvegarde() {
   }
 }
 
-// Sauvegarde locale simulÃ©e avec limite Ã  10
 function sauvegarderHistoire() {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-
-  if (histoires.length >= 10) {
-    afficherGestionSuppression();
-    return;
-  }
-
   const contenu = document.getElementById("histoire").innerHTML;
-  const histoire = {
-    titre: "Histoire du " + new Date().toLocaleDateString(),
-    contenu: contenu,
-    date: new Date().toISOString()
-  };
-
-  histoires.push(histoire);
+  const titre = "Histoire " + (histoires.length + 1);
+  const nouvelle = { titre, contenu, date: new Date().toISOString() };
+  histoires.push(nouvelle);
   localStorage.setItem("histoires", JSON.stringify(histoires));
-  alert("Histoire sauvegardÃ©e !");
+  alert("Histoire sauvegardée !");
+  showScreen("accueil");
 }
 
-// Afficher une page temporaire pour supprimer des histoires
-function afficherGestionSuppression() {
-  const container = document.getElementById("liste-histoires");
-  container.innerHTML = "";
-
+function afficherHistoiresSauvegardees() {
+  const liste = document.getElementById("liste-histoires");
+  liste.innerHTML = "";
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
 
   histoires.forEach((histoire, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <label style="display:flex; align-items:center; gap:0.5rem;">
-        <input type="checkbox" value="${index}">
-        <span>${histoire.titre}</span>
-      </label>
+      <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
+      <input type="checkbox" value="${index}" onchange="mettreAJourBarreSuppression()">
     `;
-    container.appendChild(li);
+    liste.appendChild(li);
   });
 
-  const boutonSupp = document.createElement("button");
-  boutonSupp.className = "button";
-  boutonSupp.textContent = "";
-  boutonSupp.onclick = supprimerHistoiresSelectionnees;
-
-  container.appendChild(boutonSupp);
-  showScreen("mes-histoires");
-}
-
-function supprimerHistoiresSelectionnees() {
-  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
-  const indicesASupprimer = Array.from(checkboxes).map(cb => parseInt(cb.value));
-  let histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-
-  histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
-  localStorage.setItem("histoires", JSON.stringify(histoires));
-  alert("Histoires supprimÃ©es. Vous pouvez rÃ©essayer de sauvegarder.");
-  showScreen("formulaire");
-}
-
-// Affiche ou masque la corbeille et la croix rouge en fonction de la sÃ©lection
-function mettreAJourBarreSuppression() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
-  document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
-}
-
-// Cocher/DÃ©cocher toutes les histoires
-function toutSelectionner(source) {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = source.checked);
   mettreAJourBarreSuppression();
 }
 
-// RÃ©initialise la sÃ©lection en quittant la page
-function reinitialiserSelectionHistoires() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = false);
-  const selectAll = document.getElementById('tout-selectionner');
-  if (selectAll) selectAll.checked = false;
-  mettreAJourBarreSuppression();
-}
-
-// Quand on quitte la page des histoires
-function showScreen(nouvelEcran) {
-  const anciens = document.querySelectorAll('.screen.active');
-  anciens.forEach(section => section.classList.remove('active'));
-
-  const cible = document.getElementById(nouvelEcran);
-  if (cible) {
-    cible.classList.add('active');
-
-    // rÃ©initialiser sÃ©lection si on quitte la page des histoires
-    if (nouvelEcran !== 'mes-histoires') {
-      reinitialiserSelectionHistoires();
-    }
+function afficherHistoire(index) {
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  const histoire = histoires[index];
+  if (histoire) {
+    document.getElementById("histoire").innerHTML = histoire.contenu;
+    showScreen("resultat");
   }
 }
 
-// RÃ©agir quand on clique sur une case histoire
-document.addEventListener("change", function (e) {
-  if (e.target.matches('#liste-histoires input[type="checkbox"]')) {
-    mettreAJourBarreSuppression();
-  }
-});
-
+// Modale “plus de place”
 function fermerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
 }
@@ -355,6 +177,7 @@ function validerModaleLimite() {
   showScreen("mes-histoires");
 }
 
+// Retour contextuel
 function retourDepuisMesHistoires() {
   if (previousScreen === "resultat") {
     showScreen("resultat");
@@ -362,4 +185,58 @@ function retourDepuisMesHistoires() {
     showScreen("accueil");
   }
 }
+
+function mettreAJourBarreSuppression() {
+  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']");
+  const visible = Array.from(checkboxes).some(cb => cb.checked);
+  document.getElementById("btn-corbeille").style.display = visible ? "inline-block" : "none";
+  document.getElementById("btn-annuler-selection").style.display = visible ? "inline-block" : "none";
+}
+
+function supprimerHistoiresSelectionnees() {
+  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
+  const indices = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+  let histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  histoires = histoires.filter((_, i) => !indices.includes(i));
+  localStorage.setItem("histoires", JSON.stringify(histoires));
+
+  afficherHistoiresSauvegardees();
+  reinitialiserSelectionHistoires();
+}
+
+function toutSelectionner(source) {
+  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']");
+  checkboxes.forEach(cb => cb.checked = source.checked);
+  mettreAJourBarreSuppression();
+}
+
+function reinitialiserSelectionHistoires() {
+  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']");
+  checkboxes.forEach(cb => cb.checked = false);
+  const tout = document.getElementById("tout-selectionner");
+  if (tout) tout.checked = false;
+  mettreAJourBarreSuppression();
+}
+
+// Réinitialisation du mot de passe (modale déjà dans index.html)
+function resetPassword() {
+  const modal = document.getElementById("reset-modal");
+  modal.style.display = "block";
+}
+
+function confirmReset() {
+  document.getElementById("reset-modal").style.display = "none";
+  alert("Un lien de réinitialisation a été envoyé (simulé)");
+}
+
+function cancelReset() {
+  document.getElementById("reset-modal").style.display = "none";
+}
+
+// === Initialisation ===
+window.onload = () => {
+  afficherUtilisateurConnecté();
+  afficherHistoiresSauvegardees();
+};
 
