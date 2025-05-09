@@ -259,6 +259,21 @@ function sauvegarderHistoire() {
 
   histoires.push(histoire);
   localStorage.setItem("histoires", JSON.stringify(histoires));
+
+  afficherHistoiresSauvegardees(); // Ajout pour mettre à jour l'affichage
+
+  alert("Histoire sauvegardée !");
+}
+
+  const contenu = document.getElementById("histoire").innerHTML;
+  const histoire = {
+    titre: "Histoire du " + new Date().toLocaleDateString(),
+    contenu: contenu,
+    date: new Date().toISOString()
+  };
+
+  histoires.push(histoire);
+  localStorage.setItem("histoires", JSON.stringify(histoires));
   alert("Histoire sauvegardée !");
 }
 
