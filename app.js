@@ -261,8 +261,6 @@ function sauvegarderHistoire() {
 
 }
 
-}
-
 // Afficher une page temporaire pour supprimer des histoires
 function afficherGestionSuppression() {
   const container = document.getElementById("liste-histoires");
