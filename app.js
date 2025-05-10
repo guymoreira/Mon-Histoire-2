@@ -354,9 +354,7 @@ function validerModaleLimite() {
 
 function retourDepuisMesHistoires() {
   showScreen("accueil");
-} else {
-    showScreen("accueil");
-  }
+}
 }
 
 
