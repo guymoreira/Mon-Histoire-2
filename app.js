@@ -338,18 +338,18 @@ function afficherHistoiresSauvegardees() {
   mettreAJourBarreSuppression();
 }
 
+
 function afficherHistoire(index) {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
   const histoire = histoires[index];
   if (histoire) {
     document.getElementById("histoire").innerHTML = histoire.contenu;
     showScreen("resultat");
+  }
 }
-
 
 // Initialisation au chargement de la page
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
 };
-
