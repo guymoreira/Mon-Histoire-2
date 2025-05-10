@@ -338,6 +338,11 @@ function retourDepuisMesHistoires() {
     showScreen("accueil");
   }
 }
+    showScreen("accueil");
+  
+}
+
+
 
 // Initialisation au chargement de la page
 
@@ -365,7 +370,11 @@ function afficherHistoire(index) {
     showScreen("resultat");
 }
 
+}
+
+// Initialisation au chargement de la page
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
 };
+
