@@ -353,9 +353,8 @@ function validerModaleLimite() {
 }
 
 function retourDepuisMesHistoires() {
-  if (previousScreen === "resultat") {
-    showScreen("resultat");
-  } else {
+  showScreen("accueil");
+} else {
     showScreen("accueil");
   }
 }
