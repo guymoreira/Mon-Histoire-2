@@ -1,4 +1,3 @@
-alert("Fichier app.js bien chargé");
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -113,15 +112,12 @@ function registerUser() {
   const confirm = document.getElementById("signup-confirm").value;
 
   if (!prenom || !email || !password || !confirm) {
-    alert("Merci de remplir tous les champs.");
     return;
   }
   if (password !== confirm) {
-    alert("Les mots de passe ne correspondent pas.");
     return;
   }
 
-  alert("Compte créé avec succès ! (fonctionnalité simulée)");
   toggleSignup(false);
 }
 
@@ -143,11 +139,9 @@ function toggleReset(show) {
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
   if (!email) {
-    alert("Veuillez saisir votre adresse email.");
     return;
   }
 
-  alert("Un lien de réinitialisation a été envoyé (simulation).");
   toggleReset(false);
 }
 
@@ -197,26 +191,21 @@ function registerUser() {
   const confirm = document.getElementById("signup-confirm").value;
 
   if (!prenom || !email || !password || !confirm) {
-    alert("Merci de remplir tous les champs.");
     return;
   }
   if (password !== confirm) {
-    alert("Les mots de passe ne correspondent pas.");
     return;
   }
 
-  alert("Compte créé avec succès ! (simulation)");
   toggleSignup(false);
 }
 
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
   if (!email) {
-    alert("Veuillez saisir votre adresse email.");
     return;
   }
 
-  alert("Un lien de réinitialisation a été envoyé (simulation).");
   toggleReset(false);
 }
 
@@ -247,7 +236,6 @@ function sauvegarderHistoire() {
   histoires.push(histoire);
   localStorage.setItem("histoires", JSON.stringify(histoires));
   afficherHistoiresSauvegardees();
-  alert("Histoire sauvegardée !");
 
 }
 
@@ -285,7 +273,6 @@ function supprimerHistoiresSelectionnees() {
 
   histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
   localStorage.setItem("histoires", JSON.stringify(histoires));
-  alert("Histoires supprimées. Vous pouvez réessayer de sauvegarder.");
   showScreen("formulaire");
 }
 
@@ -381,6 +368,8 @@ function afficherHistoire(index) {
   if (histoire) {
     document.getElementById("histoire").innerHTML = histoire.contenu;
     showScreen("resultat");
+}
+
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
