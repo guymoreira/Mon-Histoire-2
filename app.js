@@ -30,9 +30,6 @@ function loginUser() {
 
   if (email && password && email.value.trim() && password.value.trim()) {
 
-    // Réinitialiser les histoires à chaque nouvelle connexion
-    localStorage.removeItem("histoires");
-
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
     showScreen("accueil");
@@ -41,6 +38,7 @@ function loginUser() {
 
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("histoires"); // <= AJOUT ici
   afficherUtilisateurDéconnecté();
   const modal = document.getElementById("logout-modal");
   if (modal) modal.style.display = "none";
