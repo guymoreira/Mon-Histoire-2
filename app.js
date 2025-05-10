@@ -335,13 +335,9 @@ function retourDepuisMesHistoires() {
   if (previousScreen === "resultat") {
     showScreen("resultat");
   } else {
+    showScreen("accueil");
   }
 }
-    showScreen("accueil");
-  
-}
-
-
 
 // Initialisation au chargement de la page
 
