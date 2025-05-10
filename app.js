@@ -365,6 +365,31 @@ function retourDepuisMesHistoires() {
 
 
 // Initialisation au chargement de la page
+
+function afficherHistoiresSauvegardees() {
+  const liste = document.getElementById("liste-histoires");
+  if (!liste) return;
+  liste.innerHTML = "";
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  histoires.forEach((histoire, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
+      <input type="checkbox" value="${index}">
+    `;
+    liste.appendChild(li);
+  });
+  mettreAJourBarreSuppression();
+}
+
+function afficherHistoire(index) {
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  const histoire = histoires[index];
+  if (histoire) {
+    document.getElementById("histoire").innerHTML = histoire.contenu;
+    showScreen("resultat");
+  }
+}
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
