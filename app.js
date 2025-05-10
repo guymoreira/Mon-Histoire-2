@@ -1,5 +1,4 @@
 
-
 document.addEventListener("DOMContentLoaded", () => {
   try {
     if (localStorage.getItem("isLoggedIn") === "true") {
@@ -22,6 +21,8 @@ function showScreen(id) {
     }, 50); // courte pause pour activer la transition
   } else if (next) {
     next.classList.add("active");
+  }
+}
 
 function loginUser() {
   const email = document.getElementById("email");
@@ -31,7 +32,9 @@ function loginUser() {
 
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
+    showScreen("accueil");
   }
+}
 
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
@@ -40,18 +43,21 @@ function logoutUser() {
   const modal = document.getElementById("logout-modal");
   if (modal) modal.style.display = "none";
   showScreen("accueil");
-  window.location.reload();
 }
 
 function afficherUtilisateurConnecté() {
   const icon = document.getElementById("user-icon");
   const loginBtn = document.getElementById("login-button");
-  const myStoriesBtn = document.getElementById("my-stories-button");
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  if (icon) icon.style.display = isLoggedIn ? "inline-block" : "none";
-  if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
-  if (myStoriesBtn) myStoriesBtn.style.display = isLoggedIn ? "inline-block" : "none";
+  if (icon) icon.style.display = "inline-block";
+  if (loginBtn) loginBtn.style.display = "none";
+}
 
+function afficherUtilisateurDéconnecté() {
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  if (icon) icon.style.display = "none";
+  if (loginBtn) loginBtn.style.display = "inline-block";
+}
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
@@ -107,12 +113,17 @@ function registerUser() {
   const confirm = document.getElementById("signup-confirm").value;
 
   if (!prenom || !email || !password || !confirm) {
+    alert("Merci de remplir tous les champs.");
     return;
   }
   if (password !== confirm) {
+    alert("Les mots de passe ne correspondent pas.");
     return;
+  }
 
+  alert("Compte créé avec succès ! (fonctionnalité simulée)");
   toggleSignup(false);
+}
 
 
 function toggleReset(show) {
@@ -127,14 +138,18 @@ function toggleReset(show) {
     loginFields.style.display = "block";
     resetForm.style.display = "none";
   }
+}
 
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
   if (!email) {
+    alert("Veuillez saisir votre adresse email.");
     return;
   }
 
+  alert("Un lien de réinitialisation a été envoyé (simulation).");
   toggleReset(false);
+}
 
 
 function afficherHistoireParDefaut() {
@@ -157,11 +172,20 @@ function afficherHistoireParDefaut() {
 function afficherUtilisateurConnecté() {
   const icon = document.getElementById("user-icon");
   const loginBtn = document.getElementById("login-button");
-  const myStoriesBtn = document.getElementById("my-stories-button");
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  if (icon) icon.style.display = isLoggedIn ? "inline-block" : "none";
-  if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
-  if (myStoriesBtn) myStoriesBtn.style.display = isLoggedIn ? "inline-block" : "none";
+  const storiesBtn = document.getElementById("my-stories-button");
+  if (icon) icon.style.display = "inline-block";
+  if (loginBtn) loginBtn.style.display = "none";
+  if (storiesBtn) storiesBtn.style.display = "inline-block";
+}
+
+function afficherUtilisateurDéconnecté() {
+  const icon = document.getElementById("user-icon");
+  const loginBtn = document.getElementById("login-button");
+  const storiesBtn = document.getElementById("my-stories-button");
+  if (icon) icon.style.display = "none";
+  if (loginBtn) loginBtn.style.display = "inline-block";
+  if (storiesBtn) storiesBtn.style.display = "none";
+}
 
 
 function toggleSignup(show) {
@@ -172,6 +196,7 @@ function toggleSignup(show) {
 function toggleReset(show) {
   document.getElementById("reset-form").style.display = show ? "block" : "none";
   document.getElementById("signup-form").style.display = "none";
+}
 
 function registerUser() {
   const prenom = document.getElementById("prenom").value.trim();
@@ -180,21 +205,28 @@ function registerUser() {
   const confirm = document.getElementById("signup-confirm").value;
 
   if (!prenom || !email || !password || !confirm) {
+    alert("Merci de remplir tous les champs.");
     return;
   }
   if (password !== confirm) {
+    alert("Les mots de passe ne correspondent pas.");
     return;
   }
 
+  alert("Compte créé avec succès ! (simulation)");
   toggleSignup(false);
+}
 
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
   if (!email) {
+    alert("Veuillez saisir votre adresse email.");
     return;
   }
 
+  alert("Un lien de réinitialisation a été envoyé (simulation).");
   toggleReset(false);
+}
 
 
 // Confirmation avant sauvegarde
@@ -205,6 +237,7 @@ function demanderSauvegarde() {
   } else {
     sauvegarderHistoire();
   }
+}
 
 // Sauvegarde locale simulée avec limite à 10
 function sauvegarderHistoire() {
@@ -222,7 +255,9 @@ function sauvegarderHistoire() {
   histoires.push(histoire);
   localStorage.setItem("histoires", JSON.stringify(histoires));
   afficherHistoiresSauvegardees();
+  alert("Histoire sauvegardée !");
 
+}
 
 // Afficher une page temporaire pour supprimer des histoires
 function afficherGestionSuppression() {
@@ -249,6 +284,7 @@ function afficherGestionSuppression() {
 
   container.appendChild(boutonSupp);
   showScreen("mes-histoires");
+}
 
 function supprimerHistoiresSelectionnees() {
   const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
@@ -257,6 +293,7 @@ function supprimerHistoiresSelectionnees() {
 
   histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
   localStorage.setItem("histoires", JSON.stringify(histoires));
+  alert("Histoires supprimées. Vous pouvez réessayer de sauvegarder.");
   showScreen("formulaire");
 }
 
@@ -265,6 +302,7 @@ function mettreAJourBarreSuppression() {
   const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
   const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
   document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
+}
 
 // Cocher/Décocher toutes les histoires
 function toutSelectionner(source) {
@@ -280,6 +318,7 @@ function reinitialiserSelectionHistoires() {
   const selectAll = document.getElementById('tout-selectionner');
   if (selectAll) selectAll.checked = false;
   mettreAJourBarreSuppression();
+}
 
 // Quand on quitte la page des histoires
 function showScreen(nouvelEcran) {
@@ -295,6 +334,7 @@ function showScreen(nouvelEcran) {
       reinitialiserSelectionHistoires();
     }
   }
+}
 
 // Réagir quand on clique sur une case histoire
 document.addEventListener("change", function (e) {
@@ -305,18 +345,20 @@ document.addEventListener("change", function (e) {
 
 function fermerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
+}
 
 function validerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
   showScreen("mes-histoires");
+}
 
 function retourDepuisMesHistoires() {
   if (previousScreen === "resultat") {
     showScreen("resultat");
   } else {
-  }
     showScreen("accueil");
-  
+  }
+}
 
 
 
@@ -338,7 +380,6 @@ function afficherHistoiresSauvegardees() {
   mettreAJourBarreSuppression();
 }
 
-
 function afficherHistoire(index) {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
   const histoire = histoires[index];
@@ -347,30 +388,7 @@ function afficherHistoire(index) {
     showScreen("resultat");
   }
 }
-
-// Initialisation au chargement de la page
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
 };
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
-}
