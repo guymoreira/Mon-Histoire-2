@@ -368,9 +368,13 @@ function afficherHistoire(index) {
   if (histoire) {
     document.getElementById("histoire").innerHTML = histoire.contenu;
     showScreen("resultat");
+  }
 }
 
+// Initialisation au chargement de la page
 window.onload = () => {
   afficherUtilisateurConnecté();
   afficherHistoiresSauvegardees();
 };
+
+
