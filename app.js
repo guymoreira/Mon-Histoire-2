@@ -363,5 +363,10 @@ function retourDepuisMesHistoires() {
     showScreen("accueil");
   }
 }
+window.onload = () => {
+  afficherUtilisateurConnecté();
+  afficherHistoiresSauvegardees();
+};
+
 
 
