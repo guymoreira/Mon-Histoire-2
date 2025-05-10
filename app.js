@@ -22,8 +22,6 @@ function showScreen(id) {
     }, 50); // courte pause pour activer la transition
   } else if (next) {
     next.classList.add("active");
-  }
-}
 
 function loginUser() {
   const email = document.getElementById("email");
@@ -33,9 +31,7 @@ function loginUser() {
 
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
-    showScreen("accueil");
   }
-}
 
 function logoutUser() {
   localStorage.removeItem("isLoggedIn");
@@ -56,7 +52,6 @@ function afficherUtilisateurConnecté() {
   if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
   if (myStoriesBtn) myStoriesBtn.style.display = isLoggedIn ? "inline-block" : "none";
 
-}
 
 function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
@@ -116,10 +111,8 @@ function registerUser() {
   }
   if (password !== confirm) {
     return;
-  }
 
   toggleSignup(false);
-}
 
 
 function toggleReset(show) {
@@ -134,7 +127,6 @@ function toggleReset(show) {
     loginFields.style.display = "block";
     resetForm.style.display = "none";
   }
-}
 
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
@@ -143,7 +135,6 @@ function sendReset() {
   }
 
   toggleReset(false);
-}
 
 
 function afficherHistoireParDefaut() {
@@ -172,7 +163,6 @@ function afficherUtilisateurConnecté() {
   if (loginBtn) loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
   if (myStoriesBtn) myStoriesBtn.style.display = isLoggedIn ? "inline-block" : "none";
 
-}
 
 function toggleSignup(show) {
   document.getElementById("signup-form").style.display = show ? "block" : "none";
@@ -182,7 +172,6 @@ function toggleSignup(show) {
 function toggleReset(show) {
   document.getElementById("reset-form").style.display = show ? "block" : "none";
   document.getElementById("signup-form").style.display = "none";
-}
 
 function registerUser() {
   const prenom = document.getElementById("prenom").value.trim();
@@ -198,7 +187,6 @@ function registerUser() {
   }
 
   toggleSignup(false);
-}
 
 function sendReset() {
   const email = document.getElementById("reset-email").value.trim();
@@ -207,7 +195,6 @@ function sendReset() {
   }
 
   toggleReset(false);
-}
 
 
 // Confirmation avant sauvegarde
@@ -218,7 +205,6 @@ function demanderSauvegarde() {
   } else {
     sauvegarderHistoire();
   }
-}
 
 // Sauvegarde locale simulée avec limite à 10
 function sauvegarderHistoire() {
@@ -237,7 +223,6 @@ function sauvegarderHistoire() {
   localStorage.setItem("histoires", JSON.stringify(histoires));
   afficherHistoiresSauvegardees();
 
-}
 
 // Afficher une page temporaire pour supprimer des histoires
 function afficherGestionSuppression() {
@@ -264,7 +249,6 @@ function afficherGestionSuppression() {
 
   container.appendChild(boutonSupp);
   showScreen("mes-histoires");
-}
 
 function supprimerHistoiresSelectionnees() {
   const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
@@ -281,7 +265,6 @@ function mettreAJourBarreSuppression() {
   const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
   const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
   document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
-}
 
 // Cocher/Décocher toutes les histoires
 function toutSelectionner(source) {
@@ -297,7 +280,6 @@ function reinitialiserSelectionHistoires() {
   const selectAll = document.getElementById('tout-selectionner');
   if (selectAll) selectAll.checked = false;
   mettreAJourBarreSuppression();
-}
 
 // Quand on quitte la page des histoires
 function showScreen(nouvelEcran) {
@@ -313,7 +295,6 @@ function showScreen(nouvelEcran) {
       reinitialiserSelectionHistoires();
     }
   }
-}
 
 // Réagir quand on clique sur une case histoire
 document.addEventListener("change", function (e) {
@@ -324,23 +305,18 @@ document.addEventListener("change", function (e) {
 
 function fermerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
-}
 
 function validerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
   showScreen("mes-histoires");
-}
 
 function retourDepuisMesHistoires() {
   if (previousScreen === "resultat") {
     showScreen("resultat");
   } else {
-    showScreen("accueil");
   }
-}
     showScreen("accueil");
   
-}
 
 
 
@@ -370,7 +346,6 @@ function afficherHistoire(index) {
     showScreen("resultat");
 }
 
-}
 
 // Initialisation au chargement de la page
 window.onload = () => {
