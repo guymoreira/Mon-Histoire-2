@@ -339,7 +339,7 @@ function retourDepuisMesHistoires() {
   }
 }
     showScreen("accueil");
-  }
+  
 }
 
 
