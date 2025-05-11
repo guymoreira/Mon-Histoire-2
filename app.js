@@ -1,4 +1,3 @@
-
 let longPressActive = false;
 let longPressTriggered = false;
 
