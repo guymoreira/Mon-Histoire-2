@@ -456,7 +456,30 @@ function supprimerHistoiresSelectionnees() {
 // Écoute des événements d'appui long et clic sur les boutons d'histoires
 document.addEventListener("DOMContentLoaded", () => {
   const liste = document.getElementById("liste-histoires");
-  liste.addEventListener("mousedown", e => {
+  
+  let longPressActive = false;
+
+  function handlePressStart(e) {
+    if (!e.target.classList.contains("btn-histoire")) return;
+    console.log("⏳ Démarrage du timeout pour appui long");
+    timeoutAppuiLong = setTimeout(() => {
+      longPressActive = true;
+      console.log("✅ Appui long déclenché");
+      activerModeSelection();
+      basculerSelection(e.target);
+    }, dureeAppuiLong);
+  }
+
+  function handlePressEnd() {
+    clearTimeout(timeoutAppuiLong);
+    setTimeout(() => longPressActive = false, 50);
+  }
+
+  liste.addEventListener("mousedown", handlePressStart);
+  liste.addEventListener("mouseup", handlePressEnd);
+  liste.addEventListener("touchstart", handlePressStart);
+  liste.addEventListener("touchend", handlePressEnd);
+
     if (!e.target.classList.contains("btn-histoire")) return;
     console.log("⏳ Démarrage du timeout pour appui long");
   timeoutAppuiLong = setTimeout(() => {
@@ -469,7 +492,13 @@ document.addEventListener("DOMContentLoaded", () => {
     clearTimeout(timeoutAppuiLong);
   });
 
+  
   liste.addEventListener("click", e => {
+    if (longPressActive) {
+      console.log("🛑 Clic ignoré car appui long détecté");
+      return;
+    }
+
     if (!modeSelectionActif) return;
     if (e.target.classList.contains("btn-histoire")) {
       basculerSelection(e.target);
