@@ -1,3 +1,21 @@
+
+let longPressActive = false;
+
+function handlePressStart(e) {
+  if (!e.target.classList.contains("btn-histoire")) return;
+  timeoutAppuiLong = setTimeout(() => {
+    longPressActive = true;
+    activerModeSelection();
+    basculerSelection(e.target);
+  }, 500);
+}
+
+function handlePressEnd() {
+  clearTimeout(timeoutAppuiLong);
+  setTimeout(() => { longPressActive = false; }, 50);
+}
+
+
 console.log(">> app.v5.js chargé");
 
 
