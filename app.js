@@ -37,7 +37,7 @@ function loginUser() {
 }
 
 function logoutUser() {
-  localStorage.removeItem("isLoggedIn");
+  localStorage.setItem("isLoggedIn", "false");
   localStorage.removeItem("histoires"); // <= AJOUT ici
   afficherUtilisateurDéconnecté();
   const modal = document.getElementById("logout-modal");
