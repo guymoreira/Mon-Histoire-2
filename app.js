@@ -385,7 +385,11 @@ function afficherHistoire(index) {
   }
 }
 window.onload = () => {
-  afficherUtilisateurConnecté();
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    afficherUtilisateurConnecté();
+  } else {
+    afficherUtilisateurDéconnecté();
+  }
   afficherHistoiresSauvegardees();
 };
 
