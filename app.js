@@ -483,11 +483,3 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-supprimer").addEventListener("click", supprimerHistoiresSelectionnees);
   document.getElementById("btn-annuler-selection").addEventListener("click", quitterModeSelection);
 });
-    bouton.addEventListener("click", () => {
-      if (modeSelectionActive) {
-        basculerSelection(bouton);
-        return;
-      }
-      afficherHistoire(index);
-    });
-
