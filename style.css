@@ -359,3 +359,20 @@ body {
 }
 
 
+
+
+
+.btn-histoire.selectionnee {
+  position: relative;
+  background-color: #cbe3ff;
+}
+
+.btn-histoire.selectionnee::after {
+  content: "✔";
+  color: #0077cc;
+  position: absolute;
+  right: 15px;
+  font-size: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+}
