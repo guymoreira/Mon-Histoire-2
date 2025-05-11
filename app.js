@@ -1,8 +1,15 @@
+
 let longPressActive = false;
+let longPressTriggered = false;
 
 function handlePressStart(e) {
   if (!e.target.classList.contains("btn-histoire")) return;
   timeoutAppuiLong = setTimeout(() => {
+    longPressTriggered = true;
+    longPressActive = true;
+    activerModeSelection();
+    basculerSelection(e.target);
+  }, 500);
     longPressActive = true;
     activerModeSelection();
     basculerSelection(e.target);
@@ -11,6 +18,7 @@ function handlePressStart(e) {
 
 function handlePressEnd() {
   clearTimeout(timeoutAppuiLong);
+  setTimeout(() => { longPressTriggered = false; longPressActive = false; }, 50);
   setTimeout(() => { longPressActive = false; }, 50);
 }
 
@@ -371,6 +379,20 @@ function retourDepuisMesHistoires() {
 
 // Initialisation au chargement de la page
 
+function afficherHistoiresSauvegardees() {
+  const liste = document.getElementById("liste-histoires");
+  if (!liste) return;
+  liste.innerHTML = "";
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  histoires.forEach((histoire, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <button class="button btn-histoire" onclick="afficherHistoire(${index})">${histoire.titre}</button>
+      
+    `;
+    liste.appendChild(li);
+  });}
+
 function afficherHistoire(index) {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
   const histoire = histoires[index];
@@ -486,35 +508,3 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-supprimer").addEventListener("click", supprimerHistoiresSelectionnees);
   document.getElementById("btn-annuler-selection").addEventListener("click", quitterModeSelection);
 });
-
-
-function afficherHistoiresSauvegardees() {
-  const liste = document.getElementById("liste-histoires");
-  liste.innerHTML = "";
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-
-  histoires.forEach((histoire, index) => {
-    const li = document.createElement("li");
-    const bouton = document.createElement("button");
-    bouton.className = "button btn-histoire";
-    bouton.textContent = histoire.titre;
-
-    // Clic simple
-    bouton.addEventListener("click", () => {
-      if (modeSelectionActive) {
-        basculerSelection(bouton);
-      } else {
-        afficherHistoire(index);
-      }
-    });
-
-    // Appui long
-    bouton.addEventListener("mousedown", handlePressStart);
-    bouton.addEventListener("mouseup", handlePressEnd);
-    bouton.addEventListener("touchstart", handlePressStart);
-    bouton.addEventListener("touchend", handlePressEnd);
-
-    li.appendChild(bouton);
-    liste.appendChild(li);
-  });
-}
