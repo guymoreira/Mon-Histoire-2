@@ -9,10 +9,6 @@ function handlePressStart(e) {
     activerModeSelection();
     basculerSelection(e.target);
   }, 500);
-    longPressActive = true;
-    activerModeSelection();
-    basculerSelection(e.target);
-  }, 500);
 }
 
 function handlePressEnd() {
@@ -484,8 +480,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!e.target.classList.contains("btn-histoire")) return;
     console.log("⏳ Démarrage du timeout pour appui long");
   timeoutAppuiLong = setTimeout(() => {
-      activerModeSelection();
-      basculerSelection(e.target);
     }, dureeAppuiLong);
   });
 
@@ -496,7 +490,6 @@ document.addEventListener("DOMContentLoaded", () => {
   liste.addEventListener("click", e => {
     if (!modeSelectionActif) return;
     if (e.target.classList.contains("btn-histoire")) {
-      basculerSelection(e.target);
     }
   });
 
