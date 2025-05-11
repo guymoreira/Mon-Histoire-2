@@ -2,7 +2,7 @@ let longPressActive = false;
 let longPressTriggered = false;
 
 function handlePressStart(e) {
-  if (!e.target.classList.contains("btn-histoire")) return;
+  console.log("🚩 handlePressStart déclenché");  console.log("Target:", e.target);  if (!e.target.classList.contains("btn-histoire")) return;
   timeoutAppuiLong = setTimeout(() => {
     longPressTriggered = true;
     longPressActive = true;
