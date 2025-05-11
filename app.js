@@ -1,4 +1,17 @@
 
+function reinitialiserSelectionHistoires() {
+  const barre = document.getElementById("barre-suppression");
+  if (barre) barre.style.display = "none";
+
+  const cases = document.querySelectorAll("#liste-histoires input[type='checkbox']");
+  cases.forEach(c => c.checked = false);
+
+  const tout = document.getElementById("tout-selectionner");
+  if (tout) tout.checked = false;
+}
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
     if (localStorage.getItem("isLoggedIn") === "true") {
