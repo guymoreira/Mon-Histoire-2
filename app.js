@@ -1,4 +1,4 @@
-console.log(">> app.v3.js chargé");
+console.log(">> app.v4.js chargé");
 
 
 function reinitialiserSelectionHistoires() {
@@ -362,7 +362,7 @@ function afficherHistoiresSauvegardees() {
   histoires.forEach((histoire, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
+      <button class="button btn-histoire" onclick="afficherHistoire(${index})">${histoire.titre}</button>
       
     `;
     liste.appendChild(li);
