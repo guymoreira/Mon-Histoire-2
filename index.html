@@ -140,6 +140,14 @@
 <section class="screen" id="mes-histoires">
   <div class="bloc-centre">
     <h2>Mes Histoires</h2>
+    <div id="barre-suppression" style="display:none; justify-content: space-between; align-items: center; margin: 10px 0;">
+      <img id="btn-supprimer" src="corbeille-cartoon.png" alt="Supprimer" style="height: 40px; cursor: pointer;">
+      <img id="btn-annuler-selection" src="croix-cartoon.png" alt="Annuler" style="height: 40px; cursor: pointer;">
+    </div>
+    <label style="display:none;" id="label-tout-selectionner">
+      <input type="checkbox" id="tout-selectionner" style="display:none;"> Tout sélectionner
+    </label>
+
 
     <!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
     <div class="actions-suppression" style="display:none;" id="barre-suppression">
@@ -149,7 +157,7 @@
 
     <!-- Case tout sélectionner -->
     <label style="margin-bottom: 1rem; display: block;">
-      <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
+      <input type="checkbox" id="tout-selectionner" style="display:none;" onchange="toutSelectionner(this)">
       Tout sélectionner
     </label>
 
