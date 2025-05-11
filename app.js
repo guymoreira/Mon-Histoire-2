@@ -38,11 +38,12 @@ function loginUser() {
 
 function logoutUser() {
   localStorage.setItem("isLoggedIn", "false");
-  localStorage.removeItem("histoires"); // <= AJOUT ici
+  localStorage.removeItem("histoires");
   afficherUtilisateurDéconnecté();
   const modal = document.getElementById("logout-modal");
   if (modal) modal.style.display = "none";
   showScreen("accueil");
+  window.location.reload();
 }
 
 function afficherUtilisateurConnecté() {
