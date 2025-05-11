@@ -1,4 +1,4 @@
-console.log(">> app.v4.js chargé");
+console.log(">> app.v5.js chargé");
 
 
 function reinitialiserSelectionHistoires() {
@@ -458,7 +458,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const liste = document.getElementById("liste-histoires");
   liste.addEventListener("mousedown", e => {
     if (!e.target.classList.contains("btn-histoire")) return;
-    timeoutAppuiLong = setTimeout(() => {
+    console.log("⏳ Démarrage du timeout pour appui long");
+  timeoutAppuiLong = setTimeout(() => {
       activerModeSelection();
       basculerSelection(e.target);
     }, dureeAppuiLong);
