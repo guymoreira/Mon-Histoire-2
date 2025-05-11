@@ -383,3 +383,100 @@ window.onload = () => {
   afficherHistoiresSauvegardees();
 };
 
+
+
+
+// === Gestion du mode sélection des histoires ===
+
+let modeSelectionActif = false;
+let timeoutAppuiLong;
+const dureeAppuiLong = 500; // en ms
+
+function activerModeSelection() {
+  modeSelectionActif = true;
+  document.getElementById("barre-suppression").style.display = "flex";
+}
+
+function quitterModeSelection() {
+  modeSelectionActif = false;
+  const boutons = document.querySelectorAll("#liste-histoires .btn-histoire");
+  boutons.forEach(btn => {
+    btn.classList.remove("selectionnee");
+    btn.removeAttribute("data-selectionnee");
+  });
+  document.getElementById("barre-suppression").style.display = "none";
+  document.getElementById("tout-selectionner").style.display = "none";
+  document.getElementById("tout-selectionner").checked = false;
+}
+
+function basculerSelection(btn) {
+  btn.classList.toggle("selectionnee");
+  const estSelectionnee = btn.classList.contains("selectionnee");
+  btn.setAttribute("data-selectionnee", estSelectionnee ? "true" : "false");
+
+  const auMoinsUne = document.querySelectorAll("#liste-histoires .btn-histoire.selectionnee").length > 0;
+  document.getElementById("tout-selectionner").style.display = auMoinsUne ? "block" : "none";
+}
+
+function toutSelectionner(checked) {
+  const boutons = document.querySelectorAll("#liste-histoires .btn-histoire");
+  boutons.forEach(btn => {
+    if (checked) {
+      btn.classList.add("selectionnee");
+      btn.setAttribute("data-selectionnee", "true");
+    } else {
+      btn.classList.remove("selectionnee");
+      btn.removeAttribute("data-selectionnee");
+    }
+  });
+}
+
+function supprimerHistoiresSelectionnees() {
+  const confirmation = confirm("Supprimer les histoires sélectionnées ?");
+  if (!confirmation) return;
+
+  const indexASupprimer = [];
+  const boutons = document.querySelectorAll("#liste-histoires .btn-histoire");
+  boutons.forEach((btn, index) => {
+    if (btn.getAttribute("data-selectionnee") === "true") {
+      indexASupprimer.push(index);
+    }
+  });
+
+  const histoires = JSON.parse(localStorage.getItem("histoires")) || [];
+  const restantes = histoires.filter((_, index) => !indexASupprimer.includes(index));
+  localStorage.setItem("histoires", JSON.stringify(restantes));
+
+  afficherHistoiresSauvegardees();
+  quitterModeSelection();
+}
+
+// Écoute des événements d'appui long et clic sur les boutons d'histoires
+document.addEventListener("DOMContentLoaded", () => {
+  const liste = document.getElementById("liste-histoires");
+  liste.addEventListener("mousedown", e => {
+    if (!e.target.classList.contains("btn-histoire")) return;
+    timeoutAppuiLong = setTimeout(() => {
+      activerModeSelection();
+      basculerSelection(e.target);
+    }, dureeAppuiLong);
+  });
+
+  liste.addEventListener("mouseup", e => {
+    clearTimeout(timeoutAppuiLong);
+  });
+
+  liste.addEventListener("click", e => {
+    if (!modeSelectionActif) return;
+    if (e.target.classList.contains("btn-histoire")) {
+      basculerSelection(e.target);
+    }
+  });
+
+  document.getElementById("tout-selectionner").addEventListener("change", (e) => {
+    toutSelectionner(e.target.checked);
+  });
+
+  document.getElementById("btn-supprimer").addEventListener("click", supprimerHistoiresSelectionnees);
+  document.getElementById("btn-annuler-selection").addEventListener("click", quitterModeSelection);
+});
