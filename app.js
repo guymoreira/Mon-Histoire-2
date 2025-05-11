@@ -1,3 +1,5 @@
+console.log(">> app.v3.js chargé");
+
 
 function reinitialiserSelectionHistoires() {
   const barre = document.getElementById("barre-suppression");
