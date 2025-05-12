@@ -1,0 +1,361 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url('illustration-accueil.jpg') no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+}
+
+.screen {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease;
+  position: absolute;
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* Bloc blanc centré */
+.bloc-centre {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 360px;
+  margin: 5vh auto;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Accueil */
+#accueil {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#accueil-content {
+  text-align: center;
+}
+#accueil h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+#create-button {
+  font-size: 1.5rem;
+  padding: 1.2rem 2rem;
+  max-width: 320px;
+  width: 90%;
+  margin-bottom: 1.5rem;
+}
+#login-button {
+  display: block;
+  margin: 2rem auto;
+  float: none;
+  text-align: center;
+  max-width: 200px;
+  width: 80%;
+}
+
+/* Boutons */
+.button {
+  background: linear-gradient(to bottom, #cce4f6, #99c9f1);
+  color: #0a3d62;
+  font-weight: bold;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  margin: 0.5rem auto;
+  display: block;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: linear-gradient(to bottom, #b3daf2, #80bfe7);
+}
+
+/* Inputs et selects */
+.input-style {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Icône utilisateur */
+#user-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #99c9f1;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+
+/* Modale déconnexion */
+.logout-modal .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto;
+  min-width: 180px;
+}
+
+/* Connexion */
+#connexion form {
+  width: 100%;
+}
+#connexion .button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+#connexion .button {
+  margin: 1rem 0;
+}
+
+/* Formulaire */
+#formulaire form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#formulaire input,
+#formulaire select {
+  width: 100%;
+  max-width: 300px;
+}
+#formulaire button {
+  width: 140px;
+  margin: 0.5rem;
+}
+
+/* Résultat */
+#resultat button {
+  display: block;
+  margin: 2rem auto;
+}
+
+/* Fond formulaire et résultat */
+#formulaire.screen, #resultat.screen {
+  background: url('illustration-formulaire.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* 1. Pastille GM */
+#user-icon {
+  background-color: white;
+  color: #0a3d62;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  line-height: 48px;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Bloc modale déconnexion */
+#logout-modal.logout-modal {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  max-width: 300px;
+  margin: auto;
+}
+
+/* 3. Bouton Me connecter plus proche */
+#login-button {
+  margin-top: 1rem;
+}
+
+/* 4. Créer une histoire encore plus large */
+#create-button {
+  max-width: 340px;
+  width: 100%;
+}
+
+/* 5. Centrage vertical du bloc de connexion */
+#connexion.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Réduire la hauteur des champs sur mobile si besoin */
+@media screen and (max-width: 500px) {
+  .input-style {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+}
+
+#signup-form {
+  margin-top: 1rem;
+  animation: fadein 0.3s ease;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+#reset-form {
+  margin-top: 1rem;
+  animation: fadein 0.3s ease;
+}
+
+#signup-form, #reset-form {
+  margin-top: 2rem;
+  animation: fadein 0.3s ease;
+}
+
+#connexion:not(.active) { display: none; }
+
+/* Masquer toute section non active */
+.screen:not(.active) {
+  display: none !important;
+}
+
+/* Masquer tous les éléments de #connexion si elle n'est pas active */
+#connexion:not(.active) * {
+  display: none !important;
+}
+
+.bloc-centre {
+  overflow: hidden;
+}
+
+.bloc-centre {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.illustration-chapitre img {
+  margin: 0 auto;
+  display: block;
+}
+
+/* === Responsive mobile === */
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* === Transitions fondues === */
+.screen {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* === Boutons histoires uniformes === */
+#liste-histoires button {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: left;
+  padding-right: 3rem;
+  position: relative;
+}
+
+#liste-histoires input[type="checkbox"] {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  scale: 1.5;
+}
+
+/* === Corbeille & croix en haut === */
+.actions-suppression {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.actions-suppression img {
+  width: 32px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* === Boutons page résultat === */
+.actions-resultat {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.actions-resultat + .button {
+  display: block;
+  margin: 1rem auto 0;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
