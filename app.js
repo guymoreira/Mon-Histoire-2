@@ -414,6 +414,7 @@ let timeoutAppuiLong;
 const dureeAppuiLong = 500; // en ms
 
 function activerModeSelection() {
+  console.log("✅ activerModeSelection appelée");
   modeSelectionActif = true;
   document.getElementById("barre-suppression").style.display = "flex";
 }
@@ -491,6 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("tout-selectionner").addEventListener("change", (e) => {
+  console.log("🟨 case tout sélectionner cochée");
     toutSelectionner(e.target.checked);
   });
 
