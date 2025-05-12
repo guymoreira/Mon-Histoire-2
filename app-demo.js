@@ -106,9 +106,13 @@ function showScreen(id) {
   }
 }
 
-// Simulation de connexion
 window.addEventListener("DOMContentLoaded", () => {
-  sessionStorage.setItem("utilisateur", JSON.stringify({ nom: "G", prenom: "Guy" }));
+  // Simule une session utilisateur
+  sessionStorage.setItem("utilisateur", JSON.stringify({ nom: "MOREIRA", prenom: "Guy" }));
+  // Tente d'afficher l'utilisateur connecté (fonction de ton app réelle)
+  if (typeof afficherUtilisateurConnecte === "function") {
+    afficherUtilisateurConnecte();
+  }
   showScreen("mes-histoires");
 });
 
