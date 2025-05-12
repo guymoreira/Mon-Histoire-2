@@ -271,7 +271,6 @@ function afficherGestionSuppression() {
     const li = document.createElement("li");
     li.innerHTML = `
       <label style="display:flex; align-items:center; gap:0.5rem;">
-        <input type="checkbox" value="${index}">
         <span>${histoire.titre}</span>
       </label>
     `;
@@ -288,8 +287,6 @@ function afficherGestionSuppression() {
 }
 
 function supprimerHistoiresSelectionnees() {
-  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
-  const indicesASupprimer = Array.from(checkboxes).map(cb => parseInt(cb.value));
   let histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
 
   histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
@@ -299,26 +296,13 @@ function supprimerHistoiresSelectionnees() {
 }
 
 // Affiche ou masque la corbeille et la croix rouge en fonction de la sélection
-function mettreAJourBarreSuppression() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
-  document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
-}
 
-// Cocher/Décocher toutes les histoires
-function toutSelectionner(source) {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = source.checked);
-  mettreAJourBarreSuppression();
-}
+
+
 
 // Réinitialise la sélection en quittant la page
-function reinitialiserSelectionHistoires() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = false);
-  const selectAll = document.getElementById('tout-selectionner');
   if (selectAll) selectAll.checked = false;
-  mettreAJourBarreSuppression();
+  
 }
 
 // Quand on quitte la page des histoires
@@ -332,15 +316,14 @@ function showScreen(nouvelEcran) {
 
     // réinitialiser sélection si on quitte la page des histoires
     if (nouvelEcran !== 'mes-histoires') {
-      reinitialiserSelectionHistoires();
+      
     }
   }
 }
 
 // Réagir quand on clique sur une case histoire
 document.addEventListener("change", function (e) {
-  if (e.target.matches('#liste-histoires input[type="checkbox"]')) {
-    mettreAJourBarreSuppression();
+    
   }
 });
 
@@ -370,11 +353,10 @@ function afficherHistoiresSauvegardees() {
     const li = document.createElement("li");
     li.innerHTML = `
       <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
-      <input type="checkbox" value="${index}">
     `;
     liste.appendChild(li);
   });
-  mettreAJourBarreSuppression();
+  
 }
 
 function afficherHistoire(index) {
