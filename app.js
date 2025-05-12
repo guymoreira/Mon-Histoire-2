@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   try {
     if (localStorage.getItem("isLoggedIn") === "true") {
@@ -343,22 +342,6 @@ function retourDepuisMesHistoires() {
 
 
 // Initialisation au chargement de la page
-
-function afficherHistoiresSauvegardees() {
-  const liste = document.getElementById("liste-histoires");
-  if (!liste) return;
-  liste.innerHTML = "";
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  histoires.forEach((histoire, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
-    `;
-    liste.appendChild(li);
-  });
-  
-}
-
 function afficherHistoire(index) {
   const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
   const histoire = histoires[index];
@@ -366,11 +349,13 @@ function afficherHistoire(index) {
     document.getElementById("histoire").innerHTML = histoire.contenu;
     showScreen("resultat");
   }
+}
+
 window.onload = () => {
   if (localStorage.getItem("isLoggedIn") === "true") {
     afficherUtilisateurConnecté();
   } else {
     afficherUtilisateurDéconnecté();
+  }
   afficherHistoiresSauvegardees();
 };
-
