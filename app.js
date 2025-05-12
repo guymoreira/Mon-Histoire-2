@@ -366,12 +366,11 @@ function afficherHistoire(index) {
     document.getElementById("histoire").innerHTML = histoire.contenu;
     showScreen("resultat");
   }
-}
 window.onload = () => {
   if (localStorage.getItem("isLoggedIn") === "true") {
     afficherUtilisateurConnecté();
   } else {
     afficherUtilisateurDéconnecté();
-  }
   afficherHistoiresSauvegardees();
 };
+
