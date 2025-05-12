@@ -20,7 +20,7 @@
 </div>
 <div class="logout-modal" id="logout-modal" style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
 <p>Voulez-vous vous déconnecter ?</p>
-<button class="button" onclick="logoutUser()">Se déconnecter</button>
+<button class="button" onclick="seDeconnecter()">Se déconnecter</button>
 <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
 </div>
 </section>
@@ -38,8 +38,8 @@
 </div>
 </div>
 <p style="text-align:center;">
-<button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
-<br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+<button class="button small" <!-- onclick="onclick="toggleSignup(true)"" supprimé car fonction manquante --> type="button">Créer un compte</button>
+<br/><a href="#" <!-- onclick="onclick="toggleReset(true)"" supprimé car fonction manquante --> style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
 </p>
 </form>
 <div class="bloc-centre" id="signup-form" style="display:none;">
@@ -49,16 +49,16 @@
 <input class="input-style" id="signup-password" placeholder="Mot de passe" required="" type="password"/>
 <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required="" type="password"/>
 <div class="button-group">
-<button class="button" onclick="registerUser()">Valider</button>
-<button class="button" onclick="toggleSignup(false)">Annuler</button>
+<button class="button" <!-- onclick="onclick="registerUser()"" supprimé car fonction manquante -->>Valider</button>
+<button class="button" <!-- onclick="onclick="toggleSignup(false)"" supprimé car fonction manquante -->>Annuler</button>
 </div>
 </div>
 <div class="bloc-centre" id="reset-form" style="display:none;">
 <h2>Réinitialisation</h2>
 <input class="input-style" id="reset-email" placeholder="Votre adresse email" required="" type="email"/>
 <div class="button-group">
-<button class="button" onclick="sendReset()">Envoyer</button>
-<button class="button" onclick="toggleReset(false)">Annuler</button>
+<button class="button" <!-- onclick="onclick="sendReset()"" supprimé car fonction manquante -->>Envoyer</button>
+<button class="button" <!-- onclick="onclick="toggleReset(false)"" supprimé car fonction manquante -->>Annuler</button>
 </div>
 </div>
 </div>
@@ -126,15 +126,15 @@
 <div class="actions-resultat">
 <button class="button" onclick="showScreen('formulaire')">Retour</button>
 <button class="button" onclick="showScreen('accueil')">Accueil</button>
-<button class="button" onclick="demanderSauvegarde()">Sauvegarder</button>
+<button class="button" <!-- onclick="onclick="demanderSauvegarde()"" supprimé car fonction manquante -->>Sauvegarder</button>
 </div>
 </div>
 </section>
 <div id="modal-limite" class="modal" style="display:none;">
   <div class="modal-content">
     <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
-    <button class="button" onclick="validerModaleLimite()">Oui</button>
-    <button class="button" onclick="fermerModaleLimite()">Non</button>
+    <button class="button" <!-- onclick="onclick="validerModaleLimite()"" supprimé car fonction manquante -->>Oui</button>
+    <button class="button" <!-- onclick="onclick="fermerModaleLimite()"" supprimé car fonction manquante -->>Non</button>
   </div>
 </div>
 <script src="app.js" defer></script>
@@ -159,7 +159,7 @@
       <!-- Dynamique uniquement -->
     </ul>
 
-    <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+    <button class="button" <!-- onclick="onclick="retourDepuisMesHistoires()"" supprimé car fonction manquante -->>Retour</button>
   </div>
 </section>
 </body>
