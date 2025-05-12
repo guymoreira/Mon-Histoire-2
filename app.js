@@ -486,7 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   liste.addEventListener("click", e => {
     if (!modeSelectionActif) return;
-  if (!e.currentTarget.classList.contains("btn-histoire")) return;    }
+    if (!e.currentTarget.classList.contains("btn-histoire")) return;
   });
 
   document.getElementById("tout-selectionner").addEventListener("change", (e) => {
@@ -496,4 +496,3 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-supprimer").addEventListener("click", supprimerHistoiresSelectionnees);
   document.getElementById("btn-annuler-selection").addEventListener("click", quitterModeSelection);
 });
-
