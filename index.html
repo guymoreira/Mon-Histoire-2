@@ -144,9 +144,10 @@
 <img alt="Supprimer" id="btn-supprimer" src="corbeille-cartoon.png" style="height: 40px; cursor: pointer;"/>
 <img alt="Annuler" id="btn-annuler-selection" src="croix-cartoon.png" style="height: 40px; cursor: pointer;"/>
 </div>
-<label id="label-tout-selectionner" style="display: none; margin-bottom: 10px;">
-<input id="tout-selectionner" style="display:none;" type="checkbox"/> Tout sélectionner
-    </label>
+<label id="label-tout-selectionner" style="display: none; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+  
+  Tout sélectionner
+</label>
 <!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
 <div class="actions-suppression" id="barre-suppression" style="display:none;">
 <img alt="Corbeille" id="btn-corbeille" src="corbeille-cartoon.png"/>
@@ -154,7 +155,7 @@
 </div>
 <!-- Case tout sélectionner -->
 <label style="margin-bottom: 1rem; display: block;">
-<input id="tout-selectionner" onchange="toutSelectionner(this)" style="display:none;" type="checkbox"/>
+
       Tout sélectionner
     </label>
 <!-- Liste des histoires (sera peuplée dynamiquement) -->
