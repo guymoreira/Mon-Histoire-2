@@ -403,30 +403,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// === GESTION MODE SÉLECTION DES HISTOIRES ===
-let enModeSelection = false;
-let appuiLongTimeout = null;
-
-function activerModeSelection() {
-    enModeSelection = true;
-    document.querySelector(".corbeille-suppression")?.classList.add("visible");
-    document.querySelector(".croix-rouge-annuler")?.classList.add("visible");
-    document.querySelector(".case-tout-selectionner")?.classList.add("visible");
-}
-
-function quitterModeSelection() {
-    enModeSelection = false;
-    document.querySelectorAll(".bouton-histoire").forEach(b => b.classList.remove("selectionnee"));
-    document.querySelector(".corbeille-suppression")?.classList.remove("visible");
-    document.querySelector(".croix-rouge-annuler")?.classList.remove("visible");
-    document.querySelector(".case-tout-selectionner")?.classList.remove("visible");
-}
-
-function mettreAJourSelection(bouton) {
-    if (!enModeSelection) return;
-    bouton.classList.toggle("selectionnee");
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const croixRouge = document.querySelector(".croix-rouge-annuler");
     croixRouge?.addEventListener("click", quitterModeSelection);
@@ -557,3 +533,113 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Vérifie si l'utilisateur est connecté
+  const utilisateur = localStorage.getItem("utilisateur");
+
+  const iconeProfil = document.querySelector(".icone-profil");
+  const boutonConnexion = document.querySelector(".bouton-connexion");
+  const blocConnexion = document.querySelector("#blocConnexion");
+
+  if (!utilisateur) {
+    // Affichage déconnecté
+    iconeProfil?.classList.add("cache");
+    boutonConnexion?.classList.remove("cache");
+    blocConnexion?.classList.remove("cache");
+  } else {
+    // Affichage connecté
+    iconeProfil?.classList.remove("cache");
+    boutonConnexion?.classList.add("cache");
+    blocConnexion?.classList.add("cache");
+  }
+
+  // Gestion bouton "Se déconnecter"
+  const boutonDeconnexion = [...document.querySelectorAll("button, div, a")]
+    .find(el => el.textContent?.trim() === "Se déconnecter");
+
+  if (boutonDeconnexion) {
+    boutonDeconnexion.addEventListener("click", () => {
+      localStorage.removeItem("utilisateur");
+      location.reload();
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  let enModeSelection = false;
+  let appuiLongTimeout = null;
+
+  const corbeille = document.querySelector(".corbeille-suppression");
+  const croix = document.querySelector(".croix-rouge-annuler");
+  const caseTout = document.querySelector(".case-tout-selectionner");
+
+  function activerModeSelection() {
+    enModeSelection = true;
+    corbeille?.classList.add("visible");
+    croix?.classList.add("visible");
+    mettreAJourAffichageToutSelectionner();
+  }
+
+  function quitterModeSelection() {
+    enModeSelection = false;
+    document.querySelectorAll(".bouton-histoire").forEach(b => b.classList.remove("selectionnee"));
+    corbeille?.classList.remove("visible");
+    croix?.classList.remove("visible");
+    caseTout?.classList.remove("visible");
+  }
+
+  function mettreAJourAffichageToutSelectionner() {
+    const selection = document.querySelectorAll(".bouton-histoire.selectionnee").length;
+    if (selection > 0) {
+      caseTout?.classList.add("visible");
+    } else {
+      caseTout?.classList.remove("visible");
+    }
+  }
+
+  function toggleSelection(bouton) {
+    if (!enModeSelection) return;
+    bouton.classList.toggle("selectionnee");
+    mettreAJourAffichageToutSelectionner();
+  }
+
+  document.querySelectorAll(".bouton-histoire").forEach(bouton => {
+    bouton.addEventListener("mousedown", (e) => {
+      if (enModeSelection) return;
+      appuiLongTimeout = setTimeout(() => {
+        bouton.classList.add("selectionnee");
+        activerModeSelection();
+      }, 500);
+    });
+
+    bouton.addEventListener("mouseup", () => {
+      clearTimeout(appuiLongTimeout);
+      if (enModeSelection) {
+        toggleSelection(bouton);
+      }
+    });
+
+    bouton.addEventListener("mouseleave", () => clearTimeout(appuiLongTimeout));
+  });
+
+  croix?.addEventListener("click", quitterModeSelection);
+
+  caseTout?.addEventListener("click", () => {
+    const boutons = document.querySelectorAll(".bouton-histoire");
+    const toutes = [...boutons].every(b => b.classList.contains("selectionnee"));
+    boutons.forEach(b => b.classList.toggle("selectionnee", !toutes));
+    mettreAJourAffichageToutSelectionner();
+  });
+
+  corbeille?.addEventListener("click", () => {
+    const confirmer = confirm("Supprimer les histoires sélectionnées ?");
+    if (!confirmer) return;
+
+    const boutons = document.querySelectorAll(".bouton-histoire.selectionnee");
+    const indices = [...boutons].map(b => parseInt(b.dataset.index));
+    const histoires = JSON.parse(localStorage.getItem("mesHistoires") || "[]");
+    const nouvelles = histoires.filter((_, i) => !indices.includes(i));
+    localStorage.setItem("mesHistoires", JSON.stringify(nouvelles));
+    location.reload();
+  });
+});
