@@ -2,6 +2,7 @@ let longPressActive = false;
 let longPressTriggered = false;
 
 function handlePressStart(e) {
+  console.log("🚩 handlePressStart déclenché");
   console.log("🚩 handlePressStart déclenché");  console.log("Target:", e.target);  if (!e.currentTarget.classList.contains("btn-histoire")) return;  timeoutAppuiLong = setTimeout(() => {
     longPressTriggered = true;
     longPressActive = true;
@@ -496,3 +497,4 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-supprimer").addEventListener("click", supprimerHistoiresSelectionnees);
   document.getElementById("btn-annuler-selection").addEventListener("click", quitterModeSelection);
 });
+
