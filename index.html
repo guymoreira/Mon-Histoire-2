@@ -129,41 +129,49 @@
 </div>
 </div>
 </section>
-<div class="modal" id="modal-limite" style="display:none;">
-<div class="modal-content">
-<p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
-<button class="button" onclick="validerModaleLimite()">Oui</button>
-<button class="button" onclick="fermerModaleLimite()">Non</button>
-</div>
+<div id="modal-limite" class="modal" style="display:none;">
+  <div class="modal-content">
+    <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
+    <button class="button" onclick="validerModaleLimite()">Oui</button>
+    <button class="button" onclick="fermerModaleLimite()">Non</button>
+  </div>
 </div>
 <script src="app.js" defer></script>
 <section class="screen" id="mes-histoires">
-<div class="bloc-centre">
-<h2>Mes Histoires</h2>
-<div id="barre-suppression" style="display:none; justify-content: space-between; align-items: center; margin: 10px 0;">
-<img alt="Supprimer" id="btn-supprimer" src="corbeille-cartoon.png" style="height: 40px; cursor: pointer;"/>
-<img alt="Annuler" id="btn-annuler-selection" src="croix-cartoon.png" style="height: 40px; cursor: pointer;"/>
-</div>
-<label id="label-tout-selectionner" style="display: none; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-  
-  Tout sélectionner
-</label>
-<!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
-<div class="actions-suppression" id="barre-suppression" style="display:none;">
-<img alt="Corbeille" id="btn-corbeille" src="corbeille-cartoon.png"/>
-<img alt="Annuler sélection" id="btn-annuler-selection" src="croix-rouge.png"/>
-</div>
-<!-- Case tout sélectionner -->
-<label style="margin-bottom: 1rem; display: block;">
+  <div class="bloc-centre">
+    <h2>Mes Histoires</h2>
 
+    <!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
+    <div class="actions-suppression" style="display:none;" id="barre-suppression">
+      <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
+      <img src="croix-rouge.png" alt="Annuler sélection" id="btn-annuler-selection">
+    </div>
+
+    <!-- Case tout sélectionner -->
+    <label style="margin-bottom: 1rem; display: block;">
+      <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
       Tout sélectionner
     </label>
-<!-- Liste des histoires (sera peuplée dynamiquement) -->
-<ul id="liste-histoires" style="list-style: none; padding: 0;">
-<!-- Dynamique uniquement -->
-</ul>
-<button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
-</div>
+
+    <!-- Liste des histoires (sera peuplée dynamiquement) -->
+    <ul id="liste-histoires" style="list-style: none; padding: 0;">
+      <!-- Dynamique uniquement -->
+    </ul>
+
+    <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+  </div>
 </section>
+
+<section id="pageMesHistoires" class="ecran" style="display: none;">
+  <div class="bloc-centre">
+    <div class="corbeille-suppression" title="Supprimer les histoires sélectionnées"></div>
+    <div class="croix-rouge-annuler" title="Annuler la sélection"></div>
+    <div class="case-tout-selectionner">Tout sélectionner</div>
+    <h2>Mes Histoires</h2>
+    <div class="liste-histoires"></div>
+  </div>
+</section>
+
 </body>
 </html>
+
