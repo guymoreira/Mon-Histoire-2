@@ -2,13 +2,11 @@ let longPressActive = false;
 let longPressTriggered = false;
 
 function handlePressStart(e) {
-  console.log("🚩 handlePressStart déclenché");  console.log("Target:", e.target);  if (!e.target.classList.contains("btn-histoire")) return;
-  timeoutAppuiLong = setTimeout(() => {
+  console.log("🚩 handlePressStart déclenché");  console.log("Target:", e.target);  if (!e.currentTarget.classList.contains("btn-histoire")) return;  timeoutAppuiLong = setTimeout(() => {
     longPressTriggered = true;
     longPressActive = true;
     activerModeSelection();
-    basculerSelection(e.target);
-  }, 500);
+    basculerSelection(e.currentTarget);  }, 500);
 }
 
 function handlePressEnd() {
@@ -477,8 +475,7 @@ function supprimerHistoiresSelectionnees() {
 document.addEventListener("DOMContentLoaded", () => {
   const liste = document.getElementById("liste-histoires");
   liste.addEventListener("mousedown", e => {
-    if (!e.target.classList.contains("btn-histoire")) return;
-    console.log("⏳ Démarrage du timeout pour appui long");
+  if (!e.currentTarget.classList.contains("btn-histoire")) return;    console.log("⏳ Démarrage du timeout pour appui long");
   timeoutAppuiLong = setTimeout(() => {
     }, dureeAppuiLong);
   });
@@ -489,8 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   liste.addEventListener("click", e => {
     if (!modeSelectionActif) return;
-    if (e.target.classList.contains("btn-histoire")) {
-    }
+  if (!e.currentTarget.classList.contains("btn-histoire")) return;    }
   });
 
   document.getElementById("tout-selectionner").addEventListener("change", (e) => {
