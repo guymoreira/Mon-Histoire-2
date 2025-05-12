@@ -92,3 +92,23 @@ window.addEventListener("DOMContentLoaded", () => {
   simulerHistoires();
   initialiserSelectionHistoires();
 });
+
+
+function showScreen(id) {
+  document.querySelectorAll(".ecran").forEach(e => e.classList.remove("actif"));
+  const cible = document.getElementById(id);
+  if (cible) {
+    cible.classList.add("actif");
+    if (id === "mes-histoires") {
+      simulerHistoires();
+      initialiserSelectionHistoires();
+    }
+  }
+}
+
+// Simulation de connexion
+window.addEventListener("DOMContentLoaded", () => {
+  sessionStorage.setItem("utilisateur", JSON.stringify({ nom: "G", prenom: "Guy" }));
+  showScreen("mes-histoires");
+});
+
