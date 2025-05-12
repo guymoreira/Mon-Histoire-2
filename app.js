@@ -27,16 +27,16 @@ function seDeconnecter() {
 
 function afficherUtilisateurConnecté() {
   const email = localStorage.getItem("userEmail") || "";
-  document.getElementById("btn-connexion").style.display = "none";
-  document.getElementById("btn-histoires").style.display = "inline-block";
+  document.getElementById("login-button").style.display = "none";
+  document.getElementById("my-stories-button").style.display = "inline-block";
   document.getElementById("initiales").innerText = email.charAt(0).toUpperCase();
-  document.getElementById("icone-utilisateur").style.display = "inline-block";
+  document.getElementById("user-icon").style.display = "inline-block";
 }
 
 function afficherUtilisateurDéconnecté() {
-  document.getElementById("btn-connexion").style.display = "inline-block";
-  document.getElementById("btn-histoires").style.display = "none";
-  document.getElementById("icone-utilisateur").style.display = "none";
+  document.getElementById("login-button").style.display = "inline-block";
+  document.getElementById("my-stories-button").style.display = "none";
+  document.getElementById("user-icon").style.display = "none";
 }
 
 // Création d'une histoire
