@@ -469,3 +469,91 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("mouseleave", () => clearTimeout(appuiLongTimeout));
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const utilisateur = localStorage.getItem("utilisateur");
+    const iconeProfil = document.querySelector(".icone-profil");
+    const boutonConnexion = document.querySelector(".bouton-connexion");
+    const blocConnexion = document.querySelector("#blocConnexion");
+
+    if (!utilisateur) {
+        // Mode déconnecté
+        iconeProfil?.classList.add("cache");
+        boutonConnexion?.classList.remove("cache");
+        blocConnexion?.classList.remove("cache");
+    } else {
+        // Mode connecté
+        iconeProfil?.classList.remove("cache");
+        boutonConnexion?.classList.add("cache");
+        blocConnexion?.classList.add("cache");
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    let enModeSelection = false;
+    let appuiLongTimeout = null;
+
+    function activerModeSelection() {
+        enModeSelection = true;
+        document.querySelector(".corbeille-suppression")?.classList.add("visible");
+        document.querySelector(".croix-rouge-annuler")?.classList.add("visible");
+    }
+
+    function quitterModeSelection() {
+        enModeSelection = false;
+        document.querySelectorAll(".bouton-histoire").forEach(b => b.classList.remove("selectionnee"));
+        document.querySelector(".corbeille-suppression")?.classList.remove("visible");
+        document.querySelector(".croix-rouge-annuler")?.classList.remove("visible");
+        document.querySelector(".case-tout-selectionner")?.classList.remove("visible");
+    }
+
+    function mettreAJourAffichageToutSelectionner() {
+        const nbSelectionnees = document.querySelectorAll(".bouton-histoire.selectionnee").length;
+        const toutSel = document.querySelector(".case-tout-selectionner");
+        if (nbSelectionnees > 0) {
+            toutSel?.classList.add("visible");
+        } else {
+            toutSel?.classList.remove("visible");
+        }
+    }
+
+    document.querySelectorAll(".bouton-histoire").forEach((btn) => {
+        btn.addEventListener("mousedown", (e) => {
+            if (enModeSelection) return;
+            appuiLongTimeout = setTimeout(() => {
+                activerModeSelection();
+                btn.classList.add("selectionnee");
+                mettreAJourAffichageToutSelectionner();
+            }, 500);
+        });
+
+        btn.addEventListener("mouseup", (e) => {
+            clearTimeout(appuiLongTimeout);
+            if (enModeSelection) {
+                btn.classList.toggle("selectionnee");
+                mettreAJourAffichageToutSelectionner();
+            }
+        });
+
+        btn.addEventListener("mouseleave", () => clearTimeout(appuiLongTimeout));
+    });
+
+    document.querySelector(".croix-rouge-annuler")?.addEventListener("click", quitterModeSelection);
+
+    document.querySelector(".case-tout-selectionner")?.addEventListener("click", () => {
+        const boutons = document.querySelectorAll(".bouton-histoire");
+        const toutes = [...boutons].every(b => b.classList.contains("selectionnee"));
+        boutons.forEach(b => b.classList.toggle("selectionnee", !toutes));
+        mettreAJourAffichageToutSelectionner();
+    });
+
+    document.querySelector(".corbeille-suppression")?.addEventListener("click", () => {
+        if (!confirm("Supprimer les histoires sélectionnées ?")) return;
+        const boutons = document.querySelectorAll(".bouton-histoire.selectionnee");
+        const indices = [...boutons].map(b => parseInt(b.dataset.index));
+        const histoires = JSON.parse(localStorage.getItem("mesHistoires") || "[]");
+        const nouvelles = histoires.filter((_, i) => !indices.includes(i));
+        localStorage.setItem("mesHistoires", JSON.stringify(nouvelles));
+        location.reload();
+    });
+});
+
