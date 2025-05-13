@@ -1,3 +1,11 @@
+/* ================
+   Pas de scroll horizontal
+   ================ */
+html, body {
+  overflow-x: hidden;
+}
+
+
 /* style.css */
 body {
   margin: 0; padding: 0;
@@ -10,17 +18,43 @@ body {
 .screen {
   opacity: 0; visibility: hidden;
   transition: opacity 0.6s ease;
-  position: absolute; width: 100%; min-height: 100vh;
+  position: absolute; width: 100%; height: 100vh;
   padding: 2rem; top: 0; left: 0; z-index: 1;
+  overflow-y: hidden;   /* pas de scroll vertical par défaut */
 }
+/* ================
+   Scroll vertical autorisé *seulement* ici
+   ================ */
+
+/* Page Mes Histoires */
+#mes-histoires {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Page Résultat */
+#resultat {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Page Connexion (et modales de reset éventuelles) */
+#connexion {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .screen.active {
   opacity: 1; visibility: visible; z-index: 2;
 }
 
 .bloc-centre {
   background-color: rgba(255,255,255,0.85);
-  border-radius: 16px; padding: 2rem;
-  max-width: 360px; margin: 5vh auto;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;         /* prend 90% de l’écran */
+  max-width: 360px;   /* mais ne dépasse pas 360px sur grand écran */
+  margin: 5vh auto;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
