@@ -160,12 +160,13 @@
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
-      <div class="actions-suppression" id="barre-suppression">
-        <img src="corbeille-cartoon.png" alt="Corbeille" onclick="supprimerHistoiresSelectionnees()">
-        <img src="croix-cartoon.png" alt="Annuler sélection" onclick="reinitialiserSelectionHistoires()">
-      </div>
-      <ul id="liste-histoires"></ul>
-      <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+       <ul id="liste-histoires"></ul>
+       <div class="actions-footer" id="barre-suppression" style="display:none;">
+        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
+         <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+         <img src="croix-cartoong.png" alt="Annuler sélection" id="btn-annuler-selection">
+       </div>
+
     </div>
   </section>
 
