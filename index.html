@@ -28,10 +28,20 @@
     GM
   </div>
 
-  <div class="logout-modal" id="logout-modal" style="…">
-    …  
-  </div>
+<section class="screen active" id="accueil">
+  <!-- ... votre contenu Accueil (titre, boutons, user-icon) ... -->
 </section>
+
+<!-- On conserve uniquement CE modal complet -->
+<div class="logout-modal" id="logout-modal"
+     style="display:none; position:absolute; top:30%; left:50%; transform:translateX(-50%)">
+  <p>Voulez-vous vous déconnecter ?</p>
+  <button class="button" onclick="logoutUser()">Se déconnecter</button>
+  <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+    Annuler
+  </button>
+</div>
+
 
 
   <div class="logout-modal" id="logout-modal"
