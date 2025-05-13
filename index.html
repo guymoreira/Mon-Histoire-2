@@ -3,7 +3,7 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mon Histoire</title>
   <link href="style.css" rel="stylesheet"/>
 </head>
@@ -29,23 +29,23 @@
     <div class="bloc-centre">
       <h2>Connexion</h2>
       <form onsubmit="event.preventDefault(); loginUser();">
-        <input class="input-style" id="email" placeholder="Adresse email" required="" type="email"/>
-        <input class="input-style" id="password" placeholder="Mot de passe" required="" type="password"/>
+        <input class="input-style" id="email" placeholder="Adresse email" required type="email"/>
+        <input class="input-style" id="password" placeholder="Mot de passe" required type="password"/>
         <div class="button-group">
           <button class="button" type="submit">Se connecter</button>
-          <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
+          <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
         </div>
       </form>
       <p style="text-align:center;">
-        <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
-        <br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+        <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button><br/>
+        <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
       </p>
       <div class="bloc-centre" id="signup-form" style="display:none;">
         <h2>Créer un compte</h2>
-        <input class="input-style" id="prenom" placeholder="Prénom" required="" type="text"/>
-        <input class="input-style" id="signup-email" placeholder="Adresse email" required="" type="email"/>
-        <input class="input-style" id="signup-password" placeholder="Mot de passe" required="" type="password"/>
-        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required="" type="password"/>
+        <input class="input-style" id="prenom" placeholder="Prénom" required type="text"/>
+        <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email"/>
+        <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password"/>
+        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password"/>
         <div class="button-group">
           <button class="button" onclick="registerUser()">Valider</button>
           <button class="button" onclick="toggleSignup(false)">Annuler</button>
@@ -53,7 +53,7 @@
       </div>
       <div class="bloc-centre" id="reset-form" style="display:none;">
         <h2>Réinitialisation</h2>
-        <input class="input-style" id="reset-email" placeholder="Votre adresse email" required="" type="email"/>
+        <input class="input-style" id="reset-email" placeholder="Votre adresse email" required type="email"/>
         <div class="button-group">
           <button class="button" onclick="sendReset()">Envoyer</button>
           <button class="button" onclick="toggleReset(false)">Annuler</button>
@@ -67,7 +67,7 @@
     <div class="bloc-centre">
       <h2>Créer une Histoire</h2>
       <form onsubmit="event.preventDefault(); genererHistoire();">
-        <input class="input-style" id="nom" placeholder="Nom du héros" required="" type="text"/>
+        <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
         <select class="input-style" id="personnage">
           <option value="chevalier">Chevalier</option>
           <option value="princesse">Princesse</option>
@@ -110,7 +110,7 @@
           <option value="longue">Longue</option>
         </select>
         <button class="button" type="submit">Générer</button>
-        <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
+        <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
       </form>
     </div>
   </section>
@@ -140,21 +140,11 @@
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
-
       <div class="actions-suppression" id="barre-suppression">
-        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille" onclick="supprimerHistoiresSelectionnees()">
-        <img src="croix-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection" onclick="reinitialiserSelectionHistoires()">
+        <img src="corbeille-cartoon.png" alt="Corbeille" onclick="supprimerHistoiresSelectionnees()">
+        <img src="croix-cartoon.png" alt="Annuler sélection" onclick="reinitialiserSelectionHistoires()">
       </div>
-
-      <label id="label-tout-selectionner">
-        <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
-        Tout sélectionner
-      </label>
-
-      <ul id="liste-histoires" style="list-style: none; padding: 0;">
-        <!-- peuplé dynamiquement -->
-      </ul>
-
+      <ul id="liste-histoires"></ul>
       <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
     </div>
   </section>
