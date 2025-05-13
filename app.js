@@ -1,5 +1,5 @@
 // app.js
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", () => {
   try {
     if (localStorage.getItem("isLoggedIn") === "true") {
       afficherUtilisateurConnecté();
@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   } catch (e) {
     console.warn("Initialisation échouée :", e);
   }
+  afficherHistoiresSauvegardees();
+  bindLongPress();
 });
 
 function showScreen(id) {
@@ -16,20 +18,16 @@ function showScreen(id) {
   const next = document.getElementById(id);
   if (current && next && current !== next) {
     current.classList.remove("active");
-    setTimeout(() => {
-      next.classList.add("active");
-    }, 50);
+    setTimeout(() => next.classList.add("active"), 50);
   } else if (next) {
     next.classList.add("active");
   }
 }
 
 function loginUser() {
-  const email = document.getElementById("email");
-  const password = document.getElementById("password");
-
-  if (email && password && email.value.trim() && password.value.trim()) {
-
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if (email && password) {
     localStorage.setItem("isLoggedIn", "true");
     afficherUtilisateurConnecté();
     showScreen("accueil");
@@ -40,93 +38,67 @@ function logoutUser() {
   localStorage.setItem("isLoggedIn", "false");
   localStorage.removeItem("histoires");
   afficherUtilisateurDéconnecté();
-  const modal = document.getElementById("logout-modal");
-  if (modal) modal.style.display = "none";
+  document.getElementById("logout-modal").style.display = "none";
   showScreen("accueil");
-  window.location.reload();
 }
 
 function afficherUtilisateurConnecté() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  const storiesBtn = document.getElementById("my-stories-button");
-  if (icon) icon.style.display = "inline-block";
-  if (loginBtn) loginBtn.style.display = "none";
-  if (storiesBtn) storiesBtn.style.display = "inline-block";
+  document.getElementById("user-icon").style.display = "inline-block";
+  document.getElementById("login-button").style.display = "none";
+  document.getElementById("my-stories-button").style.display = "inline-block";
 }
 
 function afficherUtilisateurDéconnecté() {
-  const icon = document.getElementById("user-icon");
-  const loginBtn = document.getElementById("login-button");
-  const storiesBtn = document.getElementById("my-stories-button");
-  if (icon) icon.style.display = "none";
-  if (loginBtn) loginBtn.style.display = "inline-block";
-  if (storiesBtn) storiesBtn.style.display = "none";
+  document.getElementById("user-icon").style.display = "none";
+  document.getElementById("login-button").style.display = "inline-block";
+  document.getElementById("my-stories-button").style.display = "none";
 }
 
 function genererHistoire() {
-  const nom = document.getElementById("nom").value.trim();
+  const nom        = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
-  const lieu = document.getElementById("lieu").value;
-  const objet = document.getElementById("objet").value;
-  const compagnon = document.getElementById("compagnon").value;
-  const mission = document.getElementById("mission").value;
-  const style = document.getElementById("style").value;
-  const duree = document.getElementById("duree").value;
+  const lieu       = document.getElementById("lieu").value;
+  const objet      = document.getElementById("objet").value;
+  const compagnon  = document.getElementById("compagnon").value;
+  const mission    = document.getElementById("mission").value;
+  const style      = document.getElementById("style").value;
+  const duree      = document.getElementById("duree").value;
 
   const texte = `
     <h3>Chapitre 1 : Le départ</h3>
-    <p>${nom}, un jeune ${personnage}, vivait paisiblement dans une région proche de la ${lieu}.
-    Un jour, une mission importante lui fut confiée : ${mission}.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-1.jpg" alt="Illustration chapitre 1">
-    </div>
-
+    <p>${nom}, un jeune ${personnage}, vivait paisiblement près de la ${lieu}. Un jour, on lui confia la mission : ${mission}.</p>
+    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-1.jpg" alt=""></div>
     <h3>Chapitre 2 : L'objet magique</h3>
-    <p>En explorant les environs, ${nom} découvrit une ${objet} brillante. Elle semblait dotée de pouvoirs mystérieux.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-2.jpg" alt="Illustration chapitre 2">
-    </div>
-
+    <p>En explorant, ${nom} découvrit une ${objet} brillante aux pouvoirs mystérieux.</p>
+    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-2.jpg" alt=""></div>
     <h3>Chapitre 3 : La rencontre</h3>
-    <p>Sur son chemin, ${nom} rencontra un(e) ${compagnon}. Ensemble, ils se mirent en route avec courage et détermination.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-3.jpg" alt="Illustration chapitre 3">
-    </div>
-
+    <p>Sur sa route, il rencontra un(e) ${compagnon}, et tous deux poursuivirent l’aventure.</p>
+    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-3.jpg" alt=""></div>
     <h3>Chapitre 4 : L'aventure</h3>
-    <p>L’histoire se déroula dans un style ${style}, avec des rebondissements captivants et une durée ${duree}.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-4.jpg" alt="Illustration chapitre 4">
-    </div>
-
+    <p>L’histoire, dans un style ${style}, dura ${duree} et fut remplie de rebondissements.</p>
+    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-4.jpg" alt=""></div>
     <h3>Chapitre 5 : La réussite</h3>
-    <p>Grâce à sa bravoure, ${nom} réussit à ${mission.toLowerCase()} et revint triomphant dans son village.</p>
-    <div class="illustration-chapitre">
-      <img src="illustration-chevalier-chateau-chapitre-5.jpg" alt="Illustration chapitre 5">
-    </div>
+    <p>Grâce à son courage, ${nom} réussit à ${mission.toLowerCase()} et revint triomphant.</p>
+    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-5.jpg" alt=""></div>
   `;
-
   document.getElementById("histoire").innerHTML = texte;
   showScreen("resultat");
 }
 
 function registerUser() {
-  const prenom = document.getElementById("prenom").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
+  const prenom  = document.getElementById("prenom").value.trim();
+  const email   = document.getElementById("signup-email").value.trim();
+  const pwd     = document.getElementById("signup-password").value;
   const confirm = document.getElementById("signup-confirm").value;
-
-  if (!prenom || !email || !password || !confirm) {
+  if (!prenom || !email || !pwd || !confirm) {
     alert("Merci de remplir tous les champs.");
     return;
   }
-  if (password !== confirm) {
+  if (pwd !== confirm) {
     alert("Les mots de passe ne correspondent pas.");
     return;
   }
-
-  alert("Compte créé avec succès ! (fonctionnalité simulée)");
+  alert("Compte créé avec succès ! (simulation)");
   toggleSignup(false);
 }
 
@@ -146,13 +118,13 @@ function sendReset() {
     alert("Veuillez saisir votre adresse email.");
     return;
   }
-  alert("Un lien de réinitialisation a été envoyé (simulation).");
+  alert("Lien de réinitialisation envoyé ! (simulation)");
   toggleReset(false);
 }
 
 function demanderSauvegarde() {
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  if (histoires.length >= 5) {
+  const his = JSON.parse(localStorage.getItem("histoires") || "[]");
+  if (his.length >= 5) {
     document.getElementById("modal-limite").style.display = "block";
   } else {
     sauvegarderHistoire();
@@ -160,80 +132,106 @@ function demanderSauvegarde() {
 }
 
 function sauvegarderHistoire() {
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  if (histoires.length >= 10) {
-    afficherGestionSuppression();
-    return;
-  }
+  const histos = JSON.parse(localStorage.getItem("histoires") || "[]");
   const contenu = document.getElementById("histoire").innerHTML;
-  const histoire = {
+  histos.push({
     titre: "Histoire du " + new Date().toLocaleDateString(),
-    contenu: contenu,
+    contenu,
     date: new Date().toISOString()
-  };
-  histoires.push(histoire);
-  localStorage.setItem("histoires", JSON.stringify(histoires));
+  });
+  localStorage.setItem("histoires", JSON.stringify(histos));
   afficherHistoiresSauvegardees();
   alert("Histoire sauvegardée !");
 }
 
-function afficherGestionSuppression() {
-  const container = document.getElementById("liste-histoires");
-  container.innerHTML = "";
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  histoires.forEach((histoire, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <label style="display:flex; align-items:center; gap:0.5rem;">
-        <input type="checkbox" value="${index}">
-        <span>${histoire.titre}</span>
-      </label>
-    `;
-    container.appendChild(li);
-  });
-  const boutonSupp = document.createElement("button");
-  boutonSupp.className = "button";
-  boutonSupp.textContent = "";
-  boutonSupp.onclick = supprimerHistoiresSelectionnees;
-  container.appendChild(boutonSupp);
-  showScreen("mes-histoires");
-}
-
 function supprimerHistoiresSelectionnees() {
-  const checkboxes = document.querySelectorAll("#liste-histoires input[type='checkbox']:checked");
-  const indicesASupprimer = Array.from(checkboxes).map(cb => parseInt(cb.value));
-  let histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  histoires = histoires.filter((_, i) => !indicesASupprimer.includes(i));
-  localStorage.setItem("histoires", JSON.stringify(histoires));
-  alert("Histoires supprimées. Vous pouvez réessayer de sauvegarder.");
-  showScreen("formulaire");
-}
-
-function mettreAJourBarreSuppression() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
-  document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
+  const checked = Array.from(document.querySelectorAll("#liste-histoires input[type='checkbox']:checked"))
+    .map(cb => parseInt(cb.value, 10));
+  let his = JSON.parse(localStorage.getItem("histoires") || "[]");
+  his = his.filter((_, i) => !checked.includes(i));
+  localStorage.setItem("histoires", JSON.stringify(his));
+  reinitialiserSelectionHistoires();
+  afficherHistoiresSauvegardees();
 }
 
 function toutSelectionner(source) {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = source.checked);
+  document.querySelectorAll('#liste-histoires input[type="checkbox"]').forEach(cb => cb.checked = source.checked);
   mettreAJourBarreSuppression();
+}
+
+function mettreAJourBarreSuppression() {
+  const any = Array.from(document.querySelectorAll('#liste-histoires input[type="checkbox"]')).some(cb => cb.checked);
+  const bar = document.getElementById('barre-suppression');
+  const sec = document.getElementById('mes-histoires');
+  if (any) {
+    bar.style.display = 'flex';
+    sec.classList.add('selection-mode');
+  } else {
+    bar.style.display = 'none';
+    sec.classList.remove('selection-mode');
+  }
 }
 
 function reinitialiserSelectionHistoires() {
-  const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = false);
-  const selectAll = document.getElementById('tout-selectionner');
-  if (selectAll) selectAll.checked = false;
+  document.querySelectorAll('#liste-histoires input[type="checkbox"]').forEach(cb => cb.checked = false);
+  const selAll = document.getElementById('tout-selectionner');
+  if (selAll) selAll.checked = false;
   mettreAJourBarreSuppression();
 }
 
-document.addEventListener("change", function (e) {
-  if (e.target.matches('#liste-histoires input[type="checkbox"]')) {
-    mettreAJourBarreSuppression();
+function bindLongPress() {
+  document.querySelectorAll('#liste-histoires li').forEach(li => {
+    const btn = li.querySelector('button');
+    const cb  = li.querySelector('input[type="checkbox"]');
+    let timer = null;
+
+    const start = e => {
+      e.preventDefault();
+      timer = setTimeout(() => {
+        cb.checked = true;
+        mettreAJourBarreSuppression();
+      }, 600);
+    };
+    const cancel = () => clearTimeout(timer);
+
+    btn.addEventListener('touchstart', start);
+    btn.addEventListener('mousedown',  start);
+    btn.addEventListener('touchend',   cancel);
+    btn.addEventListener('mouseup',    cancel);
+    btn.addEventListener('mouseleave', cancel);
+
+    btn.addEventListener('click', e => {
+      const sec = document.getElementById('mes-histoires');
+      if (!sec.classList.contains('selection-mode')) {
+        afficherHistoire(parseInt(cb.value, 10));
+      }
+    });
+  });
+}
+
+function afficherHistoiresSauvegardees() {
+  const liste = document.getElementById("liste-histoires");
+  liste.innerHTML = "";
+  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
+  histoires.forEach((h, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <button class="button">${h.titre}</button>
+      <input type="checkbox" value="${i}">
+    `;
+    liste.appendChild(li);
+  });
+  bindLongPress();
+  mettreAJourBarreSuppression();
+}
+
+function afficherHistoire(index) {
+  const his = JSON.parse(localStorage.getItem("histoires") || "[]");
+  if (his[index]) {
+    document.getElementById("histoire").innerHTML = his[index].contenu;
+    showScreen("resultat");
   }
-});
+}
 
 function fermerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
@@ -247,37 +245,3 @@ function validerModaleLimite() {
 function retourDepuisMesHistoires() {
   showScreen("accueil");
 }
-
-function afficherHistoiresSauvegardees() {
-  const liste = document.getElementById("liste-histoires");
-  if (!liste) return;
-  liste.innerHTML = "";
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  histoires.forEach((histoire, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <button class="button" onclick="afficherHistoire(${index})">${histoire.titre}</button>
-      <input type="checkbox" value="${index}">
-    `;
-    liste.appendChild(li);
-  });
-  mettreAJourBarreSuppression();
-}
-
-function afficherHistoire(index) {
-  const histoires = JSON.parse(localStorage.getItem("histoires") || "[]");
-  const histoire = histoires[index];
-  if (histoire) {
-    document.getElementById("histoire").innerHTML = histoire.contenu;
-    showScreen("resultat");
-  }
-}
-
-window.onload = () => {
-  if (localStorage.getItem("isLoggedIn") === "true") {
-    afficherUtilisateurConnecté();
-  } else {
-    afficherUtilisateurDéconnecté();
-  }
-  afficherHistoiresSauvegardees();
-};
