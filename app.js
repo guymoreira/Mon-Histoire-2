@@ -9,16 +9,17 @@ window.addEventListener("DOMContentLoaded", () => {
   bindLongPress();
 });
 
+/**
+ * Bascule l’affichage d’une “screen” sans délai ni flash.
+ */
 function showScreen(id) {
-  const cur = document.querySelector(".screen.active");
-  const nxt = document.getElementById(id);
-  if (cur && nxt && cur !== nxt) {
-    cur.classList.remove("active");
-    setTimeout(() => nxt.classList.add("active"), 50);
-  } else if (nxt) {
-    nxt.classList.add("active");
-  }
+  // on masque tout ce qui était actif
+  document.querySelectorAll('.screen.active').forEach(el => el.classList.remove('active'));
+  // on affiche directement celui demandé
+  const next = document.getElementById(id);
+  if (next) next.classList.add('active');
 }
+
 
 function loginUser() {
   const e = document.getElementById("email").value.trim();
