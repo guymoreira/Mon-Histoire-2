@@ -89,18 +89,6 @@ body {
   transform: translateY(-50%);
 }
 
-/* barre d’actions (poubelle + croix) */
-.actions-suppression {
-  display: none; justify-content: space-between;
-  align-items: center; margin-bottom: 1rem;
-  padding: 0 1rem;
-}
-.selection-mode .actions-suppression {
-  display: flex;
-}
-.actions-suppression img {
-  width: 32px; height: auto; cursor: pointer;
-}
 
 /* =============================
    Page ACCUEIL : centrage et GM
@@ -155,5 +143,24 @@ body {
   z-index: 1000;                /* au-dessus de tout */
 }
 
+/* === Footer actions | corbeille + Retour + croix === */
+.actions-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.actions-footer img {
+  width: 64px;
+  height: auto;
+  cursor: pointer;
+}
+
+.actions-footer .button {
+  margin: 0;
+  padding: 0.8rem 1.5rem;
+}
 
 
