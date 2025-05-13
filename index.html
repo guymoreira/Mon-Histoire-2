@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,7 +8,6 @@
   <link href="style.css" rel="stylesheet"/>
 </head>
 <body>
-
   <!-- Accueil -->
   <section class="screen active" id="accueil">
     <div id="accueil-content">
@@ -23,7 +23,6 @@
       <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
     </div>
   </section>
-
   <!-- Connexion -->
   <section class="screen" id="connexion">
     <div class="bloc-centre">
@@ -34,12 +33,12 @@
           <input class="input-style" id="password" placeholder="Mot de passe" required="" type="password"/>
           <div class="button-group">
             <button class="button" type="submit">Se connecter</button>
-            <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
+            <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
           </div>
         </div>
         <p style="text-align:center;">
-          <button class="button small" type="button" onclick="toggleSignup(true)">Créer un compte</button><br/>
-          <a href="#" style="font-size:0.9rem;" onclick="toggleReset(true)">Mot de passe oublié ?</a>
+          <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
+          <br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
         </p>
       </form>
       <div class="bloc-centre" id="signup-form" style="display:none;">
@@ -47,15 +46,15 @@
         <input class="input-style" id="prenom" placeholder="Prénom" required="" type="text"/>
         <input class="input-style" id="signup-email" placeholder="Adresse email" required="" type="email"/>
         <input class="input-style" id="signup-password" placeholder="Mot de passe" required="" type="password"/>
-        <input class="input-style" id="signup-confirm" placeholder="Confirmer mot de passe" required="" type="password"/>
+        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required="" type="password"/>
         <div class="button-group">
           <button class="button" onclick="registerUser()">Valider</button>
           <button class="button" onclick="toggleSignup(false)">Annuler</button>
         </div>
       </div>
       <div class="bloc-centre" id="reset-form" style="display:none;">
-        <h2>Réinitialiser mot de passe</h2>
-        <input class="input-style" id="reset-email" placeholder="Adresse email" required="" type="email"/>
+        <h2>Réinitialisation</h2>
+        <input class="input-style" id="reset-email" placeholder="Votre adresse email" required="" type="email"/>
         <div class="button-group">
           <button class="button" onclick="sendReset()">Envoyer</button>
           <button class="button" onclick="toggleReset(false)">Annuler</button>
@@ -63,7 +62,6 @@
       </div>
     </div>
   </section>
-
   <!-- Formulaire de création -->
   <section class="screen" id="formulaire">
     <div class="bloc-centre">
@@ -112,16 +110,16 @@
           <option value="longue">Longue</option>
         </select>
         <button class="button" type="submit">Générer</button>
-        <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
+        <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
       </form>
     </div>
   </section>
-
   <!-- Résultat -->
   <section class="screen" id="resultat">
     <div class="bloc-centre">
       <h2>Ton Histoire</h2>
       <div id="histoire"></div>
+      <button class="button" onclick="showScreen('accueil')">Accueil</button>
       <div class="actions-resultat">
         <button class="button" onclick="showScreen('formulaire')">Retour</button>
         <button class="button" onclick="showScreen('accueil')">Accueil</button>
@@ -129,8 +127,6 @@
       </div>
     </div>
   </section>
-
-  <!-- Modal limite -->
   <div id="modal-limite" class="modal" style="display:none;">
     <div class="modal-content">
       <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
@@ -138,34 +134,30 @@
       <button class="button" onclick="fermerModaleLimite()">Non</button>
     </div>
   </div>
-
-  <!-- Mes Histoires -->
+  <script src="app.js" defer></script>
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
 
-      <!-- Barre d'action (masquée par défaut) -->
-      <div class="actions-suppression" id="barre-suppression" style="display:none;">
-        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille"/>
-        <img src="croixrouge-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection"/>
+      <!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
+      <div class="actions-suppression" style="display:none;" id="barre-suppression">
+        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
+        <img src="croix-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection">
       </div>
 
-      <!-- Case Tout sélectionner (masquée hors mode sélection) -->
-      <label id="label-tout-selectionner" style="margin-bottom:1rem; display:none;">
-        <input type="checkbox" id="tout-selectionner"/>
+      <!-- Case tout sélectionner -->
+      <label style="margin-bottom: 1rem; display: block;">
+        <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
         Tout sélectionner
       </label>
 
-      <!-- Liste des histoires -->
-      <ul id="liste-histoires" style="list-style:none; padding:0;">
-        <!-- peuplée dynamiquement -->
+      <!-- Liste des histoires (sera peuplée dynamiquement) -->
+      <ul id="liste-histoires" style="list-style: none; padding: 0;">
+        <!-- Dynamique uniquement -->
       </ul>
 
       <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
     </div>
   </section>
-
-  <script src="app.js" defer></script>
 </body>
 </html>
-
