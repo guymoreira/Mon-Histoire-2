@@ -300,6 +300,8 @@ function supprimerHistoiresSelectionnees() {
 
 // Affiche ou masque la corbeille et la croix rouge en fonction de la sélection
 function mettreAJourBarreSuppression() {
+  const barreActions = document.querySelector('.barre-actions');
+  if (!barreActions) return;
   const checkboxes = document.querySelectorAll('#liste-histoires input[type="checkbox"]');
   const selectionnee = Array.from(checkboxes).some(cb => cb.checked);
   document.getElementById('barre-suppression').style.display = selectionnee ? 'flex' : 'none';
