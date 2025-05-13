@@ -23,24 +23,23 @@
       <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
     </div>
   </section>
+
   <!-- Connexion -->
   <section class="screen" id="connexion">
     <div class="bloc-centre">
       <h2>Connexion</h2>
       <form onsubmit="event.preventDefault(); loginUser();">
-        <div id="login-fields">
-          <input class="input-style" id="email" placeholder="Adresse email" required="" type="email"/>
-          <input class="input-style" id="password" placeholder="Mot de passe" required="" type="password"/>
-          <div class="button-group">
-            <button class="button" type="submit">Se connecter</button>
-            <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
-          </div>
+        <input class="input-style" id="email" placeholder="Adresse email" required="" type="email"/>
+        <input class="input-style" id="password" placeholder="Mot de passe" required="" type="password"/>
+        <div class="button-group">
+          <button class="button" type="submit">Se connecter</button>
+          <button class="button" onclick="showScreen('accueil')" type="button">Annuler</button>
         </div>
-        <p style="text-align:center;">
-          <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
-          <br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
-        </p>
       </form>
+      <p style="text-align:center;">
+        <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button>
+        <br/><a href="#" onclick="toggleReset(true)" style="font-size: 0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+      </p>
       <div class="bloc-centre" id="signup-form" style="display:none;">
         <h2>Créer un compte</h2>
         <input class="input-style" id="prenom" placeholder="Prénom" required="" type="text"/>
@@ -62,6 +61,7 @@
       </div>
     </div>
   </section>
+
   <!-- Formulaire de création -->
   <section class="screen" id="formulaire">
     <div class="bloc-centre">
@@ -114,12 +114,12 @@
       </form>
     </div>
   </section>
+
   <!-- Résultat -->
   <section class="screen" id="resultat">
     <div class="bloc-centre">
       <h2>Ton Histoire</h2>
       <div id="histoire"></div>
-      <button class="button" onclick="showScreen('accueil')">Accueil</button>
       <div class="actions-resultat">
         <button class="button" onclick="showScreen('formulaire')">Retour</button>
         <button class="button" onclick="showScreen('accueil')">Accueil</button>
@@ -127,6 +127,7 @@
       </div>
     </div>
   </section>
+
   <div id="modal-limite" class="modal" style="display:none;">
     <div class="modal-content">
       <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
@@ -134,30 +135,30 @@
       <button class="button" onclick="fermerModaleLimite()">Non</button>
     </div>
   </div>
-  <script src="app.js" defer></script>
+
+  <!-- Mes Histoires -->
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
 
-      <!-- Barre d'action apparaissant dès qu'une histoire est cochée -->
-      <div class="actions-suppression" style="display:none;" id="barre-suppression">
-        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille">
-        <img src="croix-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection">
+      <div class="actions-suppression" id="barre-suppression">
+        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille" onclick="supprimerHistoiresSelectionnees()">
+        <img src="croix-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection" onclick="reinitialiserSelectionHistoires()">
       </div>
 
-      <!-- Case tout sélectionner -->
-      <label style="margin-bottom: 1rem; display: block;">
+      <label id="label-tout-selectionner">
         <input type="checkbox" id="tout-selectionner" onchange="toutSelectionner(this)">
         Tout sélectionner
       </label>
 
-      <!-- Liste des histoires (sera peuplée dynamiquement) -->
       <ul id="liste-histoires" style="list-style: none; padding: 0;">
-        <!-- Dynamique uniquement -->
+        <!-- peuplé dynamiquement -->
       </ul>
 
       <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
     </div>
   </section>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
