@@ -49,8 +49,12 @@ body {
 }
 
 .illustration-chapitre img {
-  margin: 0 auto; display: block;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;  /* espace vertical plus confortable */
 }
+
 
 .actions-resultat {
   display: flex; justify-content: space-between;
