@@ -21,11 +21,10 @@ function showScreen(id) {
     afficherHistoiresSauvegardees();
   }
 
-  // on affiche directement le nouvel écran
+  // on affiche ensuite l’écran demandé
   const next = document.getElementById(id);
   if (next) next.classList.add('active');
 }
-
 
 
 function loginUser() {
