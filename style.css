@@ -358,4 +358,19 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+.mode-selection .corbeille,
+.mode-selection .annuler-selection,
+.mode-selection .tout-selectionner {
+  display: inline-block;
+}
+
+.selectionnee {
+  background-color: #ffe4e4;
+  border: 2px dashed #dd5555;
+}
+
+.icone-action {
+  cursor: pointer;
+}
+
 
