@@ -10,18 +10,28 @@
 <body>
   <!-- Accueil -->
 <section class="screen active" id="accueil">
-  <div id="accueil-content">
+  <!-- on ajoute la classe bloc-centre pour le fond blanc -->
+  <div class="bloc-centre" id="accueil-content">
     <h1>Mon Histoire</h1>
-    <button class="button" id="create-button" onclick="showScreen('formulaire')">Créer une histoire</button>
-    <button class="button" id="login-button" onclick="showScreen('connexion')">Me connecter</button>
-    <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">Mes Histoires</button>
+    <button class="button" id="create-button" onclick="showScreen('formulaire')">
+      Créer une histoire
+    </button>
+    <button class="button" id="login-button" onclick="showScreen('connexion')">
+      Me connecter
+    </button>
+    <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
+      Mes Histoires
+    </button>
   </div>
 
-  <!-- rond “GM” déplacé hors du conteneur centré -->
-<div id="user-icon"
-     onclick="document.getElementById('logout-modal').style.display = 'block'">
-  GM
-</div>
+  <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='block'">
+    GM
+  </div>
+
+  <div class="logout-modal" id="logout-modal" style="…">
+    …  
+  </div>
+</section>
 
 
   <div class="logout-modal" id="logout-modal"
