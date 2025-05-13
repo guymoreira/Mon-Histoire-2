@@ -147,11 +147,12 @@ function afficherHistoiresSauvegardees() {
 }
 
 function bindLongPress() {
-  document.querySelectorAll("#liste-histoires li").forEach(li => {
-    const btn = li.querySelector("button");
+  document.querySelectorAll('#liste-histoires li').forEach(li => {
+    const btn = li.querySelector('button');
     let timer = null;
+
     const start = e => {
-      e.preventDefault();
+      // démarrage du timer pour détecter le long-press
       timer = setTimeout(() => {
         li.classList.add("selected");
         mettreAJourBar();
@@ -159,23 +160,25 @@ function bindLongPress() {
     };
     const cancel = () => clearTimeout(timer);
 
-    btn.addEventListener("mousedown", start);
-    btn.addEventListener("touchstart", start);
-    btn.addEventListener("mouseup", cancel);
-    btn.addEventListener("touchend", cancel);
-    btn.addEventListener("mouseleave", cancel);
+    btn.addEventListener('touchstart', start);
+    btn.addEventListener('mousedown',  start);
+    btn.addEventListener('touchend',   cancel);
+    btn.addEventListener('mouseup',    cancel);
+    btn.addEventListener('mouseleave', cancel);
 
-    btn.addEventListener("click", () => {
-      const sec = document.getElementById("mes-histoires");
-      if (sec.classList.contains("selection-mode")) {
-        li.classList.toggle("selected");
-        mettreAJourBar();
+    btn.addEventListener('click', e => {
+      const sec = document.getElementById('mes-histoires');
+      if (!sec.classList.contains('selection-mode')) {
+        const idx = parseInt(li.dataset.index, 10);
+        afficherHistoire(idx);
       } else {
-        afficherHistoire(parseInt(li.dataset.index, 10));
+        li.classList.toggle('selected');
+        mettreAJourBar();
       }
     });
   });
 }
+
 
 function mettreAJourBar() {
   const sec = document.getElementById("mes-histoires");
