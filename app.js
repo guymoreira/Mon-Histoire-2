@@ -15,10 +15,17 @@ window.addEventListener("DOMContentLoaded", () => {
 function showScreen(id) {
   // on masque tout ce qui était actif
   document.querySelectorAll('.screen.active').forEach(el => el.classList.remove('active'));
-  // on affiche directement celui demandé
+
+  // si on arrive sur Mes Histoires, on rafraîchit la liste et re-bind les événements  
+  if (id === 'mes-histoires') {
+    afficherHistoiresSauvegardees();
+  }
+
+  // on affiche directement le nouvel écran
   const next = document.getElementById(id);
   if (next) next.classList.add('active');
 }
+
 
 
 function loginUser() {
