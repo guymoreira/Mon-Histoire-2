@@ -57,11 +57,14 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Page Connexion (et modales de reset éventuelles) */
-#connexion {
+
+/* Page Connexion (et modales de reset éventuelles) et Création d’Histoire */
+#connexion,
+#formulaire {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 
 .screen.active {
   opacity: 1; visibility: visible; z-index: 2;
