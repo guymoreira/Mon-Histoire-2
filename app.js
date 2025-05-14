@@ -9,6 +9,17 @@ window.addEventListener("DOMContentLoaded", () => {
   bindLongPress();
 });
 
+
+// Affiche le modal générique avec un message
+function showMessageModal(message) {
+  document.getElementById("message-modal-text").textContent = message;
+  document.getElementById("message-modal").style.display = "flex";
+}
+
+// Ferme le modal lorsque l'utilisateur clique sur OK
+function closeMessageModal() {
+  document.getElementById("message-modal").style.display = "none";
+}
 /**
  * Bascule l’affichage d’une “screen” sans délai ni flash.
  */
