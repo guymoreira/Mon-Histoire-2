@@ -80,10 +80,13 @@ body {
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 #accueil {
+  /* on annule le padding global de .screen pour cet écran uniquement */
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 
 #accueil .bloc-centre {
   margin: 0;  /* annule la marge auto pour un centrage exact */
