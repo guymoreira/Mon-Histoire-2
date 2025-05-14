@@ -135,7 +135,7 @@ function sendReset() {
 function demanderSauvegarde() {
   const h = JSON.parse(localStorage.getItem("histoires") || "[]");
   if (h.length >= 5) {
-    document.getElementById("modal-limite").style.display = "block";
+    document.getElementById("modal-limite").style.display = "flex";
   } else {
     sauvegarderHistoire();
   }
