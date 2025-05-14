@@ -74,9 +74,9 @@ body {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
   padding: 2rem;
-  width: 90%;         /* prend 90% de l’écran */
-  max-width: 360px;   /* mais ne dépasse pas 360px sur grand écran */
-  margin: 5vh auto;
+  width: 95%;           /* prend plus de place horizontalement */
+  max-width: 480px;     /* limite plus grande sur grands écrans */
+  margin: 2vh auto;     /* réduit la marge verticale autour */
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
