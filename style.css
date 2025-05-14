@@ -284,11 +284,8 @@ body {
 #formulaire .bloc-centre,
 #connexion  .bloc-centre,
 #resultat   .bloc-centre {
-  width: 120%;
-  margin-top:    2vh;
-  margin-bottom: 2vh;
-  margin-left:  -10%;
-  margin-right: -10%;
-}
+  width: 95%;            /* carte fait 95% de la largeur écran */
+  max-width: 800px;      /* plafonné à 800px sur grand écran */
+  margin: 2vh auto;      /* 2vh vertical, auto = marge gauche/droite égale */
 }
 
