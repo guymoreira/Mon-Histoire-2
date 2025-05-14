@@ -106,7 +106,11 @@ body {
    justify-content: space-between; /* espace max entre les deux boutons */
    gap: 1rem;                       /* espace intermédiaire conservé */
  }
-
+#connexion  .button-group button[type="button"],
+#signup-form .button-group button[type="button"],
+#reset-form .button-group button[type="button"] {
+  order: -1;  /* remonte “Annuler” avant le ou les boutons submit */
+}
 #formulaire .form-buttons {
   display: flex;                   
   flex-direction: row-reverse;     /* inverse l’ordre visuel des boutons */
