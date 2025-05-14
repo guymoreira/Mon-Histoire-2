@@ -108,15 +108,17 @@ body {
  }
 
 #formulaire .form-buttons {
-  display: flex;                   /* passage en flexbox */
-  justify-content: space-between; /* bouton Annuler à gauche, Générer à droite */
-  gap: 1rem;                       /* espace entre les deux */
-  margin-top: 1.5rem;              /* décale du reste du formulaire */
+  display: flex;                   
+  flex-direction: row-reverse;     /* inverse l’ordre visuel des boutons */
+  justify-content: space-between;  
+  gap: 1rem;                       
+  margin-top: 1.5rem;             
 }
 #formulaire .form-buttons .button {
-  margin: 0; /* annule le margin:auto global */
-  flex: 1;   /* chaque bouton prend la même largeur */
+  margin: 0; 
+  flex: 1;  
 }
+
 
 .illustration-chapitre img {
   display: block;
