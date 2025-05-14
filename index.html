@@ -150,13 +150,20 @@
     </div>
   </section>
 
-  <div id="modal-limite" class="modal" style="display:none;">
-    <div class="modal-content">
-      <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
-      <button class="button" onclick="validerModaleLimite()">Oui</button>
+<div id="modal-limite" class="modal" style="display:none;">
+  <div class="modal-content">
+    <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
+
+    <!-- on ajoute un wrapper flex .button-group -->
+    <div class="button-group">
+      <!-- d’abord “Non” -->
       <button class="button" onclick="fermerModaleLimite()">Non</button>
+      <!-- puis “Oui” -->
+      <button class="button" onclick="validerModaleLimite()">Oui</button>
     </div>
   </div>
+</div>
+
 
   <!-- Mes Histoires -->
   <section class="screen" id="mes-histoires">
