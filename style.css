@@ -284,7 +284,11 @@ body {
 #formulaire .bloc-centre,
 #connexion  .bloc-centre,
 #resultat   .bloc-centre {
-  width: 120%;        /* ajuste la largeur relative */
-  max-width: 800px;  /* ajuste le plafond */
+  width: 120%;
+  margin-top:    2vh;
+  margin-bottom: 2vh;
+  margin-left:  -10%;
+  margin-right: -10%;
+}
 }
 
