@@ -73,13 +73,21 @@ body {
 .bloc-centre {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
-  padding: 1.5rem;         /* ou réduisez à 1.5rem si vous voulez plus de place intérieure */
-  width: 98%;            /* 1% de marge gauche + droite */
-  max-width: 600px;      /* largeur maximale sur grands écrans */
-  margin: 1vh auto;      /* marge verticale très réduite */
+  padding: 2rem;
+  width: 100%;        /* prit toute la largeur dispo */
+  max-width: 700px;   /* plus large que 600px */
+  margin: 2vh auto;   /* un peu plus de marge verticale */
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
+#accueil {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+#accueil .bloc-centre {
+  margin: 0;  /* annule la marge auto pour un centrage exact */
+}
 
 .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
