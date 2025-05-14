@@ -281,11 +281,11 @@ body {
   margin: 0;                
 }
 /* Override pour écrans Formulaire, Connexion et Résultats */
-#formulaire .bloc-centre,
-#connexion  .bloc-centre,
-#resultat   .bloc-centre,
-#signup-form .bloc-centre,
-#reset-form .bloc-centre {
+#formulaire.bloc-centre,
+#connexion.bloc-centre,
+#resultat.bloc-centre,
+#signup-form.bloc-centre,
+#reset-form.bloc-centre {
   width: 100%;        /* 95% de l’écran */
   max-width: 800px;  /* plafonné à 800px en desktop */
   margin: 2vh auto;  /* centré horizontalement, écart vertical 2vh */
