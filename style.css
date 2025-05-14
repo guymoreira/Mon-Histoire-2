@@ -215,5 +215,22 @@ body {
   margin: 0;
   padding: 0.8rem 1.5rem;
 }
+/* ─────────────────────────────────────
+   Centrage vertical du bloc d’accueil
+   ───────────────────────────────────── */
+#accueil {
+  /* écrase le padding de .screen */
+  padding: 0;                
+  /* transforme #accueil en flex container centré */
+  display: flex;            
+  justify-content: center;  /* centre horizontalement */
+  align-items: center;      /* centre verticalement */
+  height: 100vh;            /* 100% de la hauteur de la fenêtre */
+}
+
+#accueil .bloc-centre {
+  /* supprime la marge verticale générée par .bloc-centre */
+  margin: 0;                
+}
 
 
