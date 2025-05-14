@@ -103,9 +103,15 @@ function registerUser() {
   const em = document.getElementById("signup-email").value.trim();
   const pw = document.getElementById("signup-password").value;
   const cf = document.getElementById("signup-confirm").value;
-  if (!pr || !em || !pw || !cf) { alert("Merci de remplir tous les champs."); return; }
-  if (pw !== cf) { alert("Les mots de passe ne correspondent pas."); return; }
-  alert("Compte créé (simulation) !");
+    if (!pr || !em || !pw || !cf) { 
+    showMessageModal("Merci de remplir tous les champs.");
+    return;
+  }
+    if (pw !== cf) {
+    showMessageModal("Les mots de passe ne correspondent pas.");
+   return;
+ }
+  +  showMessageModal("Compte créé (simulation) !");
   toggleSignup(false);
 }
 function toggleSignup(show) {
@@ -118,8 +124,11 @@ function toggleReset(show) {
 }
 function sendReset() {
   const em = document.getElementById("reset-email").value.trim();
-  if (!em) { alert("Veuillez saisir votre adresse email."); return; }
-  alert("Lien de réinitialisation envoyé (simulation)");
+    if (!em) {
+   showMessageModal("Veuillez saisir votre adresse email.");
+   return;
+  }
+  showMessageModal("Lien de réinitialisation envoyé (simulation)");
   toggleReset(false);
 }
 
@@ -140,7 +149,7 @@ function sauvegarderHistoire() {
   });
   localStorage.setItem("histoires", JSON.stringify(h));
   afficherHistoiresSauvegardees();
-  alert("Histoire sauvegardée !");
+  showMessageModal("Histoire sauvegardée !");
 }
 
 function afficherHistoiresSauvegardees() {
