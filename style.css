@@ -74,7 +74,7 @@ body {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
   padding: 1rem;
-  width: 100%;          /* même % sur tous les écrans */
+  width: 90%;          /* même % sur tous les écrans */
   max-width: 600px;    /* même max-width sur tous les écrans */
   margin: 2vh auto;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
@@ -147,8 +147,12 @@ body {
   z-index: 1000;
 }
 .modal-content {
-  background: #fff; border-radius: 10px; padding: 2rem;
-  text-align: center; max-width: 90%;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  width: 90%;           /* ← occupe toujours 90 % de l’écran */
+  max-width: 400px;      /* ← plafonne à 400 px sur desktop */
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
