@@ -201,7 +201,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3rem;
+  gap: 4rem;
   margin-top: 1.5rem;
 }
 
@@ -219,13 +219,14 @@ body {
    Centrage vertical du bloc d’accueil
    ───────────────────────────────────── */
 #accueil {
-  /* écrase le padding de .screen */
-  padding: 0;                
-  /* transforme #accueil en flex container centré */
-  display: flex;            
-  justify-content: center;  /* centre horizontalement */
-  align-items: center;      /* centre verticalement */
-  height: 100vh;            /* 100% de la hauteur de la fenêtre */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;  /* on commence en haut */
+  align-items: center;          /* toujours centré horizontalement */
+  padding-top: 15vh;            /* 15% de la hauteur en “gutter” au-dessus */
+  height: 100vh;
+  box-sizing: border-box;       /* pour inclure padding dans le 100vh */
 }
 
 #accueil .bloc-centre {
