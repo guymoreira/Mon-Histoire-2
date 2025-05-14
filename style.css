@@ -280,5 +280,11 @@ body {
   /* supprime la marge verticale générée par .bloc-centre */
   margin: 0;                
 }
-
+/* Override pour écrans Formulaire, Connexion et Résultats */
+#formulaire .bloc-centre,
+#connexion  .bloc-centre,
+#resultat   .bloc-centre {
+  width: 120%;        /* ajuste la largeur relative */
+  max-width: 800px;  /* ajuste le plafond */
+}
 
