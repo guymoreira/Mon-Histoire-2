@@ -73,12 +73,13 @@ body {
 .bloc-centre {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
-  padding: 2rem;
-  width: 95%;           /* prend plus de place horizontalement */
-  max-width: 480px;     /* limite plus grande sur grands écrans */
-  margin: 2vh auto;     /* réduit la marge verticale autour */
+  padding: 1.5rem;         /* ou réduisez à 1.5rem si vous voulez plus de place intérieure */
+  width: 98%;            /* 1% de marge gauche + droite */
+  max-width: 600px;      /* largeur maximale sur grands écrans */
+  margin: 1vh auto;      /* marge verticale très réduite */
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
+
 
 .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
