@@ -118,7 +118,10 @@ body {
   margin: 0; 
   flex: 1;  
 }
-
+ /* Connexion : Annuler à gauche, Se connecter à droite */
+ #connexion .button-group button[type="button"] {
+   order: -1;  /* remonte le bouton “Annuler” avant les autres */
+ }
 
 .illustration-chapitre img {
   display: block;
