@@ -80,6 +80,11 @@ body {
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
+#message-modal .bloc-centre {
+  width: 60%;       /* ou 80 %, selon vos goûts */
+  max-width: 400px; /* plafonne la boîte message */
+}
+
 
 .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
@@ -155,7 +160,13 @@ body {
   max-width: 400px;      /* ← plafonne à 400 px sur desktop */
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
-
+.message-card {
+  width: 60%;
+  max-width: 400px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 16px;
+  /* … */
+}
 /* Mes Histoires */
 #liste-histoires {
   list-style: none; padding: 0;
