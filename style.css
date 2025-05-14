@@ -79,14 +79,6 @@ body {
   margin: 2vh auto;   /* un peu plus de marge verticale */
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
-#accueil {
-  /* on annule le padding global de .screen pour cet écran uniquement */
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 
 #accueil .bloc-centre {
   margin: 0;  /* annule la marge auto pour un centrage exact */
@@ -168,11 +160,13 @@ body {
 
  /* 1) Conteneur accueil centré verticalement */
 #accueil {
-  position: relative;          /* pour le positionnement absolu de #user-icon */
+  position: relative;       /* pour positionner #user-icon */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: center;  /* centre vertical */
+  align-items: center;      /* centre horizontal */
+  padding: 0;               /* annule le padding 2rem de .screen */
+  height: 100vh;            /* prend toute la hauteur du viewport */
 }
 
 /* 2) Titre + boutons empilés et centrés */
