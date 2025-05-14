@@ -101,9 +101,12 @@ body {
   box-sizing: border-box;
 }
 
-.button-group {
-  display: flex; justify-content: center; gap: 1rem;
-}
+103 .button-group {
+104   display: flex;
+105   justify-content: space-between; /* espace max entre les deux boutons */
+106   gap: 1rem;                       /* espace intermédiaire conservé */
+107 }
+
 
 .illustration-chapitre img {
   display: block;
