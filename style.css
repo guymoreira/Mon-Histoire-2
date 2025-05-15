@@ -304,4 +304,30 @@ body {
   padding-left: 1rem;   /* ou 0 si tu veux vraiment coller aux bords */
   padding-right: 1rem;
 }
+/* ─── ÉCRAN FORMULAIRE ─────────────────────────────────── */
+/* 1) on réduit le padding horizontal du parent */
+#formulaire.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+/* 2) on force le bloc-centre à 100 % de cette nouvelle largeur */
+#formulaire .bloc-centre {
+  width:      100%;
+  max-width:  500px;    /* ajustez à votre convenance */
+  margin:     2vh 0;    /* uniquement marge verticale */
+}
+
+/* ─── ÉCRAN RÉSULTATS ─────────────────────────────────── */
+/* 1) idem pour le conteneur */
+#resultat.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+/* 2) idem pour le bloc-centre */
+#resultat .bloc-centre {
+  width:      100%;
+  max-width:  500px;    /* même valeur que pour formulaire ou différente */
+  margin:     2vh 0;
+}
+
 
