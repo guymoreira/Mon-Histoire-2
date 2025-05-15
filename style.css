@@ -287,7 +287,7 @@ body {
 #signup-form.bloc-centre,
 #reset-form.bloc-centre {
   width: 100%;        /* 95% de l’écran */
-  max-width: 800px;  /* plafonné à 800px en desktop */
+  max-width: none;  /* plafonné à 800px en desktop */
   margin: 2vh auto;  /* centré horizontalement, écart vertical 2vh */
 }
 
