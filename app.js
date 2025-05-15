@@ -220,6 +220,14 @@ function bindLongPress() {
       timer = setTimeout(() => {
         li.classList.add("selected");
         mettreAJourBar();
+      timer = setTimeout(() => {
+        // → feedback haptique
+        if (navigator.vibrate) {
+          navigator.vibrate(50);  // vibration de 50ms
+        }
+        // sélection de l’histoire
+        li.classList.add("selected");
+        mettreAJourBar();
       }, 600);
     };
     const cancel = () => clearTimeout(timer);
