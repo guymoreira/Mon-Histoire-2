@@ -20,23 +20,41 @@ function showMessageModal(message) {
 function closeMessageModal() {
   document.getElementById("message-modal").style.display = "none";
 }
+
+// —————————————
+// State de navigation
+// —————————————
+let currentScreen  = "accueil";
+let previousScreen = null;
+
+/**
+ * Affiche un écran et mémorise d’où l’on vient.
+ * Remplace entièrement votre ancienne showScreen.
+ */
+function showScreen(screen) {
+  if (screen === currentScreen) return;
+  previousScreen = currentScreen;
+  // masque tous les écrans actifs
+  document.querySelectorAll('.screen.active')
+          .forEach(el => el.classList.remove('active'));
+  // affiche le nouvel écran
+  document.getElementById(screen).classList.add('active');
+  currentScreen = screen;
+
+  // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
+  if (screen === "mes-histoires") {
+    afficherHistoiresSauvegardees();
+  }
+}
+
+/** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
+function goBack() {
+  showScreen(previousScreen || "accueil");
+}
+
 /**
  * Bascule l’affichage d’une “screen” sans délai ni flash.
  */
-function showScreen(id) {
-  // on masque tout ce qui était actif
-  document.querySelectorAll('.screen.active').forEach(el => el.classList.remove('active'));
-
-  // si on arrive sur Mes Histoires, on rafraîchit la liste et re-bind les événements  
-  if (id === 'mes-histoires') {
-    afficherHistoiresSauvegardees();
-  }
-
-  // on affiche ensuite l’écran demandé
-  const next = document.getElementById(id);
-  if (next) next.classList.add('active');
-}
-
 
 function loginUser() {
   const e = document.getElementById("email").value.trim();
@@ -230,9 +248,6 @@ function fermerModaleLimite() {
 function validerModaleLimite() {
   document.getElementById("modal-limite").style.display = "none";
   showScreen("mes-histoires");
-}
-function retourDepuisMesHistoires() {
-  showScreen("accueil");
 }
 
 // Ouvre la modale CSS de confirmation
