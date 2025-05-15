@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,44 +8,39 @@
 </head>
 <body>
   <!-- Accueil -->
-<section class="screen active" id="accueil">
-  <!-- on ajoute la classe bloc-centre pour le fond blanc -->
-  <div class="bloc-centre" id="accueil-content">
-    <h1>Mon Histoire</h1>
-    <button class="button" id="create-button" onclick="showScreen('formulaire')">
-      Créer une histoire
-    </button>
-    <button class="button" id="login-button" onclick="showScreen('connexion')">
-      Me connecter
-    </button>
-    <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
-      Mes Histoires
-    </button>
+  <section class="screen active" id="accueil">
+    <div class="bloc-centre" id="accueil-content">
+      <h1>Mon Histoire</h1>
+      <button class="button" id="create-button" onclick="showScreen('formulaire')">
+        Créer une histoire
+      </button>
+      <button class="button" id="login-button" onclick="showScreen('connexion')">
+        Me connecter
+      </button>
+      <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
+        Mes Histoires
+      </button>
+    </div>
+
+    <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
+      GM
+    </div>
+  </section>
+
+  <!-- Modal de déconnexion -->
+  <div class="logout-modal modal" id="logout-modal" style="display:none;">
+    <div class="bloc-centre">
+      <p>Voulez-vous vous déconnecter ?</p>
+      <button class="button" onclick="logoutUser()">Se déconnecter</button>
+      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+        Annuler
+      </button>
+    </div>
   </div>
-
-<div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
-  GM
-</div>
-</section>
-
-
-<!-- On conserve uniquement CE modal complet -->
-<!-- Modal de déconnexion, plein écran, centré -->
-<div class="logout-modal" id="logout-modal">
-  <div class="bloc-centre">
-    <p>Voulez-vous vous déconnecter ?</p>
-    <button class="button" onclick="logoutUser()">Se déconnecter</button>
-    <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
-      Annuler
-    </button>
-  </div>
-</div>
-
-
 
   <!-- Connexion -->
   <section class="screen" id="connexion">
-    <div class="bloc-centre">
+    <div class="bloc-centre bloc-connexion">
       <h2>Connexion</h2>
       <form onsubmit="event.preventDefault(); loginUser();">
         <input class="input-style" id="email" placeholder="Adresse email" required type="email"/>
@@ -58,9 +52,14 @@
       </form>
       <p style="text-align:center;">
         <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button><br/>
-        <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
+        <a href="#" onclick="toggleReset(true)"
+           style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">
+          Mot de passe oublié ?
+        </a>
       </p>
-      <div class="bloc-centre" id="signup-form" style="display:none;">
+
+      <!-- Signup -->
+      <div id="signup-form" class="bloc-centre bloc-signup" style="display:none;">
         <h2>Créer un compte</h2>
         <input class="input-style" id="prenom" placeholder="Prénom" required type="text"/>
         <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email"/>
@@ -71,7 +70,9 @@
           <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
         </div>
       </div>
-      <div class="bloc-centre" id="reset-form" style="display:none;">
+
+      <!-- Reset -->
+      <div id="reset-form" class="bloc-centre bloc-reset" style="display:none;">
         <h2>Réinitialisation</h2>
         <input class="input-style" id="reset-email" placeholder="Votre adresse email" required type="email"/>
         <div class="button-group">
@@ -84,7 +85,7 @@
 
   <!-- Formulaire de création -->
   <section class="screen" id="formulaire">
-    <div class="bloc-centre">
+    <div class="bloc-centre bloc-formulaire">
       <h2>Créer une Histoire</h2>
       <form onsubmit="event.preventDefault(); genererHistoire();">
         <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
@@ -139,7 +140,7 @@
 
   <!-- Résultat -->
   <section class="screen" id="resultat">
-    <div class="bloc-centre">
+    <div class="bloc-centre bloc-resultat">
       <h2>Ton Histoire</h2>
       <div id="histoire"></div>
       <div class="actions-resultat">
@@ -150,60 +151,33 @@
     </div>
   </section>
 
-<div id="modal-limite" class="modal" style="display:none;">
-  <div class="modal-content">
-    <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
-
-    <!-- on ajoute un wrapper flex .button-group -->
-    <div class="button-group">
-      <!-- d’abord “Non” -->
-      <button class="button" onclick="fermerModaleLimite()">Non</button>
-      <!-- puis “Oui” -->
-      <button class="button" onclick="validerModaleLimite()">Oui</button>
+  <!-- Modal de limite -->
+  <div id="modal-limite" class="modal" style="display:none;">
+    <div class="modal-content">
+      <p>Plus de place pour sauvegarder.<br/>Voulez-vous supprimer des histoires ?</p>
+      <div class="button-group">
+        <button class="button" onclick="fermerModaleLimite()">Non</button>
+        <button class="button" onclick="validerModaleLimite()">Oui</button>
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- Mes Histoires -->
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
-         <ul id="liste-histoires"></ul>
-
-  <div class="actions-footer" id="barre-suppression" style="display:none;">
-    <img
-      src="corbeille-cartoon.png"
-      alt="Corbeille"
-      id="btn-corbeille"
-      onclick="supprimerHistoiresSelectionnees()"
-    >
-    <img
-      src="croix-cartoon.png"
-      alt="Annuler sélection"
-      id="btn-annuler-selection"
-      onclick="reinitialiserSelectionHistoires()"
-    >
-  </div>
-
-  <!-- Bouton Retour toujours visible -->
-  <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
-
-
+      <ul id="liste-histoires"></ul>
+      <div class="actions-footer" id="barre-suppression" style="display:none;">
+        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille"
+             onclick="supprimerHistoiresSelectionnees()"/>
+        <img src="croix-cartoon.png" alt="Annuler sélection" id="btn-annuler-selection"
+             onclick="reinitialiserSelectionHistoires()"/>
+      </div>
+      <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
     </div>
   </section>
 
   <script src="app.js" defer></script>
-    <!-- Modal générique pour messages -->
-<script src="app.js" defer></script>
-
-<!-- Modal générique pour messages -->
-<div id="message-modal" class="modal" style="display:none;">
-  <div class="message-card">     <!-- ← on utilise désormais message-card -->
-    <p id="message-modal-text"></p>
-    <button class="button" onclick="closeMessageModal()">OK</button>
-  </div>
-</div>
-
 </body>
 </html>
+
