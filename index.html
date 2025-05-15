@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -21,14 +22,13 @@
         Mes Histoires
       </button>
     </div>
-
     <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
       GM
     </div>
   </section>
 
   <!-- Modal de déconnexion -->
-  <div class="logout-modal modal" id="logout-modal" style="display:none;">
+  <div id="logout-modal" class="modal logout-modal" style="display:none;">
     <div class="bloc-centre">
       <p>Voulez-vous vous déconnecter ?</p>
       <button class="button" onclick="logoutUser()">Se déconnecter</button>
@@ -51,9 +51,8 @@
         </div>
       </form>
       <p style="text-align:center;">
-        <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button><br/>
-        <a href="#" onclick="toggleReset(true)"
-           style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">
+        <button class="button small" type="button" onclick="toggleSignup(true)">Créer un compte</button><br/>
+        <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">
           Mot de passe oublié ?
         </a>
       </p>
@@ -176,6 +175,14 @@
       <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
     </div>
   </section>
+
+  <!-- Modal générique pour messages -->
+  <div id="message-modal" class="modal" style="display:none;">
+    <div class="message-card">
+      <p id="message-modal-text"></p>
+      <button class="button" onclick="closeMessageModal()">OK</button>
+    </div>
+  </div>
 
   <script src="app.js" defer></script>
 </body>
