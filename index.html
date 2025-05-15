@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,13 +21,15 @@
         Mes Histoires
       </button>
     </div>
-    <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
-      GM
-    </div>
   </section>
 
+  <!-- Icône utilisateur (initiales) -->
+  <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
+    GM
+  </div>
+
   <!-- Modal de déconnexion -->
-  <div id="logout-modal" class="modal logout-modal" style="display:none;">
+  <div id="logout-modal" class="modal" style="display:none;">
     <div class="bloc-centre">
       <p>Voulez-vous vous déconnecter ?</p>
       <button class="button" onclick="logoutUser()">Se déconnecter</button>
@@ -52,7 +53,8 @@
       </form>
       <p style="text-align:center;">
         <button class="button small" type="button" onclick="toggleSignup(true)">Créer un compte</button><br/>
-        <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">
+        <a href="#" onclick="toggleReset(true)"
+           style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">
           Mot de passe oublié ?
         </a>
       </p>
