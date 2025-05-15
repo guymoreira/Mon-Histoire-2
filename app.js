@@ -246,3 +246,22 @@ function validerModaleLimite() {
 function retourDepuisMesHistoires() {
   showScreen("accueil");
 }
+
+// Ouvre la modale CSS de confirmation
+function supprimerHistoiresSelectionnees() {
+  document.getElementById("delete-modal").style.display = "flex";
+}
+
+// Utilisateur clique "Oui"
+function confirmDelete() {
+  // … recopiez ici la logique de suppression existante …
+  document.getElementById("delete-modal").style.display = "none";
+  showMessageModal("Histoires supprimées !");
+  showScreen("formulaire");
+}
+
+// Utilisateur clique "Non"
+function closeDeleteModal() {
+  document.getElementById("delete-modal").style.display = "none";
+}
+
