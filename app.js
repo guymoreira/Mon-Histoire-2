@@ -27,25 +27,7 @@ function closeMessageModal() {
 let currentScreen  = "accueil";
 let previousScreen = null;
 
-/**
- * Affiche un écran et mémorise d’où l’on vient.
- * Remplace entièrement votre ancienne showScreen.
- */
-function showScreen(screen) {
-  if (screen === currentScreen) return;
-  previousScreen = currentScreen;
-  // masque tous les écrans actifs
-  document.querySelectorAll('.screen.active')
-          .forEach(el => el.classList.remove('active'));
-  // affiche le nouvel écran
-  document.getElementById(screen).classList.add('active');
-  currentScreen = screen;
 
-  // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
-  if (screen === "mes-histoires") {
-    afficherHistoiresSauvegardees();
-  }
-}
  // Affiche un écran, mémorise l’historique et gère le bouton “Sauvegarder”
  function showScreen(screen) {
   if (screen === currentScreen) return;
