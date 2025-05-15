@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,77 +9,69 @@
 </head>
 <body>
   <!-- Accueil -->
-  <section class="screen active" id="accueil">
-    <div class="bloc-centre" id="accueil-content">
-      <h1>Mon Histoire</h1>
-      <button class="button" id="create-button" onclick="showScreen('formulaire')">
-        Créer une histoire
-      </button>
-      <button class="button" id="login-button" onclick="showScreen('connexion')">
-        Me connecter
-      </button>
-      <button class="button" id="my-stories-button"
-              onclick="showScreen('mes-histoires')" style="display:none;">
-        Mes Histoires
-      </button>
-    </div>
-  </section>
-
-  <!-- Icône utilisateur -->
-  <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
-    GM
+<section class="screen active" id="accueil">
+  <!-- on ajoute la classe bloc-centre pour le fond blanc -->
+  <div class="bloc-centre" id="accueil-content">
+    <h1>Mon Histoire</h1>
+    <button class="button" id="create-button" onclick="showScreen('formulaire')">
+      Créer une histoire
+    </button>
+    <button class="button" id="login-button" onclick="showScreen('connexion')">
+      Me connecter
+    </button>
+    <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
+      Mes Histoires
+    </button>
   </div>
 
-  <!-- Modal déconnexion -->
-  <div id="logout-modal" class="modal" style="display:none">
-    <div class="bloc-centre">
-      <p>Voulez-vous vous déconnecter ?</p>
-      <button class="button" onclick="logoutUser()">Se déconnecter</button>
-      <button class="button"
-              onclick="document.getElementById('logout-modal').style.display='none'">
-        Annuler
-      </button>
-    </div>
+<div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
+  GM
+</div>
+</section>
+
+
+<!-- On conserve uniquement CE modal complet -->
+<!-- Modal de déconnexion, plein écran, centré -->
+<div class="logout-modal" id="logout-modal">
+  <div class="bloc-centre">
+    <p>Voulez-vous vous déconnecter ?</p>
+    <button class="button" onclick="logoutUser()">Se déconnecter</button>
+    <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+      Annuler
+    </button>
   </div>
+</div>
+
+
 
   <!-- Connexion -->
   <section class="screen" id="connexion">
-    <div class="bloc-centre bloc-connexion">
+    <div class="bloc-centre">
       <h2>Connexion</h2>
       <form onsubmit="event.preventDefault(); loginUser();">
-        <input class="input-style" id="email"    placeholder="Adresse email" required type="email"/>
-        <input class="input-style" id="password" placeholder="Mot de passe"  required type="password"/>
+        <input class="input-style" id="email" placeholder="Adresse email" required type="email"/>
+        <input class="input-style" id="password" placeholder="Mot de passe" required type="password"/>
         <div class="button-group">
           <button class="button" type="submit">Se connecter</button>
-          <button class="button" type="button"
-                  onclick="showScreen('accueil')">Annuler</button>
+          <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
         </div>
       </form>
-      <p style="text-align:center">
-        <button class="button small" type="button" onclick="toggleSignup(true)">
-          Créer un compte
-        </button><br/>
-        <a href="#" onclick="toggleReset(true)"
-           style="font-size:0.9rem; margin-top:0.5rem; display:inline-block">
-          Mot de passe oublié ?
-        </a>
+      <p style="text-align:center;">
+        <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button><br/>
+        <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
       </p>
-
-      <!-- Signup -->
-      <div id="signup-form" class="bloc-centre bloc-signup" style="display:none">
+      <div class="bloc-centre" id="signup-form" style="display:none;">
         <h2>Créer un compte</h2>
-        <input class="input-style" id="prenom"         placeholder="Prénom"            required type="text"/>
-        <input class="input-style" id="signup-email"   placeholder="Adresse email"      required type="email"/>
-        <input class="input-style" id="signup-password"placeholder="Mot de passe"       required type="password"/>
-        <input class="input-style" id="signup-confirm" placeholder="Confirmer mot passe" required type="password"/>
+        <input class="input-style" id="prenom" placeholder="Prénom" required type="text"/>
+        <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email"/>
+        <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password"/>
+        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password"/>
         <div class="button-group">
           <button class="button" onclick="registerUser()">Valider</button>
           <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
         </div>
       </div>
-
-      <!-- Reset -->
-      <div id="reset-form" class="bloc-centre bloc-reset" style="display:none">
+      <div class="bloc-centre" id="reset-form" style="display:none;">
         <h2>Réinitialisation</h2>
         <input class="input-style" id="reset-email" placeholder="Votre adresse email" required type="email"/>
         <div class="button-group">
@@ -89,38 +82,52 @@
     </div>
   </section>
 
-  <!-- Formulaire -->
+  <!-- Formulaire de création -->
   <section class="screen" id="formulaire">
-    <div class="bloc-centre bloc-formulaire">
+    <div class="bloc-centre">
       <h2>Créer une Histoire</h2>
       <form onsubmit="event.preventDefault(); genererHistoire();">
-        <input class="input-style" id="nom"         placeholder="Nom du héros" required type="text"/>
+        <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
         <select class="input-style" id="personnage">
-          <option>Chevalier</option><option>Princesse</option>
-          <option>Fée</option><option>Explorateur</option>
+          <option value="chevalier">Chevalier</option>
+          <option value="princesse">Princesse</option>
+          <option value="fée">Fée</option>
+          <option value="explorateur">Explorateur</option>
         </select>
         <select class="input-style" id="lieu">
-          <option>Forêt enchantée</option><option>Château</option>
-          <option>Plaine magique</option><option>Volcan endormi</option>
+          <option value="forêt enchantée">Forêt enchantée</option>
+          <option value="château">Château</option>
+          <option value="plaine magique">Plaine magique</option>
+          <option value="volcan endormi">Volcan endormi</option>
         </select>
         <select class="input-style" id="objet">
-          <option>Baguette</option><option>Épée</option>
-          <option>Livre magique</option><option>Amulette</option>
+          <option value="baguette">Baguette</option>
+          <option value="épée">Épée</option>
+          <option value="livre magique">Livre magique</option>
+          <option value="amulette">Amulette</option>
         </select>
         <select class="input-style" id="compagnon">
-          <option>Dragon</option><option>Licorne</option>
-          <option>Chat parlant</option><option>Aucun</option>
+          <option value="dragon">Dragon</option>
+          <option value="licorne">Licorne</option>
+          <option value="chat parlant">Chat parlant</option>
+          <option value="">Aucun</option>
         </select>
         <select class="input-style" id="mission">
-          <option>Sauver un village</option><option>Découvrir un trésor</option>
-          <option>Réparer la nature</option><option>Retrouver un ami perdu</option>
+          <option value="sauver un village">Sauver un village</option>
+          <option value="découvrir un trésor">Découvrir un trésor</option>
+          <option value="réparer la nature">Réparer la nature</option>
+          <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
         </select>
         <select class="input-style" id="style">
-          <option>Drôle</option><option>Poétique</option>
-          <option>Suspense</option><option>Personnalisé</option>
+          <option value="drôle">Drôle</option>
+          <option value="poétique">Poétique</option>
+          <option value="suspense">Suspense</option>
+          <option value="personnalisé">Personnalisé</option>
         </select>
         <select class="input-style" id="duree">
-          <option>Courte</option><option>Moyenne</option><option>Longue</option>
+          <option value="courte">Courte</option>
+          <option value="moyenne">Moyenne</option>
+          <option value="longue">Longue</option>
         </select>
         <div class="form-buttons">
           <button class="button" type="submit">Générer</button>
@@ -132,7 +139,7 @@
 
   <!-- Résultat -->
   <section class="screen" id="resultat">
-    <div class="bloc-centre bloc-resultat">
+    <div class="bloc-centre">
       <h2>Ton Histoire</h2>
       <div id="histoire"></div>
       <div class="actions-resultat">
@@ -143,40 +150,60 @@
     </div>
   </section>
 
-  <!-- Modal limite -->
-  <div id="modal-limite" class="modal" style="display:none">
-    <div class="modal-content">
-      <p>Plus de place pour sauvegarder.<br/>Voulez-vous supprimer des histoires ?</p>
-      <div class="button-group">
-        <button class="button" onclick="fermerModaleLimite()">Non</button>
-        <button class="button" onclick="validerModaleLimite()">Oui</button>
-      </div>
+<div id="modal-limite" class="modal" style="display:none;">
+  <div class="modal-content">
+    <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
+
+    <!-- on ajoute un wrapper flex .button-group -->
+    <div class="button-group">
+      <!-- d’abord “Non” -->
+      <button class="button" onclick="fermerModaleLimite()">Non</button>
+      <!-- puis “Oui” -->
+      <button class="button" onclick="validerModaleLimite()">Oui</button>
     </div>
   </div>
+</div>
+
 
   <!-- Mes Histoires -->
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
-      <ul id="liste-histoires"></ul>
-      <div class="actions-footer" id="barre-suppression" style="display:none">
-        <img src="corbeille-cartoon.png" alt="Corbeille" id="btn-corbeille" onclick="supprimerHistoiresSelectionnees()"/>
-        <img src="croix-cartoon.png"    alt="Annuler sélection"    id="btn-annuler-selection"
-             onclick="reinitialiserSelectionHistoires()"/>
-      </div>
-      <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+         <ul id="liste-histoires"></ul>
+
+  <div class="actions-footer" id="barre-suppression" style="display:none;">
+    <img
+      src="corbeille-cartoon.png"
+      alt="Corbeille"
+      id="btn-corbeille"
+      onclick="supprimerHistoiresSelectionnees()"
+    >
+    <img
+      src="croix-cartoon.png"
+      alt="Annuler sélection"
+      id="btn-annuler-selection"
+      onclick="reinitialiserSelectionHistoires()"
+    >
+  </div>
+
+  <!-- Bouton Retour toujours visible -->
+  <button class="button" onclick="retourDepuisMesHistoires()">Retour</button>
+
+
     </div>
   </section>
 
-  <!-- Modal messages -->
-  <div id="message-modal" class="modal" style="display:none">
-    <div class="message-card">
-      <p id="message-modal-text"></p>
-      <button class="button" onclick="closeMessageModal()">OK</button>
-    </div>
-  </div>
-
   <script src="app.js" defer></script>
+    <!-- Modal générique pour messages -->
+<script src="app.js" defer></script>
+
+<!-- Modal générique pour messages -->
+<div id="message-modal" class="modal" style="display:none;">
+  <div class="message-card">     <!-- ← on utilise désormais message-card -->
+    <p id="message-modal-text"></p>
+    <button class="button" onclick="closeMessageModal()">OK</button>
+  </div>
+</div>
+
 </body>
 </html>
-
