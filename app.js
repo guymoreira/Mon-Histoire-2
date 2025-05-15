@@ -46,7 +46,30 @@ function showScreen(screen) {
     afficherHistoiresSauvegardees();
   }
 }
+ // Affiche un écran, mémorise l’historique et gère le bouton “Sauvegarder”
+ function showScreen(screen) {
+  if (screen === currentScreen) return;
+  previousScreen = currentScreen;
+  // masque tous les écrans actifs
+  document.querySelectorAll('.screen.active')
+          .forEach(el => el.classList.remove('active'));
+  // affiche le nouvel écran
+  document.getElementById(screen).classList.add('active');
+  currentScreen = screen;
 
+  // cas spécial Résultat : affiche ou cache le bouton “Sauvegarder”
+  if (screen === "resultat") {
+    const btn = document.getElementById("btn-sauvegarde");
+    btn.style.display = localStorage.getItem("isLoggedIn") === "true"
+      ? "inline-block"
+      : "none";
+  }
+
+  // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
+  if (screen === "mes-histoires") {
+    afficherHistoiresSauvegardees();
+  }
+ }
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
