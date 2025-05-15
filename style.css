@@ -292,4 +292,11 @@ body {
   max-width: 400px;    /* ne pas dépasser une taille confortable */
   margin: 2vh auto;    /* 2vh haut/bas, centré horizontalement */
 }
-
+#connexion .bloc-centre {
+  /* on prend plus de place horizontalement : 95 % au lieu de 90 % */
+  width:      95%;
+  /* si besoin, on peut aussi ajuster le plafond : */
+  max-width: 360px;
+  /* ou changer la marge latérale précisément : 2vh haut/bas, 1rem gauche/droite */
+  /* margin: 2vh 1rem; */
+}
