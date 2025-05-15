@@ -210,13 +210,13 @@ function afficherHistoiresSauvegardees() {
   mettreAJourBar();
 }
 
-function bindLongPress() {
-  document.querySelectorAll('#liste-histoires li').forEach(li => {
-    const btn = li.querySelector('button');
-    let timer = null;
+ function bindLongPress() {
+   document.querySelectorAll('#liste-histoires li').forEach(li => {
+     const btn = li.querySelector('button');
+     let timer = null;
 
-    const start = e => {
-      // démarrage du timer pour détecter le long-press
+     const start = e => {
+       // démarrage du timer pour détecter le long-press
       timer = setTimeout(() => {
         li.classList.add("selected");
         mettreAJourBar();
@@ -228,9 +228,9 @@ function bindLongPress() {
         // sélection de l’histoire
         li.classList.add("selected");
         mettreAJourBar();
-      }, 600);
-    };
-    const cancel = () => clearTimeout(timer);
+       }, 600);
+     };
+     const cancel = () => clearTimeout(timer);
 
     btn.addEventListener('touchstart', start);
     btn.addEventListener('mousedown',  start);
