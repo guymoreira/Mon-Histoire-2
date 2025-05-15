@@ -215,15 +215,6 @@ function reinitialiserSelectionHistoires() {
   mettreAJourBar();
 }
 
-function supprimerHistoiresSelectionnees() {
-  const sels = Array.from(document.querySelectorAll("#liste-histoires li.selected"))
-    .map(li => parseInt(li.dataset.index, 10));
-  let h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  h = h.filter((_, i) => !sels.includes(i));
-  localStorage.setItem("histoires", JSON.stringify(h));
-  reinitialiserSelectionHistoires();
-  afficherHistoiresSauvegardees();
-}
 
 function afficherHistoire(idx) {
   const h = JSON.parse(localStorage.getItem("histoires") || "[]");
@@ -251,10 +242,24 @@ function supprimerHistoiresSelectionnees() {
 
 // Utilisateur clique "Oui"
 function confirmDelete() {
-  // … recopiez ici la logique de suppression existante …
+  // 1) Récupère les indices sélectionnés
+  const sels = Array.from(document.querySelectorAll("#liste-histoires li.selected"))
+    .map(li => parseInt(li.dataset.index, 10));
+
+  // 2) Supprime-les du localStorage
+  let h = JSON.parse(localStorage.getItem("histoires") || "[]");
+  h = h.filter((_, i) => !sels.includes(i));
+  localStorage.setItem("histoires", JSON.stringify(h));
+
+  // 3) Réinitialise la sélection et rafraîchit la liste
+  reinitialiserSelectionHistoires();
+  afficherHistoiresSauvegardees();
+
+  // 4) Ferme la modale
   document.getElementById("delete-modal").style.display = "none";
-  showMessageModal("Histoires supprimées !");
-  showScreen("formulaire");
+
+  // 5) Reste bien sur l’écran "mes-histoires"
+  showScreen("mes-histoires");
 }
 
 // Utilisateur clique "Non"
