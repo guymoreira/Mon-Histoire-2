@@ -292,7 +292,7 @@ body {
 
 /* Bloc Résultat : on lui rend l’ancienne taille de la modale */
 #resultat.bloc-centre {
-  width: 90%;
+  width: 98%;
   max-width: 400px;
   margin: 2vh auto;
 }
