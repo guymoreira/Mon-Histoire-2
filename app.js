@@ -216,18 +216,15 @@ function afficherHistoiresSauvegardees() {
      let timer = null;
 
      const start = e => {
-       // démarrage du timer pour détecter le long-press
-      timer = setTimeout(() => {
-        li.classList.add("selected");
-        mettreAJourBar();
-      timer = setTimeout(() => {
-        // → feedback haptique
-        if (navigator.vibrate) {
-          navigator.vibrate(50);  // vibration de 50ms
-        }
-        // sélection de l’histoire
-        li.classList.add("selected");
-        mettreAJourBar();
+       // timer unique pour le long-press (600ms)
+       timer = setTimeout(() => {
+         // feedback haptique
+         if (navigator.vibrate) {
+           navigator.vibrate(50);
+         }
+         // sélection de l’histoire
+         li.classList.add("selected");
+         mettreAJourBar();
        }, 600);
      };
      const cancel = () => clearTimeout(timer);
