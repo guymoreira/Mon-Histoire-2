@@ -104,7 +104,7 @@ body {
 }
 
 
-.button {
+ .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
   color: #0a3d62; font-weight: bold;
   padding: 1rem; font-size: 1.1rem;
@@ -112,9 +112,35 @@ body {
   cursor: pointer; margin: 0.5rem auto;
   display: block; text-align: center;
   transition: background 0.3s ease;
+  background: linear-gradient(to bottom, #cce4f6, #99c9f1);
+  color: #0a3d62; font-weight: bold;
+  padding: 1rem; font-size: 1.1rem;
+  border-radius: 40px; border: none;
+  cursor: pointer; margin: 0.5rem auto;
+  display: block; text-align: center;
+
+  /* relief : ombre et élévation */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.1s ease;
+ }
+ 
+.button:hover {
+  background: linear-gradient(to bottom, #b3daf2, #80bfe7);
 }
 .button:hover {
   background: linear-gradient(to bottom, #b3daf2, #80bfe7);
+  /* plus d’ombre et léger soulèvement */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.button:active {
+  /* enfoncement */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
 }
 
 .input-style {
