@@ -113,10 +113,7 @@ function registerUser() {
     return;
   }
 
-  showMessageModal("Compte créé avec succès !");
-  toggleSignup(false);
-}
-  +  showMessageModal("Compte créé (simulation) !");
+    showMessageModal("Compte créé (simulation) !");
   toggleSignup(false);
 }
 function toggleSignup(show) {
