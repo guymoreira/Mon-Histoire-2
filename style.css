@@ -156,8 +156,8 @@ body {
   border-radius: 10px;
   padding: 2rem;
   text-align: center;
-  width: 90%;           /* ← occupe toujours 90 % de l’écran */
-  max-width: 400px;      /* ← plafonne à 400 px sur desktop */
++  width: 100%;       /* prend toute la largeur du bloc parent */
++  max-width: none;   /* plus de plafond de largeur */
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 .message-card {
@@ -283,11 +283,17 @@ body {
 /* Override pour écrans Formulaire, Connexion et Résultats */
 #formulaire.bloc-centre,
 #connexion.bloc-centre,
-#resultat.bloc-centre,
 #signup-form.bloc-centre,
 #reset-form.bloc-centre {
   width: 100%;        /* 95% de l’écran */
   max-width: none;  /* plafonné à 800px en desktop */
   margin: 2vh auto;  /* centré horizontalement, écart vertical 2vh */
+}
+
+/* Bloc Résultat : on lui rend l’ancienne taille de la modale */
+#resultat.bloc-centre {
+  width: 90%;
+  max-width: 400px;
+  margin: 2vh auto;
 }
 
