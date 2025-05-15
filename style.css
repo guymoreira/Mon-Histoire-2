@@ -294,9 +294,14 @@ body {
 }
 #connexion .bloc-centre {
   /* on prend plus de place horizontalement : 95 % au lieu de 90 % */
-  width:      105%;
+  width:      100%;
   /* si besoin, on peut aussi ajuster le plafond : */
   max-width: 360px;
   /* ou changer la marge latérale précisément : 2vh haut/bas, 1rem gauche/droite */
   /* margin: 2vh 1rem; */
 }
+#connexion.screen {
+  padding-left: 1rem;   /* ou 0 si tu veux vraiment coller aux bords */
+  padding-right: 1rem;
+}
+
