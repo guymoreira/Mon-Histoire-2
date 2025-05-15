@@ -1,292 +1,170 @@
-/* ─────────────────────────────
-   1) box-sizing global
-   ───────────────────────────── */
+/* 1) box-sizing global */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* ─────────────────────────────
-   2) plus de scroll horizontal
-   ───────────────────────────── */
+/* 2) éviter le scroll horizontal */
 html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
-
-/* style.css */
-body {
-  margin: 0; padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: url('illustration-accueil.jpg') no-repeat center center fixed;
-  background-size: cover;
-  overflow-x: hidden;
-}
-
+/* Structure principale des écrans */
 .screen {
-  /* inclus padding dans la largeur/hauteur */
-  box-sizing: border-box;
-
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.6s ease;
-
-  position: absolute;
-  inset: 0;            /* raccourci top:0;right:0;bottom:0;left:0; */
-  padding: 2rem;
-
-  overflow-x: hidden;  /* empêche le scroll horizontal */
-  overflow-y: hidden;  /* empêche le scroll vertical par défaut */
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 15vh;
+  height: 100vh;
+  box-sizing: border-box;
 }
-
-/* ================
-   Scroll vertical autorisé *seulement* ici
-   ================ */
-
-/* Page Mes Histoires */
-#mes-histoires {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Page Résultat */
-#resultat {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-
-/* Page Connexion (et modales de reset éventuelles) et Création d’Histoire */
-#connexion,
-#formulaire {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-
+/* écran actif */
 .screen.active {
-  opacity: 1; visibility: visible; z-index: 2;
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
 }
 
+/* le card blanc sur toutes les pages (sauf messages) */
 .bloc-centre {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
-  padding: 1rem;
-  width: 90%;          /* même % sur tous les écrans */
-  max-width: 600px;    /* même max-width sur tous les écrans */
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
   margin: 2vh auto;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
-#message-modal .bloc-centre {
-  width: 60%;       /* ou 80 %, selon vos goûts */
-  max-width: 400px; /* plafonne la boîte message */
+/* Entrées et dropdowns */
+.input-style {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
-
+/* Boutons génériques */
 .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
-  color: #0a3d62; font-weight: bold;
-  padding: 1rem; font-size: 1.1rem;
-  border-radius: 40px; border: none;
-  cursor: pointer; margin: 0.5rem auto;
-  display: block; text-align: center;
+  color: #0a3d62;
+  font-weight: bold;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  margin: 0.5rem auto;
+  display: block;
+  text-align: center;
   transition: background 0.3s ease;
 }
 .button:hover {
   background: linear-gradient(to bottom, #b3daf2, #80bfe7);
 }
 
-.input-style {
-  width: 100%; padding: 0.8rem;
-  margin: 0.5rem 0; font-size: 1rem;
-  border-radius: 12px; border: 1px solid #ccc;
-  box-sizing: border-box;
+/* Groupes de boutons (connexion, signup, reset...) */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
- .button-group {
-   display: flex;
-   justify-content: space-between; /* espace max entre les deux boutons */
-   gap: 1rem;                       /* espace intermédiaire conservé */
- }
-#connexion  .button-group button[type="button"],
-#signup-form .button-group button[type="button"],
-#reset-form .button-group button[type="button"] {
-  order: -1;  /* remonte “Annuler” avant le ou les boutons submit */
+/* Formulaire de génération : boutons cote à cote */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
-#formulaire .form-buttons {
-  display: flex;                   
-  flex-direction: row-reverse;     /* inverse l’ordre visuel des boutons */
-  justify-content: space-between;  
-  gap: 1rem;                       
-  margin-top: 1.5rem;             
-}
-#formulaire .form-buttons .button {
-  margin: 0; 
-  flex: 1;  
-}
- /* Connexion : Annuler à gauche, Se connecter à droite */
- #connexion .button-group button[type="button"] {
-   order: -1;  /* remonte le bouton “Annuler” avant les autres */
- }
-
-.illustration-chapitre img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  margin: 1rem auto;  /* espace vertical plus confortable */
+.form-buttons .button {
+  margin: 0;
+  flex: 1;
 }
 
-
-.actions-resultat {
-  display: flex; justify-content: space-between;
-  flex-wrap: wrap; margin-top: 2rem;
-}
-
+/* Modal overlay */
 .modal {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex; justify-content: center; align-items: center;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.3);
   z-index: 1000;
 }
+
+/* Contenu de la modale de limite (“Oui/Non”) */
 .modal-content {
   background: #fff;
   border-radius: 10px;
   padding: 2rem;
   text-align: center;
-+  width: 100%;       /* prend toute la largeur du bloc parent */
-+  max-width: none;   /* plus de plafond de largeur */
+  width: 100%;
+  max-width: none;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
+
+/* Contenu des alertes et confirmations (OK) */
 .message-card {
   width: 60%;
   max-width: 400px;
+  margin: 0 auto;
+  padding: 1.5rem;
   background: rgba(255,255,255,0.9);
   border-radius: 16px;
-  /* … */
-}
-/* Mes Histoires */
-#liste-histoires {
-  list-style: none; padding: 0;
-}
-#liste-histoires li {
-  position: relative; margin-bottom: 0.5rem;
-}
-#liste-histoires li .button {
-  width: 100%; max-width: 300px;
-  min-height: 3.5rem; font-size: 1rem;
-  text-align: left; padding-right: 3rem;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
-/* coche rouge */
-#liste-histoires li.selected .button::after {
-  content: '✔'; color: red; font-size: 1.5rem;
-  position: absolute; right: 1rem; top: 50%;
-  transform: translateY(-50%);
+/* Largeurs spécifiques par écran */
+.bloc-formulaire {
+  width: 98%;
+  max-width: 800px;
+  margin: 2vh auto;
 }
 
+.bloc-connexion {
+  width: 95%;
+  max-width: 600px;
+  margin: 2vh auto;
+}
 
-/* =============================
-   Page ACCUEIL : centrage et GM
-   ============================= */
+.bloc-resultat {
+  width: 90%;
+  max-width: 500px;
+  margin: 2vh auto;
+}
 
+.bloc-signup {
+  width: 95%;
+  max-width: 600px;
+  margin: 2vh auto;
+}
 
-/* 2) Titre + boutons empilés et centrés */
+.bloc-reset {
+  width: 95%;
+  max-width: 600px;
+  margin: 2vh auto;
+}
+
+/* Accueil : titre + boutons centrés */
 #accueil-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;                   /* espace vertical entre chaque bouton */
+  gap: 1rem;
   text-align: center;
 }
-
- /* ────────────────
-    Titre « Mon Histoire » (page accueil)
- ──────────────── */
- #accueil-content h1 {
-   font-size: 2.5rem;      /* augmente la taille du titre */
-  margin-bottom: 1rem;    /* conserve un petit espace sous le titre */
+#accueil-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
 }
 
-
-
-/* 3) Rond “GM” en haut à droite */
-#user-icon {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 48px;
-  height: 48px;
-  background-color: white;
-  color: #0a3d62;
-  font-weight: bold;
-  border-radius: 50%;
-  display: flex;            /* déjà présent : on reste en flex */
-  align-items: center;      /* centre verticalement */
-  justify-content: center;  /* centre horizontalement */
-  line-height: 48px;        /* aligne parfaitement la ligne de texte */
-  text-align: center;       /* au cas où */
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
-  cursor: pointer;
-}
-
-/* Modal full-screen centrée */
-.logout-modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;                /* cachée par défaut */
-  justify-content: center;      /* centre horizontal */
-  align-items: center;          /* centre vertical */
-  z-index: 1000;                /* au-dessus de tout */
-}
-
-/* === Footer actions | corbeille + Retour + croix === */
-.actions-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4rem;
-  margin-top: 1.5rem;
-}
-
-.actions-footer img {
-  width: 64px;
-  height: auto;
-  cursor: pointer;
-}
-
-.actions-footer .button {
-  margin: 0;
-  padding: 0.8rem 1.5rem;
-}
-/* ─────────────────────────────────────
-   Centrage vertical du bloc d’accueil
-   ───────────────────────────────────── */
-#accueil {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;  /* on commence en haut */
-  align-items: center;          /* toujours centré horizontalement */
-  padding-top: 15vh;            /* 15% de la hauteur en “gutter” au-dessus */
-  height: 100vh;
-  box-sizing: border-box;       /* pour inclure padding dans le 100vh */
-}
-
-#accueil .bloc-centre {
-  /* supprime la marge verticale générée par .bloc-centre */
-  margin: 0;                
-}
-/* Override pour écrans Formulaire, Connexion et Résultats */
-#formulaire .bloc-centre,
-#connexion .bloc-centre,
-#resultat .bloc-centre,
-#signup-form.bloc-centre,
-#reset-form.bloc-centre {
-  width: 100%;        /* 100% de la largeur du viewport */
-  max-width: none;    /* désactive tout plafond */
-  margin: 2vh 0;      /* 2vh haut/bas, 0 gauche/droite */
-}
