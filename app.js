@@ -99,18 +99,23 @@ function genererHistoire() {
 }
 
 function registerUser() {
-  const pr = document.getElementById("prenom").value.trim();
-  const em = document.getElementById("signup-email").value.trim();
-  const pw = document.getElementById("signup-password").value;
-  const cf = document.getElementById("signup-confirm").value;
-    if (!pr || !em || !pw || !cf) { 
+  const prenom  = document.getElementById("prenom").value.trim();
+  const email   = document.getElementById("signup-email").value.trim();
+  const password= document.getElementById("signup-password").value;
+  const confirm = document.getElementById("signup-confirm").value;
+
+  if (!prenom || !email || !password || !confirm) {
     showMessageModal("Merci de remplir tous les champs.");
     return;
   }
-    if (pw !== cf) {
+  if (password !== confirm) {
     showMessageModal("Les mots de passe ne correspondent pas.");
-   return;
- }
+    return;
+  }
+
+  showMessageModal("Compte créé avec succès !");
+  toggleSignup(false);
+}
   +  showMessageModal("Compte créé (simulation) !");
   toggleSignup(false);
 }
@@ -123,12 +128,13 @@ function toggleReset(show) {
   document.getElementById("signup-form").style.display = "none";
 }
 function sendReset() {
-  const em = document.getElementById("reset-email").value.trim();
-    if (!em) {
-   showMessageModal("Veuillez saisir votre adresse email.");
-   return;
+  const email = document.getElementById("reset-email").value.trim();
+  if (!email) {
+    showMessageModal("Veuillez saisir votre adresse email.");
+    return;
   }
-  showMessageModal("Lien de réinitialisation envoyé (simulation)");
+
+  showMessageModal("Lien de réinitialisation envoyé !");
   toggleReset(false);
 }
 
