@@ -281,19 +281,12 @@ body {
   margin: 0;                
 }
 /* Override pour écrans Formulaire, Connexion et Résultats */
-#formulaire.bloc-centre,
-#connexion.bloc-centre,
+#formulaire .bloc-centre,
+#connexion .bloc-centre,
+#resultat .bloc-centre,
 #signup-form.bloc-centre,
 #reset-form.bloc-centre {
-  width: 100%;        /* 95% de l’écran */
-  max-width: none;  /* plafonné à 800px en desktop */
-  margin: 2vh auto;  /* centré horizontalement, écart vertical 2vh */
+  width: 100%;        /* 100% de la largeur du viewport */
+  max-width: none;    /* désactive tout plafond */
+  margin: 2vh 0;      /* 2vh haut/bas, 0 gauche/droite */
 }
-
-/* Bloc Résultat : on lui rend l’ancienne taille de la modale */
-#resultat.bloc-centre {
-  width: 98%;
-  max-width: 400px;
-  margin: 2vh auto;
-}
-
