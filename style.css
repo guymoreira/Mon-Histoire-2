@@ -156,8 +156,8 @@ body {
   border-radius: 10px;
   padding: 2rem;
   text-align: center;
-+  width: 100%;       /* prend toute la largeur du bloc parent */
-+  max-width: none;   /* plus de plafond de largeur */
+  width: 90%;
+  max-width: 400px;  /* ou 90% / 600px selon l’importance du contenu */
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 .message-card {
@@ -272,8 +272,9 @@ body {
   justify-content: flex-start;  /* on commence en haut */
   align-items: center;          /* toujours centré horizontalement */
   padding-top: 15vh;            /* 15% de la hauteur en “gutter” au-dessus */
-  height: 100vh;
-  box-sizing: border-box;       /* pour inclure padding dans le 100vh */
+  min-height: 100vh;            /* au moins la hauteur de l’écran */
+  height: auto;                 /* laisser le navigateur gérer */
+  box-sizing: border-box;       /* inclure padding dans la hauteur */
 }
 
 #accueil .bloc-centre {
@@ -281,12 +282,14 @@ body {
   margin: 0;                
 }
 /* Override pour écrans Formulaire, Connexion et Résultats */
+/* Rendre les cards un peu moins larges, et les centrer */
 #formulaire .bloc-centre,
 #connexion .bloc-centre,
 #resultat .bloc-centre,
 #signup-form.bloc-centre,
 #reset-form.bloc-centre {
-  width: 100%;        /* 100% de la largeur du viewport */
-  max-width: none;    /* désactive tout plafond */
-  margin: 2vh 0;      /* 2vh haut/bas, 0 gauche/droite */
+  width: 90%;          /* largeur relative raisonnable */
+  max-width: 400px;    /* ne pas dépasser une taille confortable */
+  margin: 2vh auto;    /* 2vh haut/bas, centré horizontalement */
 }
+
