@@ -152,6 +152,17 @@ function genererHistoire() {
   showScreen("resultat");
 }
 
+// Fonction de contrôle de complexité du mot de passe
+function isPasswordSecure(password) {
+  // Minimum 8 caractères, au moins 1 majuscule, 1 chiffre, 1 caractère spécial
+  return (
+    password.length >= 8 &&
+    /[A-Z]/.test(password) &&
+    /[0-9]/.test(password) &&
+    /[!@#$%^&*(),.?":{}|<>]/.test(password)
+  );
+}
+
 function registerUser() {
   const prenom  = document.getElementById("prenom").value.trim();
   const email   = document.getElementById("signup-email").value.trim();
@@ -166,11 +177,14 @@ function registerUser() {
     showMessageModal("Les mots de passe ne correspondent pas.");
     return;
   }
+  if (!isPasswordSecure(password)) {
+    showMessageModal("Ton mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.");
+    return;
+  }
 
   // Firebase Auth
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      // Optionnel : enregistrer le prénom dans Firestore (profil)
       const user = userCredential.user;
       return firebase.firestore().collection("users").doc(user.uid).set({
         prenom: prenom,
@@ -187,6 +201,7 @@ function registerUser() {
       showMessageModal(msg);
     });
 }
+
 
 function toggleSignup(show) {
   document.getElementById("signup-form").style.display = show ? "block" : "none";
