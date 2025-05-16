@@ -169,14 +169,7 @@ function registerUser() {
     });
 }
 
-  if (password !== confirm) {
-    showMessageModal("Les mots de passe ne correspondent pas.");
-    return;
-  }
 
-    showMessageModal("Compte créé (simulation) !");
-  toggleSignup(false);
-}
 function toggleSignup(show) {
   document.getElementById("signup-form").style.display = show ? "block" : "none";
   document.getElementById("reset-form").style.display = "none";
