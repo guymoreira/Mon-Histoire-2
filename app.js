@@ -161,13 +161,14 @@ function registerUser() {
       });
     })
     .then(() => {
-      showMessageModal("Compte créé avec succès !");
-      toggleSignup(false);
+      toggleSignup(false); // Ferme le formulaire d'inscription avant d'afficher le message
+      showMessageModal("Ton compte a bien été créé ! Tu peux maintenant te connecter.");
     })
     .catch((error) => {
       showMessageModal("Erreur : " + error.message);
     });
 }
+
 
 
 function toggleSignup(show) {
