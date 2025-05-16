@@ -377,18 +377,20 @@ body {
 }
 
 #user-icon {
-  font-size: 2rem;         /* Augmente la taille de l’initiale */
-  font-family: 'Poppins', 'Arial', sans-serif; /* Mets la même police que le reste de ton app */
-  font-weight: bold;       /* Mets l’initiale en gras si besoin */
-  color: #222;             /* (Facultatif) même couleur de texte que tes titres */
+  font-size: 1.3rem;                /* Taille lisible mais moins massive */
+  font-family: 'Poppins', 'Arial', sans-serif; /* Même police que le reste */
+  font-weight: bold;                /* En gras */
+  color: #222;                      /* Couleur sombre, adaptée à ta charte */
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;             /* adapte selon la taille de ton rond */
+  width: 44px;
   height: 44px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   cursor: pointer;
+  letter-spacing: 0.02em;           /* Optionnel pour une initiale aérée */
+  line-height: 1;                   /* Pour bien centrer la lettre */
 }
 
