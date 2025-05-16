@@ -9,40 +9,34 @@
 </head>
 <body>
   <!-- Accueil -->
-<section class="screen active" id="accueil">
-  <!-- on ajoute la classe bloc-centre pour le fond blanc -->
-  <div class="bloc-centre" id="accueil-content">
-    <h1>Mon Histoire</h1>
-    <button class="button" id="create-button" onclick="showScreen('formulaire')">
-      Créer une histoire
-    </button>
-    <button class="button" id="login-button" onclick="showScreen('connexion')">
-      Me connecter
-    </button>
-    <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
-      Mes Histoires
-    </button>
+  <section class="screen active" id="accueil">
+    <div class="bloc-centre" id="accueil-content">
+      <h1>Mon Histoire</h1>
+      <button class="button" id="create-button" onclick="showScreen('formulaire')">
+        Créer une histoire
+      </button>
+      <button class="button" id="login-button" onclick="showScreen('connexion')">
+        Me connecter
+      </button>
+      <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
+        Mes Histoires
+      </button>
+    </div>
+    <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
+      GM
+    </div>
+  </section>
+
+  <!-- Modal de déconnexion -->
+  <div class="logout-modal" id="logout-modal">
+    <div class="bloc-centre">
+      <p>Voulez-vous vous déconnecter ?</p>
+      <button class="button" onclick="logoutUser()">Se déconnecter</button>
+      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+        Annuler
+      </button>
+    </div>
   </div>
-
-<div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
-  GM
-</div>
-</section>
-
-
-<!-- On conserve uniquement CE modal complet -->
-<!-- Modal de déconnexion, plein écran, centré -->
-<div class="logout-modal" id="logout-modal">
-  <div class="bloc-centre">
-    <p>Voulez-vous vous déconnecter ?</p>
-    <button class="button" onclick="logoutUser()">Se déconnecter</button>
-    <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
-      Annuler
-    </button>
-  </div>
-</div>
-
-
 
   <!-- Connexion -->
   <section class="screen" id="connexion">
@@ -150,89 +144,78 @@
     </div>
   </section>
 
-<div id="modal-limite" class="modal" style="display:none;">
-  <div class="modal-content">
-    <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
-
-    <!-- on ajoute un wrapper flex .button-group -->
-    <div class="button-group">
-      <!-- d’abord “Non” -->
-      <button class="button" onclick="fermerModaleLimite()">Non</button>
-      <!-- puis “Oui” -->
-      <button class="button" onclick="validerModaleLimite()">Oui</button>
+  <div id="modal-limite" class="modal" style="display:none;">
+    <div class="modal-content">
+      <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
+      <div class="button-group">
+        <button class="button" onclick="fermerModaleLimite()">Non</button>
+        <button class="button" onclick="validerModaleLimite()">Oui</button>
+      </div>
     </div>
   </div>
-</div>
- <!-- Modal confirmation de suppression -->
- <div class="modal" id="delete-modal" style="display:none;">
-   <div class="modal-content">
-     <p>Supprimer les histoires sélectionnées ?</p>
-     <div class="button-group">
-       <button class="button" onclick="confirmDelete()">Oui</button>
-       <button class="button" onclick="closeDeleteModal()">Non</button>
-     </div>
-   </div>
- </div>
+
+  <div class="modal" id="delete-modal" style="display:none;">
+    <div class="modal-content">
+      <p>Supprimer les histoires sélectionnées ?</p>
+      <div class="button-group">
+        <button class="button" onclick="confirmDelete()">Oui</button>
+        <button class="button" onclick="closeDeleteModal()">Non</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Mes Histoires -->
   <section class="screen" id="mes-histoires">
     <div class="bloc-centre">
       <h2>Mes Histoires</h2>
-         <ul id="liste-histoires"></ul>
-
-  <div class="actions-footer" id="barre-suppression" style="display:none;">
-    <img
-      src="corbeille-cartoon.png"
-      alt="Corbeille"
-      id="btn-corbeille"
-      onclick="supprimerHistoiresSelectionnees()"
-    >
-    <img
-      src="croix-cartoon.png"
-      alt="Annuler sélection"
-      id="btn-annuler-selection"
-      onclick="reinitialiserSelectionHistoires()"
-    >
-  </div>
-
-  <!-- Bouton Retour toujours visible -->
-  <button class="button" onclick="goBack()">Retour</button>
-
-
+      <ul id="liste-histoires"></ul>
+      <div class="actions-footer" id="barre-suppression" style="display:none;">
+        <img
+          src="corbeille-cartoon.png"
+          alt="Corbeille"
+          id="btn-corbeille"
+          onclick="supprimerHistoiresSelectionnees()"
+        >
+        <img
+          src="croix-cartoon.png"
+          alt="Annuler sélection"
+          id="btn-annuler-selection"
+          onclick="reinitialiserSelectionHistoires()"
+        >
+      </div>
+      <button class="button" onclick="goBack()">Retour</button>
     </div>
   </section>
 
-... (tout ton code jusqu’à la fin des sections)
+  <!-- ====== CI-DESSOUS : SCRIPTS FIREBASE (pas de type=module, pas d'import/export) ====== -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9cbe7d67gAEMSSV0EnZDe1ocaHO8dzqs",
+      authDomain: "mon-histoire-9ea8b.firebaseapp.com",
+      projectId: "mon-histoire-9ea8b",
+      storageBucket: "mon-histoire-9ea8b.appspot.com",
+      messagingSenderId: "161346258517",
+      appId: "1:161346258517:web:6844de025dff1173f2f6dc",
+      measurementId: "G-SFPQGT4D5M"
+    };
+    firebase.initializeApp(firebaseConfig);
+    if ('measurementId' in firebaseConfig) {
+      firebase.analytics();
+    }
+  </script>
+  <script src="app.js" defer></script>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB9cbe7d67gAEMSSV0EnZDe1ocaHO8dzqs",
-    authDomain: "mon-histoire-9ea8b.firebaseapp.com",
-    projectId: "mon-histoire-9ea8b",
-    storageBucket: "mon-histoire-9ea8b.appspot.com",
-    messagingSenderId: "161346258517",
-    appId: "1:161346258517:web:6844de025dff1173f2f6dc",
-    measurementId: "G-SFPQGT4D5M"
-  };
-  firebase.initializeApp(firebaseConfig);
-  if ('measurementId' in firebaseConfig) {
-    firebase.analytics();
-  }
-</script>
-
-<script src="app.js" defer></script>
-  
-<!-- Modal générique pour messages -->
-<div id="message-modal" class="modal" style="display:none;">
-  ...
-</div>
-
+  <!-- Modal générique pour messages -->
+  <div id="message-modal" class="modal" style="display:none;">
+    <div class="message-card">
+      <p id="message-modal-text"></p>
+      <button class="button" onclick="closeMessageModal()">OK</button>
+    </div>
+  </div>
 </body>
 </html>
-
