@@ -114,7 +114,32 @@ function afficherUtilisateurConnecté() {
   document.getElementById("user-icon").style.display = "inline-block";
   document.getElementById("login-button").style.display = "none";
   document.getElementById("my-stories-button").style.display = "inline-block";
+
+  // Récupère l'utilisateur connecté
+  const user = firebase.auth().currentUser;
+  if (user) {
+    // Récupère le prénom stocké dans Firestore (ou affiche l'initiale de l'email sinon)
+    firebase.firestore().collection("users").doc(user.uid).get()
+      .then((doc) => {
+        let initiale = "U"; // Valeur par défaut
+        if (doc.exists && doc.data().prenom) {
+          initiale = doc.data().prenom.trim().charAt(0).toUpperCase();
+        } else if (user.email) {
+          initiale = user.email.charAt(0).toUpperCase();
+        }
+        document.getElementById("user-icon").textContent = initiale;
+      })
+      .catch(() => {
+        // En cas d'erreur, affiche l'initiale de l'email
+        if (user.email) {
+          document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
+        } else {
+          document.getElementById("user-icon").textContent = "U";
+        }
+      });
+  }
 }
+
 function afficherUtilisateurDéconnecté() {
   document.getElementById("user-icon").style.display = "none";
   document.getElementById("login-button").style.display = "inline-block";
