@@ -188,27 +188,29 @@
   </section>
 
   <!-- ====== CI-DESSOUS : SCRIPTS FIREBASE (pas de type=module, pas d'import/export) ====== -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyB9cbe7d67gAEMSSV0EnZDe1ocaHO8dzqs",
-      authDomain: "mon-histoire-9ea8b.firebaseapp.com",
-      projectId: "mon-histoire-9ea8b",
-      storageBucket: "mon-histoire-9ea8b.appspot.com",
-      messagingSenderId: "161346258517",
-      appId: "1:161346258517:web:6844de025dff1173f2f6dc",
-      measurementId: "G-SFPQGT4D5M"
-    };
-    firebase.initializeApp(firebaseConfig);
-    if ('measurementId' in firebaseConfig) {
-      firebase.analytics();
-    }
-  </script>
-  <script src="app.js" defer></script>
+<!-- Firebase SDK compatibilité navigateur -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9cbe7d67gAEMSSV0EnZDe1ocaHO8dzqs",
+    authDomain: "mon-histoire-9ea8b.firebaseapp.com",
+    projectId: "mon-histoire-9ea8b",
+    storageBucket: "mon-histoire-9ea8b.appspot.com",
+    messagingSenderId: "161346258517",
+    appId: "1:161346258517:web:6844de025dff1173f2f6dc",
+    measurementId: "G-SFPQGT4D5M"
+  };
+  firebase.initializeApp(firebaseConfig);
+  if ('measurementId' in firebaseConfig) {
+    firebase.analytics();
+  }
+</script>
+<script src="app.js" defer></script>
+
 
   <!-- Modal générique pour messages -->
   <div id="message-modal" class="modal" style="display:none;">
