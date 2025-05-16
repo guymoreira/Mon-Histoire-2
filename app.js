@@ -1,6 +1,17 @@
 // app.js
 firebase.auth().useDeviceLanguage();
 
+const firebaseErrorMessages = {
+  "auth/email-already-in-use": "Cette adresse e-mail est déjà utilisée.",
+  "auth/invalid-email": "L'adresse e-mail n'est pas valide.",
+  "auth/user-disabled": "Ce compte utilisateur a été désactivé.",
+  "auth/user-not-found": "Aucun compte trouvé avec cet e-mail.",
+  "auth/wrong-password": "Le mot de passe est incorrect.",
+  "auth/weak-password": "Le mot de passe est trop faible (minimum 6 caractères).",
+  "auth/too-many-requests": "Trop de tentatives. Merci de réessayer plus tard.",
+  "auth/operation-not-allowed": "Opération non autorisée. Merci de contacter le support.",
+};
+
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     afficherUtilisateurConnecté();
@@ -12,7 +23,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     bindLongPress();
   }
 });
-
 
 // Affiche le modal générique avec un message
 function showMessageModal(message) {
@@ -31,9 +41,8 @@ function closeMessageModal() {
 let currentScreen  = "accueil";
 let previousScreen = null;
 
-
- // Affiche un écran, mémorise l’historique et gère le bouton “Sauvegarder”
- function showScreen(screen) {
+// Affiche un écran, mémorise l’historique et gère le bouton “Sauvegarder”
+function showScreen(screen) {
   if (screen === currentScreen) return;
   previousScreen = currentScreen;
   // masque tous les écrans actifs
@@ -55,7 +64,7 @@ let previousScreen = null;
   if (screen === "mes-histoires") {
     afficherHistoiresSauvegardees();
   }
- }
+}
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
@@ -80,7 +89,8 @@ function loginUser() {
       showScreen("accueil");
     })
     .catch((error) => {
-      showMessageModal("Erreur de connexion : " + error.message);
+      const msg = firebaseErrorMessages[error.code] || error.message;
+      showMessageModal(msg);
     });
 }
 
@@ -167,11 +177,10 @@ function registerUser() {
       showMessageModal("Ton compte a bien été créé ! Tu peux maintenant te connecter.");
     })
     .catch((error) => {
-      showMessageModal("Erreur : " + error.message);
+      const msg = firebaseErrorMessages[error.code] || error.message;
+      showMessageModal(msg);
     });
 }
-
-
 
 function toggleSignup(show) {
   document.getElementById("signup-form").style.display = show ? "block" : "none";
@@ -188,8 +197,15 @@ function sendReset() {
     return;
   }
 
-  showMessageModal("Lien de réinitialisation envoyé !");
-  toggleReset(false);
+  firebase.auth().sendPasswordResetEmail(email)
+    .then(() => {
+      showMessageModal("Lien de réinitialisation envoyé !");
+      toggleReset(false);
+    })
+    .catch((error) => {
+      const msg = firebaseErrorMessages[error.code] || error.message;
+      showMessageModal(msg);
+    });
 }
 
 function demanderSauvegarde() {
@@ -226,24 +242,24 @@ function afficherHistoiresSauvegardees() {
   mettreAJourBar();
 }
 
- function bindLongPress() {
-   document.querySelectorAll('#liste-histoires li').forEach(li => {
-     const btn = li.querySelector('button');
-     let timer = null;
+function bindLongPress() {
+  document.querySelectorAll('#liste-histoires li').forEach(li => {
+    const btn = li.querySelector('button');
+    let timer = null;
 
-     const start = e => {
-       // timer unique pour le long-press (600ms)
-       timer = setTimeout(() => {
-         // feedback haptique
-         if (navigator.vibrate) {
-           navigator.vibrate(50);
-         }
-         // sélection de l’histoire
-         li.classList.add("selected");
-         mettreAJourBar();
-       }, 600);
-     };
-     const cancel = () => clearTimeout(timer);
+    const start = e => {
+      // timer unique pour le long-press (600ms)
+      timer = setTimeout(() => {
+        // feedback haptique
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+        // sélection de l’histoire
+        li.classList.add("selected");
+        mettreAJourBar();
+      }, 600);
+    };
+    const cancel = () => clearTimeout(timer);
 
     btn.addEventListener('touchstart', start);
     btn.addEventListener('mousedown',  start);
@@ -264,7 +280,6 @@ function afficherHistoiresSauvegardees() {
   });
 }
 
-
 function mettreAJourBar() {
   const sec = document.getElementById("mes-histoires");
   const any = !!document.querySelector("#liste-histoires li.selected");
@@ -276,7 +291,6 @@ function reinitialiserSelectionHistoires() {
   document.querySelectorAll("#liste-histoires li.selected").forEach(li => li.classList.remove("selected"));
   mettreAJourBar();
 }
-
 
 function afficherHistoire(idx) {
   const h = JSON.parse(localStorage.getItem("histoires") || "[]");
@@ -325,4 +339,3 @@ function confirmDelete() {
 function closeDeleteModal() {
   document.getElementById("delete-modal").style.display = "none";
 }
-
