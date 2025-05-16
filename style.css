@@ -377,20 +377,22 @@ body {
 }
 
 #user-icon {
-  font-size: 1.3rem;                /* Taille lisible mais moins massive */
-  font-family: 'Poppins', 'Arial', sans-serif; /* Même police que le reste */
-  font-weight: bold;                /* En gras */
-  color: #222;                      /* Couleur sombre, adaptée à ta charte */
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.3rem; /* ou ajuste entre 1.2rem et 1.5rem selon ton goût */
+  font-family: inherit; /* Si tu utilises la police sur le body, hérite automatiquement */
+  font-weight: bold;    /* En gras */
+  color: #222;          /* Couleur adaptée à ton thème */
   width: 44px;
   height: 44px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   cursor: pointer;
-  letter-spacing: 0.02em;           /* Optionnel pour une initiale aérée */
-  line-height: 1;                   /* Pour bien centrer la lettre */
+  letter-spacing: 0.01em; /* Optionnel, pour l’équilibre visuel */
+  line-height: 1;         /* Pour bien centrer la lettre verticalement */
+  user-select: none;      /* Pour ne pas sélectionner la lettre par accident */
 }
+
 
