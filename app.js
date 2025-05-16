@@ -1,12 +1,14 @@
 // app.js
-window.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("isLoggedIn") === "true") {
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
     afficherUtilisateurConnecté();
+    afficherHistoiresSauvegardees(); // On migrera plus tard vers Firestore
+    bindLongPress();
   } else {
     afficherUtilisateurDéconnecté();
+    afficherHistoiresSauvegardees();
+    bindLongPress();
   }
-  afficherHistoiresSauvegardees();
-  bindLongPress();
 });
 
 
@@ -62,22 +64,33 @@ function goBack() {
  */
 
 function loginUser() {
-  const e = document.getElementById("email").value.trim();
-  const p = document.getElementById("password").value.trim();
-  if (e && p) {
-    localStorage.setItem("isLoggedIn", "true");
-    afficherUtilisateurConnecté();
-    showScreen("accueil");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if (!email || !password) {
+    showMessageModal("Merci de remplir tous les champs.");
+    return;
   }
+
+  // Firebase Auth
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      afficherUtilisateurConnecté();
+      showScreen("accueil");
+    })
+    .catch((error) => {
+      showMessageModal("Erreur de connexion : " + error.message);
+    });
 }
 
+
 function logoutUser() {
-  localStorage.setItem("isLoggedIn", "false");
-  localStorage.removeItem("histoires");
-  afficherUtilisateurDéconnecté();
-  document.getElementById("logout-modal").style.display = "none";
-  showScreen("accueil");
+  firebase.auth().signOut().then(() => {
+    afficherUtilisateurDéconnecté();
+    document.getElementById("logout-modal").style.display = "none";
+    showScreen("accueil");
+  });
 }
+
 
 function afficherUtilisateurConnecté() {
   document.getElementById("user-icon").style.display = "inline-block";
@@ -131,6 +144,31 @@ function registerUser() {
     showMessageModal("Merci de remplir tous les champs.");
     return;
   }
+  if (password !== confirm) {
+    showMessageModal("Les mots de passe ne correspondent pas.");
+    return;
+  }
+
+  // Firebase Auth
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Optionnel : enregistrer le prénom dans Firestore (profil)
+      const user = userCredential.user;
+      return firebase.firestore().collection("users").doc(user.uid).set({
+        prenom: prenom,
+        email: email,
+        createdAt: new Date().toISOString()
+      });
+    })
+    .then(() => {
+      showMessageModal("Compte créé avec succès !");
+      toggleSignup(false);
+    })
+    .catch((error) => {
+      showMessageModal("Erreur : " + error.message);
+    });
+}
+
   if (password !== confirm) {
     showMessageModal("Les mots de passe ne correspondent pas.");
     return;
