@@ -10,6 +10,12 @@ const firebaseErrorMessages = {
   "auth/weak-password": "Le mot de passe est trop faible (minimum 6 caractères).",
   "auth/too-many-requests": "Trop de tentatives. Merci de réessayer plus tard.",
   "auth/operation-not-allowed": "Opération non autorisée. Merci de contacter le support.",
+  "auth/missing-password": "Merci de saisir un mot de passe.",
+  "auth/missing-email": "Merci de saisir une adresse e-mail.",
+  "auth/invalid-credential": "L'identifiant ou le mot de passe est invalide.",
+  "auth/network-request-failed": "Problème de connexion réseau. Veuillez réessayer.",
+  "auth/invalid-credential": "L'identifiant ou le mot de passe est invalide ou a expiré.",
+
 };
 
 firebase.auth().onAuthStateChanged(function(user) {
