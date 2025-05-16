@@ -1,4 +1,6 @@
 // app.js
+firebase.auth().useDeviceLanguage();
+
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     afficherUtilisateurConnecté();
