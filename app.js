@@ -75,10 +75,18 @@ if (screen === "resultat") {
 
 
   // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
-  if (screen === "mes-histoires") {
-    afficherHistoiresSauvegardees();
+if (screen === "mes-histoires") {
+  afficherHistoiresSauvegardees();
+
+  // Afficher ou cacher le bouton "Retour" selon la page précédente
+  const btnRetour = document.getElementById("btn-retour-mes-histoires");
+  if (previousScreen === "resultat") {
+    btnRetour.style.display = "inline-block";
+  } else {
+    btnRetour.style.display = "none";
   }
 }
+
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
