@@ -316,8 +316,14 @@ function bindLongPress() {
     };
     const cancel = () => clearTimeout(timer);
 
-    btn.addEventListener('touchstart', start);
-    btn.addEventListener('mousedown',  start);
+   btn.addEventListener('touchstart', (e) => {
+  if (navigator.vibrate) navigator.vibrate(10);
+  start(e);
+});
+btn.addEventListener('mousedown', (e) => {
+  if (navigator.vibrate) navigator.vibrate(10);
+  start(e);
+});
     btn.addEventListener('touchend',   cancel);
     btn.addEventListener('mouseup',    cancel);
     btn.addEventListener('mouseleave', cancel);
