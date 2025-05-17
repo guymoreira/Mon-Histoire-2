@@ -419,6 +419,7 @@ body {
 #mes-histoires-actions {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -426,10 +427,11 @@ body {
 #mes-histoires-actions .button {
   max-width: 300px;
   min-width: 180px;
-  width: 100%;
+  width: auto;              /* <- ICI, le bouton prend la largeur de son contenu */
   min-height: 3.5rem;
-  margin: 0 auto;
+  margin: 0 0.5rem;
   text-align: center;
+  flex: 1 0 auto;           /* Chaque bouton occupe son espace sans forcer l’étirement */
   display: block;
 }
 
