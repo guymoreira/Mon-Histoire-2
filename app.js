@@ -306,11 +306,14 @@ async function sauvegarderHistoire() {
 
     showMessageModal("Histoire sauvegardée en ligne !");
     afficherHistoiresSauvegardees();
-  } catch (error) {
-    showMessageModal("Erreur lors de la sauvegarde : " + error.message);
-  }
+catch (error) {
+    let msg = "Erreur : " + error.message;
+    if (error.code === "unavailable" || error.message.includes("offline")) {
+        msg = "Impossible de récupérer l’histoire : vous n’êtes pas connecté à Internet.";
+    }
+    showMessageModal(msg);
 }
-
+}
 
 async function afficherHistoiresSauvegardees() {
   const ul = document.getElementById("liste-histoires");
