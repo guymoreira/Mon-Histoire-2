@@ -316,41 +316,6 @@ async function sauvegarderHistoire(nombreRestant) {
   }
 }
 
-
-async function sauvegarderHistoire() {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    showMessageModal("Vous devez être connecté pour sauvegarder.");
-    return;
-  }
-
-  const contenu = document.getElementById("histoire").innerHTML;
-  const titre = "Histoire du " + new Date().toLocaleDateString();
-  const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
-
-  try {
-    await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
-      .add({
-        titre: titre,
-        contenu: contenu,
-        images: images,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-
-    showMessageModal("Histoire sauvegardée en ligne !");
-    afficherHistoiresSauvegardees();
-  } catch (error) {
-    let msg = "Erreur : " + error.message;
-    if (error.code === "unavailable" || error.message.includes("offline")) {
-      msg = "Impossible de récupérer l’histoire : vous n’êtes pas connecté à Internet.";
-    }
-    showMessageModal(msg);
-  }
-}
-
 async function afficherHistoiresSauvegardees() {
   const ul = document.getElementById("liste-histoires");
   ul.innerHTML = "";
