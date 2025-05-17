@@ -75,9 +75,17 @@ if (screen === "resultat") {
 
 
   // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
-  if (screen === "mes-histoires") {
-    afficherHistoiresSauvegardees();
+if (screen === "mes-histoires") {
+  afficherHistoiresSauvegardees();
+
+  // Affiche le bouton Accueil seulement si tu viens de "resultat"
+  const btnAccueil = document.getElementById("btn-accueil-mes-histoires");
+  if (previousScreen === "resultat") {
+    btnAccueil.style.display = "inline-block";
+  } else {
+    btnAccueil.style.display = "none";
   }
+}
 }
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
