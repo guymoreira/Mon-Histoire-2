@@ -416,4 +416,9 @@ body {
   opacity: 1;
   pointer-events: auto;
 }
+.form-buttons {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
