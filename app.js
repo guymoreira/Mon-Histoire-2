@@ -316,6 +316,34 @@ async function sauvegarderHistoire(nombreRestant) {
   }
 }
 
+async function demanderSauvegarde() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Vous devez être connecté pour sauvegarder.");
+    return;
+  }
+  try {
+    const snap = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .get();
+
+    const nbHistoires = snap.size;
+    const restant = MAX_HISTOIRES - nbHistoires;
+
+    if (nbHistoires >= MAX_HISTOIRES) {
+      document.getElementById("modal-limite").classList.add("show");
+    } else {
+      await sauvegarderHistoire(restant); // On passe le nombre restant à la fonction
+    }
+  } catch (error) {
+    showMessageModal("Erreur lors de la vérification du quota : " + error.message);
+  }
+}
+
+
+
 async function afficherHistoiresSauvegardees() {
   const ul = document.getElementById("liste-histoires");
   ul.innerHTML = "";
