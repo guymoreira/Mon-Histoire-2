@@ -59,12 +59,11 @@ function showScreen(screen) {
   currentScreen = screen;
 
   // cas spécial Résultat : affiche ou cache le bouton “Sauvegarder”
-  if (screen === "resultat") {
-    const btn = document.getElementById("btn-sauvegarde");
-    btn.style.display = localStorage.getItem("isLoggedIn") === "true"
-      ? "inline-block"
-      : "none";
-  }
+if (screen === "resultat") {
+  const btn = document.getElementById("btn-sauvegarde");
+  btn.style.display = firebase.auth().currentUser ? "inline-block" : "none";
+}
+
 
   // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
   if (screen === "mes-histoires") {
