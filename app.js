@@ -279,7 +279,6 @@ async function demanderSauvegarde() {
     showMessageModal("Vous devez être connecté pour sauvegarder.");
     return;
   }
-  // Compte les histoires Firestore existantes pour cet utilisateur
   try {
     const snap = await firebase.firestore()
       .collection("users")
@@ -322,13 +321,13 @@ async function sauvegarderHistoire() {
 
     showMessageModal("Histoire sauvegardée en ligne !");
     afficherHistoiresSauvegardees();
-catch (error) {
+  } catch (error) {
     let msg = "Erreur : " + error.message;
     if (error.code === "unavailable" || error.message.includes("offline")) {
-        msg = "Impossible de récupérer l’histoire : vous n’êtes pas connecté à Internet.";
+      msg = "Impossible de récupérer l’histoire : vous n’êtes pas connecté à Internet.";
     }
     showMessageModal(msg);
-}
+  }
 }
 
 async function afficherHistoiresSauvegardees() {
