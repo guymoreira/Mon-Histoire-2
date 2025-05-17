@@ -1,4 +1,5 @@
 // app.js
+const MAX_HISTOIRES = 5; // Change cette valeur pour la limite souhaitée
 let resultatSource = "formulaire"; // Par défaut
 // (le reste de tes variables globales)
 
@@ -273,28 +274,48 @@ function sendReset() {
     });
 }
 
-async function demanderSauvegarde() {
+async function sauvegarderHistoire(nombreRestant) {
   const user = firebase.auth().currentUser;
   if (!user) {
     showMessageModal("Vous devez être connecté pour sauvegarder.");
     return;
   }
+
+  const contenu = document.getElementById("histoire").innerHTML;
+  const titre = "Histoire du " + new Date().toLocaleDateString();
+  const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
+
   try {
-    const snap = await firebase.firestore()
+    await firebase.firestore()
       .collection("users")
       .doc(user.uid)
       .collection("stories")
-      .get();
+      .add({
+        titre: titre,
+        contenu: contenu,
+        images: images,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
 
-    if (snap.size >= 5) {
-      document.getElementById("modal-limite").classList.add("show");
+    afficherHistoiresSauvegardees();
+
+    // Affiche le message spécial à partir de 3 histoires déjà enregistrées, sauf si plus de place
+    if ((MAX_HISTOIRES - nombreRestant) >= 3 && nombreRestant > 0) {
+      showMessageModal(
+        "Histoire sauvegardée en ligne !<br><b>Plus que " + nombreRestant + " enregistrement(s) possible(s).</b>"
+      );
     } else {
-      sauvegarderHistoire();
+      showMessageModal("Histoire sauvegardée en ligne !");
     }
   } catch (error) {
-    showMessageModal("Erreur lors de la vérification du quota : " + error.message);
+    let msg = "Erreur : " + error.message;
+    if (error.code === "unavailable" || error.message.includes("offline")) {
+      msg = "Impossible de récupérer l’histoire : vous n’êtes pas connecté à Internet.";
+    }
+    showMessageModal(msg);
   }
 }
+
 
 async function sauvegarderHistoire() {
   const user = firebase.auth().currentUser;
