@@ -347,16 +347,16 @@ function afficherHistoire(idx) {
 }
 
 function fermerModaleLimite() {
-  document.getElementById("modal-limite").style.display = "none";
+  document.getElementById("modal-limite").classList.remove("show");
 }
 function validerModaleLimite() {
-  document.getElementById("modal-limite").style.display = "none";
+  document.getElementById("modal-limite").classList.remove("show");
   showScreen("mes-histoires");
 }
 
 // Ouvre la modale CSS de confirmation
 function supprimerHistoiresSelectionnees() {
-  document.getElementById("delete-modal").style.display = "flex";
+  document.getElementById("delete-modal").classList.add("show");
 }
 
 // Utilisateur clique "Oui"
@@ -421,5 +421,5 @@ function deleteAccount() {
 
 // Utilisateur clique "Non"
 function closeDeleteModal() {
-  document.getElementById("delete-modal").style.display = "none";
+  document.getElementById("delete-modal").classList.remove("show");
 }
