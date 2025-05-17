@@ -160,17 +160,18 @@ body {
 #reset-form .button-group button[type="button"] {
   order: -1;  /* remonte “Annuler” avant le ou les boutons submit */
 }
-#formulaire .form-buttons {
+.form-buttons {
   display: flex;                   
-  flex-direction: row-reverse;     /* inverse l’ordre visuel des boutons */
+  flex-direction: row-reverse;     
   justify-content: space-between;  
   gap: 1rem;                       
   margin-top: 1.5rem;             
 }
-#formulaire .form-buttons .button {
+.form-buttons .button {
   margin: 0; 
   flex: 1;  
 }
+
  /* Connexion : Annuler à gauche, Se connecter à droite */
  #connexion .button-group button[type="button"] {
    order: -1;  /* remonte le bouton “Annuler” avant les autres */
