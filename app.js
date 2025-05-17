@@ -111,9 +111,9 @@ function logoutUser() {
 
 
 function afficherUtilisateurConnecté() {
-  document.getElementById("user-icon").style.display = "inline-block";
-  document.getElementById("login-button").style.display = "none";
-  document.getElementById("my-stories-button").style.display = "inline-block";
+  document.getElementById("user-icon").classList.remove("hidden");
+  document.getElementById("login-button").classList.add("hidden");
+  document.getElementById("my-stories-button").classList.remove("hidden");
 
   // Récupère l'utilisateur connecté
   const user = firebase.auth().currentUser;
@@ -141,9 +141,9 @@ function afficherUtilisateurConnecté() {
 }
 
 function afficherUtilisateurDéconnecté() {
-  document.getElementById("user-icon").style.display = "none";
-  document.getElementById("login-button").style.display = "inline-block";
-  document.getElementById("my-stories-button").style.display = "none";
+  document.getElementById("user-icon").classList.add("hidden");
+  document.getElementById("login-button").classList.remove("hidden");
+  document.getElementById("my-stories-button").classList.add("hidden");
 }
 
 function genererHistoire() {
