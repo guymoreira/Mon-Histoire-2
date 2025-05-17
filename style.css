@@ -416,4 +416,20 @@ body {
   pointer-events: auto;
 }
 
+#mes-histoires-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+#mes-histoires-actions .button {
+  max-width: 300px;
+  min-width: 180px;
+  width: 100%;
+  min-height: 3.5rem;
+  margin: 0 auto;
+  text-align: center;
+  display: block;
+}
 
