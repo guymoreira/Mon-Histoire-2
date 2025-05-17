@@ -15,14 +15,14 @@
       <button class="button" id="create-button" onclick="showScreen('formulaire')">
         Créer une histoire
       </button>
-      <button class="button" id="login-button" onclick="showScreen('connexion')">
+      <button class="button hidden" id="login-button" onclick="showScreen('connexion')">
         Me connecter
       </button>
-      <button class="button" id="my-stories-button" onclick="showScreen('mes-histoires')" style="display:none;">
+      <button class="button hidden" id="my-stories-button" onclick="showScreen('mes-histoires')">
         Mes Histoires
       </button>
     </div>
-    <div id="user-icon" onclick="document.getElementById('logout-modal').style.display='flex'">
+    <div id="user-icon" class="hidden" onclick="document.getElementById('logout-modal').style.display='flex'">
       GM
     </div>
   </section>
