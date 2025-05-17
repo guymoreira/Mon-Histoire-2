@@ -36,11 +36,10 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 // Affiche le modal générique avec un message
 function showMessageModal(message) {
-  document.getElementById("message-modal-text").textContent = message;
+  document.getElementById("message-modal-text").innerHTML = message;
   const modal = document.getElementById("message-modal");
   modal.classList.add("show");
 }
-
 // Ferme le modal lorsque l'utilisateur clique sur OK
 function closeMessageModal() {
   const modal = document.getElementById("message-modal");
