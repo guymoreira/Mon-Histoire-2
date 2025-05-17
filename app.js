@@ -75,18 +75,10 @@ if (screen === "resultat") {
 
 
   // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
-if (screen === "mes-histoires") {
-  afficherHistoiresSauvegardees();
-
-  // Afficher ou cacher le bouton "Retour" selon la page précédente
-  const btnRetour = document.getElementById("btn-retour-mes-histoires");
-  if (previousScreen === "resultat") {
-    btnRetour.style.display = "inline-block";
-  } else {
-    btnRetour.style.display = "none";
+  if (screen === "mes-histoires") {
+    afficherHistoiresSauvegardees();
   }
 }
-
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
@@ -455,26 +447,4 @@ function retourDepuisResultat() {
     showScreen("formulaire");
   }
 }
-window.showScreen = showScreen;
-window.goBack = goBack;
-window.logoutUser = logoutUser;
-window.loginUser = loginUser;
-window.registerUser = registerUser;
-window.toggleSignup = toggleSignup;
-window.toggleReset = toggleReset;
-window.sendReset = sendReset;
-window.demanderSauvegarde = demanderSauvegarde;
-window.fermerModaleLimite = fermerModaleLimite;
-window.validerModaleLimite = validerModaleLimite;
-window.supprimerHistoiresSelectionnees = supprimerHistoiresSelectionnees;
-window.confirmDelete = confirmDelete;
-window.closeDeleteModal = closeDeleteModal;
-window.reinitialiserSelectionHistoires = reinitialiserSelectionHistoires;
-window.openDeleteAccountModal = openDeleteAccountModal;
-window.closeDeleteAccountModal = closeDeleteAccountModal;
-window.deleteAccount = deleteAccount;
-window.closeMessageModal = closeMessageModal;
-window.retourDepuisResultat = retourDepuisResultat;
-
-  
 
