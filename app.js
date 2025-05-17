@@ -380,6 +380,44 @@ function confirmDelete() {
   // 5) Reste bien sur l’écran "mes-histoires"
   showScreen("mes-histoires");
 }
+function openDeleteAccountModal() {
+  document.getElementById('logout-modal').style.display = 'none';
+  document.getElementById('delete-account-modal').style.display = 'flex';
+}
+
+function closeDeleteAccountModal() {
+  document.getElementById('delete-account-modal').style.display = 'none';
+}
+function deleteAccount() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Aucun utilisateur connecté.");
+    closeDeleteAccountModal();
+    return;
+  }
+
+  // Supprime les données Firestore associées (ex: profil)
+  firebase.firestore().collection("users").doc(user.uid).delete()
+    .catch(() => {}) // Ignore si déjà supprimé ou inexistant
+    .finally(() => {
+      // Supprime le compte Auth
+      user.delete()
+        .then(() => {
+          closeDeleteAccountModal();
+          showMessageModal("Compte supprimé. Au revoir !");
+          afficherUtilisateurDéconnecté();
+          showScreen("accueil");
+        })
+        .catch((error) => {
+          if (error.code === "auth/requires-recent-login") {
+            showMessageModal("Pour des raisons de sécurité, veuillez vous reconnecter puis réessayer la suppression.");
+          } else {
+            showMessageModal("Erreur lors de la suppression : " + error.message);
+          }
+          closeDeleteAccountModal();
+        });
+    });
+}
 
 // Utilisateur clique "Non"
 function closeDeleteModal() {
