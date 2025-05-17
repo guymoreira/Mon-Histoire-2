@@ -1,4 +1,7 @@
 // app.js
+let resultatSource = "formulaire"; // Par défaut
+// (le reste de tes variables globales)
+
 firebase.auth().useDeviceLanguage();
 
 const firebaseErrorMessages = {
@@ -174,6 +177,7 @@ function genererHistoire() {
     <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-5.jpg" alt=""></div>
   `;
   document.getElementById("histoire").innerHTML = html;
+  resultatSource = "formulaire";
   showScreen("resultat");
 }
 
@@ -342,9 +346,11 @@ function afficherHistoire(idx) {
   const h = JSON.parse(localStorage.getItem("histoires") || "[]");
   if (h[idx]) {
     document.getElementById("histoire").innerHTML = h[idx].contenu;
+    resultatSource = "mes-histoires";
     showScreen("resultat");
   }
 }
+
 
 function fermerModaleLimite() {
   document.getElementById("modal-limite").classList.remove("show");
@@ -423,3 +429,12 @@ function deleteAccount() {
 function closeDeleteModal() {
   document.getElementById("delete-modal").classList.remove("show");
 }
+function retourDepuisResultat() {
+  if (resultatSource === "mes-histoires") {
+    showScreen("mes-histoires");
+  } else {
+    showScreen("formulaire");
+  }
+}
+
+
