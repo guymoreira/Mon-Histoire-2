@@ -167,27 +167,33 @@
   </div>
 
   <!-- Mes Histoires -->
-  <section class="screen" id="mes-histoires">
-    <div class="bloc-centre">
-      <h2>Mes Histoires</h2>
-      <ul id="liste-histoires"></ul>
-      <div class="actions-footer" id="barre-suppression" style="display:none;">
-        <img
-          src="corbeille-cartoon.png"
-          alt="Corbeille"
-          id="btn-corbeille"
-          onclick="supprimerHistoiresSelectionnees()"
-        >
-        <img
-          src="croix-cartoon.png"
-          alt="Annuler sélection"
-          id="btn-annuler-selection"
-          onclick="reinitialiserSelectionHistoires()"
-        >
-      </div>
-      <button class="button" onclick="goBack()">Retour</button>
+<!-- Mes Histoires -->
+<section class="screen" id="mes-histoires">
+  <div class="bloc-centre">
+    <h2>Mes Histoires</h2>
+    <ul id="liste-histoires"></ul>
+    <div class="actions-footer" id="barre-suppression" style="display:none;">
+      <img
+        src="corbeille-cartoon.png"
+        alt="Corbeille"
+        id="btn-corbeille"
+        onclick="supprimerHistoiresSelectionnees()"
+      >
+      <img
+        src="croix-cartoon.png"
+        alt="Annuler sélection"
+        id="btn-annuler-selection"
+        onclick="reinitialiserSelectionHistoires()"
+      >
     </div>
-  </section>
+    <!-- Bloc à insérer à la place du simple bouton -->
+    <div class="actions-footer" id="mes-histoires-actions">
+      <button class="button" id="btn-retour-mes-histoires" onclick="goBack()">Retour</button>
+      <button class="button" id="btn-accueil-mes-histoires" onclick="showScreen('accueil')" style="display:none;">Accueil</button>
+    </div>
+  </div>
+</section>
+
 
   <!-- ====== CI-DESSOUS : SCRIPTS FIREBASE (pas de type=module, pas d'import/export) ====== -->
 <!-- Firebase SDK compatibilité navigateur -->
