@@ -397,6 +397,8 @@ body {
   user-select: none;
   /* On supprime line-height, ça n'a pas d'effet en flex et peut décentrer */
 }
-
+.hidden {
+  display: none !important;
+}
 
 
