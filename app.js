@@ -257,7 +257,7 @@ function sendReset() {
 function demanderSauvegarde() {
   const h = JSON.parse(localStorage.getItem("histoires") || "[]");
   if (h.length >= 5) {
-    document.getElementById("modal-limite").style.display = "flex";
+    document.getElementById("modal-limite").classList.add("show");
   } else {
     sauvegarderHistoire();
   }
@@ -375,18 +375,18 @@ function confirmDelete() {
   afficherHistoiresSauvegardees();
 
   // 4) Ferme la modale
-  document.getElementById("delete-modal").style.display = "none";
+  document.getElementById("delete-modal").classList.remove("show");
 
   // 5) Reste bien sur l’écran "mes-histoires"
   showScreen("mes-histoires");
 }
 function openDeleteAccountModal() {
   document.getElementById('logout-modal').style.display = 'none';
-  document.getElementById('delete-account-modal').style.display = 'flex';
+  document.getElementById('delete-account-modal').classList.add('show');
 }
 
 function closeDeleteAccountModal() {
-  document.getElementById('delete-account-modal').style.display = 'none';
+  document.getElementById('delete-account-modal').classList.remove('show');
 }
 function deleteAccount() {
   const user = firebase.auth().currentUser;
