@@ -44,29 +44,29 @@
   <section class="screen" id="connexion">
     <div class="bloc-centre">
       <h2>Connexion</h2>
-      <form onsubmit="event.preventDefault(); loginUser();">
-        <input class="input-style" id="email" placeholder="Adresse email" required type="email"/>
-        <input class="input-style" id="password" placeholder="Mot de passe" required type="password"/>
-        <div class="button-group">
-          <button class="button" type="submit">Se connecter</button>
-          <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
-        </div>
-      </form>
+     <form onsubmit="event.preventDefault(); loginUser();" autocomplete="off">
+         <input class="input-style" id="email" placeholder="Adresse email" required type="email" autocomplete="off"/>
+         <input class="input-style" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+      <div class="button-group">
+    <button class="button" type="submit">Se connecter</button>
+    <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
+  </div>
+</form>
       <p style="text-align:center;">
         <button class="button small" onclick="toggleSignup(true)" type="button">Créer un compte</button><br/>
         <a href="#" onclick="toggleReset(true)" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
       </p>
       <div class="bloc-centre" id="signup-form" style="display:none;">
         <h2>Créer un compte</h2>
-        <input class="input-style" id="prenom" placeholder="Prénom" required type="text"/>
-        <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email"/>
-        <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password"/>
-        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password"/>
+        <input class="input-style" id="prenom" placeholder="Prénom" required type="text" autocomplete="off"/>
+        <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email" autocomplete="off"/>
+        <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
         <div class="button-group">
-          <button class="button" onclick="registerUser()">Valider</button>
-          <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
-        </div>
-      </div>
+    <button class="button" onclick="registerUser()">Valider</button>
+    <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
+  </div>
+</div>
       <div class="bloc-centre" id="reset-form" style="display:none;">
         <h2>Réinitialisation</h2>
         <input class="input-style" id="reset-email" placeholder="Votre adresse email" required type="email"/>
