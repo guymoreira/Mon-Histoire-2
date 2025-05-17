@@ -401,4 +401,18 @@ body {
   display: none !important;
 }
 
+.modal {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s;
+  display: flex;         /* reste compatible flex pour centrer le contenu */
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  /* display: flex; -- déjà défini sur .modal */
+}
 
