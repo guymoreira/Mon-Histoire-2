@@ -65,7 +65,12 @@ function showScreen(screen) {
   // cas spécial Résultat : affiche ou cache le bouton “Sauvegarder”
 if (screen === "resultat") {
   const btn = document.getElementById("btn-sauvegarde");
-  btn.style.display = firebase.auth().currentUser ? "inline-block" : "none";
+  // Affiche le bouton sauvegarde uniquement si connecté ET si on vient du formulaire de création
+  if (firebase.auth().currentUser && resultatSource === "formulaire") {
+    btn.style.display = "inline-block";
+  } else {
+    btn.style.display = "none";
+  }
 }
 
 
