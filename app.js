@@ -273,14 +273,30 @@ function sendReset() {
     });
 }
 
-function demanderSauvegarde() {
-  const h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  if (h.length >= 5) {
-    document.getElementById("modal-limite").classList.add("show");
-  } else {
-    sauvegarderHistoire();
+async function demanderSauvegarde() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Vous devez être connecté pour sauvegarder.");
+    return;
+  }
+  // Compte les histoires Firestore existantes pour cet utilisateur
+  try {
+    const snap = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .get();
+
+    if (snap.size >= 5) {
+      document.getElementById("modal-limite").classList.add("show");
+    } else {
+      sauvegarderHistoire();
+    }
+  } catch (error) {
+    showMessageModal("Erreur lors de la vérification du quota : " + error.message);
   }
 }
+
 async function sauvegarderHistoire() {
   const user = firebase.auth().currentUser;
   if (!user) {
