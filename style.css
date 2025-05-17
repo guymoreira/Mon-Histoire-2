@@ -436,4 +436,10 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+#mes-histoires-actions.single .button {
+  flex: 0 0 48%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
