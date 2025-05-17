@@ -28,15 +28,17 @@
   </section>
 
   <!-- Modal de déconnexion -->
-  <div class="logout-modal" id="logout-modal">
-    <div class="bloc-centre">
-      <p>Voulez-vous vous déconnecter ?</p>
-      <button class="button" onclick="logoutUser()">Se déconnecter</button>
-      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
-        Annuler
-      </button>
-    </div>
+<div class="logout-modal" id="logout-modal">
+  <div class="bloc-centre">
+    <p>Voulez-vous vous déconnecter ?</p>
+    <button class="button" onclick="logoutUser()">Se déconnecter</button>
+    <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+      Annuler
+    </button>
+    <button class="button" style="background:#e74c3c; color:#fff; margin-top:1rem;" onclick="openDeleteAccountModal()">Supprimer mon compte</button>
   </div>
+</div>
+
 
   <!-- Connexion -->
   <section class="screen" id="connexion">
@@ -219,5 +221,16 @@
       <button class="button" onclick="closeMessageModal()">OK</button>
     </div>
   </div>
+
+<div class="modal" id="delete-account-modal" style="display:none;">
+  <div class="message-card">
+    <p style="color:#e74c3c; font-weight:bold;">
+      Action irréversible.<br>Toutes vos données seront supprimées.<br>Êtes-vous sûr ?
+    </p>
+    <button class="button" style="background:#e74c3c; color:#fff;" onclick="deleteAccount()">Oui, supprimer mon compte</button>
+    <button class="button" onclick="closeDeleteAccountModal()">Annuler</button>
+  </div>
+</div>
+  
 </body>
 </html>
