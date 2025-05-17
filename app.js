@@ -281,31 +281,67 @@ function demanderSauvegarde() {
     sauvegarderHistoire();
   }
 }
-function sauvegarderHistoire() {
-  const h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  h.push({
-    titre: "Histoire du " + new Date().toLocaleDateString(),
-    contenu: document.getElementById("histoire").innerHTML,
-    date: new Date().toISOString()
-  });
-  localStorage.setItem("histoires", JSON.stringify(h));
-  afficherHistoiresSauvegardees();
-  showMessageModal("Histoire sauvegardée !");
+async function sauvegarderHistoire() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Vous devez être connecté pour sauvegarder.");
+    return;
+  }
+
+  const contenu = document.getElementById("histoire").innerHTML;
+  const titre = "Histoire du " + new Date().toLocaleDateString();
+  const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
+
+  try {
+    await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .add({
+        titre: titre,
+        contenu: contenu,
+        images: images,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+    showMessageModal("Histoire sauvegardée en ligne !");
+    afficherHistoiresSauvegardees();
+  } catch (error) {
+    showMessageModal("Erreur lors de la sauvegarde : " + error.message);
+  }
 }
 
-function afficherHistoiresSauvegardees() {
+
+async function afficherHistoiresSauvegardees() {
   const ul = document.getElementById("liste-histoires");
   ul.innerHTML = "";
-  const h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  h.forEach((item, i) => {
-    const li = document.createElement("li");
-    li.dataset.index = i;
-    li.innerHTML = `<button class="button">${item.titre}</button>`;
-    ul.appendChild(li);
-  });
-  bindLongPress();
-  mettreAJourBar();
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    // Affiche rien si déconnecté
+    return;
+  }
+  try {
+    const snap = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    snap.forEach(doc => {
+      const data = doc.data();
+      const li = document.createElement("li");
+      li.dataset.id = doc.id;
+      li.innerHTML = `<button class="button">${data.titre || "Sans titre"}</button>`;
+      ul.appendChild(li);
+    });
+    bindLongPress();
+    mettreAJourBar();
+  } catch (error) {
+    showMessageModal("Erreur lors de la lecture : " + error.message);
+  }
 }
+
 
 function bindLongPress() {
   document.querySelectorAll('#liste-histoires li').forEach(li => {
@@ -338,16 +374,16 @@ btn.addEventListener('mousedown', (e) => {
     btn.addEventListener('mouseup',    cancel);
     btn.addEventListener('mouseleave', cancel);
 
-    btn.addEventListener('click', e => {
-      const sec = document.getElementById('mes-histoires');
-      if (!sec.classList.contains('selection-mode')) {
-        const idx = parseInt(li.dataset.index, 10);
-        afficherHistoire(idx);
-      } else {
-        li.classList.toggle('selected');
-        mettreAJourBar();
-      }
-    });
+btn.addEventListener('click', e => {
+  const sec = document.getElementById('mes-histoires');
+  if (!sec.classList.contains('selection-mode')) {
+    const storyId = li.dataset.id;
+    afficherHistoireById(storyId);
+  } else {
+    li.classList.toggle('selected');
+    mettreAJourBar();
+  }
+});
   });
 }
 
@@ -363,14 +399,27 @@ function reinitialiserSelectionHistoires() {
   mettreAJourBar();
 }
 
-function afficherHistoire(idx) {
-  const h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  if (h[idx]) {
-    document.getElementById("histoire").innerHTML = h[idx].contenu;
-    resultatSource = "mes-histoires";
-    showScreen("resultat");
+async function afficherHistoireById(storyId) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  try {
+    const doc = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .doc(storyId)
+      .get();
+
+    if (doc.exists) {
+      document.getElementById("histoire").innerHTML = doc.data().contenu;
+      resultatSource = "mes-histoires";
+      showScreen("resultat");
+    }
+  } catch (error) {
+    showMessageModal("Erreur : " + error.message);
   }
 }
+
 
 
 function fermerModaleLimite() {
@@ -387,26 +436,25 @@ function supprimerHistoiresSelectionnees() {
 }
 
 // Utilisateur clique "Oui"
-function confirmDelete() {
-  // 1) Récupère les indices sélectionnés
-  const sels = Array.from(document.querySelectorAll("#liste-histoires li.selected"))
-    .map(li => parseInt(li.dataset.index, 10));
-
-  // 2) Supprime-les du localStorage
-  let h = JSON.parse(localStorage.getItem("histoires") || "[]");
-  h = h.filter((_, i) => !sels.includes(i));
-  localStorage.setItem("histoires", JSON.stringify(h));
-
-  // 3) Réinitialise la sélection et rafraîchit la liste
+async function confirmDelete() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const selectedLis = Array.from(document.querySelectorAll("#liste-histoires li.selected"));
+  for (const li of selectedLis) {
+    const storyId = li.dataset.id;
+    await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .doc(storyId)
+      .delete();
+  }
   reinitialiserSelectionHistoires();
   afficherHistoiresSauvegardees();
-
-  // 4) Ferme la modale
   document.getElementById("delete-modal").classList.remove("show");
-
-  // 5) Reste bien sur l’écran "mes-histoires"
   showScreen("mes-histoires");
 }
+
 function openDeleteAccountModal() {
   document.getElementById('logout-modal').style.display = 'none';
   document.getElementById('delete-account-modal').classList.add('show');
