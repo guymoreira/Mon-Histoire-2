@@ -468,5 +468,22 @@ body {
   60% { text-shadow: 0 0 8px #f5c6c6; }
   100% { text-shadow: 0 0 0 #fab1a0; }
 }
+/* Barre de suppression quand il y a le bouton renommer */
+.actions-footer.with-rename {
+  gap: 2rem !important; /* Réduit l’espace horizontal entre les éléments */
+  justify-content: center;
+}
+
+/* Option : réajuste la taille des icônes pour ne pas qu'elles soient trop grandes */
+.actions-footer img,
+.actions-footer .button#btn-renommer-histoire {
+  width: 56px;
+  height: 56px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  box-sizing: border-box;
+}
 
 
