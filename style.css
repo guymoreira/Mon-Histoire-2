@@ -485,5 +485,28 @@ body {
   padding: 0.6rem 0.7rem;
   box-sizing: border-box;
 }
+/* Bouton crayon "renommer" – style rond, blanc, centré */
+#btn-renommer-histoire.icon-action {
+  background: #fff !important;
+  color: #1161a5 !important; /* bleu doux */
+  border-radius: 50%;
+  min-width: 56px;
+  min-height: 56px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem; /* crayon bien visible */
+  box-shadow: 0 0 6px rgba(50,100,150,0.10);
+  border: 2px solid #dde7f3;
+  margin: 0;
+  padding: 0;
+  transition: box-shadow 0.2s;
+}
+#btn-renommer-histoire.icon-action:hover {
+  box-shadow: 0 0 12px rgba(16,97,165,0.18);
+  background: #f7fbff !important;
+}
 
 
