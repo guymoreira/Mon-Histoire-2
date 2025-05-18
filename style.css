@@ -514,4 +514,27 @@ body {
   background: #f7fbff !important;
 }
 
+#btn-export-pdf.icon-action {
+  background: #fff;
+  color: #1161a5;
+  border-radius: 50%;
+  border: 2px solid #dde7f3;
+  width: 2.3em;
+  height: 2.3em;
+  min-width: 2.3em;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  margin-left: 0.7em;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(50,100,150,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
+  padding: 0;
+}
+#btn-export-pdf.icon-action:hover {
+  background: #f7fbff;
+  box-shadow: 0 0 12px rgba(16,97,165,0.18);
+}
 
