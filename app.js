@@ -283,7 +283,8 @@ async function sauvegarderHistoire(nombreRestant) {
   }
 
   const contenu = document.getElementById("histoire").innerHTML;
-  const titre = "Histoire du " + new Date().toLocaleDateString();
+  // Utilise le même titre que celui affiché sous "Ton Histoire"
+  const titre = document.getElementById("titre-histoire-resultat").textContent || "Titre de Mon Histoire";
   const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
 
   try {
