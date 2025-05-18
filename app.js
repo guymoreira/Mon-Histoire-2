@@ -610,23 +610,57 @@ async function confirmerRenommer() {
 function exporterPDF() {
   const { jsPDF } = window.jspdf;
   const titre = document.getElementById("titre-histoire-resultat").textContent || "Mon Histoire";
-  const element = document.getElementById("histoire");
+  const histoireElem = document.getElementById("histoire");
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  let y = 20;
 
-  html2canvas(element).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    pdf.setFontSize(18);
-    pdf.text(titre, 12, 20);
+  pdf.setFontSize(18);
+  pdf.text(titre, 12, y);
+  y += 10;
 
-    const pageWidth = 180;
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pageWidth;
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    pdf.addImage(imgData, 'PNG', 12, 30, pdfWidth, pdfHeight);
-
-    pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
+  // On récupère chaque bloc de l’histoire
+  histoireElem.childNodes.forEach(node => {
+    if (node.nodeType === 1) {
+      if (node.tagName.toLowerCase() === "h3") {
+        pdf.setFontSize(15);
+        y += 10;
+        if (y > 270) { pdf.addPage(); y = 20; }
+        pdf.text(node.textContent, 12, y);
+      }
+      if (node.tagName.toLowerCase() === "p") {
+        pdf.setFontSize(12);
+        y += 7;
+        if (y > 280) { pdf.addPage(); y = 20; }
+        let split = pdf.splitTextToSize(node.textContent, 180);
+        pdf.text(split, 12, y);
+        y += (split.length * 6);
+      }
+      if (node.classList && node.classList.contains('illustration-chapitre')) {
+        const img = node.querySelector("img");
+        if (img) {
+          y += 5;
+          if (y > 210) { pdf.addPage(); y = 20; }
+          // Crée une image temporaire pour jsPDF (attention à l’asynchrone !)
+          let imgData;
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            imgData = canvas.toDataURL("image/png");
+          } catch (e) { imgData = null; }
+          if (imgData) {
+            pdf.addImage(imgData, "PNG", 25, y, 70, 40);
+            y += 45;
+          }
+        }
+      }
+    }
   });
+
+  pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
 }
+
 
 
