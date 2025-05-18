@@ -192,9 +192,10 @@ function genererHistoire() {
     <p>Grâce à son courage, ${nom} réussit à ${mis.toLowerCase()} et revint triomphant.</p>
     <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-5.jpg" alt=""></div>
   `;
-  document.getElementById("histoire").innerHTML = html;
-  resultatSource = "formulaire";
-  showScreen("resultat");
+document.getElementById("histoire").innerHTML = html;
+document.getElementById("titre-histoire-resultat").textContent = "Titre de Mon Histoire";
+resultatSource = "formulaire";
+showScreen("resultat");
 }
 
 // Fonction de contrôle de complexité du mot de passe
@@ -469,11 +470,12 @@ async function afficherHistoireById(storyId) {
       .doc(storyId)
       .get();
 
-    if (doc.exists) {
-      document.getElementById("histoire").innerHTML = doc.data().contenu;
-      resultatSource = "mes-histoires";
-      showScreen("resultat");
-    }
+if (doc.exists) {
+  document.getElementById("histoire").innerHTML = doc.data().contenu;
+  document.getElementById("titre-histoire-resultat").textContent = doc.data().titre || "Titre de Mon Histoire";
+  resultatSource = "mes-histoires";
+  showScreen("resultat");
+}
   } catch (error) {
     showMessageModal("Erreur : " + error.message);
   }
