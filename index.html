@@ -170,8 +170,8 @@
     <h3>Renommer l’histoire</h3>
     <input id="input-nouveau-titre" type="text" class="input-style" maxlength="50" style="margin-bottom:1em;" />
     <div class="button-group">
-      <button class="button" onclick="confirmerRenommer()">Valider</button>
       <button class="button" onclick="fermerModaleRenommer()">Annuler</button>
+      <button class="button" onclick="confirmerRenommer()">Valider</button>     
     </div>
   </div>
 </div>
@@ -191,7 +191,7 @@
         id="btn-corbeille"
         onclick="supprimerHistoiresSelectionnees()"
       >
-      <button class="button" id="btn-renommer-histoire" style="display:none;min-width:44px;" onclick="afficherModaleRenommer()">✏️</button>
+      <button class="icon-action" id="btn-renommer-histoire" style="display:none;" onclick="afficherModaleRenommer()">✏️</button>
       <img
         src="croix-cartoon.png"
         alt="Annuler sélection"
