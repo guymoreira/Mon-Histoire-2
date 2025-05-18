@@ -442,4 +442,28 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+#compteur-histoires {
+  background: #eaf6fd;
+  color: #1161a5;
+  font-weight: bold;
+  border-radius: 2em;
+  padding: 0.3em 1.1em;
+  margin-left: 0.5em;
+  transition: background 0.3s, color 0.3s;
+  border: 1.5px solid #cce4f6;
+  display: inline-block;
+}
+
+#compteur-histoires.quota-alerte {
+  background: #feeaea;
+  color: #b91c1c;
+  border-color: #fab1a0;
+  /* effet supplémentaire possible : petit "pulse" */
+  animation: quota-pulse 0.7s 1;
+}
+@keyframes quota-pulse {
+  0% { box-shadow: 0 0 0 0 #fab1a0; }
+  60% { box-shadow: 0 0 0 6px #ffeaea88; }
+  100% { box-shadow: 0 0 0 0 #fab1a0; }
+}
 
