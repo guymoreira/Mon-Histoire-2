@@ -439,6 +439,14 @@ function mettreAJourBar() {
   const any = !!document.querySelector("#liste-histoires li.selected");
   document.getElementById("barre-suppression").style.display = any ? "flex" : "none";
   sec.classList.toggle("selection-mode", any);
+
+  // Gestion bouton Renommer
+  const btnRenommer = document.getElementById("btn-renommer-histoire");
+  const nbSelected = document.querySelectorAll("#liste-histoires li.selected").length;
+  // N’affiche le bouton que si UNE seule histoire est sélectionnée
+  if (btnRenommer) {
+    btnRenommer.style.display = (nbSelected === 1) ? "inline-block" : "none";
+  }
 }
 
 function reinitialiserSelectionHistoires() {
@@ -552,4 +560,45 @@ function retourDepuisResultat() {
     showScreen("formulaire");
   }
 }
+function afficherModaleRenommer() {
+  const selected = document.querySelector("#liste-histoires li.selected");
+  if (!selected) return;
+  // Récupère le titre actuel
+  const btn = selected.querySelector('button');
+  document.getElementById('input-nouveau-titre').value = btn.textContent.trim();
+  document.getElementById("modal-renommer").classList.add("show");
+}
+
+function fermerModaleRenommer() {
+  document.getElementById("modal-renommer").classList.remove("show");
+}
+
+async function confirmerRenommer() {
+  const selected = document.querySelector("#liste-histoires li.selected");
+  if (!selected) return;
+  const storyId = selected.dataset.id;
+  const nouveauTitre = document.getElementById('input-nouveau-titre').value.trim();
+  if (!nouveauTitre) {
+    showMessageModal("Le titre ne peut pas être vide.");
+    return;
+  }
+  // Met à jour Firestore
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  try {
+    await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .doc(storyId)
+      .update({ titre: nouveauTitre });
+    fermerModaleRenommer();
+    afficherHistoiresSauvegardees();
+    reinitialiserSelectionHistoires();
+    showMessageModal("Titre modifié !");
+  } catch (error) {
+    showMessageModal("Erreur lors du renommage : " + error.message);
+  }
+}
+
 
