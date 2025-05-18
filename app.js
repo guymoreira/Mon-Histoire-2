@@ -437,15 +437,19 @@ btn.addEventListener('click', e => {
 function mettreAJourBar() {
   const sec = document.getElementById("mes-histoires");
   const any = !!document.querySelector("#liste-histoires li.selected");
+  const barre = document.getElementById("barre-suppression");
   document.getElementById("barre-suppression").style.display = any ? "flex" : "none";
   sec.classList.toggle("selection-mode", any);
 
   // Gestion bouton Renommer
   const btnRenommer = document.getElementById("btn-renommer-histoire");
   const nbSelected = document.querySelectorAll("#liste-histoires li.selected").length;
-  // N’affiche le bouton que si UNE seule histoire est sélectionnée
   if (btnRenommer) {
     btnRenommer.style.display = (nbSelected === 1) ? "inline-block" : "none";
+  }
+  // Applique une classe spéciale si le bouton renommer est visible
+  if (barre) {
+    barre.classList.toggle("with-rename", btnRenommer && btnRenommer.style.display !== "none");
   }
 }
 
