@@ -300,10 +300,10 @@ body {
 }
 
 .actions-footer img {
-  width: 64px !important;
-  height: 64px !important;
-  min-width: 56px;
-  min-height: 56px;
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 72px;
+  min-height: 72px;
   object-fit: contain;
   margin: 0;
   padding: 0;
