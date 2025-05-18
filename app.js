@@ -607,5 +607,26 @@ async function confirmerRenommer() {
     showMessageModal("Erreur lors du renommage : " + error.message);
   }
 }
+function exporterPDF() {
+  const { jsPDF } = window.jspdf;
+  const titre = document.getElementById("titre-histoire-resultat").textContent || "Mon Histoire";
+  const element = document.getElementById("histoire");
+
+  html2canvas(element).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    pdf.setFontSize(18);
+    pdf.text(titre, 12, 20);
+
+    const pageWidth = 180;
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pageWidth;
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 12, 30, pdfWidth, pdfHeight);
+
+    pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
+  });
+}
 
 
