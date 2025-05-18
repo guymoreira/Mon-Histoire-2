@@ -300,9 +300,14 @@ body {
 }
 
 .actions-footer img {
-  width: 64px;
-  height: auto;
-  cursor: pointer;
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 56px;
+  min-height: 56px;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
 }
 
 .actions-footer .button {
