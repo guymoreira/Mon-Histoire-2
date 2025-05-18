@@ -137,8 +137,13 @@
 <section class="screen" id="resultat">
   <div class="bloc-centre">
     <h2>Ton Histoire</h2>
-    <h3 id="titre-histoire-resultat" style="text-align:center; margin-bottom:1.2rem; color:#1161a5; font-weight:bold;"></h3>
-    <div id="histoire"></div>
+    <div style="display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
+  <h3 id="titre-histoire-resultat" style="margin:0; color:#1161a5; font-weight:bold; display:inline-block;"></h3>
+  <button id="btn-export-pdf" class="icon-action" title="Télécharger en PDF" onclick="exporterPDF()" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+    <span aria-label="Télécharger en PDF" style="pointer-events:none;">⬇️</span>
+  </button>
+</div>
+   <div id="histoire"></div>
     <div class="actions-resultat">
       <button class="button" onclick="retourDepuisResultat()">Retour</button>
       <button class="button" onclick="showScreen('accueil')">Accueil</button>
