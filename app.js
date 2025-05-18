@@ -366,7 +366,7 @@ async function afficherHistoiresSauvegardees() {
 
     // Ajout ou MAJ du compteur de quota
     if (compteur) {
-      compteur.textContent = `${snap.size} / ${MAX_HISTOIRES} utilisées`;
+      compteur.textContent = `${snap.size} / ${MAX_HISTOIRES}`;
       // Passe en rouge si on atteint le seuil
       if (snap.size >= SEUIL_ALERTE_HISTOIRES) {
         compteur.classList.add('quota-alerte');
@@ -388,6 +388,7 @@ async function afficherHistoiresSauvegardees() {
     showMessageModal("Erreur lors de la lecture : " + error.message);
   }
 }
+
 
 function bindLongPress() {
   document.querySelectorAll('#liste-histoires li').forEach(li => {
