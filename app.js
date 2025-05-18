@@ -1,5 +1,6 @@
 // app.js
 const MAX_HISTOIRES = 5; // Change cette valeur pour la limite souhaitée
+const SEUIL_ALERTE_HISTOIRES = 4; // passe en rouge à partir de 4/5 (ajuste si tu veux)
 let resultatSource = "formulaire"; // Par défaut
 // (le reste de tes variables globales)
 
@@ -342,10 +343,14 @@ async function demanderSauvegarde() {
 }
 
 
-
 async function afficherHistoiresSauvegardees() {
   const ul = document.getElementById("liste-histoires");
   ul.innerHTML = "";
+  const compteur = document.getElementById("compteur-histoires");
+  if (compteur) {
+    compteur.textContent = '';
+    compteur.classList.remove('quota-alerte');
+  }
   const user = firebase.auth().currentUser;
   if (!user) {
     // Affiche rien si déconnecté
@@ -358,6 +363,17 @@ async function afficherHistoiresSauvegardees() {
       .collection("stories")
       .orderBy("createdAt", "desc")
       .get();
+
+    // Ajout ou MAJ du compteur de quota
+    if (compteur) {
+      compteur.textContent = `${snap.size} / ${MAX_HISTOIRES} utilisées`;
+      // Passe en rouge si on atteint le seuil
+      if (snap.size >= SEUIL_ALERTE_HISTOIRES) {
+        compteur.classList.add('quota-alerte');
+      } else {
+        compteur.classList.remove('quota-alerte');
+      }
+    }
 
     snap.forEach(doc => {
       const data = doc.data();
@@ -372,7 +388,6 @@ async function afficherHistoiresSauvegardees() {
     showMessageModal("Erreur lors de la lecture : " + error.message);
   }
 }
-
 
 function bindLongPress() {
   document.querySelectorAll('#liste-histoires li').forEach(li => {
