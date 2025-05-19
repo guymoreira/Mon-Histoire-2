@@ -661,27 +661,3 @@ function exporterPDF() {
 
   pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
 }
-
-// Fonction de test pour lire un doc dans stock_histoires et logguer dans la console
-function testLectureStockHistoire() {
-    const docId = 'OOatgfs7udkQceStx3mb'; // à adapter
-    firebase.firestore().collection("stock_histoires").doc(docId).get()
-      .then((doc) => {
-        console.log('exists :', doc.exists);
-        console.log('id :', doc.id);
-        console.log('data :', doc.data());
-        if (doc.exists) {
-          const histoire = doc.data();
-          console.log('Histoire récupérée depuis le stock IA :', histoire);
-          alert('Titre : ' + histoire.titre + '\nTexte : ' + histoire.texte + '\nImages : ' + histoire.images);
-        } else {
-          alert('Aucune histoire trouvée avec cet ID.');
-        }
-      })
-      .catch((error) => {
-        alert('Erreur Firestore : ' + error);
-        console.error('Erreur Firestore :', error);
-      });
-}
-
-
