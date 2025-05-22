@@ -172,12 +172,37 @@ async function genererHistoire() {
   const style = document.getElementById("style").value;
   const tranche_age = document.getElementById("tranche_age").value;
 
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Veuillez vous connecter pour lancer une histoire.");
+    return;
+  }
+
+  // Clé unique pour la combinaison de filtres
+  const filtresKey = `${personnage}|${lieu}|${style}|${tranche_age}`;
+  const histoiresLuesRef = firebase.firestore()
+    .collection("users")
+    .doc(user.uid)
+    .collection("histoires_lues")
+    .doc(filtresKey);
+
+  // Récupérer la liste des histoires déjà lues pour ces filtres
+  let lues = [];
+  try {
+    const luesDoc = await histoiresLuesRef.get();
+    if (luesDoc.exists && Array.isArray(luesDoc.data().ids)) {
+      lues = luesDoc.data().ids;
+    }
+  } catch (e) {
+    lues = [];
+  }
+
+  // Récupérer toutes les histoires disponibles dans le stock IA
   let query = firebase.firestore().collection("stock_histoires")
     .where("personnage", "==", personnage)
     .where("lieu", "==", lieu)
     .where("style", "==", style)
-    .where("tranche_age", "==", tranche_age)
-    .limit(1);
+    .where("tranche_age", "==", tranche_age);
 
   try {
     const snap = await query.get();
@@ -185,20 +210,36 @@ async function genererHistoire() {
       showMessageModal("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
       return;
     }
-    const data = snap.docs[0].data();
+
+    // Liste des histoires possibles
+    const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Trouve la première histoire jamais lue
+    let histoire = stories.find(st => !lues.includes(st.id));
+    if (!histoire) {
+      // Toutes lues, on remet à zéro
+      lues = [];
+      histoire = stories[0];
+    }
+
+    // Ajoute l'id à la liste et mets à jour Firestore
+    if (!lues.includes(histoire.id)) {
+      lues.push(histoire.id);
+      await histoiresLuesRef.set({ ids: lues }, { merge: true });
+    }
+
+    // Affichage de l'histoire
     let html = "";
-    data.chapitres.forEach((chap, idx) => {
+    histoire.chapitres.forEach((chap, idx) => {
       html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
-      let texte = chap.texte;
-      // Remplace le prénom du héros dans l’histoire (optionnel)
-      texte = texte.replace(/\b\w+\b/, nom); // Remplace le premier mot par le prénom saisi
+      let texte = chap.texte.replace(/\b\w+\b/, nom);
       html += `<p>${texte}</p>`;
       if (chap.image) {
         html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
       }
     });
     document.getElementById("histoire").innerHTML = html;
-    document.getElementById("titre-histoire-resultat").textContent = data.titre || "Mon Histoire";
+    document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
     resultatSource = "formulaire";
     showScreen("resultat");
   } catch (e) {
