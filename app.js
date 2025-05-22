@@ -661,13 +661,12 @@ async function exporterPDF() {
   const titre = document.getElementById("titre-histoire-resultat").textContent || "Mon Histoire";
   const histoireElem = document.getElementById("histoire");
   const pdf = new jsPDF('p', 'mm', 'a4');
-  let y = 20;
+  let y = 25;
 
-  pdf.setFontSize(18);
-  pdf.text(titre, 12, y);
-  y += 10;
+  pdf.setFontSize(20);
+  pdf.text(titre, 105, y, { align: "center" });
+  y += 15;
 
-  // Fonction utilitaire qui charge une image (depuis src) en DataURL
   async function imgSrcToDataURL(src) {
     return new Promise((resolve, reject) => {
       const img = document.createElement("img");
@@ -693,37 +692,38 @@ async function exporterPDF() {
   for (const node of nodes) {
     if (node.nodeType === 1) {
       if (node.tagName.toLowerCase() === "h3") {
-        pdf.setFontSize(15);
-        y += 10;
-        if (y > 270) { pdf.addPage(); y = 20; }
-        pdf.text(node.textContent, 12, y);
-      }
-      if (node.tagName.toLowerCase() === "p") {
-        pdf.setFontSize(12);
-        y += 7;
-        if (y > 280) { pdf.addPage(); y = 20; }
-        let split = pdf.splitTextToSize(node.textContent, 180);
-        pdf.text(split, 12, y);
-        y += (split.length * 6);
+        y += 14;
+        pdf.setFontSize(16);
+        if (y > 260) { pdf.addPage(); y = 20; }
+        pdf.text(node.textContent, 105, y, { align: "center" });
+        y += 6;
       }
       if (node.classList && node.classList.contains('illustration-chapitre')) {
         const img = node.querySelector("img");
         if (img && img.src) {
-          y += 5;
-          if (y > 210) { pdf.addPage(); y = 20; }
+          y += 2;
+          if (y > 200) { pdf.addPage(); y = 20; }
           try {
             const imgData = await imgSrcToDataURL(img.src);
-            pdf.addImage(imgData, "PNG", 25, y, 70, 40);
-            y += 45;
-          } catch (e) {
-            // Ignore et continue
-          }
+            // Centre l’image sur la page
+            const imgWidth = 70, imgHeight = 40;
+            const x = (210 - imgWidth) / 2;
+            pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+            y += imgHeight + 6;
+          } catch (e) {}
         }
+      }
+      if (node.tagName.toLowerCase() === "p") {
+        pdf.setFontSize(12);
+        y += 2;
+        if (y > 280) { pdf.addPage(); y = 20; }
+        let split = pdf.splitTextToSize(node.textContent, 180);
+        pdf.text(split, 15, y);
+        y += (split.length * 7) + 2;
       }
     }
   }
 
   pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
 }
-
 
