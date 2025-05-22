@@ -165,37 +165,45 @@ function afficherUtilisateurDéconnecté() {
   document.getElementById("my-stories-button").classList.add("hidden");
 }
 
-function genererHistoire() {
+async function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
-  const pers = document.getElementById("personnage").value;
+  const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
-  const obj  = document.getElementById("objet").value;
-  const cmp  = document.getElementById("compagnon").value;
-  const mis  = document.getElementById("mission").value;
-  const st   = document.getElementById("style").value;
-  const dur  = document.getElementById("duree").value;
+  const style = document.getElementById("style").value;
+  const tranche_age = document.getElementById("tranche_age").value;
 
-  const html = `
-    <h3>Chapitre 1 : Le départ</h3>
-    <p>${nom}, un jeune ${pers}, vivait paisiblement près de la ${lieu}. On lui confia la mission : ${mis}.</p>
-    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-1.jpg" alt=""></div>
-    <h3>Chapitre 2 : L'objet magique</h3>
-    <p>En explorant, ${nom} découvrit une ${obj} brillante aux pouvoirs mystérieux.</p>
-    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-2.jpg" alt=""></div>
-    <h3>Chapitre 3 : La rencontre</h3>
-    <p>Sur sa route, il rencontra un(e) ${cmp}, et tous deux poursuivirent l’aventure.</p>
-    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-3.jpg" alt=""></div>
-    <h3>Chapitre 4 : L'aventure</h3>
-    <p>Dans un style ${st}, cette histoire ${dur} fut riche en rebondissements.</p>
-    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-4.jpg" alt=""></div>
-    <h3>Chapitre 5 : La réussite</h3>
-    <p>Grâce à son courage, ${nom} réussit à ${mis.toLowerCase()} et revint triomphant.</p>
-    <div class="illustration-chapitre"><img src="illustration-chevalier-chateau-chapitre-5.jpg" alt=""></div>
-  `;
-document.getElementById("histoire").innerHTML = html;
-document.getElementById("titre-histoire-resultat").textContent = "Titre de Mon Histoire";
-resultatSource = "formulaire";
-showScreen("resultat");
+  let query = firebase.firestore().collection("stock_histoires")
+    .where("personnage", "==", personnage)
+    .where("lieu", "==", lieu)
+    .where("style", "==", style)
+    .where("tranche_age", "==", tranche_age)
+    .limit(1);
+
+  try {
+    const snap = await query.get();
+    if (snap.empty) {
+      showMessageModal("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
+      return;
+    }
+    const data = snap.docs[0].data();
+    let html = "";
+    data.chapitres.forEach((chap, idx) => {
+      html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
+      let texte = chap.texte;
+      // Remplace le prénom du héros dans l’histoire (optionnel)
+      texte = texte.replace(/\b\w+\b/, nom); // Remplace le premier mot par le prénom saisi
+      html += `<p>${texte}</p>`;
+      if (chap.image) {
+        html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
+      }
+    });
+    document.getElementById("histoire").innerHTML = html;
+    document.getElementById("titre-histoire-resultat").textContent = data.titre || "Mon Histoire";
+    resultatSource = "formulaire";
+    showScreen("resultat");
+  } catch (e) {
+    showMessageModal("Erreur lors de la recherche de l'histoire : " + e.message);
+  }
 }
 
 // Fonction de contrôle de complexité du mot de passe
