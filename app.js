@@ -667,13 +667,13 @@ async function exporterPDF() {
   pdf.text(titre, 12, y);
   y += 10;
 
-  // On récupère chaque bloc de l’histoire
-  const nodes = Array.from(histoireElem.childNodes);
-
-  // Fonction utilitaire pour charger une image et retourner son dataURL
-  function loadImageToDataURL(img) {
-    return new Promise((resolve) => {
-      if (img.complete) {
+  // Fonction utilitaire qui charge une image (depuis src) en DataURL
+  async function imgSrcToDataURL(src) {
+    return new Promise((resolve, reject) => {
+      const img = document.createElement("img");
+      img.crossOrigin = "anonymous";
+      img.src = src;
+      img.onload = () => {
         try {
           const canvas = document.createElement("canvas");
           canvas.width = img.naturalWidth;
@@ -682,26 +682,14 @@ async function exporterPDF() {
           ctx.drawImage(img, 0, 0);
           resolve(canvas.toDataURL("image/png"));
         } catch (e) {
-          resolve(null);
+          reject(e);
         }
-      } else {
-        img.onload = () => {
-          try {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            resolve(canvas.toDataURL("image/png"));
-          } catch (e) {
-            resolve(null);
-          }
-        };
-        img.onerror = () => resolve(null);
-      }
+      };
+      img.onerror = reject;
     });
   }
 
+  const nodes = Array.from(histoireElem.childNodes);
   for (const node of nodes) {
     if (node.nodeType === 1) {
       if (node.tagName.toLowerCase() === "h3") {
@@ -720,18 +708,15 @@ async function exporterPDF() {
       }
       if (node.classList && node.classList.contains('illustration-chapitre')) {
         const img = node.querySelector("img");
-        if (img) {
-          // Attends que l’image soit bien chargée, puis ajoute-la
+        if (img && img.src) {
           y += 5;
           if (y > 210) { pdf.addPage(); y = 20; }
           try {
-            const imgData = await loadImageToDataURL(img);
-            if (imgData) {
-              pdf.addImage(imgData, "PNG", 25, y, 70, 40);
-              y += 45;
-            }
+            const imgData = await imgSrcToDataURL(img.src);
+            pdf.addImage(imgData, "PNG", 25, y, 70, 40);
+            y += 45;
           } catch (e) {
-            // Ignore les erreurs, passe à la suite
+            // Ignore et continue
           }
         }
       }
@@ -740,4 +725,5 @@ async function exporterPDF() {
 
   pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
 }
+
 
