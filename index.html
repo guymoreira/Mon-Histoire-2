@@ -81,59 +81,43 @@
   </section>
 
   <!-- Formulaire de création -->
-  <section class="screen" id="formulaire">
-    <div class="bloc-centre">
-      <h2>Créer une Histoire</h2>
-      <form onsubmit="event.preventDefault(); genererHistoire();">
-        <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
-        <select class="input-style" id="personnage">
-          <option value="chevalier">Chevalier</option>
-          <option value="princesse">Princesse</option>
-          <option value="fée">Fée</option>
-          <option value="explorateur">Explorateur</option>
-        </select>
-        <select class="input-style" id="lieu">
-          <option value="forêt enchantée">Forêt enchantée</option>
-          <option value="château">Château</option>
-          <option value="plaine magique">Plaine magique</option>
-          <option value="volcan endormi">Volcan endormi</option>
-        </select>
-        <select class="input-style" id="objet">
-          <option value="baguette">Baguette</option>
-          <option value="épée">Épée</option>
-          <option value="livre magique">Livre magique</option>
-          <option value="amulette">Amulette</option>
-        </select>
-        <select class="input-style" id="compagnon">
-          <option value="dragon">Dragon</option>
-          <option value="licorne">Licorne</option>
-          <option value="chat parlant">Chat parlant</option>
-          <option value="">Aucun</option>
-        </select>
-        <select class="input-style" id="mission">
-          <option value="sauver un village">Sauver un village</option>
-          <option value="découvrir un trésor">Découvrir un trésor</option>
-          <option value="réparer la nature">Réparer la nature</option>
-          <option value="retrouver un ami perdu">Retrouver un ami perdu</option>
-        </select>
-        <select class="input-style" id="style">
-          <option value="drôle">Drôle</option>
-          <option value="poétique">Poétique</option>
-          <option value="suspense">Suspense</option>
-          <option value="personnalisé">Personnalisé</option>
-        </select>
-        <select class="input-style" id="duree">
-          <option value="courte">Courte</option>
-          <option value="moyenne">Moyenne</option>
-          <option value="longue">Longue</option>
-        </select>
-        <div class="form-buttons">
-          <button class="button" type="submit">Générer</button>
-          <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
-        </div>
-      </form>
-    </div>
-  </section>
+<section class="screen" id="formulaire">
+  <div class="bloc-centre">
+    <h2>Créer une Histoire</h2>
+    <form onsubmit="event.preventDefault(); genererHistoire();">
+      <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
+
+      <label for="personnage" style="font-weight:bold;margin-top:0.7em;">Personnage :</label>
+      <select class="input-style" id="personnage" required>
+        <option value="lapin">Lapin</option>
+        <option value="sorcière">Sorcière</option>
+      </select>
+
+      <label for="lieu" style="font-weight:bold;margin-top:0.7em;">Lieu :</label>
+      <select class="input-style" id="lieu" required>
+        <option value="forêt">Forêt</option>
+        <option value="château">Château</option>
+      </select>
+
+      <label for="style" style="font-weight:bold;margin-top:0.7em;">Style :</label>
+      <select class="input-style" id="style" required>
+        <option value="aventure">Aventure</option>
+        <option value="amitié">Amitié</option>
+      </select>
+
+      <label for="tranche_age" style="font-weight:bold;margin-top:0.7em;">Tranche d'âge :</label>
+      <select class="input-style" id="tranche_age" required>
+        <option value="3-6 ans">3-6 ans</option>
+        <option value="6-9 ans">6-9 ans</option>
+      </select>
+
+      <div class="form-buttons">
+        <button class="button" type="submit">Chercher une histoire</button>
+        <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
+      </div>
+    </form>
+  </div>
+</section>
 
   <!-- Résultat -->
 <section class="screen" id="resultat">
