@@ -230,14 +230,15 @@ async function genererHistoire() {
 
     // Affichage de l'histoire
     let html = "";
-    histoire.chapitres.forEach((chap, idx) => {
-      html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
-      let texte = chap.texte.replace(/\b\w+\b/, nom);
-      html += `<p>${texte}</p>`;
-      if (chap.image) {
-        html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
-      }
-    });
+histoire.chapitres.forEach((chap, idx) => {
+  html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
+  let texte = personnaliserTexteChapitre(chap.texte, nom, personnage); // <-- NOUVEAU
+  html += `<p>${texte}</p>`;
+  if (chap.image) {
+    html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
+  }
+});
+
     document.getElementById("histoire").innerHTML = html;
     document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
     resultatSource = "formulaire";
