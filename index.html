@@ -85,12 +85,12 @@
   <div class="bloc-centre">
     <h2>Créer une Histoire</h2>
     <form onsubmit="event.preventDefault(); genererHistoire();">
-      <input class="input-style" id="nom" placeholder="Nom du héros" required type="text"/>
+      <input class="input-style" id="nom" placeholder="Nom du héros" required type="text" />
 
       <label for="personnage" style="font-weight:bold;margin-top:0.7em;">Personnage :</label>
       <select class="input-style" id="personnage" required>
-        <option value="lapin">Lapin</option>
-        <option value="sorcière">Sorcière</option>
+        <option value="fille">Fille</option>
+        <option value="garcon">Garçon</option>
       </select>
 
       <label for="lieu" style="font-weight:bold;margin-top:0.7em;">Lieu :</label>
@@ -101,8 +101,8 @@
 
       <label for="style" style="font-weight:bold;margin-top:0.7em;">Style :</label>
       <select class="input-style" id="style" required>
-        <option value="aventure">Aventure</option>
         <option value="amitié">Amitié</option>
+        <option value="aventure">Aventure</option>
       </select>
 
       <label for="tranche_age" style="font-weight:bold;margin-top:0.7em;">Tranche d'âge :</label>
