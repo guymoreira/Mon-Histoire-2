@@ -727,4 +727,17 @@ async function exporterPDF() {
 
   pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
 }
+function personnaliserTexteChapitre(texte, prenom, personnage) {
+  if (personnage === "fille") {
+    return texte.replace(
+      /\b(la fillette|la petite fille|l'héroïne|la jeune fille|la heroine|la fillette héroïne|la fillette heroïne|la jeune héroïne)\b/gi,
+      prenom
+    );
+  } else {
+    return texte.replace(
+      /\b(le garçon|le petit garçon|le héros|le jeune garçon|l'héros|le garçon héros)\b/gi,
+      prenom
+    );
+  }
+}
 
