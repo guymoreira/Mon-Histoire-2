@@ -62,6 +62,14 @@
         <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email" autocomplete="off"/>
         <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
         <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
+        <label style="display:flex;align-items:flex-start; margin:0.8em 0; font-size:0.97em;">
+  <input type="checkbox" id="checkbox-consent" required style="margin-top:0.2em; margin-right:0.5em;">
+  <span>
+    J’atteste avoir l’accord d’un parent ou responsable légal pour l’utilisation de cette application et l’enregistrement de mes données, conformément à la
+    <a href="#" onclick="document.getElementById('modal-rgpd').classList.add('show');return false;">politique de confidentialité</a>.
+  </span>
+</label>
+
         <div class="button-group">
     <button class="button" onclick="registerUser()">Valider</button>
     <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
