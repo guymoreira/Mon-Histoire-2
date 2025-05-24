@@ -91,11 +91,11 @@ body {
 .bloc-centre {
   background-color: rgba(255,255,255,0.85);
   border-radius: 16px;
-  padding: 1rem;
-  width: 90%;          /* même % sur tous les écrans */
-  max-width: 600px;    /* même max-width sur tous les écrans */
-  margin: 2vh auto;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  padding: 0.5rem 0.5rem 0.8rem 0.5rem; /* padding réduit haut/bas/gauche/droite */
+  width: 96%;
+  max-width: 500px; /* un peu moins large sur mobile */
+  margin: 1vh auto;  /* moins de marge verticale */
+  box-shadow: 0 0 8px rgba(0,0,0,0.09);
 }
 
 #message-modal .bloc-centre {
@@ -107,14 +107,14 @@ body {
  .button {
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
   color: #0a3d62; font-weight: bold;
-  padding: 1rem; font-size: 1.1rem;
+ padding: 0.7rem 1rem; font-size: 1.04rem;
   border-radius: 40px; border: none;
   cursor: pointer; margin: 0.5rem auto;
   display: block; text-align: center;
   transition: background 0.3s ease;
   background: linear-gradient(to bottom, #cce4f6, #99c9f1);
   color: #0a3d62; font-weight: bold;
-  padding: 1rem; font-size: 1.1rem;
+  padding: 0.7rem 1rem; font-size: 1.04rem;
   border-radius: 40px; border: none;
   cursor: pointer; margin: 0.5rem auto;
   display: block; text-align: center;
@@ -144,9 +144,12 @@ body {
 }
 
 .input-style {
-  width: 100%; padding: 0.8rem;
-  margin: 0.5rem 0; font-size: 1rem;
-  border-radius: 12px; border: 1px solid #ccc;
+  width: 100%; 
+  padding: 0.6rem 0.8rem;
+  margin: 0.3rem 0; 
+  font-size: 0.98rem;
+  border-radius: 10px; 
+  border: 1px solid #ccc;
   box-sizing: border-box;
 }
 
@@ -252,9 +255,9 @@ body {
  /* ────────────────
     Titre « Mon Histoire » (page accueil)
  ──────────────── */
- #accueil-content h1 {
-   font-size: 2.5rem;      /* augmente la taille du titre */
-  margin-bottom: 1rem;    /* conserve un petit espace sous le titre */
+#accueil-content h1 {
+  font-size: 2.15rem;
+  margin-bottom: 0.7rem;
 }
 
 
@@ -540,5 +543,19 @@ body {
 
 .bloc-compte {
   background-color: #fff !important;  /* Force l’opacité 100% pour “Mon Compte” seulement */
+}
+@media (max-width: 480px) {
+  .bloc-centre {
+    padding: 0.35rem 0.25rem 0.5rem 0.25rem;
+    max-width: 99vw;
+  }
+  .button {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.98rem;
+  }
+  .input-style {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.95rem;
+  }
 }
 
