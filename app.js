@@ -568,6 +568,7 @@ async function confirmDelete() {
 }
 
 function openDeleteAccountModal() {
+  fermerMonCompte(); // On ferme la modale "Mon Compte" si elle est ouverte
   document.getElementById('logout-modal').style.display = 'none';
   document.getElementById('delete-account-modal').classList.add('show');
 }
@@ -790,6 +791,7 @@ function modifierMonCompte() {
 function envoyerResetEmail() {
   const user = firebase.auth().currentUser;
   if (!user) return;
+  fermerMonCompte(); // On ferme la modale "Mon Compte" avant d'afficher la confirmation
   firebase.auth().sendPasswordResetEmail(user.email)
     .then(() => {
       showMessageModal("Un e-mail de réinitialisation a été envoyé.");
