@@ -265,6 +265,16 @@ function registerUser() {
   const password= document.getElementById("signup-password").value;
   const confirm = document.getElementById("signup-confirm").value;
 
+  // Vérification consentement parental
+  const consentCheckbox = document.getElementById("checkbox-consent");
+  const consent = consentCheckbox ? consentCheckbox.checked : false;
+  if (!consent) {
+    showMessageModal(
+      'Merci de cocher la case de consentement parental.<br>Tu peux consulter les <a href="#" onclick="document.getElementById(\'modal-rgpd\').classList.add(\'show\');return false;">règles de vie privée</a> ici.'
+    );
+    return;
+  }
+
   if (!prenom || !email || !password || !confirm) {
     showMessageModal("Merci de remplir tous les champs.");
     return;
@@ -282,10 +292,12 @@ function registerUser() {
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
+      // Stocke le consentement parental dans Firestore
       return firebase.firestore().collection("users").doc(user.uid).set({
         prenom: prenom,
         email: email,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        consentement_parental: true
       });
     })
     .then(() => {
@@ -297,7 +309,6 @@ function registerUser() {
       showMessageModal(msg);
     });
 }
-
 
 function toggleSignup(show) {
   document.getElementById("signup-form").style.display = show ? "block" : "none";
