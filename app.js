@@ -800,4 +800,14 @@ function envoyerResetEmail() {
       showMessageModal("Erreur : " + (e.message || e));
     });
 }
+// Activation du lien footer RGPD
+document.addEventListener('DOMContentLoaded', function() {
+  const rgpdLink = document.getElementById('link-rgpd');
+  if (rgpdLink) {
+    rgpdLink.onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('modal-rgpd').classList.add('show');
+    };
+  }
+});
 
