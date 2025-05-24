@@ -37,6 +37,7 @@
     <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
       Annuler
     </button>
+    <button class="button" onclick="ouvrirMonCompte()" style="margin-top:1rem;">Gérer mon compte</button>
     <button class="button" style="background:#e74c3c; color:#fff; margin-top:1rem;" onclick="openDeleteAccountModal()">Supprimer mon compte</button>
   </div>
 </div>
@@ -245,6 +246,28 @@ const firebaseConfig = {
     <button class="button" onclick="closeDeleteAccountModal()">Annuler</button>
   </div>
 </div>
+
+<div class="modal" id="modal-moncompte">
+  <div class="bloc-centre" style="max-width:430px;">
+    <h3 style="margin-top:0;">Mon Compte</h3>
+    <form onsubmit="event.preventDefault(); modifierMonCompte();">
+      <label style="margin-top:1em;">Prénom :</label>
+      <input class="input-style" id="compte-prenom" type="text" required>
+      <label style="margin-top:1em;">Adresse e-mail :</label>
+      <input class="input-style" id="compte-email" type="email" required>
+      <div style="margin:1.5em 0 0.5em 0;">
+        <button class="button" type="button" onclick="envoyerResetEmail()">Réinitialiser le mot de passe</button>
+      </div>
+      <div class="form-buttons">
+        <button class="button" type="submit">Enregistrer</button>
+        <button class="button" type="button" onclick="fermerMonCompte()">Annuler</button>
+      </div>
+      <button class="button" type="button" style="background:#e74c3c; color:#fff; margin-top:1.2em;"
+        onclick="openDeleteAccountModal()">Supprimer mon compte</button>
+    </form>
+  </div>
+</div>
+
   
 </body>
 </html>
