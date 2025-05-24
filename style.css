@@ -538,3 +538,7 @@ body {
   box-shadow: 0 0 12px rgba(16,97,165,0.18);
 }
 
+.bloc-compte {
+  background-color: #fff !important;  /* Force l’opacité 100% pour “Mon Compte” seulement */
+}
+
