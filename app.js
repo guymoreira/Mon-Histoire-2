@@ -740,4 +740,62 @@ function personnaliserTexteChapitre(texte, prenom, personnage) {
     );
   }
 }
+// Ouvre la modale "Mon Compte" et remplit les champs avec les infos actuelles
+function ouvrirMonCompte() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  firebase.firestore().collection("users").doc(user.uid).get()
+    .then(doc => {
+      document.getElementById('compte-prenom').value = doc.exists && doc.data().prenom ? doc.data().prenom : '';
+      document.getElementById('compte-email').value = user.email || '';
+      document.getElementById('modal-moncompte').classList.add('show');
+      document.getElementById('logout-modal').style.display = 'none';
+    });
+}
+
+// Ferme la modale "Mon Compte"
+function fermerMonCompte() {
+  document.getElementById('modal-moncompte').classList.remove('show');
+}
+
+// Modifie le prénom et l'adresse email dans Firebase
+function modifierMonCompte() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const prenom = document.getElementById('compte-prenom').value.trim();
+  const email = document.getElementById('compte-email').value.trim();
+  if (!prenom || !email) {
+    showMessageModal("Merci de remplir tous les champs.");
+    return;
+  }
+  // Met à jour Firestore (prénom)
+  firebase.firestore().collection("users").doc(user.uid).set(
+    { prenom: prenom },
+    { merge: true }
+  ).then(() => {
+    // Met à jour Firebase Auth (email) si changé
+    if (user.email !== email) {
+      return user.updateEmail(email);
+    }
+  }).then(() => {
+    showMessageModal("Modifications enregistrées !");
+    fermerMonCompte();
+    afficherUtilisateurConnecté(); // MAJ de l'icône utilisateur en haut à droite
+  }).catch(e => {
+    showMessageModal("Erreur : " + (e.message || e));
+  });
+}
+
+// Envoie un e-mail de réinitialisation du mot de passe
+function envoyerResetEmail() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  firebase.auth().sendPasswordResetEmail(user.email)
+    .then(() => {
+      showMessageModal("Un e-mail de réinitialisation a été envoyé.");
+    })
+    .catch(e => {
+      showMessageModal("Erreur : " + (e.message || e));
+    });
+}
 
