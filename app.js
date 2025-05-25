@@ -773,8 +773,8 @@ function ouvrirMonCompte() {
     .then(doc => {
       document.getElementById('compte-prenom').value = doc.exists && doc.data().prenom ? doc.data().prenom : '';
       document.getElementById('compte-email').value = user.email || '';
-      document.getElementById('modal-moncompte').classList.add('show');
-      document.getElementById('logout-modal').style.display = 'none';
+     document.getElementById('modal-moncompte').classList.add('show');
+      fermerLogoutModal();
     });
 }
 
