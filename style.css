@@ -115,19 +115,17 @@ body {
 .button {
   display: block;
   width: 100%;
-  margin: 1.5em 0 0.9em 0;
-  padding: 0.98em 0;
+  margin: 0.75em 0 0.65em 0;     /* ESPACEMENT entre les boutons */
+  padding: 0.55em 0;              /* HAUTEUR du bouton réduite */
   border: none;
-  border-radius: 48px;
-  font-size: 1.44em;
+  border-radius: 28px;            /* ARRONDI réduit pour un aspect plus “carte” que “pilule” */
+  font-size: 1.22em;
   font-family: 'Fredoka', Arial, sans-serif;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: #46301d;
   text-align: center;
-  background: #eee; /* sera écrasé par les variantes */
-  box-shadow: 0 7px 18px 0 rgba(211,174,114,0.22);
   cursor: pointer;
+  box-shadow: 0 5px 18px 0 rgba(211,174,114,0.17);
   transition: transform 0.09s, box-shadow 0.11s;
 }
 
@@ -164,9 +162,8 @@ body {
 }
 
 .button:active {
-  /* enfoncement */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transform: translateY(0);
+  transform: scale(0.97);
+  box-shadow: 0 2px 4px rgba(211,174,114,0.13);
 }
 
 .input-style {
