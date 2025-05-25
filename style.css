@@ -577,12 +577,18 @@ body {
 .toggle-password:hover {
   opacity: 1;
 }
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+}
 button:focus,
 .button:focus,
 button:focus-visible,
 .button:focus-visible,
 input[type="button"]:focus,
-input[type="submit"]:focus {
+input[type="submit"]:focus,
+a:focus {
   outline: none !important;
   box-shadow: none !important;
 }
@@ -590,6 +596,3 @@ button::-moz-focus-inner,
 .button::-moz-focus-inner {
   border: 0 !important;
 }
-
-
-
