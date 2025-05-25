@@ -111,6 +111,7 @@ function loginUser() {
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       afficherUtilisateurConnecté();
+      logActivite("connexion"); // LOG : Connexion réussie
       showScreen("accueil");
     })
     .catch((error) => {
@@ -122,6 +123,7 @@ function loginUser() {
 
 function logoutUser() {
   firebase.auth().signOut().then(() => {
+    logActivite("deconnexion"); // LOG : Déconnexion
     afficherUtilisateurDéconnecté();
     document.getElementById("logout-modal").style.display = "none";
     showScreen("accueil");
@@ -301,6 +303,7 @@ function registerUser() {
       });
     })
     .then(() => {
+      logActivite("creation_compte");  // LOG : création de compte
       toggleSignup(false); // Ferme le formulaire d'inscription avant d'afficher le message
       showMessageModal("Ton compte a bien été créé ! Tu peux maintenant te connecter.");
     })
@@ -359,7 +362,7 @@ async function sauvegarderHistoire(nombreRestant) {
         images: images,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
-
+    logActivite("sauvegarde_histoire"); // LOG : Sauvegarde d'une histoire
     afficherHistoiresSauvegardees();
 
     // Affiche le message spécial à partir de 3 histoires déjà enregistrées, sauf si plus de place
@@ -537,6 +540,7 @@ if (doc.exists) {
   document.getElementById("titre-histoire-resultat").textContent = doc.data().titre || "Titre de Mon Histoire";
   resultatSource = "mes-histoires";
   showScreen("resultat");
+  logActivite("consultation_histoire", { story_id: storyId }); // LOG : consultation d'histoire
 }
   } catch (error) {
     showMessageModal("Erreur : " + error.message);
@@ -571,6 +575,7 @@ async function confirmDelete() {
       .collection("stories")
       .doc(storyId)
       .delete();
+    logActivite("suppression_histoire", { story_id: storyId }); // LOG : Suppression histoire
   }
   reinitialiserSelectionHistoires();
   afficherHistoiresSauvegardees();
@@ -594,7 +599,7 @@ function deleteAccount() {
     closeDeleteAccountModal();
     return;
   }
-
+  logActivite("suppression_compte"); // LOG : suppression compte
   // Supprime les données Firestore associées (ex: profil)
   firebase.firestore().collection("users").doc(user.uid).delete()
     .catch(() => {}) // Ignore si déjà supprimé ou inexistant
@@ -661,6 +666,7 @@ async function confirmerRenommer() {
       .collection("stories")
       .doc(storyId)
       .update({ titre: nouveauTitre });
+    logActivite("renommage_histoire", { story_id: storyId }); // LOG : Renommage histoire
     fermerModaleRenommer();
     afficherHistoiresSauvegardees();
     reinitialiserSelectionHistoires();
@@ -738,6 +744,7 @@ async function exporterPDF() {
   }
 
   pdf.save((titre.replace(/[^a-z0-9]/gi, '_').toLowerCase() || "mon_histoire") + '.pdf');
+  logActivite("export_pdf"); // LOG : Export PDF
 }
 function personnaliserTexteChapitre(texte, prenom, personnage) {
   if (personnage === "fille") {
@@ -790,6 +797,7 @@ function modifierMonCompte() {
       return user.updateEmail(email);
     }
   }).then(() => {
+    logActivite("modification_prenom"); // LOG : modification prénom
     showMessageModal("Modifications enregistrées !");
     fermerMonCompte();
     afficherUtilisateurConnecté(); // MAJ de l'icône utilisateur en haut à droite
@@ -821,4 +829,21 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 });
+// ========== LOG D'ACTIVITÉ UTILISATEUR ==========
+// Log anonyme d'une action utilisateur (stocké dans /users/{uid}/logs)
+function logActivite(type, data = {}) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  const entry = {
+    type: type,
+    timestamp: new Date().toISOString(),
+    ...data
+  };
+  firebase.firestore()
+    .collection("users")
+    .doc(user.uid)
+    .collection("logs")
+    .add(entry)
+    .catch(() => {}); // On ignore les erreurs pour ne jamais bloquer l'appli
+}
 
