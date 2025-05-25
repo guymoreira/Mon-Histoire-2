@@ -15,15 +15,9 @@
   <section class="screen active" id="accueil">
     <div class="bloc-centre" id="accueil-content">
       <h1>Mon Histoire</h1>
-      <button class="button" id="create-button" onclick="showScreen('formulaire')">
-        Créer une histoire
-      </button>
-      <button class="button hidden" id="login-button" onclick="showScreen('connexion')">
-        Me connecter
-      </button>
-      <button class="button hidden" id="my-stories-button" onclick="showScreen('mes-histoires')">
-        Mes Histoires
-      </button>
+     <button class="button button-blue" id="create-button" onclick="showScreen('formulaire')">Créer une histoire</button>
+<button class="button button-purple hidden" id="login-button" onclick="showScreen('connexion')">Me connecter</button>
+<button class="button button-purple hidden" id="my-stories-button" onclick="showScreen('mes-histoires')">Mes Histoires</button>
     </div>
     <div id="user-icon" class="hidden" onclick="ouvrirLogoutModal()">
       !!
@@ -34,14 +28,9 @@
 <div class="modal" id="logout-modal">
   <div class="bloc-centre" style="max-width:350px;">
     <p>Voulez-vous vous déconnecter&nbsp;?</p>
-    <button class="button" style="margin-bottom: 1.1em;" onclick="ouvrirMonCompte()">Mon Compte</button>
-    <div class="button-group" style="justify-content: center;">
-      <button class="button" onclick="fermerLogoutModal()">
-        Annuler
-      </button>
-      <button class="button" onclick="logoutUser()">
-        Déconnecter
-      </button>
+<button class="button button-purple" style="margin-bottom: 1.1em;" onclick="ouvrirMonCompte()">Mon Compte</button>
+<button class="button button-purple" onclick="fermerLogoutModal()">Annuler</button>
+<button class="button button-purple" onclick="logoutUser()">Déconnecter</button>
     </div>
   </div>
 </div>
@@ -88,16 +77,16 @@
 </label>
 
         <div class="button-group">
-    <button class="button" onclick="registerUser()">Valider</button>
-    <button class="button" type="button" onclick="toggleSignup(false)">Annuler</button>
+<button class="button button-blue" onclick="registerUser()">Valider</button>
+<button class="button button-purple" type="button" onclick="toggleSignup(false)">Annuler</button>
   </div>
 </div>
       <div class="bloc-centre" id="reset-form" style="display:none;">
         <h2>Réinitialisation</h2>
         <input class="input-style" id="reset-email" placeholder="Votre adresse e-mail" required type="email" autocomplete="username"/>
         <div class="button-group">
-          <button class="button" onclick="sendReset()">Envoyer</button>
-          <button class="button" type="button" onclick="toggleReset(false)">Annuler</button>
+<button class="button button-blue" onclick="sendReset()">Envoyer</button>
+<button class="button button-purple" type="button" onclick="toggleReset(false)">Annuler</button>
         </div>
       </div>
     </div>
@@ -135,8 +124,8 @@
       </select>
 
       <div class="form-buttons">
-        <button class="button" type="submit">C'est parti !</button>
-        <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
+<button class="button button-blue" type="submit">C'est parti !</button>
+<button class="button button-purple" type="button" onclick="showScreen('accueil')">Annuler</button>
       </div>
     </form>
   </div>
@@ -154,9 +143,9 @@
 </div>
    <div id="histoire"></div>
     <div class="actions-resultat">
-      <button class="button" onclick="retourDepuisResultat()">Retour</button>
-      <button class="button" onclick="showScreen('accueil')">Accueil</button>
-      <button id="btn-sauvegarde" class="button" onclick="demanderSauvegarde()">Sauvegarder</button>
+<button class="button button-purple" onclick="retourDepuisResultat()">Retour</button>
+<button class="button button-purple" onclick="showScreen('accueil')">Accueil</button>
+<button id="btn-sauvegarde" class="button button-blue" onclick="demanderSauvegarde()">Sauvegarder</button>
     </div>
   </div>
 </section>
@@ -166,8 +155,8 @@
     <div class="modal-content">
       <p>Plus de place pour sauvegarder. Voulez-vous supprimer des histoires ?</p>
       <div class="button-group">
-        <button class="button" onclick="fermerModaleLimite()">Non</button>
-        <button class="button" onclick="validerModaleLimite()">Oui</button>
+<button class="button button-purple" onclick="fermerModaleLimite()">Non</button>
+<button class="button button-blue" onclick="validerModaleLimite()">Oui</button>
       </div>
     </div>
   </div>
@@ -176,8 +165,8 @@
     <div class="modal-content">
       <p>Supprimer les histoires sélectionnées ?</p>
       <div class="button-group">
-        <button class="button" onclick="confirmDelete()">Oui</button>
-        <button class="button" onclick="closeDeleteModal()">Non</button>
+<button class="button button-blue" onclick="confirmDelete()">Oui</button>
+<button class="button button-purple" onclick="closeDeleteModal()">Non</button>
       </div>
     </div>
   </div>
@@ -186,9 +175,9 @@
     <h3>Renommer l’histoire</h3>
     <input id="input-nouveau-titre" type="text" class="input-style" maxlength="50" style="margin-bottom:1em;" />
     <div class="button-group">
-      <button class="button" onclick="fermerModaleRenommer()">Annuler</button>
-      <button class="button" onclick="confirmerRenommer()">Valider</button>     
-    </div>
+<button class="button button-purple" onclick="fermerModaleRenommer()">Annuler</button>
+<button class="button button-blue" onclick="confirmerRenommer()">Valider</button>
+   </div>
   </div>
 </div>
   <!-- Mes Histoires -->
@@ -217,8 +206,8 @@
     </div>
     <!-- Bloc à insérer à la place du simple bouton -->
 <div class="form-buttons" id="mes-histoires-actions">
-  <button class="button" id="btn-retour-mes-histoires" onclick="goBack()">Retour</button>
-  <button class="button" id="btn-accueil-mes-histoires" onclick="showScreen('accueil')" style="display:none;">Accueil</button>
+<button class="button button-purple" id="btn-retour-mes-histoires" onclick="goBack()">Retour</button>
+<button class="button button-purple" id="btn-accueil-mes-histoires" onclick="showScreen('accueil')" style="display:none;">Accueil</button>
 </div>
 
   </div>
@@ -254,7 +243,7 @@ const firebaseConfig = {
 <div id="message-modal" class="modal">
   <div class="message-card">
     <p id="message-modal-text"></p>
-    <button class="button" onclick="closeMessageModal()">OK</button>
+   <button class="button button-blue" onclick="closeMessageModal()">OK</button>
   </div>
 </div>
 
@@ -264,8 +253,8 @@ const firebaseConfig = {
     <p style="color:#e74c3c; font-weight:bold;">
       Action irréversible.<br>Toutes vos données seront supprimées.<br>Êtes-vous sûr ?
     </p>
-    <button class="button" style="background:#e74c3c; color:#fff;" onclick="deleteAccount()">Oui, supprimer mon compte</button>
-    <button class="button" onclick="closeDeleteAccountModal()">Annuler</button>
+<button class="button" style="background:#e74c3c; color:#fff;" onclick="deleteAccount()">Oui, supprimer mon compte</button>
+<button class="button button-purple" onclick="closeDeleteAccountModal()">Annuler</button>
   </div>
 </div>
 
@@ -283,11 +272,10 @@ const firebaseConfig = {
       </div>
 
       <div class="form-buttons">
-        <button class="button" type="submit">Enregistrer</button>
-        <button class="button" type="button" onclick="fermerMonCompte()">Annuler</button>
+        <button class="button button-blue" type="submit">Enregistrer</button>
+        <button class="button button-purple" type="button" onclick="fermerMonCompte()">Annuler</button>
       </div>
-      <button class="button" type="button" style="background:#e74c3c; color:#fff; margin-top:1.2em;"
-        onclick="openDeleteAccountModal()">Supprimer mon compte</button>
+      <button class="button" type="button" style="background:#e74c3c; color:#fff; margin-top:1.2em;" onclick="openDeleteAccountModal()">Supprimer mon compte</button>
     </form>
   </div>
 </div>
@@ -309,7 +297,7 @@ const firebaseConfig = {
       </ul>
     </div>
     <div class="button-group" style="justify-content:center;">
-      <button class="button" onclick="document.getElementById('modal-rgpd').classList.remove('show')">Fermer</button>
+      <button class="button button-purple" onclick="document.getElementById('modal-rgpd').classList.remove('show')">Fermer</button>
     </div>
   </div>
 </div>
