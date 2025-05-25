@@ -153,7 +153,6 @@ body {
   background: linear-gradient(90deg, #b39ddb 60%, #ce93d8 100%);
   color: #312244;
 }
-
  
 .button:hover {
   background: linear-gradient(to bottom, #b3daf2, #80bfe7);
