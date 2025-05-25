@@ -115,8 +115,8 @@ body {
 .button {
   display: block;
   width: 100%;
-  margin: 0.75em 0 0.65em 0;     /* ESPACEMENT entre les boutons */
-  padding: 0.55em 0;              /* HAUTEUR du bouton réduite */
+  margin: 0.38em 0 0.28em 0;    /* ESPACEMENT réduit */
+  padding: 0.85em 0;             /* HAUTEUR augmentée */
   border: none;
   border-radius: 28px;            /* ARRONDI réduit pour un aspect plus “carte” que “pilule” */
   font-size: 1.22em;
