@@ -590,11 +590,10 @@ async function confirmDelete() {
 }
 
 function openDeleteAccountModal() {
-  fermerMonCompte(); // On ferme la modale "Mon Compte" si elle est ouverte
+  fermerMonCompte();
   fermerLogoutModal();
   document.getElementById('delete-account-modal').classList.add('show');
 }
-
 
 function closeDeleteAccountModal() {
   document.getElementById('delete-account-modal').classList.remove('show');
