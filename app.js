@@ -130,7 +130,6 @@ function logoutUser() {
   });
 }
 
-
 function afficherUtilisateurConnecté() {
   document.getElementById("user-icon").classList.remove("hidden");
   document.getElementById("login-button").classList.add("hidden");
