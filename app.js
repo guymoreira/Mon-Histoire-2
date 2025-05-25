@@ -864,4 +864,15 @@ function logActivite(type, data = {}) {
     .add(entry)
     .catch(() => {}); // On ignore les erreurs pour ne jamais bloquer l'appli
 }
+function togglePassword(inputId, eyeSpan) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === "password") {
+    input.type = "text";
+    eyeSpan.textContent = "🙈";
+  } else {
+    input.type = "password";
+    eyeSpan.textContent = "👁️";
+  }
+}
 
