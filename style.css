@@ -279,17 +279,6 @@ body {
   cursor: pointer;
 }
 
-/* Modal full-screen centrée */
-.logout-modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;                /* cachée par défaut */
-  justify-content: center;      /* centre horizontal */
-  align-items: center;          /* centre vertical */
-  z-index: 1000;                /* au-dessus de tout */
-}
-
 /* === Footer actions | corbeille + Retour + croix === */
 .actions-footer {
   display: flex;
