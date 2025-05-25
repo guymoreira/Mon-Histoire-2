@@ -267,9 +267,11 @@ const firebaseConfig = {
       <input class="input-style" id="compte-prenom" type="text" required>
       <label style="margin-top:1em;">Adresse e-mail :</label>
       <input class="input-style" id="compte-email" type="email" required>
-      <div style="margin:1.5em 0 0.5em 0;">
-        <button class="button" type="button" onclick="envoyerResetEmail()">Réinitialiser le mot de passe</button>
+
+      <div id="compte-stock-histoires" style="margin:1.2em 0; font-size:1.07em; text-align:center;">
+        Chargement du stock d’histoires…
       </div>
+
       <div class="form-buttons">
         <button class="button" type="submit">Enregistrer</button>
         <button class="button" type="button" onclick="fermerMonCompte()">Annuler</button>
@@ -279,6 +281,7 @@ const firebaseConfig = {
     </form>
   </div>
 </div>
+
   
 <footer style="text-align:center; margin:2em 0; opacity:0.7;">
   <a href="#" id="link-rgpd" style="font-size:1rem;">Vie privée &amp; RGPD</a>
