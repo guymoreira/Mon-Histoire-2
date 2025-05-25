@@ -577,4 +577,8 @@ body {
 .toggle-password:hover {
   opacity: 1;
 }
+.button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
