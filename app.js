@@ -773,8 +773,20 @@ function ouvrirMonCompte() {
     .then(doc => {
       document.getElementById('compte-prenom').value = doc.exists && doc.data().prenom ? doc.data().prenom : '';
       document.getElementById('compte-email').value = user.email || '';
-     document.getElementById('modal-moncompte').classList.add('show');
+      document.getElementById('modal-moncompte').classList.add('show');
       fermerLogoutModal();
+
+      // Affiche le stock d’histoires dans la modale
+      const quota = typeof MAX_HISTOIRES !== 'undefined' ? MAX_HISTOIRES : 5; // valeur par défaut
+      firebase.firestore().collection("users").doc(user.uid).collection("stories").get()
+        .then(snap => {
+          document.getElementById("compte-stock-histoires").innerHTML =
+            `Stock d’histoires : <b>${snap.size}</b> / ${quota}`;
+        })
+        .catch(() => {
+          document.getElementById("compte-stock-histoires").innerHTML =
+            `Stock d’histoires : <i>erreur de lecture</i>`;
+        });
     });
 }
 
