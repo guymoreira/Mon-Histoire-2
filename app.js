@@ -125,7 +125,7 @@ function logoutUser() {
   firebase.auth().signOut().then(() => {
     logActivite("deconnexion"); // LOG : Déconnexion
     afficherUtilisateurDéconnecté();
-    document.getElementById("logout-modal").style.display = "none";
+    fermerLogoutModal(); // <-- C'est ça qu'il faut appeler maintenant
     showScreen("accueil");
   });
 }
