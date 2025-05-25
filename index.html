@@ -53,7 +53,10 @@
       <h2>Connexion</h2>
      <form onsubmit="event.preventDefault(); loginUser();" autocomplete="off">
          <input class="input-style" id="email" placeholder="Adresse email" required type="email" autocomplete="off"/>
-         <input class="input-style" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+         <div class="password-field">
+  <input class="input-style" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+  <span class="toggle-password" onclick="togglePassword('password', this)">👁️</span>
+</div>
       <div class="button-group">
     <button class="button" type="submit">Se connecter</button>
     <button class="button" type="button" onclick="showScreen('accueil')">Annuler</button>
@@ -67,8 +70,14 @@
         <h2>Créer un compte</h2>
         <input class="input-style" id="prenom" placeholder="Prénom" required type="text" autocomplete="off"/>
         <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email" autocomplete="off"/>
-        <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
-        <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
+<div class="password-field">
+  <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+  <span class="toggle-password" onclick="togglePassword('signup-password', this)">👁️</span>
+</div>
+<div class="password-field">
+  <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
+  <span class="toggle-password" onclick="togglePassword('signup-confirm', this)">👁️</span>
+</div>
         <label style="display:flex;align-items:flex-start; margin:0.8em 0; font-size:0.97em;">
   <input type="checkbox" id="checkbox-consent" required style="margin-top:0.2em; margin-right:0.5em;">
   <span>
