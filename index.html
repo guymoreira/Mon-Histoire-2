@@ -31,13 +31,20 @@
 
   <!-- Modal de déconnexion -->
 <div class="logout-modal" id="logout-modal">
-  <div class="bloc-centre">
-    <p>Voulez-vous vous déconnecter ?</p>
-    <button class="button" onclick="ouvrirMonCompte()" style="margin-top:1rem;">Gérer mon compte</button>
-    <button class="button" onclick="logoutUser()">Se déconnecter</button>
-    <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">Annuler</button>
+  <div class="bloc-centre" style="max-width:350px;">
+    <p>Voulez-vous vous déconnecter&nbsp;?</p>
+    <button class="button" style="margin-bottom: 1.1em;" onclick="ouvrirMonCompte()">Gérer mon compte</button>
+    <div class="button-group" style="justify-content: center;">
+      <button class="button" onclick="document.getElementById('logout-modal').style.display='none'">
+        Annuler
+      </button>
+      <button class="button" onclick="logoutUser()">
+        Se déconnecter
+      </button>
     </div>
+  </div>
 </div>
+
 
 
   <!-- Connexion -->
