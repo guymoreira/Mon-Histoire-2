@@ -412,7 +412,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Segoe UI', Arial, sans-serif; /* même police que le titre (body) */
+  font-family: 'Fredoka', Arial, sans-serif; /* même police que le titre (body) */
   font-size: 1.6rem; /* augmente un peu la taille, ajuste à 1.3rem si tu préfères */
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
   cursor: pointer;
