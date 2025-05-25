@@ -29,8 +29,10 @@
   <div class="bloc-centre" style="max-width:350px;">
     <p>Voulez-vous vous déconnecter&nbsp;?</p>
 <button class="button button-purple" style="margin-bottom: 1.1em;" onclick="ouvrirMonCompte()">Mon Compte</button>
-<button class="button button-purple" onclick="fermerLogoutModal()">Annuler</button>
-<button class="button button-blue" onclick="logoutUser()">Déconnecter</button>
+<div class="button-group" style="display: flex; justify-content: center; gap: 1em;">
+  <button class="button button-purple" style="flex:1;" onclick="fermerLogoutModal()">Annuler</button>
+  <button class="button button-blue" style="flex:1;" onclick="logoutUser()">Déconnecter</button>
+</div>
     </div>
   </div>
 </div>
