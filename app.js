@@ -167,6 +167,13 @@ function afficherUtilisateurDéconnecté() {
   document.getElementById("my-stories-button").classList.add("hidden");
 }
 
+function ouvrirLogoutModal() {
+  document.getElementById('logout-modal').classList.add('show');
+}
+function fermerLogoutModal() {
+  document.getElementById('logout-modal').classList.remove('show');
+}
+
 async function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
