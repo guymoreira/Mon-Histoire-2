@@ -52,7 +52,7 @@
     <div class="bloc-centre">
       <h2>Connexion</h2>
      <form onsubmit="event.preventDefault(); loginUser();" autocomplete="off">
-         <input class="input-style" id="email" placeholder="Adresse email" required type="email" autocomplete="off"/>
+         <input class="input-style" id="email" placeholder="Adresse e-mail" required type="email" autocomplete="username"/>
          <div class="password-field">
   <input class="input-style" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
   <span class="toggle-password" onclick="togglePassword('password', this)">👁️</span>
@@ -69,7 +69,7 @@
       <div class="bloc-centre" id="signup-form" style="display:none;">
         <h2>Créer un compte</h2>
         <input class="input-style" id="prenom" placeholder="Prénom" required type="text" autocomplete="off"/>
-        <input class="input-style" id="signup-email" placeholder="Adresse email" required type="email" autocomplete="off"/>
+        <input class="input-style" id="signup-email" placeholder="Adresse e-mail" required type="email" autocomplete="email"/>
 <div class="password-field">
   <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
   <span class="toggle-password" onclick="togglePassword('signup-password', this)">👁️</span>
@@ -93,7 +93,7 @@
 </div>
       <div class="bloc-centre" id="reset-form" style="display:none;">
         <h2>Réinitialisation</h2>
-        <input class="input-style" id="reset-email" placeholder="Votre adresse email" required type="email"/>
+        <input class="input-style" id="reset-email" placeholder="Votre adresse e-mail" required type="email" autocomplete="username"/>
         <div class="button-group">
           <button class="button" onclick="sendReset()">Envoyer</button>
           <button class="button" type="button" onclick="toggleReset(false)">Annuler</button>
