@@ -18,7 +18,7 @@ html, body {
 /* style.css */
 body {
   margin: 0; padding: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Fredoka', Arial, sans-serif;
   background: url('illustration-accueil.jpg') no-repeat center center fixed;
   background-size: cover;
   overflow-x: hidden;
@@ -88,44 +88,72 @@ body {
   z-index: 2;
  }
 
-.bloc-centre {
-  background-color: rgba(255,255,255,0.85);
-  border-radius: 16px;
+.bloc-centre,
+.modal .bloc-centre,
+.bloc-compte,
+.modal-content,
+.message-card {
+  background: #fff8e1 !important;   /* crème pastel, effet carte douce */
+  border-radius: 36px !important;   /* très arrondi */
   padding: 1rem;
-  width: 90%;          /* même % sur tous les écrans */
-  max-width: 600px;    /* même max-width sur tous les écrans */
+  width: 90%;
+  max-width: 600px;
   margin: 2vh auto;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 28px rgba(76,195,247,0.09), 0 2px 7px rgba(180,150,240,0.08);
 }
 
 #message-modal .bloc-centre {
-  width: 60%;       /* ou 80 %, selon vos goûts */
-  max-width: 400px; /* plafonne la boîte message */
+  width: 60%;
+  max-width: 400px;
+}
+.bloc-centre,
+.modal-content,
+.message-card {
+  box-shadow: 0 8px 34px rgba(76,195,247,0.11), 0 3px 12px rgba(180,150,240,0.10);
 }
 
-
- .button {
-  background: linear-gradient(to bottom, #cce4f6, #99c9f1);
-  color: #0a3d62; font-weight: bold;
-  padding: 1rem; font-size: 1.1rem;
-  border-radius: 40px; border: none;
-  cursor: pointer; margin: 0.5rem auto;
-  display: block; text-align: center;
-  transition: background 0.3s ease;
-  background: linear-gradient(to bottom, #cce4f6, #99c9f1);
-  color: #0a3d62; font-weight: bold;
-  padding: 1rem; font-size: 1.1rem;
-  border-radius: 40px; border: none;
-  cursor: pointer; margin: 0.5rem auto;
-  display: block; text-align: center;
-
-  /* relief : ombre et élévation */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.button {
+  display: block;
+  width: 100%;
+  margin: 0.4em 0;
+  padding: 0.9em 0;
+  border: none;
+  border-radius: 22px !important;
+  font-size: 1.13em;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(76,195,247,0.09);
+  color: #215;
+  text-align: center;
+  cursor: pointer;
   transition:
-    background 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.1s ease;
- }
+    background 0.15s,
+    box-shadow 0.13s,
+    transform 0.13s,
+    filter 0.13s;
+}
+
+/* Effet d’appui “rebond” */
+.button:active {
+  transform: scale(0.93);
+  box-shadow: 0 1px 2px rgba(76,195,247,0.13);
+}
+
+/* Bouton principal (bleu) */
+.button-blue,
+.button-principal,
+.button[type="submit"] {
+  background: linear-gradient(90deg, #4fc3f7 60%, #81d4fa 100%);
+  color: #215;
+}
+
+/* Bouton secondaire (violet) */
+.button-purple,
+.button-secondaire {
+  background: linear-gradient(90deg, #b39ddb 60%, #ce93d8 100%);
+  color: #312244;
+}
+
  
 .button:hover {
   background: linear-gradient(to bottom, #b3daf2, #80bfe7);
