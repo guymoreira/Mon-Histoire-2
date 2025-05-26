@@ -145,14 +145,12 @@
 </div>
    <div id="histoire"></div>
 <div class="actions-resultat">
-  <!-- Sauvegarder en haut sur toute la largeur -->
-  <button id="btn-sauvegarde" class="button button-blue" onclick="demanderSauvegarde()" style="width:100%; margin-bottom: 1em;">Sauvegarder</button>
-  <!-- En dessous : Retour à gauche, Accueil à droite -->
-  <div style="display: flex; gap: 1em;">
-    <button class="button button-purple" style="flex:1;" onclick="retourDepuisResultat()">Retour</button>
-    <button class="button button-purple" style="flex:1;" onclick="showScreen('accueil')">Accueil</button>
+  <button id="btn-sauvegarde" class="button button-blue" onclick="demanderSauvegarde()" style="margin-bottom: 1em;">Sauvegarder</button>
+  <div class="button-group">
+    <button class="button button-purple" onclick="retourDepuisResultat()">Retour</button>
+    <button class="button button-purple" onclick="showScreen('accueil')">Accueil</button>
+  </div>
 </div>
-    </div>
   </div>
 </section>
 
