@@ -235,9 +235,12 @@ body {
   position: relative; margin-bottom: 0.5rem;
 }
 #liste-histoires li .button {
-  width: 100%; max-width: 300px;
-  min-height: 3.5rem; font-size: 1rem;
-  text-align: left; padding-right: 3rem;
+  width: 100%;
+  max-width: 300px;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: center;   /* <-- centré */
+  padding-right: 0;     /* optionnel : ou 1rem, mais 0 c'est parfait */
 }
 
 /* coche rouge */
@@ -353,6 +356,11 @@ body {
   max-width: 360px;
   /* ou changer la marge latérale précisément : 2vh haut/bas, 1rem gauche/droite */
   /* margin: 2vh 1rem; */
+}
+#mes-histoires .bloc-centre {
+  width: 100%;
+  max-width: 600px; /* ou 500px si tu préfères moins large */
+  margin: 2vh auto;
 }
 #connexion.screen {
   padding-left: 1rem;   /* ou 0 si tu veux vraiment coller aux bords */
