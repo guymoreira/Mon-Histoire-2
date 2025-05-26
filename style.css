@@ -199,8 +199,8 @@ body {
 
 
 .actions-resultat {
-  display: flex; justify-content: space-between;
-  flex-wrap: wrap; margin-top: 2rem;
+  display: block;
+  margin-top: 2rem;
 }
 
 .modal {
