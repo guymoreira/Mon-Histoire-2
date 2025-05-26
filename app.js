@@ -447,13 +447,13 @@ async function afficherHistoiresSauvegardees() {
       }
     }
 
-    snap.forEach(doc => {
-      const data = doc.data();
-      const li = document.createElement("li");
-      li.dataset.id = doc.id;
-      li.innerHTML = `<button class="button">${data.titre || "Sans titre"}</button>`;
-      ul.appendChild(li);
-    });
+snap.forEach(doc => {
+  const data = doc.data();
+  const li = document.createElement("li");
+  li.dataset.id = doc.id;
+  li.innerHTML = `<button class="button button-blue">${data.titre || "Sans titre"}</button>`;
+  ul.appendChild(li);
+});
     bindLongPress();
     mettreAJourBar();
   } catch (error) {
