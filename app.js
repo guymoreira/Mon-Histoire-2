@@ -174,85 +174,74 @@ function fermerLogoutModal() {
 }
 
 async function genererHistoire() {
-  // 1) Lecture des filtres
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
   const tranche_age = document.getElementById("tranche_age").value;
 
-  // 2) Vérification de l'utilisateur
   const user = firebase.auth().currentUser;
   if (!user) {
     showMessageModal("Veuillez vous connecter pour lancer une histoire.");
     return;
   }
 
-  try {
-    // 3) Calcul de la clé pour l'historique de lecture
-    const filtresKey = `${personnage}|${tranche_age}`;
-    const histoiresLuesRef = firebase
-      .firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("histoires_lues")
-      .doc(filtresKey);
+  // Clé unique pour la combinaison de filtres
+  const filtresKey = `${personnage}|${lieu}|${style}|${tranche_age}`;
+  const histoiresLuesRef = firebase.firestore()
+    .collection("users")
+    .doc(user.uid)
+    .collection("histoires_lues")
+    .doc(filtresKey);
 
-    // 4) Récupération des IDs déjà lues
-    let lues = [];
+  // Récupérer la liste des histoires déjà lues pour ces filtres
+  let lues = [];
+  try {
     const luesDoc = await histoiresLuesRef.get();
     if (luesDoc.exists && Array.isArray(luesDoc.data().ids)) {
       lues = luesDoc.data().ids;
     }
+  } catch (e) {
+    lues = [];
+  }
 
-    // 5) Requête Firestore avec seulement 2 filtres
-    const snap = await firebase
-      .firestore()
-      .collection("stock_histoires")
-      .where("personnage", "==", personnage)
-      .where("tranche_age", "==", tranche_age)
-      .get();
+  // Récupérer toutes les histoires disponibles dans le stock IA
+  let query = firebase.firestore().collection("stock_histoires")
+    .where("personnage", "==", personnage)
+    .where("tranche_age", "==", tranche_age);
 
+  try {
+    const snap = await query.get();
     if (snap.empty) {
-      showMessageModal("Aucune histoire trouvée pour ces filtres.");
+      showMessageModal("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
       return;
     }
 
-    // 6) Choix d'une histoire non lue
-    const stories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    let histoire = stories.find(s => !lues.includes(s.id));
+    // Liste des histoires possibles
+    const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Trouve la première histoire jamais lue
+    let histoire = stories.find(st => !lues.includes(st.id));
     if (!histoire) {
-      // toutes lues -> on repart de zéro
+      // Toutes lues, on remet à zéro
       lues = [];
       histoire = stories[0];
     }
 
-    // 7) Mise à jour de l'historique de lecture
+    // Ajoute l'id à la liste et mets à jour Firestore
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
       await histoiresLuesRef.set({ ids: lues }, { merge: true });
     }
 
-    // 8) Affichage
+    // Affichage de l'histoire
     let html = "";
-    histoire.chapitres.forEach((chap, idx) => {
-      html += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
-      const texte = personnaliserTexteChapitre(chap.texte, nom, personnage);
-      html += `<p>${texte}</p>`;
-      if (chap.image) {
-        html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
-      }
-    });
-    document.getElementById("titre-histoire-resultat").textContent = histoire.titre;
-    document.getElementById("histoire").innerHTML = html;
-    resultatSource = "formulaire";
-    showScreen("resultat");
-
-  } catch (e) {
-    console.error("Erreur détaillée dans genererHistoire :", e);
-    showMessageModal("Erreur lors de la recherche de l'histoire : " + e.message);
+histoire.chapitres.forEach((chap, idx) => {
+  html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
+  let texte = personnaliserTexteChapitre(chap.texte, nom, personnage); // <-- NOUVEAU
+  html += `<p>${texte}</p>`;
+  if (chap.image) {
+    html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
   }
-}
-
-
+});
 
     document.getElementById("histoire").innerHTML = html;
     document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
@@ -882,4 +871,3 @@ function togglePassword(inputId, eyeSpan) {
     eyeSpan.textContent = "👁️";
   }
 }
-
