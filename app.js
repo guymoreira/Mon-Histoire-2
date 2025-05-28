@@ -185,7 +185,7 @@ async function genererHistoire() {
   }
 
   // Clé unique pour la combinaison de filtres
-  const filtresKey = `${personnage}|${lieu}|${style}|${tranche_age}`;
+  const filtresKey = `${personnage}|${tranche_age}`;
   const histoiresLuesRef = firebase.firestore()
     .collection("users")
     .doc(user.uid)
