@@ -174,6 +174,7 @@ function fermerLogoutModal() {
 }
 
 async function genererHistoire() {
+  // 1) lecture des filtres
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
   const tranche_age = document.getElementById("tranche_age").value;
@@ -184,64 +185,71 @@ async function genererHistoire() {
     return;
   }
 
-  // Clé unique pour la combinaison de filtres
+  // 2) clé pour éviter les répétitions
   const filtresKey = `${personnage}|${tranche_age}`;
   const histoiresLuesRef = firebase.firestore()
-    .collection("users")
-    .doc(user.uid)
+    .collection("users").doc(user.uid)
     .collection("histoires_lues")
     .doc(filtresKey);
 
-  // Récupérer la liste des histoires déjà lues pour ces filtres
+  // 3) récupérer IDs déjà lues
   let lues = [];
   try {
-    const luesDoc = await histoiresLuesRef.get();
-    if (luesDoc.exists && Array.isArray(luesDoc.data().ids)) {
-      lues = luesDoc.data().ids;
+    const docLues = await histoiresLuesRef.get();
+    if (docLues.exists && Array.isArray(docLues.data().ids)) {
+      lues = docLues.data().ids;
     }
-  } catch (e) {
+  } catch {
     lues = [];
   }
 
-  // Récupérer toutes les histoires disponibles dans le stock IA
-  let query = firebase.firestore().collection("stock_histoires")
+  // 4) requête strictement filtrée
+  const query = firebase.firestore()
+    .collection("stock_histoires")
     .where("personnage", "==", personnage)
     .where("tranche_age", "==", tranche_age);
 
   try {
     const snap = await query.get();
     if (snap.empty) {
-      showMessageModal("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
+      showMessageModal("Aucune histoire trouvée pour ces filtres. Essaie d'autres choix !");
       return;
     }
 
-    // Liste des histoires possibles
-    const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    // Trouve la première histoire jamais lue
-    let histoire = stories.find(st => !lues.includes(st.id));
+    // 5) on prend la première non lue
+    const toutes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    let histoire = toutes.find(h => !lues.includes(h.id));
     if (!histoire) {
-      // Toutes lues, on remet à zéro
+      // toutes lues → reset
       lues = [];
-      histoire = stories[0];
+      histoire = toutes[0];
     }
 
-    // Ajoute l'id à la liste et mets à jour Firestore
+    // 6) marque comme lue
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
       await histoiresLuesRef.set({ ids: lues }, { merge: true });
     }
 
-    // Affichage de l'histoire
+    // 7) affichage
     let html = "";
-histoire.chapitres.forEach((chap, idx) => {
-  html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
-  let texte = personnaliserTexteChapitre(chap.texte, nom, personnage); // <-- NOUVEAU
-  html += `<p>${texte}</p>`;
-  if (chap.image) {
-    html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
+    histoire.chapitres.forEach((chap, idx) => {
+      html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
+      const texte = personnaliserTexteChapitre(chap.texte, nom, personnage);
+      html += `<p>${texte}</p>`;
+      if (chap.image) {
+        html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
+      }
+    });
+    document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
+    document.getElementById("histoire").innerHTML = html;
+    resultatSource = "formulaire";
+    showScreen("resultat");
+  } catch (e) {
+    showMessageModal("Erreur lors de la récupération : " + e.message);
   }
-});
+}
+
 
     document.getElementById("histoire").innerHTML = html;
     document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
