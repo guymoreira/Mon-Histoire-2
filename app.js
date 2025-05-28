@@ -174,81 +174,84 @@ function fermerLogoutModal() {
 }
 
 async function genererHistoire() {
-  // 1) lecture des filtres
+  // 1) Lecture des filtres
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
   const tranche_age = document.getElementById("tranche_age").value;
 
+  // 2) Vérification de l'utilisateur
   const user = firebase.auth().currentUser;
   if (!user) {
     showMessageModal("Veuillez vous connecter pour lancer une histoire.");
     return;
   }
 
-  // 2) clé pour éviter les répétitions
-  const filtresKey = `${personnage}|${tranche_age}`;
-  const histoiresLuesRef = firebase.firestore()
-    .collection("users").doc(user.uid)
-    .collection("histoires_lues")
-    .doc(filtresKey);
-
-  // 3) récupérer IDs déjà lues
-  let lues = [];
   try {
-    const docLues = await histoiresLuesRef.get();
-    if (docLues.exists && Array.isArray(docLues.data().ids)) {
-      lues = docLues.data().ids;
+    // 3) Calcul de la clé pour l'historique de lecture
+    const filtresKey = `${personnage}|${tranche_age}`;
+    const histoiresLuesRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("histoires_lues")
+      .doc(filtresKey);
+
+    // 4) Récupération des IDs déjà lues
+    let lues = [];
+    const luesDoc = await histoiresLuesRef.get();
+    if (luesDoc.exists && Array.isArray(luesDoc.data().ids)) {
+      lues = luesDoc.data().ids;
     }
-  } catch {
-    lues = [];
-  }
 
-  // 4) requête strictement filtrée
-  const query = firebase.firestore()
-    .collection("stock_histoires")
-    .where("personnage", "==", personnage)
-    .where("tranche_age", "==", tranche_age);
+    // 5) Requête Firestore avec seulement 2 filtres
+    const snap = await firebase
+      .firestore()
+      .collection("stock_histoires")
+      .where("personnage", "==", personnage)
+      .where("tranche_age", "==", tranche_age)
+      .get();
 
-  try {
-    const snap = await query.get();
     if (snap.empty) {
-      showMessageModal("Aucune histoire trouvée pour ces filtres. Essaie d'autres choix !");
+      showMessageModal("Aucune histoire trouvée pour ces filtres.");
       return;
     }
 
-    // 5) on prend la première non lue
-    const toutes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    let histoire = toutes.find(h => !lues.includes(h.id));
+    // 6) Choix d'une histoire non lue
+    const stories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    let histoire = stories.find(s => !lues.includes(s.id));
     if (!histoire) {
-      // toutes lues → reset
+      // toutes lues -> on repart de zéro
       lues = [];
-      histoire = toutes[0];
+      histoire = stories[0];
     }
 
-    // 6) marque comme lue
+    // 7) Mise à jour de l'historique de lecture
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
       await histoiresLuesRef.set({ ids: lues }, { merge: true });
     }
 
-    // 7) affichage
+    // 8) Affichage
     let html = "";
     histoire.chapitres.forEach((chap, idx) => {
-      html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
+      html += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
       const texte = personnaliserTexteChapitre(chap.texte, nom, personnage);
       html += `<p>${texte}</p>`;
       if (chap.image) {
         html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
       }
     });
-    document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
+    document.getElementById("titre-histoire-resultat").textContent = histoire.titre;
     document.getElementById("histoire").innerHTML = html;
     resultatSource = "formulaire";
     showScreen("resultat");
+
   } catch (e) {
-    showMessageModal("Erreur lors de la récupération : " + e.message);
+    console.error("Erreur détaillée dans genererHistoire :", e);
+    showMessageModal("Erreur lors de la recherche de l'histoire : " + e.message);
   }
 }
+
 
 
     document.getElementById("histoire").innerHTML = html;
