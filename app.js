@@ -176,6 +176,8 @@ function fermerLogoutModal() {
 async function genererHistoire() {
   const nom = document.getElementById("nom").value.trim();
   const personnage = document.getElementById("personnage").value;
+  const lieu = document.getElementById("lieu").value;
+  const style = document.getElementById("style").value;
   const tranche_age = document.getElementById("tranche_age").value;
 
   const user = firebase.auth().currentUser;
@@ -185,7 +187,7 @@ async function genererHistoire() {
   }
 
   // Clé unique pour la combinaison de filtres
-  const filtresKey = `${personnage}|${tranche_age}`;
+  const filtresKey = `${personnage}|${lieu}|${style}|${tranche_age}`;
   const histoiresLuesRef = firebase.firestore()
     .collection("users")
     .doc(user.uid)
@@ -206,6 +208,8 @@ async function genererHistoire() {
   // Récupérer toutes les histoires disponibles dans le stock IA
   let query = firebase.firestore().collection("stock_histoires")
     .where("personnage", "==", personnage)
+    .where("lieu", "==", lieu)
+    .where("style", "==", style)
     .where("tranche_age", "==", tranche_age);
 
   try {
@@ -871,3 +875,4 @@ function togglePassword(inputId, eyeSpan) {
     eyeSpan.textContent = "👁️";
   }
 }
+
