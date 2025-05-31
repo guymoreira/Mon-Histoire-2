@@ -99,17 +99,24 @@
   <div class="bloc-centre">
     <h2>Créer une Histoire</h2>
     <form onsubmit="event.preventDefault(); genererHistoire();">
-      <!-- === Suppression du champ "Nom du héros" ===
-      <input class="input-style" id="nom" placeholder="Nom du héros" required type="text" />
-      -->
 
-      <!-- PERSONNAGE -->
+      <!-- 1. Réintégration du champ Prénom du héros -->
+      <input
+        class="input-style"
+        id="prenom"
+        placeholder="Prénom du héros"
+        required
+        type="text"
+        style="margin-top:0.5em;"
+      />
+
+      <!-- 2. PERSONNAGE (fixé à « Fille » pour l’instant) -->
       <label for="personnage" style="font-weight:bold;margin-top:0.7em;">Personnage&nbsp;:</label>
       <select class="input-style" id="personnage" required>
         <option value="fille">Fille</option>
       </select>
 
-      <!-- LIEU / DÉCOR -->
+      <!-- 3. LIEU / DÉCOR -->
       <label for="lieu" style="font-weight:bold;margin-top:0.7em;">Lieu / Décor&nbsp;:</label>
       <select class="input-style" id="lieu" required>
         <option value="foret_enchantee">Forêt enchantée</option>
@@ -119,7 +126,7 @@
         <option value="ile_perdue">Île perdue</option>
       </select>
 
-      <!-- OBJET MAGIQUE -->
+      <!-- 4. OBJET MAGIQUE -->
       <label for="objet" style="font-weight:bold;margin-top:0.7em;">Objet magique&nbsp;:</label>
       <select class="input-style" id="objet" required>
         <option value="baguette_magique">Baguette magique</option>
@@ -129,7 +136,7 @@
         <option value="amulette_de_lumiere">Amulette de lumière</option>
       </select>
 
-      <!-- COMPAGNON (optionnel) -->
+      <!-- 5. COMPAGNON (optionnel) -->
       <label for="compagnon" style="font-weight:bold;margin-top:0.7em;">Compagnon (optionnel)&nbsp;:</label>
       <select class="input-style" id="compagnon">
         <option value="">Aucun</option>
@@ -140,7 +147,7 @@
         <option value="lion_majestueux">Lion majestueux</option>
       </select>
 
-      <!-- OBJECTIF / MISSION -->
+      <!-- 6. OBJECTIF / MISSION -->
       <label for="objectif" style="font-weight:bold;margin-top:0.7em;">Objectif / Mission&nbsp;:</label>
       <select class="input-style" id="objectif" required>
         <option value="sauver_un_village">Sauver un village</option>
@@ -150,22 +157,6 @@
         <option value="retrouver_un_ami_perdu">Retrouver un ami perdu</option>
       </select>
 
-      <!-- === Suppression du filtre "Style narratif" ===
-      <label for="style" style="font-weight:bold;margin-top:0.7em;">Style :</label>
-      <select class="input-style" id="style" required>
-        <option value="amitié">Amitié</option>
-        <option value="aventure">Aventure</option>
-      </select>
-      -->
-
-      <!-- === Suppression du filtre "Tranche d'âge" ===
-      <label for="tranche_age" style="font-weight:bold;margin-top:0.7em;">Tranche d'âge :</label>
-      <select class="input-style" id="tranche_age" required>
-        <option value="3-6 ans">3-6 ans</option>
-        <option value="6-9 ans">6-9 ans</option>
-      </select>
-      -->
-
       <div class="form-buttons">
         <button class="button button-blue" type="submit">C'est parti !</button>
         <button class="button button-purple" type="button" onclick="showScreen('accueil')">Annuler</button>
@@ -173,6 +164,7 @@
     </form>
   </div>
 </section>
+
 
 
   <!-- Résultat -->
