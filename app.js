@@ -174,11 +174,12 @@ function fermerLogoutModal() {
 }
 
 async function genererHistoire() {
-  const nom = document.getElementById("nom").value.trim();
+  // (1) On ne collecte plus "nom", "style" ni "tranche_age"
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
-  const style = document.getElementById("style").value;
-  const tranche_age = document.getElementById("tranche_age").value;
+  const objet = document.getElementById("objet").value;
+  const compagnon = document.getElementById("compagnon").value;  // chaîne vide si "Aucun"
+  const objectif = document.getElementById("objectif").value;
 
   const user = firebase.auth().currentUser;
   if (!user) {
@@ -186,15 +187,15 @@ async function genererHistoire() {
     return;
   }
 
-  // Clé unique pour la combinaison de filtres
-  const filtresKey = `${personnage}|${lieu}|${style}|${tranche_age}`;
+  // (2) Nouvelle clé unique : personnage|lieu|objet|compagnon|objectif
+  const filtresKey = `${personnage}|${lieu}|${objet}|${compagnon}|${objectif}`;
   const histoiresLuesRef = firebase.firestore()
     .collection("users")
     .doc(user.uid)
     .collection("histoires_lues")
     .doc(filtresKey);
 
-  // Récupérer la liste des histoires déjà lues pour ces filtres
+  // (3) Récupérer la liste des histoires déjà lues
   let lues = [];
   try {
     const luesDoc = await histoiresLuesRef.get();
@@ -202,15 +203,20 @@ async function genererHistoire() {
       lues = luesDoc.data().ids;
     }
   } catch (e) {
-    lues = [];
+    console.error(e);
   }
 
-  // Récupérer toutes les histoires disponibles dans le stock IA
+  // (4) Construire la requête Firestore sur "stock_histoires"
   let query = firebase.firestore().collection("stock_histoires")
     .where("personnage", "==", personnage)
     .where("lieu", "==", lieu)
-    .where("style", "==", style)
-    .where("tranche_age", "==", tranche_age);
+    .where("objet", "==", objet)
+    .where("objectif", "==", objectif);
+  
+  // (5) Si un compagnon a été sélectionné (non vide), on ajoute le filtre
+  if (compagnon) {
+    query = query.where("compagnon", "==", compagnon);
+  }
 
   try {
     const snap = await query.get();
@@ -222,30 +228,32 @@ async function genererHistoire() {
     // Liste des histoires possibles
     const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // Trouve la première histoire jamais lue
+    // (6) On choisit la première histoire jamais lue
     let histoire = stories.find(st => !lues.includes(st.id));
     if (!histoire) {
-      // Toutes lues, on remet à zéro
       lues = [];
       histoire = stories[0];
     }
 
-    // Ajoute l'id à la liste et mets à jour Firestore
+    // (7) Mise à jour des histoires lues
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
       await histoiresLuesRef.set({ ids: lues }, { merge: true });
     }
 
-    // Affichage de l'histoire
+    // (8) Affichage de l'histoire — attention : 
+    //     vous n'avez plus le "nom" à personnaliser dans le texte.
     let html = "";
-histoire.chapitres.forEach((chap, idx) => {
-  html += `<h3>${chap.titre || "Chapitre " + (idx+1)}</h3>`;
-  let texte = personnaliserTexteChapitre(chap.texte, nom, personnage); // <-- NOUVEAU
-  html += `<p>${texte}</p>`;
-  if (chap.image) {
-    html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
-  }
-});
+    histoire.chapitres.forEach((chap, idx) => {
+      html += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
+      // Si vous n'avez plus à intégrer 'nom' dans le texte, 
+      // vous pouvez appeler personnaliserTexteChapitre sans le paramètre nom
+      let texte = personnaliserTexteChapitre(chap.texte, "", personnage);
+      html += `<p>${texte}</p>`;
+      if (chap.image) {
+        html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
+      }
+    });
 
     document.getElementById("histoire").innerHTML = html;
     document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
