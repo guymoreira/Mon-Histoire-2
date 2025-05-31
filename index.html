@@ -99,26 +99,31 @@
   <div class="bloc-centre">
     <h2>Créer une Histoire</h2>
     <form onsubmit="event.preventDefault(); genererHistoire();">
+      <!-- Champ Nom du héros (à supprimer) -->
       <input class="input-style" id="nom" placeholder="Nom du héros" required type="text" />
 
+      <!-- Personnage -->
       <label for="personnage" style="font-weight:bold;margin-top:0.7em;">Personnage :</label>
       <select class="input-style" id="personnage" required>
         <option value="renard">Renard</option>
         <option value="fille">Fille</option>
       </select>
 
+      <!-- Lieu -->
       <label for="lieu" style="font-weight:bold;margin-top:0.7em;">Lieu :</label>
       <select class="input-style" id="lieu" required>
         <option value="forêt">Forêt</option>
         <option value="château">Château</option>
       </select>
 
+      <!-- Style narratif (à supprimer) -->
       <label for="style" style="font-weight:bold;margin-top:0.7em;">Style :</label>
       <select class="input-style" id="style" required>
         <option value="amitié">Amitié</option>
         <option value="aventure">Aventure</option>
       </select>
 
+      <!-- Tranche d'âge (à supprimer) -->
       <label for="tranche_age" style="font-weight:bold;margin-top:0.7em;">Tranche d'âge :</label>
       <select class="input-style" id="tranche_age" required>
         <option value="3-6 ans">3-6 ans</option>
@@ -126,8 +131,8 @@
       </select>
 
       <div class="form-buttons">
-<button class="button button-blue" type="submit">C'est parti !</button>
-<button class="button button-purple" type="button" onclick="showScreen('accueil')">Annuler</button>
+        <button class="button button-blue" type="submit">C'est parti !</button>
+        <button class="button button-purple" type="button" onclick="showScreen('accueil')">Annuler</button>
       </div>
     </form>
   </div>
