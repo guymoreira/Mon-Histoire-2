@@ -174,11 +174,12 @@ function fermerLogoutModal() {
 }
 
 async function genererHistoire() {
-  // (1) On ne collecte plus "nom", "style" ni "tranche_age"
+  // 1. Lire le prénom du héros
+  const prenom = document.getElementById("prenom").value.trim();
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
   const objet = document.getElementById("objet").value;
-  const compagnon = document.getElementById("compagnon").value;  // chaîne vide si "Aucun"
+  const compagnon = document.getElementById("compagnon").value;
   const objectif = document.getElementById("objectif").value;
 
   const user = firebase.auth().currentUser;
@@ -187,7 +188,7 @@ async function genererHistoire() {
     return;
   }
 
-  // (2) Nouvelle clé unique : personnage|lieu|objet|compagnon|objectif
+  // 2. Nouvelle clé unique (on garde la même formule)
   const filtresKey = `${personnage}|${lieu}|${objet}|${compagnon}|${objectif}`;
   const histoiresLuesRef = firebase.firestore()
     .collection("users")
@@ -195,7 +196,7 @@ async function genererHistoire() {
     .collection("histoires_lues")
     .doc(filtresKey);
 
-  // (3) Récupérer la liste des histoires déjà lues
+  // 3. Récupérer la liste des histoires déjà lues
   let lues = [];
   try {
     const luesDoc = await histoiresLuesRef.get();
@@ -206,14 +207,13 @@ async function genererHistoire() {
     console.error(e);
   }
 
-  // (4) Construire la requête Firestore sur "stock_histoires"
+  // 4. Construire la requête Firestore
   let query = firebase.firestore().collection("stock_histoires")
     .where("personnage", "==", personnage)
     .where("lieu", "==", lieu)
     .where("objet", "==", objet)
     .where("objectif", "==", objectif);
-  
-  // (5) Si un compagnon a été sélectionné (non vide), on ajoute le filtre
+
   if (compagnon) {
     query = query.where("compagnon", "==", compagnon);
   }
@@ -225,30 +225,25 @@ async function genererHistoire() {
       return;
     }
 
-    // Liste des histoires possibles
     const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // (6) On choisit la première histoire jamais lue
     let histoire = stories.find(st => !lues.includes(st.id));
     if (!histoire) {
       lues = [];
       histoire = stories[0];
     }
 
-    // (7) Mise à jour des histoires lues
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
       await histoiresLuesRef.set({ ids: lues }, { merge: true });
     }
 
-    // (8) Affichage de l'histoire — attention : 
-    //     vous n'avez plus le "nom" à personnaliser dans le texte.
+    // 5. AFFICHAGE DE L'HISTOIRE (avec prénom désormais)
     let html = "";
     histoire.chapitres.forEach((chap, idx) => {
       html += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
-      // Si vous n'avez plus à intégrer 'nom' dans le texte, 
-      // vous pouvez appeler personnaliserTexteChapitre sans le paramètre nom
-      let texte = personnaliserTexteChapitre(chap.texte, "", personnage);
+      // On passe le prénom saisi, puis le type de personnage (“fille”)
+      let texte = personnaliserTexteChapitre(chap.texte, prenom, personnage);
       html += `<p>${texte}</p>`;
       if (chap.image) {
         html += `<div class="illustration-chapitre"><img src="${chap.image}" alt=""></div>`;
@@ -264,16 +259,6 @@ async function genererHistoire() {
   }
 }
 
-// Fonction de contrôle de complexité du mot de passe
-function isPasswordSecure(password) {
-  // Minimum 8 caractères, au moins 1 majuscule, 1 chiffre, 1 caractère spécial
-  return (
-    password.length >= 8 &&
-    /[A-Z]/.test(password) &&
-    /[0-9]/.test(password) &&
-    /[!@#$%^&*(),.?":{}|<>]/.test(password)
-  );
-}
 
 function registerUser() {
   const prenom  = document.getElementById("prenom").value.trim();
