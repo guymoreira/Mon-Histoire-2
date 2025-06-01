@@ -301,10 +301,6 @@ function registerUser() {
     showMessageModal("Les mots de passe ne correspondent pas.");
     return;
   }
-  if (!isPasswordSecure(password)) {
-    showMessageModal("Ton mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.");
-    return;
-  }
 
   // Firebase Auth
   firebase.auth().createUserWithEmailAndPassword(email, password)
