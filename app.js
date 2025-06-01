@@ -741,10 +741,16 @@ async function exporterPDF() {
           try {
             const imgData = await imgSrcToDataURL(img.src);
             // Centre l’image sur la page
-          const imgWidth = 140, imgHeight = 140; // carré, assez grand
+          const imgWidth = 140, imgHeight = 140;
           const x = (210 - imgWidth) / 2;
-          pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
-          y += imgHeight + 6;
+// Si l'image déborde de la page, saute à la page suivante
+          if (y + imgHeight > 290) { // 290 = bas de page moins marge (A4 portrait)
+          pdf.addPage();
+           y = 20; // marge en haut de page
+          }
+
+pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+y += imgHeight + 6;
           } catch (e) {}
         }
       }
