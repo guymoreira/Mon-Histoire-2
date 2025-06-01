@@ -741,10 +741,10 @@ async function exporterPDF() {
           try {
             const imgData = await imgSrcToDataURL(img.src);
             // Centre l’image sur la page
-            const imgWidth = 140, imgHeight = 80;
-            const x = (210 - imgWidth) / 2;
-            pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
-            y += imgHeight + 6;
+          const imgWidth = 90, imgHeight = 90; // carré, assez grand
+          const x = (210 - imgWidth) / 2;
+          pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+          y += imgHeight + 6;
           } catch (e) {}
         }
       }
