@@ -175,8 +175,14 @@ function fermerLogoutModal() {
 
 async function genererHistoire() {
   // 1. Lire le prénom du héros
-  const prenom = document.getElementById("hero-prenom").value.trim();
-localStorage.setItem("prenom_heros", prenom);
+  let prenom = "";
+const prenomInput = document.getElementById("hero-prenom");
+if (prenomInput && prenomInput.value.trim()) {
+  prenom = prenomInput.value.trim();
+  localStorage.setItem("prenom_heros", prenom);
+} else {
+  prenom = localStorage.getItem("prenom_heros") || "";
+}
   console.log("DEBUG prénom utilisé :", prenom);
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
@@ -256,20 +262,13 @@ console.log("DEBUG histoire récupérée :", histoire);
     document.getElementById("histoire").innerHTML = html;
     // Personnalisation du titre à l'affichage (stock -> affichage)
 // Récupère le prénom depuis le formulaire si dispo, sinon depuis le localStorage
-let prenomStocke = prenom || localStorage.getItem("prenom_heros") || "";
-
-// Prend le titre de l'histoire, sinon valeur par défaut
 let titrePerso = histoire.titre || "Mon Histoire";
-
-// Remplace TOUJOURS le début "fille" par le prénom si disponible
-if (prenomStocke) {
-  titrePerso = titrePerso.replace(/^fille/i, prenomStocke);
-  // Si tu ajoutes plus tard d'autres types (ex: "garçon"), ajoute aussi :
-  // titrePerso = titrePerso.replace(/^garçon/i, prenomStocke);
+if (prenom) {
+  titrePerso = titrePerso.replace(/^fille/i, prenom);
+  // + plus tard d'autres types si besoin
 }
-
-// Affiche le titre personnalisé
 document.getElementById("titre-histoire-resultat").textContent = titrePerso;
+
     resultatSource = "formulaire";
     showScreen("resultat");
   } catch (e) {
@@ -366,11 +365,9 @@ async function sauvegarderHistoire(nombreRestant) {
   const contenu = document.getElementById("histoire").innerHTML;
   // Utilise le même titre que celui affiché sous "Ton Histoire"
   // On reprend le prénom utilisé lors de la génération (champ du formulaire)
-const prenomUtilisateur = localStorage.getItem("prenom_heros") || document.getElementById("hero-prenom").value.trim();
 let titre = document.getElementById("titre-histoire-resultat").textContent || "Titre de Mon Histoire";
-if (titre && titre.startsWith("fille") && prenomUtilisateur) {
-  titre = titre.replace(/^fille/, prenomUtilisateur);
-}
+// Le titre affiché est déjà personnalisé ! Pas besoin de remplacer encore.
+
 // ... puis sauvegarde le favori avec ce titre (titre déjà personnalisé !)
   const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
 
