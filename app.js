@@ -753,8 +753,15 @@ async function exporterPDF() {
         y += 2;
         if (y > 280) { pdf.addPage(); y = 20; }
         let split = pdf.splitTextToSize(node.textContent, 180);
-        pdf.text(split, 15, y);
-        y += (split.length * 7) + 2;
+          for (let i = 0; i < split.length; i++) {
+          if (y > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+  pdf.text(split[i], 15, y);
+  y += 7;
+}
+y += 2;
       }
     }
   }
