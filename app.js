@@ -255,12 +255,21 @@ console.log("DEBUG histoire récupérée :", histoire);
 
     document.getElementById("histoire").innerHTML = html;
     // Personnalisation du titre à l'affichage (stock -> affichage)
-let prenomStocke = localStorage.getItem("prenom_heros") || prenom;
-let titrePerso = histoire.titre;
-if (titrePerso && titrePerso.startsWith("fille") && prenomStocke) {
-  titrePerso = titrePerso.replace(/^fille/, prenomStocke);
+// Récupère le prénom depuis le formulaire si dispo, sinon depuis le localStorage
+let prenomStocke = prenom || localStorage.getItem("prenom_heros") || "";
+
+// Prend le titre de l'histoire, sinon valeur par défaut
+let titrePerso = histoire.titre || "Mon Histoire";
+
+// Remplace TOUJOURS le début "fille" par le prénom si disponible
+if (prenomStocke) {
+  titrePerso = titrePerso.replace(/^fille/i, prenomStocke);
+  // Si tu ajoutes plus tard d'autres types (ex: "garçon"), ajoute aussi :
+  // titrePerso = titrePerso.replace(/^garçon/i, prenomStocke);
 }
-document.getElementById("titre-histoire-resultat").textContent = titrePerso || "Mon Histoire";
+
+// Affiche le titre personnalisé
+document.getElementById("titre-histoire-resultat").textContent = titrePerso;
     resultatSource = "formulaire";
     showScreen("resultat");
   } catch (e) {
