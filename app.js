@@ -741,7 +741,7 @@ async function exporterPDF() {
           try {
             const imgData = await imgSrcToDataURL(img.src);
             // Centre l’image sur la page
-            const imgWidth = 70, imgHeight = 40;
+            const imgWidth = 140, imgHeight = 80;
             const x = (210 - imgWidth) / 2;
             pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
             y += imgHeight + 6;
