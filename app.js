@@ -251,7 +251,12 @@ async function genererHistoire() {
     });
 
     document.getElementById("histoire").innerHTML = html;
-    document.getElementById("titre-histoire-resultat").textContent = histoire.titre || "Mon Histoire";
+    // Personnalisation du titre à l'affichage (stock -> affichage)
+let titrePerso = histoire.titre;
+if (titrePerso && titrePerso.startsWith("fille")) {
+  titrePerso = titrePerso.replace(/^fille/, prenom);
+}
+document.getElementById("titre-histoire-resultat").textContent = titrePerso || "Mon Histoire";
     resultatSource = "formulaire";
     showScreen("resultat");
   } catch (e) {
@@ -347,7 +352,13 @@ async function sauvegarderHistoire(nombreRestant) {
 
   const contenu = document.getElementById("histoire").innerHTML;
   // Utilise le même titre que celui affiché sous "Ton Histoire"
-  const titre = document.getElementById("titre-histoire-resultat").textContent || "Titre de Mon Histoire";
+  // On reprend le prénom utilisé lors de la génération (champ du formulaire)
+const prenomUtilisateur = document.getElementById("hero-prenom").value.trim();
+let titre = document.getElementById("titre-histoire-resultat").textContent || "Titre de Mon Histoire";
+// Si l'utilisateur consulte une histoire du stock, il est possible que le titre affiché ait été personnalisé dynamiquement, donc on vérifie la cohérence :
+if (titre && titre.startsWith("fille") && prenomUtilisateur) {
+  titre = titre.replace(/^fille/, prenomUtilisateur);
+}
   const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
 
   try {
