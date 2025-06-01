@@ -175,7 +175,7 @@ function fermerLogoutModal() {
 
 async function genererHistoire() {
   // 1. Lire le prénom du héros
-  const prenom = document.getElementById("prenom").value.trim();
+  const prenom = document.getElementById("hero-prenom").value.trim();
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
   const objet = document.getElementById("objet").value;
