@@ -176,6 +176,7 @@ function fermerLogoutModal() {
 async function genererHistoire() {
   // 1. Lire le prénom du héros
   const prenom = document.getElementById("hero-prenom").value.trim();
+localStorage.setItem("prenom_heros", prenom);
   console.log("DEBUG prénom utilisé :", prenom);
   const personnage = document.getElementById("personnage").value;
   const lieu = document.getElementById("lieu").value;
@@ -254,9 +255,10 @@ console.log("DEBUG histoire récupérée :", histoire);
 
     document.getElementById("histoire").innerHTML = html;
     // Personnalisation du titre à l'affichage (stock -> affichage)
+let prenomStocke = localStorage.getItem("prenom_heros") || prenom;
 let titrePerso = histoire.titre;
-if (titrePerso && titrePerso.startsWith("fille")) {
-  titrePerso = titrePerso.replace(/^fille/, prenom);
+if (titrePerso && titrePerso.startsWith("fille") && prenomStocke) {
+  titrePerso = titrePerso.replace(/^fille/, prenomStocke);
 }
 document.getElementById("titre-histoire-resultat").textContent = titrePerso || "Mon Histoire";
     resultatSource = "formulaire";
@@ -355,12 +357,12 @@ async function sauvegarderHistoire(nombreRestant) {
   const contenu = document.getElementById("histoire").innerHTML;
   // Utilise le même titre que celui affiché sous "Ton Histoire"
   // On reprend le prénom utilisé lors de la génération (champ du formulaire)
-const prenomUtilisateur = document.getElementById("hero-prenom").value.trim();
+const prenomUtilisateur = localStorage.getItem("prenom_heros") || document.getElementById("hero-prenom").value.trim();
 let titre = document.getElementById("titre-histoire-resultat").textContent || "Titre de Mon Histoire";
-// Si l'utilisateur consulte une histoire du stock, il est possible que le titre affiché ait été personnalisé dynamiquement, donc on vérifie la cohérence :
 if (titre && titre.startsWith("fille") && prenomUtilisateur) {
   titre = titre.replace(/^fille/, prenomUtilisateur);
 }
+// ... puis sauvegarde le favori avec ce titre (titre déjà personnalisé !)
   const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
 
   try {
