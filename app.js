@@ -12,7 +12,8 @@ const firebaseErrorMessages = {
   "auth/user-disabled": "Ce compte utilisateur a été désactivé.",
   "auth/user-not-found": "Aucun compte trouvé avec cet e-mail.",
   "auth/wrong-password": "Le mot de passe est incorrect.",
-  "auth/weak-password": "Le mot de passe est trop faible (minimum 6 caractères).",
+  "auth/weak-password": "Le mot de passe est trop faible (minimum 10 caractères).",
+  "auth/password-does-not-meet-requirements": "Le mot de passe doit comporter au moins 10 caractères, dont une minuscule, une majuscule et un caractère spécial.",
   "auth/too-many-requests": "Trop de tentatives. Merci de réessayer plus tard.",
   "auth/operation-not-allowed": "Opération non autorisée. Merci de contacter le support.",
   "auth/missing-password": "Merci de saisir un mot de passe.",
@@ -20,7 +21,6 @@ const firebaseErrorMessages = {
   "auth/invalid-credential": "L'identifiant ou le mot de passe est invalide.",
   "auth/network-request-failed": "Problème de connexion réseau. Veuillez réessayer.",
   "auth/invalid-credential": "L'identifiant ou le mot de passe est invalide ou a expiré.",
-
 };
 
 firebase.auth().onAuthStateChanged(function(user) {
