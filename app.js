@@ -232,6 +232,7 @@ async function genererHistoire() {
       lues = [];
       histoire = stories[0];
     }
+console.log("DEBUG histoire récupérée :", histoire);
 
     if (!lues.includes(histoire.id)) {
       lues.push(histoire.id);
