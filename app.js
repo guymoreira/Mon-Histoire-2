@@ -928,7 +928,7 @@ function afficherProfilsEnfants() {
         li.innerHTML = `
           <span class="prenom">${data.prenom}</span>
           <span class="quota">${data.nb_histoires || 0}/5</span>
-          <img src="img/corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="retirerProfil('${doc.id}')">
+          <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="retirerProfil('${doc.id}')">
           <button class="btn-edit" onclick="modifierProfil('${doc.id}', '${data.prenom}')">✏️</button>
         `;
         liste.appendChild(li);
