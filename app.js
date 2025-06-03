@@ -938,6 +938,13 @@ function afficherProfilsEnfants() {
       document.getElementById("btn-ajouter-enfant").style.display = (count >= 2) ? "none" : "inline-block";
     });
 }
+function ouvrirFormAjoutEnfant() {
+  const form = document.getElementById("form-ajout-enfant");
+  form.classList.remove("fade-in"); // au cas où
+  void form.offsetWidth; // forcer le redémarrage d'animation
+  form.classList.add("fade-in");
+  form.style.display = "block";
+}
 
 function retirerProfil(id) {
   profilsEnfantModifies.push({ action: "supprimer", id });
