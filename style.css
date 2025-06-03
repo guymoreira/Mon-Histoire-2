@@ -433,7 +433,7 @@ body {
 }
 .form-buttons {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row; /* ← corriger ici */
   justify-content: space-between;
   gap: 1rem;
   margin-top: 1.5rem;
