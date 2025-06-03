@@ -288,6 +288,7 @@ const firebaseConfig = {
       <input class="input-style" id="compte-prenom" type="text" required>
       <label style="margin-top:1em;">Adresse e-mail :</label>
       <input class="input-style" id="compte-email" type="email" required>
+      <div id="compte-stock-histoires" style="margin: 1rem 0; text-align: center;"></div>
 <!-- SECTION : Profils Enfant -->
 <div id="bloc-profils-enfant" class="bloc-interne" style="margin-top:2em;">
    <ul id="liste-profils-enfants" class="liste-profils"></ul>
@@ -296,10 +297,10 @@ const firebaseConfig = {
   <!-- Formulaire de création -->
   <div id="form-ajout-enfant" style="display:none; margin-top:1em;">
     <input id="input-prenom-enfant" name="prenom-enfant" type="text" class="input-style" placeholder="Prénom de l'enfant" />
-    <div style="margin-top:0.5em;">
-      <button class="button button-grey" type="button" onclick="annulerAjoutEnfant()">Annuler</button>
-      <button class="button button-blue" type="button" onclick="validerAjoutEnfant()">Valider</button>
-    </div>
+<div class="form-buttons">
+  <button class="button button-purple" type="button" onclick="annulerAjoutEnfant()">Annuler</button>
+  <button class="button button-blue" type="button" onclick="validerAjoutEnfant()">Valider</button>
+</div>
   </div>
 </div>
 
