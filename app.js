@@ -953,7 +953,15 @@ function modifierProfil(id, prenomActuel) {
 }
 
 function annulerAjoutEnfant() {
-  document.getElementById("form-ajout-enfant").style.display = "none";
+  const form = document.getElementById("form-ajout-enfant");
+form.classList.remove("fade-in");
+form.classList.add("fade-out");
+setTimeout(() => {
+  form.style.display = "none";
+  form.classList.remove("fade-out");
+  document.getElementById("input-prenom-enfant").value = "";
+}, 250);
+
   document.getElementById("input-prenom-enfant").value = "";
 }
 
@@ -971,7 +979,7 @@ function validerAjoutEnfant() {
     createdAt: new Date().toISOString(),
     nb_histoires: 0
   }).then(() => {
-    document.getElementById("form-ajout-enfant").style.display = "none";
+    annulerAjoutEnfant();
     document.getElementById("input-prenom-enfant").value = "";
     afficherProfilsEnfants();
   });
