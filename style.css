@@ -637,3 +637,16 @@ button::-moz-focus-inner,
   margin-left: 0.4em;
   cursor: pointer;
 }
+.fade-in {
+  opacity: 0;
+  transform: translateY(-8px);
+  display: block !important;
+  animation: fadeinform 300ms ease-out forwards;
+}
+
+@keyframes fadeinform {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
