@@ -951,13 +951,46 @@ function retirerProfil(id) {
   document.querySelector(`img[onclick*='${id}']`).closest("li").remove();
 }
 
+let idProfilEnfantActif = null;
+
 function modifierProfil(id, prenomActuel) {
-  const nouveauPrenom = prompt("Nouveau prénom :", prenomActuel);
-  if (nouveauPrenom && nouveauPrenom !== prenomActuel) {
-    profilsEnfantModifies.push({ action: "modifier", id, nouveauPrenom });
-    logActivite("modification_prenom_profil", { id_enfant: id });
-  }
+  idProfilEnfantActif = id;
+  const input = document.getElementById("input-nouveau-prenom-enfant");
+  input.value = prenomActuel;
+  document.getElementById("modal-renommer-profil").classList.add("show");
 }
+function fermerModaleRenommerProfil() {
+  document.getElementById("modal-renommer-profil").classList.remove("show");
+  idProfilEnfantActif = null;
+}
+
+function confirmerRenommerProfil() {
+  const nouveauPrenom = document.getElementById("input-nouveau-prenom-enfant").value.trim();
+  if (!nouveauPrenom) {
+    showMessageModal("Le prénom ne peut pas être vide.");
+    return;
+  }
+  if (!idProfilEnfantActif) return;
+
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  firebase.firestore()
+    .collection("users")
+    .doc(user.uid)
+    .collection("profils_enfant")
+    .doc(idProfilEnfantActif)
+    .update({ prenom: nouveauPrenom })
+    .then(() => {
+      logActivite("modification_prenom_profil", { id_enfant: idProfilEnfantActif });
+      afficherProfilsEnfants();
+      fermerModaleRenommerProfil();
+    })
+    .catch((e) => {
+      showMessageModal("Erreur : " + (e.message || e));
+    });
+}
+
 
 function annulerAjoutEnfant() {
   const form = document.getElementById("form-ajout-enfant");
