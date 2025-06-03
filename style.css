@@ -589,3 +589,51 @@ button::-moz-focus-inner,
 .button::-moz-focus-inner {
   border: 0 !important;
 }
+/* ───── GESTION PROFILS ENFANT (modale Mon Compte) ───── */
+
+.liste-profils {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.ligne-profil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7eb;
+  border-radius: 16px;
+  padding: 0.6em 1em;
+  margin-bottom: 0.6em;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ligne-profil .prenom {
+  font-weight: bold;
+  flex: 1;
+}
+
+.ligne-profil .quota {
+  font-size: 0.95em;
+  margin: 0 1em;
+  color: #444;
+  white-space: nowrap;
+}
+
+.ligne-profil .btn-corbeille {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.ligne-profil .btn-edit {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #666;
+  margin-left: 0.4em;
+  cursor: pointer;
+}
