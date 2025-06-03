@@ -955,7 +955,7 @@ let idProfilEnfantActif = null;
 
 function modifierProfil(id, prenomActuel) {
   idProfilEnfantActif = id;
-  const input = document.getElementById("input-nouveau-prenom-enfant");
+  const input = document.getElementById("input-nouveau-prenom");
   input.value = prenomActuel;
   document.getElementById("modal-renommer-profil").classList.add("show");
 }
