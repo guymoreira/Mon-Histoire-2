@@ -283,7 +283,7 @@ const firebaseConfig = {
 <div class="modal" id="modal-moncompte">
   <div class="bloc-centre bloc-compte" style="max-width:430px;">
     <h3 style="margin-top:0;">Mon Compte</h3>
-    <form onsubmit="event.preventDefault(); modifierMonCompte();">
+    <form onsubmit="event.preventDefault(); modifierMonCompte(); enregistrerModificationsProfils();">
       <label style="margin-top:1em;">Prénom :</label>
       <input class="input-style" id="compte-prenom" type="text" required>
       <label style="margin-top:1em;">Adresse e-mail :</label>
