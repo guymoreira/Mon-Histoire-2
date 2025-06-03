@@ -810,6 +810,7 @@ function ouvrirMonCompte() {
           document.getElementById("compte-stock-histoires").innerHTML =
             `Stock d’histoires : <i>erreur de lecture</i>`;
         });
+      afficherProfilsEnfants();
     });
 }
 
@@ -898,4 +899,102 @@ function togglePassword(inputId, eyeSpan) {
     eyeSpan.textContent = "👁️";
   }
 }
+// ==========================
+// 🔧 GESTION PROFILS ENFANT
+// ==========================
 
+// Variable globale (en haut de fichier si tu préfères)
+let profilsEnfantModifies = [];
+
+// Afficher les profils enfants dans la modale
+function afficherProfilsEnfants() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const liste = document.getElementById("liste-profils-enfants");
+  liste.innerHTML = "";
+
+  firebase.firestore()
+    .collection("users").doc(user.uid)
+    .collection("profils_enfant")
+    .get()
+    .then(snapshot => {
+      let count = 0;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        count++;
+        const li = document.createElement("li");
+        li.className = "ligne-profil";
+        li.innerHTML = `
+          <span class="prenom">${data.prenom}</span>
+          <span class="quota">${data.nb_histoires || 0}/5</span>
+          <img src="img/corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="retirerProfil('${doc.id}')">
+          <button class="btn-edit" onclick="modifierProfil('${doc.id}', '${data.prenom}')">✏️</button>
+        `;
+        liste.appendChild(li);
+      });
+
+      // Masquer bouton d’ajout si 2 profils
+      document.getElementById("btn-ajouter-enfant").style.display = (count >= 2) ? "none" : "inline-block";
+    });
+}
+
+function retirerProfil(id) {
+  profilsEnfantModifies.push({ action: "supprimer", id });
+  document.querySelector(`img[onclick*='${id}']`).closest("li").remove();
+}
+
+function modifierProfil(id, prenomActuel) {
+  const nouveauPrenom = prompt("Nouveau prénom :", prenomActuel);
+  if (nouveauPrenom && nouveauPrenom !== prenomActuel) {
+    profilsEnfantModifies.push({ action: "modifier", id, nouveauPrenom });
+    logActivite("modification_prenom_profil", { id_enfant: id });
+  }
+}
+
+function annulerAjoutEnfant() {
+  document.getElementById("form-ajout-enfant").style.display = "none";
+  document.getElementById("input-prenom-enfant").value = "";
+}
+
+function validerAjoutEnfant() {
+  const user = firebase.auth().currentUser;
+  const prenom = document.getElementById("input-prenom-enfant").value.trim();
+  if (!prenom || !user) return;
+
+  const ref = firebase.firestore()
+    .collection("users").doc(user.uid)
+    .collection("profils_enfant").doc();
+
+  ref.set({
+    prenom,
+    createdAt: new Date().toISOString(),
+    nb_histoires: 0
+  }).then(() => {
+    document.getElementById("form-ajout-enfant").style.display = "none";
+    document.getElementById("input-prenom-enfant").value = "";
+    afficherProfilsEnfants();
+  });
+}
+
+// À appeler quand on clique sur le bouton “Enregistrer”
+function enregistrerModificationsProfils() {
+  const user = firebase.auth().currentUser;
+  const batch = firebase.firestore().batch();
+  const ref = firebase.firestore().collection("users").doc(user.uid).collection("profils_enfant");
+
+  profilsEnfantModifies.forEach(modif => {
+    if (modif.action === "supprimer") {
+      batch.delete(ref.doc(modif.id));
+      logActivite("suppression_profil_enfant", { id_enfant: modif.id });
+    }
+    if (modif.action === "modifier") {
+      batch.update(ref.doc(modif.id), { prenom: modif.nouveauPrenom });
+    }
+  });
+
+  batch.commit().then(() => {
+    profilsEnfantModifies = [];
+    afficherProfilsEnfants();
+  });
+}
