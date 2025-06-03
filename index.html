@@ -288,6 +288,21 @@ const firebaseConfig = {
       <input class="input-style" id="compte-prenom" type="text" required>
       <label style="margin-top:1em;">Adresse e-mail :</label>
       <input class="input-style" id="compte-email" type="email" required>
+<!-- SECTION : Profils Enfant -->
+<div id="bloc-profils-enfant" class="bloc-interne" style="margin-top:2em;">
+  <h4>Profils Enfant</h4>
+  <ul id="liste-profils-enfants" class="liste-profils"></ul>
+  <button id="btn-ajouter-enfant" class="button button-blue" type="button">Ajouter un profil</button>
+
+  <!-- Formulaire de création -->
+  <div id="form-ajout-enfant" style="display:none; margin-top:1em;">
+    <input id="input-prenom-enfant" type="text" class="input-style" placeholder="Prénom de l'enfant" required />
+    <div style="margin-top:0.5em;">
+      <button class="button button-grey" type="button" onclick="annulerAjoutEnfant()">Annuler</button>
+      <button class="button button-blue" type="button" onclick="validerAjoutEnfant()">Valider</button>
+    </div>
+  </div>
+</div>
 
       <div id="compte-stock-histoires" style="margin:1.2em 0; font-size:1.07em; text-align:center;">
         Chargement du stock d’histoires…
