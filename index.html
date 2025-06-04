@@ -349,6 +349,20 @@ const firebaseConfig = {
     </div>
   </div>
 </div>
- 
+ <!-- ===============================================
+     MODALE DE SAISIE DU MOT DE PASSE POUR PARENT
+     =============================================== -->
+<div class="modal" id="modal-password-parent" style="display:none;">
+  <div class="bloc-centre" style="max-width:350px;">
+    <h3>Mot de passe Parent</h3>
+    <input id="input-password-parent" class="input-style" placeholder="Votre mot de passe" type="password" />
+    <div style="margin-top:1.2em; display:flex; justify-content:center; gap:1em;">
+      <button class="button button-purple" onclick="fermerModalPasswordParent()">Annuler</button>
+      <button class="button button-blue" onclick="verifierMotdepasseParent()">Valider</button>
+    </div>
+    <p id="password-parent-error" style="color:red; margin-top:0.8em; display:none; text-align:center; font-size:0.9em;"></p>
+  </div>
+</div>
+
 </body>
 </html>
