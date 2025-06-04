@@ -96,10 +96,6 @@ function goBack() {
   showScreen(previousScreen || "accueil");
 }
 
-/**
- * Bascule l’affichage d’une “screen” sans délai ni flash.
- */
-
 function loginUser() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -313,12 +309,6 @@ async function ouvrirLogoutModal() {
   document.getElementById('logout-modal').classList.add('show');
 }
 
-// ────── Nouvelle fonction ouvrirModalMotDePasseParent() ──────
-/**
- * Ouvre la modale de saisie du mot de passe pour revenir au profil parent.
- * Au lieu de changer directement `style.display`, on ajoute la classe `show`,
- * pour que le CSS `.modal.show { opacity:1; pointer-events:auto; }` s’applique.
- */
 function ouvrirModalMotDePasseParent() {
   const modal = document.getElementById("modal-password-parent");
   // On remet l’état d’erreur à zéro
@@ -369,11 +359,6 @@ async function verifierMotdepasseParent() {
   }
 }
 
-  * Ferme simplement la modale "Mot de passe Parent"
- /**
-  * Vérifie le mot de passe entré pour le parent.
-  * Si correct, repasse en mode parent ; sinon, affiche une erreur.
-  */
  async function verifierMotdepasseParent() {
    const pwd = document.getElementById("input-password-parent").value.trim();
    const user = firebase.auth().currentUser;
