@@ -127,6 +127,7 @@ function logoutUser() {
     logActivite("deconnexion"); // LOG : Déconnexion
     afficherUtilisateurDéconnecté();
     fermerLogoutModal(); // <-- C'est ça qu'il faut appeler maintenant
+    profilActif = { type: "parent" };
     showScreen("accueil");
   });
 }
