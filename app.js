@@ -569,24 +569,24 @@ let titre = document.getElementById("titre-histoire-resultat").textContent || "T
       .doc(profilActif.id)
       .collection("stories");
   }
-+    await storiesRef.add({
-+      titre: titre,
-+      contenu: contenu,
-+      images: images,
-+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-+    });
-+
-+    // --- SI on est en mode ENFANT, incrémenter nb_histoires sur son document de profil ---
-+    if (profilActif.type === "enfant") {
-+      const profilDocRef = firebase.firestore()
-+        .collection("users")
-+        .doc(user.uid)
-+        .collection("profils_enfant")
-+        .doc(profilActif.id);
-+      await profilDocRef.update({
-+        nb_histoires: firebase.firestore.FieldValue.increment(1)
-+      });
-+    }
+    await storiesRef.add({
+      titre: titre,
+      contenu: contenu,
+      images: images,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // --- SI on est en mode ENFANT, incrémenter nb_histoires sur son document de profil ---
+    if (profilActif.type === "enfant") {
+      const profilDocRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id);
+      await profilDocRef.update({
+        nb_histoires: firebase.firestore.FieldValue.increment(1)
+      });
+    }
     logActivite("sauvegarde_histoire"); // LOG : Sauvegarde d'une histoire
     afficherHistoiresSauvegardees();
 
