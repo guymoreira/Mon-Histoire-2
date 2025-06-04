@@ -754,12 +754,23 @@ async function afficherHistoireById(storyId) {
   const user = firebase.auth().currentUser;
   if (!user) return;
   try {
-    const doc = await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
-      .doc(storyId)
-      .get();
+    let storyDocRef;
+    if (profilActif.type === "parent") {
+      storyDocRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .doc(storyId);
+    } else {
+      storyDocRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories")
+        .doc(storyId);
+    }
+    const doc = await storyDocRef.get();
 
 if (doc.exists) {
   document.getElementById("histoire").innerHTML = doc.data().contenu;
@@ -795,12 +806,23 @@ async function confirmDelete() {
   const selectedLis = Array.from(document.querySelectorAll("#liste-histoires li.selected"));
   for (const li of selectedLis) {
     const storyId = li.dataset.id;
-    await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
-      .doc(storyId)
-      .delete();
+    let deleteRef;
+    if (profilActif.type === "parent") {
+      deleteRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .doc(storyId);
+    } else {
+      deleteRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories")
+        .doc(storyId);
+    }
+    await deleteRef.delete();
     logActivite("suppression_histoire", { story_id: storyId }); // LOG : Suppression histoire
   }
   reinitialiserSelectionHistoires();
@@ -886,12 +908,23 @@ async function confirmerRenommer() {
   const user = firebase.auth().currentUser;
   if (!user) return;
   try {
-    await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
-      .doc(storyId)
-      .update({ titre: nouveauTitre });
+    let updateRef;
+    if (profilActif.type === "parent") {
+      updateRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .doc(storyId);
+    } else {
+      updateRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories")
+        .doc(storyId);
+    }
+    await updateRef.update({ titre: nouveauTitre });
     logActivite("renommage_histoire", { story_id: storyId }); // LOG : Renommage histoire
     fermerModaleRenommer();
     afficherHistoiresSauvegardees();
