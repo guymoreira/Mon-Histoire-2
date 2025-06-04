@@ -810,12 +810,34 @@ function ouvrirMonCompte() {
           document.getElementById("compte-stock-histoires").innerHTML =
             `Stock d’histoires : <i>erreur de lecture</i>`;
         });
+      firebase.firestore()
+  .collection("users")
+  .doc(user.uid)
+  .collection("profils_enfant")
+  .get()
+  .then(snapshot => {
+    etatInitialProfilsEnfant = [];
+    snapshot.forEach(doc => {
+      etatInitialProfilsEnfant.push({ id: doc.id, prenom: doc.data().prenom });
+    });
+  });
       afficherProfilsEnfants();
     });
 }
 
 // Ferme la modale "Mon Compte"
 function fermerMonCompte() {
+  // Réinitialise les modifs si on annule
+profilsEnfantModifies = [];
+
+etatInitialProfilsEnfant.forEach(profil => {
+  const ligne = document.querySelector(`#liste-profils-enfants .ligne-profil[data-id="${profil.id}"]`);
+  if (ligne) {
+    ligne.style.display = ""; // réaffiche si supprimé
+    const prenomEl = ligne.querySelector(".prenom");
+    if (prenomEl) prenomEl.textContent = profil.prenom;
+  }
+});
   document.getElementById('modal-moncompte').classList.remove('show');
 }
 
@@ -905,6 +927,7 @@ function togglePassword(inputId, eyeSpan) {
 
 // Variable globale (en haut de fichier si tu préfères)
 let profilsEnfantModifies = [];
+let etatInitialProfilsEnfant = []; // Pour restaurer les prénoms si on annule
 
 // Afficher les profils enfants dans la modale
 function afficherProfilsEnfants() {
