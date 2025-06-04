@@ -603,11 +603,22 @@ async function demanderSauvegarde() {
     return;
   }
   try {
-    const snap = await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
-      .get();
+   // Selon le profil, calculer le quota sur la collection correspondante
+   let quotaRef;
+   if (profilActif.type === "parent") {
+     quotaRef = firebase.firestore()
+       .collection("users")
+       .doc(user.uid)
+       .collection("stories");
+   } else {
+     quotaRef = firebase.firestore()
+       .collection("users")
+       .doc(user.uid)
+       .collection("profils_enfant")
+       .doc(profilActif.id)
+       .collection("stories");
+   }
+   const snap = await quotaRef.get();
 
     const nbHistoires = snap.size;
     const restant = MAX_HISTOIRES - nbHistoires;
