@@ -372,22 +372,8 @@ async function verifierMotdepasseParent() {
     logActivite("tentative_acces_parent");
   }
 }
- /**
-  * Ouvre la modale de saisie de mot de passe pour revenir au profil parent.
-  */
- function ouvrirModalMotDePasseParent() {
-   document.getElementById("modal-password-parent").style.display = "flex";
-   document.getElementById("password-parent-error").style.display = "none";
-   document.getElementById("input-password-parent").value = "";
- }
 
- /**
   * Ferme simplement la modale "Mot de passe Parent"
-  */
- function fermerModalPasswordParent() {
-   document.getElementById("modal-password-parent").style.display = "none";
- }
-
  /**
   * Vérifie le mot de passe entré pour le parent.
   * Si correct, repasse en mode parent ; sinon, affiche une erreur.
