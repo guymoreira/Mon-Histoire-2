@@ -168,33 +168,44 @@ function afficherUtilisateurDéconnecté() {
   document.getElementById("my-stories-button").classList.add("hidden");
 }
 
+// ────── Nouvelle fonction ouvrirLogoutModal() ──────
 async function ouvrirLogoutModal() {
-  // 1. Récupérer l'élément qui contiendra le prénom
+  // 1. Récupérer l'élément qui contiendra le prénom et la liste
   const nameEl = document.getElementById('logout-profile-name');
   const listEl = document.getElementById('logout-profiles-list');
-  // Vider d'abord tout contenu précédent
+
+  // Vider tout contenu précédent
+  nameEl.textContent = "";
   listEl.innerHTML = "";
+
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    // Si pas d'utilisateur connecté, on ne fait rien et on ferme
+    document.getElementById('logout-modal').classList.remove('show');
+    return;
+  }
+
+  // 2.a. Si le profil actif est "parent"
   if (profilActif.type === "parent") {
-    // 2.a. Parent : on récupère le prénom stocké dans Firestore
-    const user = firebase.auth().currentUser;
+    // 2.a.1. Récupérer le prénom du parent dans Firestore (ou initiale si absent)
     let prenomParent = "";
     try {
-      const doc = await firebase.firestore()
+      const docParent = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
         .get();
-      if (doc.exists && doc.data().prenom) {
-        prenomParent = doc.data().prenom;
+      if (docParent.exists && docParent.data().prenom) {
+        prenomParent = docParent.data().prenom;
       } else {
-        // Si pas de champ "prenom", on tombe sur l'initiale
         prenomParent = user.email.charAt(0).toUpperCase();
       }
     } catch (e) {
-      // En cas d’erreur, on affiche l’initiale de l’email
       prenomParent = user.email ? user.email.charAt(0).toUpperCase() : "U";
     }
+    // Afficher le prénom du parent en en-tête
     nameEl.textContent = prenomParent;
-    // --- 2.a.1 Afficher un bouton pour chaque enfant ---
+
+    // 2.a.2. Lister chaque enfant avec un bouton bleu
     try {
       const enfantsSnap = await firebase.firestore()
         .collection("users")
@@ -203,12 +214,10 @@ async function ouvrirLogoutModal() {
         .get();
       enfantsSnap.forEach(docEnfant => {
         const data = docEnfant.data();
-        // Créer un bouton bleu pour l'enfant
         const btn = document.createElement("button");
         btn.className = "button button-blue";
         btn.textContent = data.prenom;
-        btn.style.marginBottom = "0.75em"; // un peu d'espace
-        // Au clic, on passera en mode enfant
+        btn.style.marginBottom = "0.75em";
         btn.onclick = () => {
           profilActif = {
             type: "enfant",
@@ -220,47 +229,49 @@ async function ouvrirLogoutModal() {
             nouveau: data.prenom
           });
           fermerLogoutModal();
-          // Mettre à jour l'icône utilisateur
           document.getElementById("user-icon").textContent = data.prenom.charAt(0).toUpperCase();
         };
         listEl.appendChild(btn);
       });
     } catch (e) {
-      console.error("Erreur lecture profils enfants:", e);
+      console.error("Erreur lecture profils enfants :", e);
     }
-    // --- Parent reste : on affiche son bouton Mon Compte + Annuler + Déconnecter ---
+
+    // 2.a.3. Afficher les boutons "Mon Compte" et "Déconnecter"
     document.querySelector("#logout-modal button[onclick='ouvrirMonCompte()']").style.display = "block";
     document.querySelector("#logout-modal button[onclick='logoutUser()']").style.display = "block";
+
+  // 2.b. Sinon, si le profil actif est "enfant"
   } else {
-    // 2.b. Enfant : on connaît déjà son prénom dans profilActif
+    // 2.b.1. Afficher le prénom de l'enfant en tête
     nameEl.textContent = profilActif.prenom;
-   // --- 2.b.1 Afficher d'abord un bouton pour le profil parent ---
+
+    // 2.b.2. Afficher un bouton bleu "Parent" (pour repasser au parent)
+    let prenomParent = "";
     try {
-      const user = firebase.auth().currentUser;
-      // On récupère prénom parent depuis Firestore
       const docParent = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
         .get();
-      let prenomParent = docParent.exists && docParent.data().prenom
-        ? docParent.data().prenom
-        : user.email.charAt(0).toUpperCase();
-      const btnParent = document.createElement("button");
-      btnParent.className = "button button-blue";
-      btnParent.textContent = prenomParent;
-      btnParent.style.marginBottom = "0.75em";
-      // Au clic : demander mot de passe
-      btnParent.onclick = () => {
-        fermerLogoutModal();
-        ouvrirModalMotDePasseParent();
-      };
-      listEl.appendChild(btnParent);
+      if (docParent.exists && docParent.data().prenom) {
+        prenomParent = docParent.data().prenom;
+      } else {
+        prenomParent = user.email.charAt(0).toUpperCase();
+      }
     } catch (e) {
-      console.error("Erreur lecture prénom parent :", e);
+      prenomParent = user.email ? user.email.charAt(0).toUpperCase() : "U";
     }
-    // --- 2.b.2 Puis afficher les autres enfants (sauf lui-même) ---
+    const btnParent = document.createElement("button");
+    btnParent.className = "button button-blue";
+    btnParent.textContent = prenomParent;
+    btnParent.style.marginBottom = "0.75em";
+    btnParent.onclick = () => {
+      ouvrirModalMotDePasseParent();
+    };
+    listEl.appendChild(btnParent);
+
+    // 2.b.3. Afficher les autres enfants (sauf celui en cours)
     try {
-      const user = firebase.auth().currentUser;
       const enfantsSnap = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
@@ -268,13 +279,12 @@ async function ouvrirLogoutModal() {
         .get();
       enfantsSnap.forEach(docEnfant => {
         const data = docEnfant.data();
-        if (docEnfant.id === profilActif.id) return; // ne pas afficher soi-même
+        if (docEnfant.id === profilActif.id) return;
         const btn = document.createElement("button");
         btn.className = "button button-blue";
         btn.textContent = data.prenom;
         btn.style.marginBottom = "0.75em";
         btn.onclick = () => {
-          // Changer vers un autre enfant
           const ancienPrenom = profilActif.prenom;
           profilActif = {
             type: "enfant",
@@ -294,12 +304,59 @@ async function ouvrirLogoutModal() {
       console.error("Erreur lecture autres profils enfants :", e);
     }
 
-    // --- 2.b.3 Masquer les boutons Mon Compte & Déconnecter pour un enfant ---
+    // 2.b.4. Masquer "Mon Compte" et "Déconnecter" quand un enfant est actif
     document.querySelector("#logout-modal button[onclick='ouvrirMonCompte()']").style.display = "none";
     document.querySelector("#logout-modal button[onclick='logoutUser()']").style.display = "none";
   }
+
   // 3. Afficher la modale
   document.getElementById('logout-modal').classList.add('show');
+}
+
+// ────── Nouvelle fonction ouvrirModalMotDePasseParent() ──────
+function ouvrirModalMotDePasseParent() {
+  document.getElementById("modal-password-parent").style.display = "flex";
+  document.getElementById("password-parent-error").style.display = "none";
+  document.getElementById("input-password-parent").value = "";
+}
+
+// ────── Nouvelle fonction fermerModalPasswordParent() ──────
+function fermerModalPasswordParent() {
+  document.getElementById("modal-password-parent").style.display = "none";
+}
+
+// ────── Nouvelle fonction verifierMotdepasseParent() ──────
+async function verifierMotdepasseParent() {
+  const pwd = document.getElementById("input-password-parent").value.trim();
+  const user = firebase.auth().currentUser;
+  if (!pwd) {
+    const errEl = document.getElementById("password-parent-error");
+    errEl.textContent = "Veuillez saisir votre mot de passe.";
+    errEl.style.display = "block";
+    return;
+  }
+  const credential = firebase.auth.EmailAuthProvider.credential(user.email, pwd);
+  try {
+    await user.reauthenticateWithCredential(credential);
+    // Succès : retour au profil parent
+    const ancien = profilActif.prenom;
+    profilActif = { type: "parent" };
+    logActivite("changement_profil", { ancien: ancien || "enfant", nouveau: "parent" });
+    // Mettre à jour l’icône parent
+    firebase.firestore().collection("users").doc(user.uid).get()
+      .then(doc => {
+        const prenomParent = doc.exists && doc.data().prenom
+          ? doc.data().prenom
+          : user.email.charAt(0).toUpperCase();
+        document.getElementById("user-icon").textContent = prenomParent.charAt(0).toUpperCase();
+      });
+    fermerModalPasswordParent();
+  } catch (error) {
+    const errEl = document.getElementById("password-parent-error");
+    errEl.textContent = "Mot de passe incorrect !";
+    errEl.style.display = "block";
+    logActivite("tentative_acces_parent");
+  }
 }
  /**
   * Ouvre la modale de saisie de mot de passe pour revenir au profil parent.
