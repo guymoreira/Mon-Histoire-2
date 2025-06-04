@@ -167,9 +167,39 @@ function afficherUtilisateurDéconnecté() {
   document.getElementById("my-stories-button").classList.add("hidden");
 }
 
-function ouvrirLogoutModal() {
-  document.getElementById('logout-modal').classList.add('show');
-}
+ async function ouvrirLogoutModal() {
+   // 1. Récupérer l'élément qui contiendra le prénom
+   const nameEl = document.getElementById('logout-profile-name');
+
+   if (profilActif.type === "parent") {
+     // 2.a. Parent : on récupère le prénom stocké dans Firestore
+     const user = firebase.auth().currentUser;
+     let prenomParent = "";
+     try {
+       const doc = await firebase.firestore()
+         .collection("users")
+         .doc(user.uid)
+         .get();
+       if (doc.exists && doc.data().prenom) {
+         prenomParent = doc.data().prenom;
+       } else {
+         // Si pas de champ "prenom", on tombe sur l'initiale
+         prenomParent = user.email.charAt(0).toUpperCase();
+       }
+     } catch (e) {
+       // En cas d’erreur, on affiche l’initiale de l’email
+       const user = firebase.auth().currentUser;
+       prenomParent = user.email ? user.email.charAt(0).toUpperCase() : "U";
+     }
+     nameEl.textContent = prenomParent;
+   } else {
+     // 2.b. Enfant : on connaît déjà son prénom dans profilActif
+     nameEl.textContent = profilActif.prenom;
+   }
+
+   // 3. Afficher la modale
+   document.getElementById('logout-modal').classList.add('show');
+ }
 function fermerLogoutModal() {
   document.getElementById('logout-modal').classList.remove('show');
 }
