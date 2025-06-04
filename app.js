@@ -300,7 +300,62 @@ async function ouvrirLogoutModal() {
   // 3. Afficher la modale
   document.getElementById('logout-modal').classList.add('show');
 }
+ /**
+  * Ouvre la modale de saisie de mot de passe pour revenir au profil parent.
+  */
+ function ouvrirModalMotDePasseParent() {
+   document.getElementById("modal-password-parent").style.display = "flex";
+   document.getElementById("password-parent-error").style.display = "none";
+   document.getElementById("input-password-parent").value = "";
+ }
 
+ /**
+  * Ferme simplement la modale "Mot de passe Parent"
+  */
+ function fermerModalPasswordParent() {
+   document.getElementById("modal-password-parent").style.display = "none";
+ }
+
+ /**
+  * Vérifie le mot de passe entré pour le parent.
+  * Si correct, repasse en mode parent ; sinon, affiche une erreur.
+  */
+ async function verifierMotdepasseParent() {
+   const pwd = document.getElementById("input-password-parent").value.trim();
+   const user = firebase.auth().currentUser;
+   if (!pwd) {
+     // Champ vide → message d'erreur
+     const errEl = document.getElementById("password-parent-error");
+     errEl.textContent = "Veuillez saisir votre mot de passe.";
+     errEl.style.display = "block";
+     return;
+   }
+
+   // On ré-authentifie l’utilisateur pour vérifier le mot de passe
+   const credential = firebase.auth.EmailAuthProvider.credential(user.email, pwd);
+   try {
+     await user.reauthenticateWithCredential(credential);
+     // Succès : on repasse en mode parent
+     const ancien = profilActif.prenom;
+     profilActif = { type: "parent" };
+     logActivite("changement_profil", { ancien: ancien || "enfant", nouveau: "parent" });
+     // Mettre à jour l’icône utilisateur avec initiale parent
+     firebase.firestore().collection("users").doc(user.uid).get()
+       .then(doc => {
+         const prenomParent = doc.exists && doc.data().prenom
+           ? doc.data().prenom
+           : user.email.charAt(0).toUpperCase();
+         document.getElementById("user-icon").textContent = prenomParent.charAt(0).toUpperCase();
+       });
+     fermerModalPasswordParent();
+   } catch (error) {
+     // Mot de passe incorrect : message d’erreur
+     const errEl = document.getElementById("password-parent-error");
+     errEl.textContent = "Mot de passe incorrect !";
+     errEl.style.display = "block";
+     logActivite("tentative_acces_parent");
+   }
+ }
 function fermerLogoutModal() {
   document.getElementById('logout-modal').classList.remove('show');
 }
