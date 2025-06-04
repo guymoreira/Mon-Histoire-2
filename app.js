@@ -555,15 +555,26 @@ let titre = document.getElementById("titre-histoire-resultat").textContent || "T
   const images = Array.from(document.querySelectorAll("#histoire img")).map(img => img.src);
 
   try {
-    await firebase.firestore()
+  let storiesRef;
+  if (profilActif.type === "parent") {
+    storiesRef = firebase.firestore()
       .collection("users")
       .doc(user.uid)
-      .collection("stories")
-      .add({
-        titre: titre,
-        contenu: contenu,
-        images: images,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      .collection("stories");
+  } else {
+    storiesRef = firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("profils_enfant")
+      .doc(profilActif.id)
+      .collection("stories");
+  }
+  await storiesRef.add({
+    titre: titre,
+    contenu: contenu,
+    images: images,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
       });
     logActivite("sauvegarde_histoire"); // LOG : Sauvegarde d'une histoire
     afficherHistoiresSauvegardees();
@@ -626,10 +637,23 @@ async function afficherHistoiresSauvegardees() {
     return;
   }
   try {
-    const snap = await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("stories")
+    // Selon le profil actif, on pointe vers la collection correspondante
+    let storiesRef;
+    if (profilActif.type === "parent") {
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories");
+    } else {
+      // mode enfant : on stocke les stories sous /users/{uid}/profils_enfant/{childId}/stories
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories");
+    }
+    const snap = await storiesRef
       .orderBy("createdAt", "desc")
       .get();
 
