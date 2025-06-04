@@ -575,7 +575,6 @@ let titre = document.getElementById("titre-histoire-resultat").textContent || "T
     images: images,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
   });
-      });
     logActivite("sauvegarde_histoire"); // LOG : Sauvegarde d'une histoire
     afficherHistoiresSauvegardees();
 
