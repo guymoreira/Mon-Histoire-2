@@ -862,9 +862,14 @@ function modifierMonCompte() {
     }
   }).then(() => {
     logActivite("modification_prenom"); // LOG : modification prénom
-    showMessageModal("Modifications enregistrées !");
-    fermerMonCompte();
-    afficherUtilisateurConnecté(); // MAJ de l'icône utilisateur en haut à droite
+fermerMonCompte(); // D'abord on ferme calmement la modale
+
+setTimeout(() => {
+  showMessageModal("Modifications enregistrées !");
+}, 100); // On attend 100ms pour fluidifier visuellement
+
+afficherUtilisateurConnecté(); // Met à jour l’icône avec nouvelle initiale
+ // MAJ de l'icône utilisateur en haut à droite
   }).catch(e => {
     showMessageModal("Erreur : " + (e.message || e));
   });
