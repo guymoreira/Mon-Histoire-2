@@ -975,17 +975,10 @@ function confirmerRenommerProfil() {
   const user = firebase.auth().currentUser;
   if (!user) return;
 
-  firebase.firestore()
-    .collection("users")
-    .doc(user.uid)
-    .collection("profils_enfant")
-    .doc(idProfilEnfantActif)
-    .update({ prenom: nouveauPrenom })
-    .then(() => {
-      logActivite("modification_prenom_profil", { id_enfant: idProfilEnfantActif });
-      afficherProfilsEnfants();
-      fermerModaleRenommerProfil();
-    })
+// Stocke la modif localement sans toucher Firestore
+profilsEnfantModifies.push({ action: "modifier", id: idProfilEnfantActif, nouveauPrenom });
+afficherProfilsEnfants();
+fermerModaleRenommerProfil();
     .catch((e) => {
       showMessageModal("Erreur : " + (e.message || e));
     });
@@ -1038,6 +1031,7 @@ function enregistrerModificationsProfils() {
     }
     if (modif.action === "modifier") {
       batch.update(ref.doc(modif.id), { prenom: modif.nouveauPrenom });
+      logActivite("modification_prenom_profil", { id_enfant: modif.id });
     }
   });
 
