@@ -2,8 +2,10 @@
 const MAX_HISTOIRES = 5; // Change cette valeur pour la limite souhaitée
 const SEUIL_ALERTE_HISTOIRES = 4; // passe en rouge à partir de 4/5 (ajuste si tu veux)
 let resultatSource = "formulaire"; // Par défaut
-let profilActif = { type: "parent" }; // Définit le profil courant (parent par défaut)
-// (le reste de tes variables globales)
+// Instancie "profilActif" à partir du localStorage, sinon sur {type:"parent"} :
+let profilActif = localStorage.getItem("profilActif")
+  ? JSON.parse(localStorage.getItem("profilActif"))
+  : { type: "parent" };
 
 firebase.auth().useDeviceLanguage();
 
@@ -124,6 +126,7 @@ function logoutUser() {
     afficherUtilisateurDéconnecté();
     fermerLogoutModal(); // <-- C'est ça qu'il faut appeler maintenant
     profilActif = { type: "parent" };
+    localStorage.removeItem("profilActif");
     showScreen("accueil");
   });
 }
@@ -287,6 +290,8 @@ async function ouvrirLogoutModal() {
             id: docEnfant.id,
             prenom: data.prenom
           };
+             // ★ Enregistre le profil enfant dans localStorage ★
+   localStorage.setItem("profilActif", JSON.stringify(profilActif));
           logActivite("changement_profil", {
             ancien: ancienPrenom,
             nouveau: data.prenom
@@ -377,6 +382,8 @@ async function verifierMotdepasseParent() {
      // Succès : on repasse en mode parent
      const ancien = profilActif.prenom;
      profilActif = { type: "parent" };
+        // ★ Enregistre le retour au profil parent dans localStorage ★
+   localStorage.setItem("profilActif", JSON.stringify(profilActif));
      logActivite("changement_profil", { ancien: ancien || "enfant", nouveau: "parent" });
      // Mettre à jour l’icône utilisateur avec initiale parent
      firebase.firestore().collection("users").doc(user.uid).get()
