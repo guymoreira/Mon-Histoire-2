@@ -545,7 +545,6 @@ async function sauvegarderHistoire(nombreRestant) {
     showMessageModal("Vous devez être connecté pour sauvegarder.");
     return;
   }
-
   const contenu = document.getElementById("histoire").innerHTML;
   // Utilise le même titre que celui affiché sous "Ton Histoire"
   // On reprend le prénom utilisé lors de la génération (champ du formulaire)
@@ -570,12 +569,24 @@ let titre = document.getElementById("titre-histoire-resultat").textContent || "T
       .doc(profilActif.id)
       .collection("stories");
   }
-  await storiesRef.add({
-    titre: titre,
-    contenu: contenu,
-    images: images,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-  });
++    await storiesRef.add({
++      titre: titre,
++      contenu: contenu,
++      images: images,
++      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
++    });
++
++    // --- SI on est en mode ENFANT, incrémenter nb_histoires sur son document de profil ---
++    if (profilActif.type === "enfant") {
++      const profilDocRef = firebase.firestore()
++        .collection("users")
++        .doc(user.uid)
++        .collection("profils_enfant")
++        .doc(profilActif.id);
++      await profilDocRef.update({
++        nb_histoires: firebase.firestore.FieldValue.increment(1)
++      });
++    }
     logActivite("sauvegarde_histoire"); // LOG : Sauvegarde d'une histoire
     afficherHistoiresSauvegardees();
 
@@ -835,6 +846,18 @@ async function confirmDelete() {
         .doc(storyId);
     }
     await deleteRef.delete();
+    
+    // --- Si on est en mode ENFANT, décrémenter nb_histoires sur son document de profil ---
+    if (profilActif.type === "enfant") {
+      const profilDocRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id);
+      await profilDocRef.update({
+        nb_histoires: firebase.firestore.FieldValue.increment(-1)
+      });
+    }
     logActivite("suppression_histoire", { story_id: storyId }); // LOG : Suppression histoire
   }
   reinitialiserSelectionHistoires();
