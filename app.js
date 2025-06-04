@@ -329,10 +329,6 @@ function ouvrirModalMotDePasseParent() {
   modal.classList.add("show");
 }
 
-/**
- * Ferme simplement la modale "Mot de passe Parent".
- * On retire la classe "show" au lieu de manipuler `style.display`.
- */
 function fermerModalPasswordParent() {
   const modal = document.getElementById("modal-password-parent");
   modal.classList.remove("show");
