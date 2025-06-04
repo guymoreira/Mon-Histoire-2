@@ -1066,8 +1066,22 @@ function enregistrerModificationsProfils() {
     }
   });
 
-  batch.commit().then(() => {
-    profilsEnfantModifies = [];
-    afficherProfilsEnfants();
-  });
+batch.commit().then(() => {
+  profilsEnfantModifies = [];
+  afficherProfilsEnfants();
+
+  // ➕ Nouveau : fondu doux sur le formulaire d’ajout s’il est ouvert
+  const form = document.getElementById("form-ajout-enfant");
+  if (form && form.style.display !== "none") {
+    form.classList.remove("fade-in");
+    form.classList.add("fade-out");
+  }
+
+  // Puis on ferme la modale et affiche la confirmation après un léger délai
+  fermerMonCompte();
+
+  setTimeout(() => {
+    showMessageModal("Modifications enregistrées !");
+  }, 100);
+});
 }
