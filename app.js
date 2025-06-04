@@ -1070,18 +1070,27 @@ batch.commit().then(() => {
   profilsEnfantModifies = [];
   afficherProfilsEnfants();
 
-  // ➕ Nouveau : fondu doux sur le formulaire d’ajout s’il est ouvert
   const form = document.getElementById("form-ajout-enfant");
   if (form && form.style.display !== "none") {
     form.classList.remove("fade-in");
     form.classList.add("fade-out");
+
+    // Attendre la fin du fondu avant de fermer la modale principale
+    setTimeout(() => {
+      form.style.display = "none";
+      form.classList.remove("fade-out");
+
+      fermerMonCompte(); // Ferme "Mon Compte" une fois que tout est calme
+
+      setTimeout(() => {
+        showMessageModal("Modifications enregistrées !");
+      }, 100);
+    }, 250); // temps du fondu en ms
+  } else {
+    fermerMonCompte();
+    setTimeout(() => {
+      showMessageModal("Modifications enregistrées !");
+    }, 100);
   }
-
-  // Puis on ferme la modale et affiche la confirmation après un léger délai
-  fermerMonCompte();
-
-  setTimeout(() => {
-    showMessageModal("Modifications enregistrées !");
-  }, 100);
 });
 }
