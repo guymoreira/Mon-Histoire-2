@@ -314,16 +314,30 @@ async function ouvrirLogoutModal() {
 }
 
 // ────── Nouvelle fonction ouvrirModalMotDePasseParent() ──────
+/**
+ * Ouvre la modale de saisie du mot de passe pour revenir au profil parent.
+ * Au lieu de changer directement `style.display`, on ajoute la classe `show`,
+ * pour que le CSS `.modal.show { opacity:1; pointer-events:auto; }` s’applique.
+ */
 function ouvrirModalMotDePasseParent() {
-  document.getElementById("modal-password-parent").style.display = "flex";
+  const modal = document.getElementById("modal-password-parent");
+  // On remet l’état d’erreur à zéro
   document.getElementById("password-parent-error").style.display = "none";
   document.getElementById("input-password-parent").value = "";
+
+  // Ajoute la classe "show" pour afficher la modale (opacity:1, pointer-events:auto)
+  modal.classList.add("show");
 }
 
-// ────── Nouvelle fonction fermerModalPasswordParent() ──────
+/**
+ * Ferme simplement la modale "Mot de passe Parent".
+ * On retire la classe "show" au lieu de manipuler `style.display`.
+ */
 function fermerModalPasswordParent() {
-  document.getElementById("modal-password-parent").style.display = "none";
+  const modal = document.getElementById("modal-password-parent");
+  modal.classList.remove("show");
 }
+
 
 // ────── Nouvelle fonction verifierMotdepasseParent() ──────
 async function verifierMotdepasseParent() {
