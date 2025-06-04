@@ -965,7 +965,7 @@ function fermerModaleRenommerProfil() {
 }
 
 function confirmerRenommerProfil() {
-  const nouveauPrenom = document.getElementById("input-nouveau-prenom-enfant").value.trim();
+  const nouveauPrenom = document.getElementById("input-nouveau-prenom").value.trim();
   if (!nouveauPrenom) {
     showMessageModal("Le prénom ne peut pas être vide.");
     return;
@@ -979,9 +979,6 @@ function confirmerRenommerProfil() {
 profilsEnfantModifies.push({ action: "modifier", id: idProfilEnfantActif, nouveauPrenom });
 afficherProfilsEnfants();
 fermerModaleRenommerProfil();
-    .catch((e) => {
-      showMessageModal("Erreur : " + (e.message || e));
-    });
 }
 
 
