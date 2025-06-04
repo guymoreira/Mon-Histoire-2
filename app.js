@@ -2,6 +2,7 @@
 const MAX_HISTOIRES = 5; // Change cette valeur pour la limite souhaitée
 const SEUIL_ALERTE_HISTOIRES = 4; // passe en rouge à partir de 4/5 (ajuste si tu veux)
 let resultatSource = "formulaire"; // Par défaut
+let profilActif = { type: "parent" }; // Définit le profil courant (parent par défaut)
 // (le reste de tes variables globales)
 
 firebase.auth().useDeviceLanguage();
