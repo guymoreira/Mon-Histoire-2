@@ -664,3 +664,12 @@ button::-moz-focus-inner,
     transform: translateY(-8px);
   }
 }
+/* S'assurer que la modale de renommage profil passe AU-DESSUS de la modale Mon Compte */
+#modal-renommer-profil {
+  z-index: 3000;
+}
+
+/* Harmonise le fond visuel de la petite modale */
+#modal-renommer-profil .bloc-centre {
+  background-color: #fffef9 !important;
+}
