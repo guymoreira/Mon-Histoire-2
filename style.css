@@ -664,6 +664,10 @@ button::-moz-focus-inner,
     transform: translateY(-8px);
   }
 }
+.modal.fade-out {
+  animation: fadeoutform 300ms ease-out forwards;
+}
+
 /* S'assurer que la modale de renommage profil passe AU-DESSUS de la modale Mon Compte */
 #modal-renommer-profil {
   z-index: 3000;
