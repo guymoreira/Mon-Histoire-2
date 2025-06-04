@@ -828,17 +828,24 @@ function ouvrirMonCompte() {
 // Ferme la modale "Mon Compte"
 function fermerMonCompte() {
   // Réinitialise les modifs si on annule
-profilsEnfantModifies = [];
+  profilsEnfantModifies = [];
 
-etatInitialProfilsEnfant.forEach(profil => {
-  const ligne = document.querySelector(`#liste-profils-enfants .ligne-profil[data-id="${profil.id}"]`);
-  if (ligne) {
-    ligne.style.display = ""; // réaffiche si supprimé
-    const prenomEl = ligne.querySelector(".prenom");
-    if (prenomEl) prenomEl.textContent = profil.prenom;
-  }
-});
-  document.getElementById('modal-moncompte').classList.remove('show');
+  etatInitialProfilsEnfant.forEach(profil => {
+    const ligne = document.querySelector(`#liste-profils-enfants .ligne-profil[data-id="${profil.id}"]`);
+    if (ligne) {
+      ligne.style.display = "";
+      const prenomEl = ligne.querySelector(".prenom");
+      if (prenomEl) prenomEl.textContent = profil.prenom;
+    }
+  });
+
+  const modal = document.getElementById("modal-moncompte");
+  modal.classList.add("fade-out");
+
+  setTimeout(() => {
+    modal.classList.remove("fade-out");
+    modal.classList.remove("show");
+  }, 300); // correspond à la durée de l'animation CSS
 }
 
 // Modifie le prénom et l'adresse email dans Firebase
