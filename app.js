@@ -975,11 +975,16 @@ function confirmerRenommerProfil() {
   const user = firebase.auth().currentUser;
   if (!user) return;
 
-// Stocke la modif localement sans toucher Firestore
-profilsEnfantModifies.push({ action: "modifier", id: idProfilEnfantActif, nouveauPrenom });
-afficherProfilsEnfants();
-fermerModaleRenommerProfil();
+  // Stocke la modif localement sans toucher Firestore
+  profilsEnfantModifies.push({ action: "modifier", id: idProfilEnfantActif, nouveauPrenom });
+
+  // Mise à jour visuelle immédiate
+  const element = document.querySelector(`#liste-profils-enfants .ligne-profil[data-id="${idProfilEnfantActif}"] .prenom`);
+  if (element) element.textContent = nouveauPrenom;
+
+  fermerModaleRenommerProfil();
 }
+
 
 
 function annulerAjoutEnfant() {
