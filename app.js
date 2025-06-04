@@ -948,6 +948,7 @@ function afficherProfilsEnfants() {
         count++;
         const li = document.createElement("li");
         li.className = "ligne-profil";
+        li.setAttribute("data-id", doc.id); // Ajout ici ✅
         li.innerHTML = `
           <span class="prenom">${data.prenom}</span>
           <span class="quota">${data.nb_histoires || 0}/5</span>
