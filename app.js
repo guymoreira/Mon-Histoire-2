@@ -762,7 +762,23 @@ snap.forEach(doc => {
   const data = doc.data();
   const li = document.createElement("li");
   li.dataset.id = doc.id;
-  li.innerHTML = `<button class="button button-blue">${data.titre || "Sans titre"}</button>`;
+  
+  // Vérifie si l'histoire a été partagée par quelqu'un
+  if (data.partageParPrenom) {
+    // Ajoute une indication de qui a partagé l'histoire
+    li.innerHTML = `
+      <button class="button button-blue">
+        ${data.titre || "Sans titre"}
+        <small style="display:block; font-size:0.8em; opacity:0.8; margin-top:0.2em;">
+          Partagé par ${data.partageParPrenom}
+        </small>
+      </button>
+    `;
+  } else {
+    // Histoire normale (non partagée)
+    li.innerHTML = `<button class="button button-blue">${data.titre || "Sans titre"}</button>`;
+  }
+  
   ul.appendChild(li);
 });
     bindLongPress();
@@ -1630,4 +1646,174 @@ batch.commit().then(() => {
     }, 100);
   }
 });
+}
+
+// ========== FONCTIONNALITÉS DE PARTAGE D'HISTOIRES ==========
+
+// Variable pour stocker l'ID de l'histoire à partager
+let histoireAPartager = null;
+
+// Ouvre la modale de partage et affiche la liste des profils disponibles
+async function ouvrirModalePartage() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Vous devez être connecté pour partager une histoire.");
+    return;
+  }
+
+  // Récupère l'histoire actuellement affichée
+  const titre = document.getElementById("titre-histoire-resultat").textContent;
+  const contenu = document.getElementById("histoire").innerHTML;
+  
+  // Si aucune histoire n'est affichée, on ne fait rien
+  if (!contenu) {
+    showMessageModal("Aucune histoire à partager.");
+    return;
+  }
+
+  // Stocke temporairement l'histoire à partager
+  histoireAPartager = {
+    titre: titre,
+    contenu: contenu,
+    images: Array.from(document.querySelectorAll("#histoire img")).map(img => img.src),
+    partageParProfil: profilActif.type === "parent" ? null : profilActif.id,
+    partageParPrenom: profilActif.type === "parent" ? null : profilActif.prenom
+  };
+
+  // Vide la liste des profils
+  const listeEl = document.getElementById("liste-partage-profils");
+  listeEl.innerHTML = "";
+
+  try {
+    // Récupère tous les profils enfants
+    const enfantsSnap = await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("profils_enfant")
+      .get();
+
+    // Si aucun profil enfant, affiche un message
+    if (enfantsSnap.empty) {
+      listeEl.innerHTML = "<p style='text-align:center;'>Aucun profil disponible pour le partage.</p>";
+      document.getElementById("modal-partage").classList.add("show");
+      return;
+    }
+
+    // Ajoute un bouton pour le parent (sauf si on est déjà le parent)
+    if (profilActif.type === "enfant") {
+      // Récupère le prénom du parent
+      const docParent = await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .get();
+      
+      let prenomParent = "";
+      if (docParent.exists && docParent.data().prenom) {
+        prenomParent = docParent.data().prenom;
+      } else {
+        prenomParent = "Parent";
+      }
+
+      const btnParent = document.createElement("button");
+      btnParent.className = "button button-blue";
+      btnParent.textContent = prenomParent;
+      btnParent.style.marginBottom = "0.75em";
+      btnParent.onclick = () => partagerHistoire("parent", null, prenomParent);
+      listeEl.appendChild(btnParent);
+    }
+
+    // Ajoute un bouton pour chaque profil enfant (sauf celui actif)
+    enfantsSnap.forEach(docEnfant => {
+      const data = docEnfant.data();
+      // Ne pas afficher le profil actif
+      if (profilActif.type === "enfant" && docEnfant.id === profilActif.id) return;
+
+      const btn = document.createElement("button");
+      btn.className = "button button-blue";
+      btn.textContent = data.prenom;
+      btn.style.marginBottom = "0.75em";
+      btn.onclick = () => partagerHistoire("enfant", docEnfant.id, data.prenom);
+      listeEl.appendChild(btn);
+    });
+
+    // Affiche la modale
+    document.getElementById("modal-partage").classList.add("show");
+  } catch (error) {
+    showMessageModal("Erreur lors du chargement des profils : " + error.message);
+  }
+}
+
+// Ferme la modale de partage
+function fermerModalePartage() {
+  document.getElementById("modal-partage").classList.remove("show");
+  histoireAPartager = null;
+}
+
+// Partage l'histoire avec le profil sélectionné
+async function partagerHistoire(type, id, prenom) {
+  if (!histoireAPartager) {
+    fermerModalePartage();
+    return;
+  }
+
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showMessageModal("Vous devez être connecté pour partager une histoire.");
+    fermerModalePartage();
+    return;
+  }
+
+  try {
+    // Détermine la collection cible selon le type de profil
+    let targetRef;
+    if (type === "parent") {
+      targetRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories");
+    } else {
+      targetRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(id)
+        .collection("stories");
+    }
+
+    // Ajoute l'histoire partagée
+    await targetRef.add({
+      titre: histoireAPartager.titre,
+      contenu: histoireAPartager.contenu,
+      images: histoireAPartager.images,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      partageParProfil: histoireAPartager.partageParProfil,
+      partageParPrenom: histoireAPartager.partageParPrenom
+    });
+
+    // Si on partage avec un profil enfant, incrémente son compteur d'histoires
+    if (type === "enfant") {
+      const profilDocRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(id);
+      
+      await profilDocRef.update({
+        nb_histoires: firebase.firestore.FieldValue.increment(1)
+      });
+    }
+
+    // Log de l'activité
+    logActivite("partage_histoire", { 
+      destinataire_type: type,
+      destinataire_id: id,
+      destinataire_prenom: prenom
+    });
+
+    fermerModalePartage();
+    showMessageModal(`Histoire partagée avec ${prenom} !`);
+  } catch (error) {
+    showMessageModal("Erreur lors du partage : " + error.message);
+    fermerModalePartage();
+  }
 }
