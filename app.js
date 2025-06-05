@@ -277,9 +277,13 @@ async function ouvrirLogoutModal() {
     btnParent.textContent = prenomParent;
     btnParent.style.marginBottom = "0.75em";
     btnParent.onclick = () => {
+     // ★ Fermer d’abord la modale de sélection de profil ★
+     fermerLogoutModal();
+     // Puis ouvrir la modale de saisie du mot de passe parent
       ouvrirModalMotDePasseParent();
     };
     listEl.appendChild(btnParent);
+
 
     // 2.b.3. Afficher les autres enfants (sauf celui en cours)
     try {
