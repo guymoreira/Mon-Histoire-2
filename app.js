@@ -7,6 +7,11 @@ let profilActif = localStorage.getItem("profilActif")
   ? JSON.parse(localStorage.getItem("profilActif"))
   : { type: "parent" };
 
+// Variables pour la lecture audio
+let lectureAudioEnCours = false;
+let syntheseVocale = null;
+let pauseAudio = false;
+
 firebase.auth().useDeviceLanguage();
 
 // Ici une modificaion
@@ -95,7 +100,6 @@ if (screen === "mes-histoires") {
   }
 }
 }
-// coucou
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
@@ -1129,6 +1133,190 @@ function personnaliserTexteChapitre(texte, prenom, personnage) {
       prenom
     );
   }
+}
+
+// ========== FONCTIONNALITÉS DE LECTURE AUDIO ==========
+
+// Vérifie si l'API Web Speech est disponible dans le navigateur
+function estSynthesisDisponible() {
+  return 'speechSynthesis' in window;
+}
+
+// Extrait le texte de l'histoire pour la lecture audio
+function extraireTexteHistoire() {
+  const histoire = document.getElementById("histoire");
+  let texte = "";
+  
+  // Parcourt tous les éléments enfants de la div histoire
+  Array.from(histoire.childNodes).forEach(node => {
+    // Si c'est un titre (h3)
+    if (node.nodeName === "H3") {
+      texte += node.textContent + ". ";
+    }
+    // Si c'est un paragraphe (p)
+    else if (node.nodeName === "P") {
+      texte += node.textContent + " ";
+    }
+    // On ignore les images et autres éléments
+  });
+  
+  return texte;
+}
+
+// Démarre la lecture audio de l'histoire
+function demarrerLectureAudio() {
+  if (!estSynthesisDisponible()) {
+    showMessageModal("Désolé, votre navigateur ne prend pas en charge la lecture audio.");
+    return;
+  }
+  
+  // Récupère le texte de l'histoire
+  const texte = extraireTexteHistoire();
+  if (!texte) {
+    showMessageModal("Aucun texte à lire.");
+    return;
+  }
+  
+  // Crée un nouvel objet SpeechSynthesisUtterance
+  syntheseVocale = new SpeechSynthesisUtterance(texte);
+  syntheseVocale.lang = 'fr-FR';
+  syntheseVocale.rate = 0.9; // Vitesse légèrement plus lente pour une meilleure compréhension
+  syntheseVocale.pitch = 1.0; // Hauteur normale
+  
+  // Événements pour gérer la fin de la lecture
+  syntheseVocale.onend = function() {
+    arreterLectureAudio();
+  };
+  
+  syntheseVocale.onerror = function(event) {
+    console.error("Erreur de synthèse vocale:", event);
+    arreterLectureAudio();
+  };
+  
+  // Démarre la lecture
+  window.speechSynthesis.speak(syntheseVocale);
+  lectureAudioEnCours = true;
+  pauseAudio = false;
+  
+  // Met à jour l'interface
+  mettreAJourBoutonAudio();
+  
+  // Log de l'activité
+  logActivite("lecture_audio");
+}
+
+// Arrête la lecture audio
+function arreterLectureAudio() {
+  if (estSynthesisDisponible()) {
+    window.speechSynthesis.cancel();
+  }
+  
+  lectureAudioEnCours = false;
+  pauseAudio = false;
+  syntheseVocale = null;
+  
+  // Met à jour l'interface
+  mettreAJourBoutonAudio();
+}
+
+// Met en pause la lecture audio
+function pauserLectureAudio() {
+  if (estSynthesisDisponible() && lectureAudioEnCours) {
+    window.speechSynthesis.pause();
+    pauseAudio = true;
+    
+    // Met à jour l'interface
+    mettreAJourBoutonAudio();
+  }
+}
+
+// Reprend la lecture audio après une pause
+function reprendreLectureAudio() {
+  if (estSynthesisDisponible() && lectureAudioEnCours && pauseAudio) {
+    window.speechSynthesis.resume();
+    pauseAudio = false;
+    
+    // Met à jour l'interface
+    mettreAJourBoutonAudio();
+  }
+}
+
+// Met à jour l'apparence du bouton audio selon l'état de la lecture
+function mettreAJourBoutonAudio() {
+  const bouton = document.getElementById("btn-audio");
+  const icone = document.getElementById("icon-audio");
+  
+  if (lectureAudioEnCours) {
+    bouton.classList.add("active");
+    
+    if (pauseAudio) {
+      icone.textContent = "⏯️";
+      icone.classList.remove("playing");
+    } else {
+      icone.textContent = "⏸️";
+      icone.classList.add("playing");
+    }
+  } else {
+    bouton.classList.remove("active");
+    icone.textContent = "🔊";
+    icone.classList.remove("playing");
+  }
+}
+
+// Fonction appelée par le bouton audio pour basculer entre lecture/pause/arrêt
+function toggleLectureAudio() {
+  if (!lectureAudioEnCours) {
+    demarrerLectureAudio();
+  } else if (pauseAudio) {
+    reprendreLectureAudio();
+  } else {
+    pauserLectureAudio();
+  }
+}
+
+// Arrête la lecture audio lorsqu'on change d'écran
+function showScreen(screen) {
+  if (screen === currentScreen) return;
+  
+  // Arrête la lecture audio si elle est en cours
+  if (lectureAudioEnCours) {
+    arreterLectureAudio();
+  }
+  
+  previousScreen = currentScreen;
+  // masque tous les écrans actifs
+  document.querySelectorAll('.screen.active')
+          .forEach(el => el.classList.remove('active'));
+  // affiche le nouvel écran
+  document.getElementById(screen).classList.add('active');
+  currentScreen = screen;
+
+  // cas spécial Résultat : affiche ou cache le bouton "Sauvegarder"
+if (screen === "resultat") {
+  const btn = document.getElementById("btn-sauvegarde");
+  // Affiche le bouton sauvegarde uniquement si connecté ET si on vient du formulaire de création
+  if (firebase.auth().currentUser && resultatSource === "formulaire") {
+    btn.style.display = "inline-block";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+
+  // cas particulier : si c'est Mes Histoires, on rafraîchit la liste
+if (screen === "mes-histoires") {
+  afficherHistoiresSauvegardees();
+  // Affiche le bouton Accueil seulement si tu viens de "resultat"
+  const btnAccueil = document.getElementById("btn-accueil-mes-histoires");
+  const group = document.getElementById("mes-histoires-actions");
+  if (previousScreen === "resultat") {
+    btnAccueil.style.display = "inline-block";
+    group.classList.remove('single');
+  } else {
+    btnAccueil.style.display = "none";
+    group.classList.add('single');
+  }
+}
 }
 // Ouvre la modale "Mon Compte" et remplit les champs avec les infos actuelles
 function ouvrirMonCompte() {
