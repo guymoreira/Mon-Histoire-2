@@ -1849,6 +1849,13 @@ function configurerEcouteurHistoiresPartagees() {
 
   const user = firebase.auth().currentUser;
   if (!user) return;
+  
+  // S'assure que le profilActif est correctement initialisé depuis localStorage
+  if (!profilActif) {
+    profilActif = localStorage.getItem("profilActif")
+      ? JSON.parse(localStorage.getItem("profilActif"))
+      : { type: "parent" };
+  }
 
   // Détermine la collection à surveiller selon le profil actif
   let storiesRef;
@@ -1898,6 +1905,13 @@ function configurerEcouteurHistoiresPartagees() {
 async function verifierHistoiresPartagees() {
   const user = firebase.auth().currentUser;
   if (!user) return;
+
+  // S'assure que le profilActif est correctement initialisé depuis localStorage
+  if (!profilActif) {
+    profilActif = localStorage.getItem("profilActif")
+      ? JSON.parse(localStorage.getItem("profilActif"))
+      : { type: "parent" };
+  }
 
   try {
     // Détermine la collection à vérifier selon le profil actif
