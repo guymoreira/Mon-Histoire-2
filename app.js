@@ -231,6 +231,9 @@ async function ouvrirLogoutModal() {
             id: docEnfant.id,
             prenom: data.prenom
           };
+         // ★ Enregistre le profil enfant dans localStorage ★
+         localStorage.setItem("profilActif", JSON.stringify(profilActif));
+
           logActivite("changement_profil", {
             ancien: "parent",
             nouveau: data.prenom
@@ -240,6 +243,7 @@ async function ouvrirLogoutModal() {
         };
         listEl.appendChild(btn);
       });
+
     } catch (e) {
       console.error("Erreur lecture profils enfants :", e);
     }
