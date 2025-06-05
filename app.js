@@ -9,6 +9,8 @@ let profilActif = localStorage.getItem("profilActif")
 
 firebase.auth().useDeviceLanguage();
 
+// Ici une modificaion
+
 const firebaseErrorMessages = {
   "auth/email-already-in-use": "Cette adresse e-mail est déjà utilisée.",
   "auth/invalid-email": "L'adresse e-mail n'est pas valide.",
