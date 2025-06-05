@@ -136,10 +136,19 @@ function afficherUtilisateurConnecté() {
   document.getElementById("login-button").classList.add("hidden");
   document.getElementById("my-stories-button").classList.remove("hidden");
 
-  // Récupère l'utilisateur connecté
+  // → Si un profil enfant était actif, on court-circuite tout :
+  if (profilActif.type === "enfant") {
+    // On met directement l'initiale de l'enfant
+    document.getElementById("user-icon").textContent = profilActif.prenom
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+    return; // on ne fait pas la requête Firestore parent
+  }
+
+  // Sinon, c’est le parent → on récupère son prénom dans Firestore
   const user = firebase.auth().currentUser;
   if (user) {
-    // Récupère le prénom stocké dans Firestore (ou affiche l'initiale de l'email sinon)
     firebase.firestore().collection("users").doc(user.uid).get()
       .then((doc) => {
         let initiale = "U"; // Valeur par défaut
@@ -151,7 +160,6 @@ function afficherUtilisateurConnecté() {
         document.getElementById("user-icon").textContent = initiale;
       })
       .catch(() => {
-        // En cas d'erreur, affiche l'initiale de l'email
         if (user.email) {
           document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
         } else {
