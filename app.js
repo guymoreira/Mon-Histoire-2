@@ -254,6 +254,7 @@ async function ouvrirLogoutModal() {
           });
           fermerLogoutModal();
           document.getElementById("user-icon").textContent = data.prenom.charAt(0).toUpperCase();
+          verifierHistoiresPartagees(); // Vérifie les histoires partagées après changement de profil
         };
         listEl.appendChild(btn);
       });
@@ -328,6 +329,7 @@ async function ouvrirLogoutModal() {
           });
           fermerLogoutModal();
           document.getElementById("user-icon").textContent = data.prenom.charAt(0).toUpperCase();
+          verifierHistoiresPartagees(); // Vérifie les histoires partagées après changement de profil
         };
         listEl.appendChild(btn);
       });
@@ -383,9 +385,10 @@ function fermerModalPasswordParent() {
         const prenomParent = doc.exists && doc.data().prenom
           ? doc.data().prenom
           : user.email.charAt(0).toUpperCase();
-        document.getElementById("user-icon").textContent = prenomParent.charAt(0).toUpperCase();
-      });
-    fermerModalPasswordParent();
+         document.getElementById("user-icon").textContent = prenomParent.charAt(0).toUpperCase();
+         verifierHistoiresPartagees(); // Vérifie les histoires partagées après retour au profil parent
+       });
+     fermerModalPasswordParent();
   } catch (error) {
     const errEl = document.getElementById("password-parent-error");
     errEl.textContent = "Mot de passe incorrect !";
@@ -422,6 +425,7 @@ function fermerModalPasswordParent() {
            ? doc.data().prenom
            : user.email.charAt(0).toUpperCase();
          document.getElementById("user-icon").textContent = prenomParent.charAt(0).toUpperCase();
+         verifierHistoiresPartagees(); // Vérifie les histoires partagées après retour au profil parent
        });
      fermerModalPasswordParent();
    } catch (error) {
