@@ -12,6 +12,11 @@ let lectureAudioEnCours = false;
 let syntheseVocale = null;
 let pauseAudio = false;
 
+// Variables pour la notification de partage
+let notificationSwipeStartX = 0;
+let notificationSwipeStartY = 0;
+let notificationTimeout = null;
+
 firebase.auth().useDeviceLanguage();
 
 // Ici une modificaion
@@ -38,6 +43,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     afficherUtilisateurConnecté();
     afficherHistoiresSauvegardees(); // On migrera plus tard vers Firestore
     bindLongPress();
+    verifierHistoiresPartagees(); // Vérifie s'il y a des histoires partagées
   } else {
     afficherUtilisateurDéconnecté();
     afficherHistoiresSauvegardees();
@@ -119,6 +125,7 @@ function loginUser() {
       afficherUtilisateurConnecté();
       logActivite("connexion"); // LOG : Connexion réussie
       showScreen("accueil");
+      verifierHistoiresPartagees(); // Vérifie s'il y a des histoires partagées après connexion
     })
     .catch((error) => {
       const msg = firebaseErrorMessages[error.code] || error.message;
@@ -1787,7 +1794,8 @@ async function partagerHistoire(type, id, prenom) {
       images: histoireAPartager.images,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       partageParProfil: histoireAPartager.partageParProfil,
-      partageParPrenom: histoireAPartager.partageParPrenom
+      partageParPrenom: histoireAPartager.partageParPrenom,
+      nouvelleHistoire: true // Marque l'histoire comme nouvelle pour la notification
     });
 
     // Si on partage avec un profil enfant, incrémente son compteur d'histoires
@@ -1816,4 +1824,184 @@ async function partagerHistoire(type, id, prenom) {
     showMessageModal("Erreur lors du partage : " + error.message);
     fermerModalePartage();
   }
+}
+
+// ========== FONCTIONNALITÉS DE NOTIFICATION DE PARTAGE ==========
+
+// Vérifie s'il y a des histoires partagées pour l'utilisateur connecté
+async function verifierHistoiresPartagees() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  try {
+    // Détermine la collection à vérifier selon le profil actif
+    let storiesRef;
+    if (profilActif.type === "parent") {
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .where("nouvelleHistoire", "==", true)
+        .limit(1);
+    } else {
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories")
+        .where("nouvelleHistoire", "==", true)
+        .limit(1);
+    }
+
+    const snapshot = await storiesRef.get();
+    
+    if (!snapshot.empty) {
+      // Il y a au moins une histoire partagée
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      
+      if (data.partageParPrenom) {
+        // Affiche la notification
+        afficherNotificationPartage(data.partageParPrenom);
+        
+        // Marque l'histoire comme vue
+        doc.ref.update({ nouvelleHistoire: false });
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de la vérification des histoires partagées:", error);
+  }
+}
+
+// Affiche la notification de partage
+function afficherNotificationPartage(prenomPartageur) {
+  const notification = document.getElementById("notification-partage");
+  const message = document.getElementById("notification-message");
+  
+  // Définit le message
+  message.textContent = `${prenomPartageur} t'as partagé une histoire`;
+  
+  // Ajoute les écouteurs d'événements pour le swipe
+  notification.addEventListener("touchstart", demarrerSwipeNotification, { passive: true });
+  notification.addEventListener("touchmove", deplacerSwipeNotification, { passive: true });
+  notification.addEventListener("touchend", terminerSwipeNotification, { passive: true });
+  notification.addEventListener("mousedown", demarrerSwipeNotification);
+  notification.addEventListener("mousemove", deplacerSwipeNotification);
+  notification.addEventListener("mouseup", terminerSwipeNotification);
+  notification.addEventListener("mouseleave", terminerSwipeNotification);
+  
+  // Ajoute l'écouteur pour le clic
+  notification.addEventListener("click", clicNotificationPartage);
+  
+  // Affiche la notification avec animation
+  notification.classList.add("animate-in");
+  
+  // Supprime la classe d'animation après qu'elle soit terminée
+  setTimeout(() => {
+    notification.classList.remove("animate-in");
+    notification.classList.add("show");
+  }, 500);
+  
+  // Ferme automatiquement la notification après 5 secondes
+  notificationTimeout = setTimeout(() => {
+    fermerNotificationPartage();
+  }, 5000);
+}
+
+// Ferme la notification de partage
+function fermerNotificationPartage() {
+  const notification = document.getElementById("notification-partage");
+  
+  // Annule le timeout si existant
+  if (notificationTimeout) {
+    clearTimeout(notificationTimeout);
+    notificationTimeout = null;
+  }
+  
+  // Ajoute l'animation de sortie
+  notification.classList.remove("show");
+  notification.classList.add("animate-out");
+  
+  // Supprime les classes et les écouteurs après l'animation
+  setTimeout(() => {
+    notification.classList.remove("animate-out");
+    
+    // Supprime les écouteurs d'événements
+    notification.removeEventListener("touchstart", demarrerSwipeNotification);
+    notification.removeEventListener("touchmove", deplacerSwipeNotification);
+    notification.removeEventListener("touchend", terminerSwipeNotification);
+    notification.removeEventListener("mousedown", demarrerSwipeNotification);
+    notification.removeEventListener("mousemove", deplacerSwipeNotification);
+    notification.removeEventListener("mouseup", terminerSwipeNotification);
+    notification.removeEventListener("mouseleave", terminerSwipeNotification);
+    notification.removeEventListener("click", clicNotificationPartage);
+  }, 500);
+}
+
+// Gestion du swipe - Début
+function demarrerSwipeNotification(e) {
+  // Annule le timeout automatique
+  if (notificationTimeout) {
+    clearTimeout(notificationTimeout);
+    notificationTimeout = null;
+  }
+  
+  // Enregistre la position de départ
+  if (e.type === "touchstart") {
+    notificationSwipeStartX = e.touches[0].clientX;
+    notificationSwipeStartY = e.touches[0].clientY;
+  } else {
+    notificationSwipeStartX = e.clientX;
+    notificationSwipeStartY = e.clientY;
+  }
+}
+
+// Gestion du swipe - Déplacement
+function deplacerSwipeNotification(e) {
+  // Ne fait rien si on n'a pas commencé un swipe
+  if (notificationSwipeStartX === 0 && notificationSwipeStartY === 0) return;
+  
+  let currentX, currentY;
+  
+  if (e.type === "touchmove") {
+    currentX = e.touches[0].clientX;
+    currentY = e.touches[0].clientY;
+  } else {
+    currentX = e.clientX;
+    currentY = e.clientY;
+  }
+  
+  // Calcule la distance parcourue
+  const distanceX = Math.abs(currentX - notificationSwipeStartX);
+  const distanceY = Math.abs(currentY - notificationSwipeStartY);
+  
+  // Si la distance est suffisante, ferme la notification
+  if (distanceX > 50 || distanceY > 50) {
+    fermerNotificationPartage();
+    
+    // Réinitialise les positions
+    notificationSwipeStartX = 0;
+    notificationSwipeStartY = 0;
+  }
+}
+
+// Gestion du swipe - Fin
+function terminerSwipeNotification() {
+  // Réinitialise les positions
+  notificationSwipeStartX = 0;
+  notificationSwipeStartY = 0;
+}
+
+// Gestion du clic sur la notification
+function clicNotificationPartage(e) {
+  // Empêche la propagation du clic
+  e.preventDefault();
+  e.stopPropagation();
+  
+  // Ferme la notification
+  fermerNotificationPartage();
+  
+  // Redirige vers "Mes histoires"
+  showScreen("mes-histoires");
 }

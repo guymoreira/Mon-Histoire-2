@@ -697,3 +697,54 @@ button::-moz-focus-inner,
 #modal-renommer-profil .bloc-centre {
   background-color: #fffef9 !important;
 }
+
+/* ========== NOTIFICATION DE PARTAGE D'HISTOIRE ========== */
+.notification-partage {
+  position: fixed;
+  top: -100px; /* Commence hors de l'écran */
+  left: 0;
+  right: 0;
+  background-color: #79d4e7;
+  color: #395872;
+  padding: 15px 20px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 0 0 15px 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 3000;
+  transition: top 0.5s ease-out;
+  cursor: pointer;
+  touch-action: none; /* Pour gérer manuellement les événements tactiles */
+}
+
+.notification-partage.show {
+  top: 0; /* Animation vers le bas */
+}
+
+/* Animation pour faire "couler" la notification depuis le haut */
+@keyframes notification-slide-in {
+  from {
+    top: -100px;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.notification-partage.animate-in {
+  animation: notification-slide-in 0.5s forwards;
+}
+
+/* Animation pour faire disparaître la notification vers le haut */
+@keyframes notification-slide-out {
+  from {
+    top: 0;
+  }
+  to {
+    top: -100px;
+  }
+}
+
+.notification-partage.animate-out {
+  animation: notification-slide-out 0.5s forwards;
+}
