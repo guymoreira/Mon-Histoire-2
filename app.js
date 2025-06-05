@@ -95,6 +95,7 @@ if (screen === "mes-histoires") {
   }
 }
 }
+// coucou
 /** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
 function goBack() {
   showScreen(previousScreen || "accueil");
