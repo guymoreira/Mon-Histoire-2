@@ -16,6 +16,7 @@ let pauseAudio = false;
 let notificationSwipeStartX = 0;
 let notificationSwipeStartY = 0;
 let notificationTimeout = null;
+let histoiresPartageesListener = null; // Pour stocker la référence à l'écouteur en temps réel
 
 firebase.auth().useDeviceLanguage();
 
@@ -135,6 +136,12 @@ function loginUser() {
 
 
 function logoutUser() {
+  // Arrête l'écouteur d'histoires partagées avant la déconnexion
+  if (histoiresPartageesListener) {
+    histoiresPartageesListener();
+    histoiresPartageesListener = null;
+  }
+  
   firebase.auth().signOut().then(() => {
     logActivite("deconnexion"); // LOG : Déconnexion
     afficherUtilisateurDéconnecté();
@@ -1832,6 +1839,61 @@ async function partagerHistoire(type, id, prenom) {
 
 // ========== FONCTIONNALITÉS DE NOTIFICATION DE PARTAGE ==========
 
+// Configure un écouteur en temps réel pour les nouvelles histoires partagées
+function configurerEcouteurHistoiresPartagees() {
+  // Arrête l'écouteur précédent s'il existe
+  if (histoiresPartageesListener) {
+    histoiresPartageesListener();
+    histoiresPartageesListener = null;
+  }
+
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  // Détermine la collection à surveiller selon le profil actif
+  let storiesRef;
+  if (profilActif.type === "parent") {
+    storiesRef = firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .where("nouvelleHistoire", "==", true);
+  } else {
+    storiesRef = firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("profils_enfant")
+      .doc(profilActif.id)
+      .collection("stories")
+      .where("nouvelleHistoire", "==", true);
+  }
+
+  // Configure l'écouteur en temps réel
+  histoiresPartageesListener = storiesRef.onSnapshot(snapshot => {
+    // Vérifie s'il y a des changements
+    const changesCount = snapshot.docChanges().length;
+    if (changesCount === 0) return;
+
+    // Parcourt les documents ajoutés ou modifiés
+    snapshot.docChanges().forEach(change => {
+      // Ne traite que les documents ajoutés
+      if (change.type === "added") {
+        const data = change.doc.data();
+        
+        if (data.partageParPrenom) {
+          // Affiche la notification
+          afficherNotificationPartage(data.partageParPrenom);
+          
+          // Marque l'histoire comme vue
+          change.doc.ref.update({ nouvelleHistoire: false });
+        }
+      }
+    });
+  }, error => {
+    console.error("Erreur lors de l'écoute des histoires partagées:", error);
+  });
+}
+
 // Vérifie s'il y a des histoires partagées pour l'utilisateur connecté
 async function verifierHistoiresPartagees() {
   const user = firebase.auth().currentUser;
@@ -1873,6 +1935,9 @@ async function verifierHistoiresPartagees() {
         doc.ref.update({ nouvelleHistoire: false });
       }
     }
+    
+    // Configure l'écouteur en temps réel pour les futures histoires partagées
+    configurerEcouteurHistoiresPartagees();
   } catch (error) {
     console.error("Erreur lors de la vérification des histoires partagées:", error);
   }
