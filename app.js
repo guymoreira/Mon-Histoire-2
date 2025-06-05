@@ -339,7 +339,7 @@ function fermerModalPasswordParent() {
 
 
 // ────── Nouvelle fonction verifierMotdepasseParent() ──────
-async function verifierMotdepasseParent() {
+/*async function verifierMotdepasseParent() {
   const pwd = document.getElementById("input-password-parent").value.trim();
   const user = firebase.auth().currentUser;
   if (!pwd) {
@@ -370,7 +370,7 @@ async function verifierMotdepasseParent() {
     errEl.style.display = "block";
     logActivite("tentative_acces_parent");
   }
-}
+}*/
 
  async function verifierMotdepasseParent() {
    const pwd = document.getElementById("input-password-parent").value.trim();
