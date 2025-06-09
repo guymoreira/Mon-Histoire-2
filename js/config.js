@@ -69,10 +69,9 @@ MonHistoire.config = {
           }
         });
         
-        // Configurer la persistance des données hors ligne
-        firebase.database().setPersistenceEnabled(true).catch(err => {
-          console.warn("Erreur lors de l'activation de la persistance Realtime Database:", err);
-        });
+        // Note: La méthode setPersistenceEnabled n'est pas disponible dans cette version de Firebase
+        // Utiliser plutôt les paramètres de connexion par défaut qui incluent déjà la persistance
+        console.log("Firebase Realtime Database configurée avec les paramètres par défaut");
       } else {
         console.warn("Firebase Realtime Database n'est pas disponible");
         // Émettre un événement pour informer les autres modules

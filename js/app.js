@@ -490,7 +490,32 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialiser l'application
   MonHistoire.init();
+  
+  // Gérer la visibilité du footer en fonction du profil actif
+  MonHistoire.updateFooterVisibility();
 });
+
+// Fonction pour mettre à jour la visibilité du footer en fonction du profil actif
+MonHistoire.updateFooterVisibility = function() {
+  const footer = document.querySelector('footer');
+  if (!footer) return;
+  
+  // Récupérer le profil actif depuis le localStorage si nécessaire
+  if (!MonHistoire.state.profilActif) {
+    MonHistoire.state.profilActif = localStorage.getItem("profilActif")
+      ? JSON.parse(localStorage.getItem("profilActif"))
+      : { type: "parent" };
+  }
+  
+  // Masquer le footer si le profil actif est un profil enfant
+  if (MonHistoire.state.profilActif.type === "enfant") {
+    footer.style.display = 'none';
+  } else {
+    footer.style.display = 'block';
+  }
+  
+  console.log(`Footer visibility updated: ${MonHistoire.state.profilActif.type === "enfant" ? "hidden" : "visible"} for profile type ${MonHistoire.state.profilActif.type}`);
+};
 
 // Exporter pour utilisation dans d'autres modules
 window.MonHistoire = MonHistoire;

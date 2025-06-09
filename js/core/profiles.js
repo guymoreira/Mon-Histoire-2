@@ -83,6 +83,11 @@ MonHistoire.core.profiles = {
       });
     }
     
+    // Mettre à jour la visibilité du footer en fonction du type de profil
+    if (typeof MonHistoire.updateFooterVisibility === 'function') {
+      MonHistoire.updateFooterVisibility();
+    }
+    
     // Émet un événement pour informer les autres modules
     MonHistoire.events.emit("profilChange", nouveauProfil);
     
@@ -301,6 +306,11 @@ MonHistoire.core.profiles = {
     // Mettre à jour l'interface
     if (MonHistoire.core && MonHistoire.core.auth) {
       MonHistoire.core.auth.afficherUtilisateurConnecté();
+    }
+    
+    // Mettre à jour la visibilité du footer
+    if (typeof MonHistoire.updateFooterVisibility === 'function') {
+      MonHistoire.updateFooterVisibility();
     }
     
     // Rafraîchir le quota et la liste des histoires

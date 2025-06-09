@@ -679,15 +679,22 @@ MonHistoire.features.sharing = {
   
   // Partage l'histoire avec le profil sélectionné
   async partagerHistoire(type, id, prenom) {
+    // Fermer la modale après un délai pour éviter qu'elle reste bloquée
+    const fermerModaleAvecDelai = () => {
+      setTimeout(() => {
+        this.fermerModalePartage();
+      }, 300);
+    };
+    
     if (!this.histoireAPartager) {
-      this.fermerModalePartage();
+      fermerModaleAvecDelai();
       return;
     }
 
     const user = firebase.auth().currentUser;
     if (!user) {
       MonHistoire.showMessageModal("Tu dois être connecté pour partager une histoire.");
-      this.fermerModalePartage();
+      fermerModaleAvecDelai();
       return;
     }
     
@@ -699,15 +706,19 @@ MonHistoire.features.sharing = {
     // Si l'appareil n'est pas connecté, ajouter l'opération à la file d'attente hors ligne
     if (!isConnected) {
       // Ajouter l'opération à la file d'attente hors ligne
-      MonHistoire.addToOfflineQueue('partageHistoire', {
-        type: type,
-        id: id,
-        prenom: prenom,
-        histoire: this.histoireAPartager,
-        profilActif: MonHistoire.state.profilActif
-      });
+      if (typeof MonHistoire.addToOfflineQueue === 'function') {
+        MonHistoire.addToOfflineQueue('partageHistoire', {
+          type: type,
+          id: id,
+          prenom: prenom,
+          histoire: this.histoireAPartager,
+          profilActif: MonHistoire.state.profilActif
+        });
+      } else {
+        console.warn("La fonction addToOfflineQueue n'est pas disponible");
+      }
       
-      this.fermerModalePartage();
+      fermerModaleAvecDelai();
       
       // Message différent selon le type de déconnexion
       if (!isNetworkConnected) {
@@ -801,6 +812,9 @@ MonHistoire.features.sharing = {
         version: 1 // Version initiale du document
       });
       
+      // Variable pour suivre si la notification en temps réel a été ajoutée
+      let notificationRealtimeAjoutee = false;
+      
       // Ajoute également une notification en temps réel dans Firebase Realtime Database
       try {
         if (firebase.database && MonHistoire.state.realtimeDbAvailable !== false) {
@@ -820,6 +834,7 @@ MonHistoire.features.sharing = {
             deviceId: MonHistoire.generateDeviceId()
           });
           
+          notificationRealtimeAjoutee = true;
           MonHistoire.logger.info("Notification en temps réel ajoutée avec succès");
         }
       } catch (notifError) {
@@ -829,36 +844,53 @@ MonHistoire.features.sharing = {
       }
       
       // Supprimer le verrou
-      await lockRef.delete();
+      try {
+        await lockRef.delete();
+      } catch (lockError) {
+        MonHistoire.logger.error("Erreur lors de la suppression du verrou", lockError);
+        // On continue même si la suppression du verrou échoue
+      }
 
       // Si on partage avec un profil enfant, incrémente son compteur d'histoires
       if (type === "enfant") {
-        const profilDocRef = firebase.firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("profils_enfant")
-          .doc(id);
-        
-        await profilDocRef.update({
-          nb_histoires: firebase.firestore.FieldValue.increment(1)
-        });
+        try {
+          const profilDocRef = firebase.firestore()
+            .collection("users")
+            .doc(user.uid)
+            .collection("profils_enfant")
+            .doc(id);
+          
+          await profilDocRef.update({
+            nb_histoires: firebase.firestore.FieldValue.increment(1)
+          });
+        } catch (updateError) {
+          MonHistoire.logger.error("Erreur lors de la mise à jour du compteur d'histoires", updateError);
+          // On continue même si la mise à jour du compteur échoue
+        }
       }
 
       // Log de l'activité
       if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.logActivite("partage_histoire", { 
-          destinataire_type: type,
-          destinataire_id: id,
-          destinataire_prenom: prenom
-        });
+        try {
+          MonHistoire.core.auth.logActivite("partage_histoire", { 
+            destinataire_type: type,
+            destinataire_id: id,
+            destinataire_prenom: prenom,
+            notification_realtime: notificationRealtimeAjoutee
+          });
+        } catch (logError) {
+          MonHistoire.logger.error("Erreur lors du log de l'activité", logError);
+          // On continue même si le log de l'activité échoue
+        }
       }
 
-      this.fermerModalePartage();
+      // Fermer la modale et afficher le message de succès
+      fermerModaleAvecDelai();
       MonHistoire.showMessageModal(`Histoire partagée avec ${prenom} !`);
     } catch (error) {
       console.error("Erreur lors du partage :", error);
       MonHistoire.showMessageModal("Erreur lors du partage : " + error.message);
-      this.fermerModalePartage();
+      fermerModaleAvecDelai();
     }
   },
   
@@ -973,32 +1005,118 @@ MonHistoire.features.sharing = {
   
   // Configure l'écouteur de notifications en temps réel via Firebase Realtime Database
   configurerEcouteurNotificationsRealtime() {
+    // Stocker les références aux écouteurs pour pouvoir les détacher plus tard
+    if (!this.realtimeListeners) {
+      this.realtimeListeners = [];
+    } else {
+      // Détacher les écouteurs précédents
+      this.realtimeListeners.forEach(listener => {
+        if (listener && listener.ref && typeof listener.detach === 'function') {
+          try {
+            listener.detach();
+          } catch (e) {
+            console.warn("Erreur lors du détachement d'un écouteur Realtime:", e);
+          }
+        }
+      });
+      this.realtimeListeners = [];
+    }
+    
     try {
       const user = firebase.auth().currentUser;
       if (!user) {
         MonHistoire.logger.warning("Impossible de configurer l'écouteur de notifications Realtime: utilisateur non connecté");
+        
+        // Configurer un écouteur pour réessayer quand l'utilisateur se connecte
+        const authListener = firebase.auth().onAuthStateChanged(newUser => {
+          if (newUser) {
+            // Détacher cet écouteur pour éviter les appels multiples
+            authListener();
+            // Réessayer de configurer l'écouteur après un court délai
+            setTimeout(() => this.configurerEcouteurNotificationsRealtime(), 1000);
+          }
+        });
+        
         return;
       }
       
       // Vérifier si Firebase Realtime Database est disponible
-      if (!firebase.database || MonHistoire.state.realtimeDbAvailable === false) {
+      if (!firebase.database) {
         MonHistoire.logger.warning("Impossible de configurer l'écouteur de notifications Realtime: Firebase Realtime Database n'est pas disponible");
+        MonHistoire.state.realtimeDbAvailable = false;
+        return;
+      }
+      
+      // Vérifier la connexion à Firebase Realtime Database
+      const connectedRef = firebase.database().ref(".info/connected");
+      const connectedListener = connectedRef.on("value", (snap) => {
+        const isConnected = snap.val() === true;
+        MonHistoire.state.realtimeDbConnected = isConnected;
+        
+        if (isConnected && !this.realtimeListeners.length) {
+          // Si on vient de se connecter et qu'aucun écouteur n'est actif, configurer les écouteurs
+          setTimeout(() => this.configurerEcouteurNotificationsRealtime(), 500);
+        }
+      }, error => {
+        console.error("Erreur lors de la vérification de la connexion à Firebase Realtime Database:", error);
+        MonHistoire.state.realtimeDbConnected = false;
+      });
+      
+      // Ajouter l'écouteur de connexion à la liste
+      this.realtimeListeners.push({
+        ref: connectedRef,
+        detach: () => connectedRef.off("value", connectedListener)
+      });
+      
+      // Si la connexion n'est pas établie, ne pas continuer
+      if (MonHistoire.state.realtimeDbConnected === false) {
+        MonHistoire.logger.warning("Impossible de configurer l'écouteur de notifications Realtime: connexion inactive");
         return;
       }
       
       // Déterminer le chemin de l'écouteur selon le profil actif
+      if (!MonHistoire.state.profilActif) {
+        MonHistoire.state.profilActif = localStorage.getItem("profilActif")
+          ? JSON.parse(localStorage.getItem("profilActif"))
+          : { type: "parent" };
+      }
+      
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
       // Référence à la notification en temps réel
       const notificationsRef = firebase.database()
         .ref(`users/${user.uid}/notifications/${profilId}`);
       
+      // Créer un cache local pour éviter d'afficher plusieurs fois la même notification
+      if (!this.notificationsTraitees) {
+        this.notificationsTraitees = new Set();
+      }
+      
       // Configurer l'écouteur pour les nouvelles notifications
-      notificationsRef.on('child_added', (snapshot) => {
+      const childAddedListener = notificationsRef.on('child_added', (snapshot) => {
+        const notificationId = snapshot.key;
         const notification = snapshot.val();
         
+        // Vérifier si la notification a déjà été traitée
+        if (this.notificationsTraitees.has(notificationId)) {
+          return;
+        }
+        
+        // Ajouter la notification au cache
+        this.notificationsTraitees.add(notificationId);
+        
+        // Limiter la taille du cache (garder les 50 dernières notifications)
+        if (this.notificationsTraitees.size > 50) {
+          const iterator = this.notificationsTraitees.values();
+          this.notificationsTraitees.delete(iterator.next().value);
+        }
+        
         // Vérifier si la notification est valide
-        if (!notification || !notification.partageParPrenom) return;
+        if (!notification || !notification.partageParPrenom) {
+          // Supprimer les notifications invalides
+          snapshot.ref.remove();
+          return;
+        }
         
         // Vérifier si la notification n'est pas trop ancienne (moins de 5 minutes)
         const maintenant = Date.now();
@@ -1013,13 +1131,19 @@ MonHistoire.features.sharing = {
         }
         
         // Vérifier si la notification n'a pas été envoyée par le profil actif lui-même
-        if (notification.partageParProfil === profilId) return;
+        if (notification.partageParProfil === profilId) {
+          // Supprimer les notifications envoyées par soi-même
+          snapshot.ref.remove();
+          return;
+        }
         
         // Afficher la notification
         this.afficherNotificationPartage(notification.partageParPrenom, null);
         
         // Supprimer la notification après l'avoir affichée
-        snapshot.ref.remove();
+        snapshot.ref.remove().catch(error => {
+          console.warn("Erreur lors de la suppression de la notification:", error);
+        });
         
         // Rafraîchir la liste des histoires si on est sur la page "Mes histoires"
         if (MonHistoire.state.currentScreen === "mes-histoires" && 
@@ -1028,16 +1152,60 @@ MonHistoire.features.sharing = {
             MonHistoire.features.stories.management) {
           MonHistoire.features.stories.management.afficherHistoiresSauvegardees();
         }
+      }, error => {
+        console.error("Erreur lors de l'écoute des nouvelles notifications:", error);
+      });
+      
+      // Ajouter l'écouteur à la liste
+      this.realtimeListeners.push({
+        ref: notificationsRef,
+        detach: () => notificationsRef.off('child_added', childAddedListener)
       });
       
       // Configurer l'écouteur pour les erreurs
-      notificationsRef.on('child_changed', (snapshot) => {
+      const childChangedListener = notificationsRef.on('child_changed', (snapshot) => {
         // Rien à faire pour l'instant
+      }, error => {
+        console.error("Erreur lors de l'écoute des modifications de notifications:", error);
+      });
+      
+      // Ajouter l'écouteur à la liste
+      this.realtimeListeners.push({
+        ref: notificationsRef,
+        detach: () => notificationsRef.off('child_changed', childChangedListener)
+      });
+      
+      // Nettoyer les anciennes notifications au démarrage
+      notificationsRef.once('value', snapshot => {
+        if (snapshot.exists()) {
+          snapshot.forEach(childSnapshot => {
+            const notification = childSnapshot.val();
+            const maintenant = Date.now();
+            const tempsNotification = notification.timestamp || 0;
+            const differenceTemps = maintenant - tempsNotification;
+            const cinqMinutesEnMs = 5 * 60 * 1000;
+            
+            if (differenceTemps > cinqMinutesEnMs) {
+              childSnapshot.ref.remove().catch(error => {
+                console.warn("Erreur lors du nettoyage d'une ancienne notification:", error);
+              });
+            }
+          });
+        }
+      }).catch(error => {
+        console.warn("Erreur lors du nettoyage des anciennes notifications:", error);
       });
       
       MonHistoire.logger.info("Écouteur de notifications Realtime configuré avec succès");
     } catch (error) {
       MonHistoire.logger.error("Erreur lors de la configuration de l'écouteur de notifications Realtime", error);
+      
+      // Planifier une nouvelle tentative après un délai
+      setTimeout(() => {
+        if (!this.realtimeListeners || this.realtimeListeners.length === 0) {
+          this.configurerEcouteurNotificationsRealtime();
+        }
+      }, 10000); // Réessayer après 10 secondes
     }
   },
   
