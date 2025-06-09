@@ -14,6 +14,7 @@ MonHistoire.features.sharing = {
   histoiresPartageesListener: null, // Pour stocker la référence à l'écouteur en temps réel
   histoireAPartager: null, // Pour stocker temporairement l'histoire à partager
   histoireNotifieeActuelle: null, // Pour stocker la référence à l'histoire en cours de notification
+  notificationsNonLues: {}, // Pour stocker le nombre de notifications non lues par profil
   
   // Initialisation du module
   init() {
@@ -48,6 +49,9 @@ MonHistoire.features.sharing = {
     }
 
     try {
+      // Initialise le compteur de notifications non lues pour le profil actif
+      this.initialiserCompteurNotifications(user);
+      
       // Vérifie d'abord les histoires partagées pour le profil actif
       this.verifierHistoiresPartageesProfilActif(user);
       
@@ -55,6 +59,60 @@ MonHistoire.features.sharing = {
       this.configurerEcouteurHistoiresPartagees();
     } catch (error) {
       console.error("Erreur lors de la vérification des histoires partagées:", error);
+    }
+  },
+  
+  // Initialise le compteur de notifications non lues pour le profil actif
+  async initialiserCompteurNotifications(user) {
+    try {
+      // Détermine la collection à vérifier selon le profil actif
+      let storiesRef;
+      if (MonHistoire.state.profilActif.type === "parent") {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      } else {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .doc(MonHistoire.state.profilActif.id)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      }
+
+      // Compte le nombre de notifications non lues
+      const snapshot = await storiesRef.get();
+      this.notificationsNonLues[MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id] = snapshot.size;
+      
+      // Si le profil actif est le parent, compte aussi les notifications non lues pour chaque profil enfant
+      if (MonHistoire.state.profilActif.type === "parent") {
+        const profilsEnfantsSnapshot = await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .get();
+          
+        for (const profilDoc of profilsEnfantsSnapshot.docs) {
+          const profilId = profilDoc.id;
+          const storiesEnfantRef = firebase.firestore()
+            .collection("users")
+            .doc(user.uid)
+            .collection("profils_enfant")
+            .doc(profilId)
+            .collection("stories")
+            .where("nouvelleHistoire", "==", true);
+            
+          const storiesEnfantSnapshot = await storiesEnfantRef.get();
+          this.notificationsNonLues[profilId] = storiesEnfantSnapshot.size;
+        }
+      }
+      
+      console.log("Compteur de notifications initialisé:", this.notificationsNonLues);
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
     }
   },
   
@@ -87,7 +145,13 @@ MonHistoire.features.sharing = {
         const doc = snapshot.docs[0];
         const data = doc.data();
         
-        if (data.partageParPrenom) {
+        // Vérifie si l'histoire n'a pas été partagée par le profil actif lui-même
+        // (sauf pour le profil parent qui doit voir toutes les notifications)
+        const estPartageParProfilActif = 
+          MonHistoire.state.profilActif.type !== "parent" && 
+          data.partageParProfil === MonHistoire.state.profilActif.id;
+        
+        if (data.partageParPrenom && !estPartageParProfilActif) {
           // Affiche la notification sans marquer l'histoire comme vue immédiatement
           this.afficherNotificationPartage(data.partageParPrenom, doc.ref);
         }
@@ -159,7 +223,17 @@ MonHistoire.features.sharing = {
         if (change.type === "added") {
           const data = change.doc.data();
           
-          if (data.partageParPrenom) {
+          // Vérifie si l'histoire n'a pas été partagée par le profil actif lui-même
+          // (sauf pour le profil parent qui doit voir toutes les notifications)
+          const estPartageParProfilActif = 
+            MonHistoire.state.profilActif.type !== "parent" && 
+            data.partageParProfil === MonHistoire.state.profilActif.id;
+          
+          if (data.partageParPrenom && !estPartageParProfilActif) {
+            // Incrémente le compteur de notifications non lues
+            const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+            this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+            
             // Affiche la notification sans marquer l'histoire comme vue immédiatement
             this.afficherNotificationPartage(data.partageParPrenom, change.doc.ref);
           }
@@ -300,8 +374,39 @@ MonHistoire.features.sharing = {
     
     // Marque l'histoire comme vue si demandé et si une histoire est en cours de notification
     if (marquerCommeVue && this.histoireNotifieeActuelle) {
-      this.histoireNotifieeActuelle.update({ nouvelleHistoire: false })
-        .catch(error => console.error("Erreur lors du marquage de l'histoire comme vue:", error));
+      // Récupère l'ID du profil actif
+      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+      
+      // Décrémente le compteur de notifications non lues
+      if (this.notificationsNonLues[profilId] && this.notificationsNonLues[profilId] > 0) {
+        this.notificationsNonLues[profilId]--;
+      }
+      
+      // Met à jour le document Firestore
+      this.histoireNotifieeActuelle.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          
+          // Initialise vueParProfils s'il n'existe pas
+          const vueParProfils = data.vueParProfils || [];
+          
+          // Ajoute le profil actif à la liste des profils ayant vu l'histoire
+          if (!vueParProfils.includes(profilId)) {
+            vueParProfils.push(profilId);
+          }
+          
+          // Détermine si l'histoire doit être marquée comme vue
+          // (si tous les destinataires l'ont vue)
+          const nouvelleHistoire = vueParProfils.length < 2; // Simplifié pour l'instant
+          
+          // Met à jour le document
+          this.histoireNotifieeActuelle.update({ 
+            nouvelleHistoire: nouvelleHistoire,
+            vueParProfils: vueParProfils,
+            vueLe: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(error => console.error("Erreur lors du marquage de l'histoire comme vue:", error));
+        }
+      }).catch(error => console.error("Erreur lors de la récupération de l'histoire:", error));
       
       // Réinitialise la référence
       this.histoireNotifieeActuelle = null;
@@ -560,6 +665,18 @@ MonHistoire.features.sharing = {
         partageParPrenom = MonHistoire.state.profilActif.prenom;
       }
 
+      // Détermine l'ID du profil qui partage
+      const partageParProfil = MonHistoire.state.profilActif.type === "parent" 
+        ? "parent" 
+        : MonHistoire.state.profilActif.id;
+      
+      // Détermine l'ID du profil destinataire
+      const destinataireProfil = type === "parent" ? "parent" : id;
+      
+      // Initialise vueParProfils avec le profil qui partage
+      // (pour éviter qu'il ne reçoive une notification pour son propre partage)
+      const vueParProfils = [partageParProfil];
+
       // Ajoute l'histoire partagée
       await targetRef.add({
         titre: this.histoireAPartager.titre,
@@ -571,8 +688,11 @@ MonHistoire.features.sharing = {
         contenu: this.histoireAPartager.contenu || "",
         images: this.histoireAPartager.images || [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        partageParProfil: MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id,
+        partageParProfil: partageParProfil,
         partageParPrenom: partageParPrenom,
+        destinataireProfil: destinataireProfil,
+        destinatairePrenom: prenom,
+        vueParProfils: vueParProfils,
         nouvelleHistoire: true // Marque l'histoire comme nouvelle pour la notification
       });
 

@@ -63,7 +63,7 @@ MonHistoire.core.profiles = {
       else if (typeof MonHistoire.features.sharing.histoiresPartageesListener === 'function') {
         MonHistoire.features.sharing.histoiresPartageesListener();
       }
-      MonHistoire.features.sharing.histoiresPartageesListener = null;
+      MonHistoire.features.sharing.histoiresPartageesListener = [];
     }
     
     // Met à jour le profil actif
