@@ -818,6 +818,34 @@ button::-moz-focus-inner,
   touch-action: none; /* Pour gérer manuellement les événements tactiles */
 }
 
+/* Indicateur de notification (petit badge rouge) */
+.notification-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 0 5px;
+  z-index: 10;
+}
+
+/* Style spécifique pour l'indicateur dans la liste des profils */
+.profile-item .notification-indicator {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
 .notification.show {
   top: 0; /* Animation vers le bas */
 }

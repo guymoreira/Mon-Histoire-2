@@ -29,20 +29,8 @@ MonHistoire.config = {
     // Firebase est déjà initialisé dans index.html
     // Cette fonction est conservée pour d'éventuelles configurations supplémentaires
     
-    // Configuration de Firestore avec la nouvelle méthode de cache
-    const db = firebase.firestore();
-    
-    try {
-      // Utilisation de la nouvelle méthode de cache recommandée
-      db.settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true // Évite l'avertissement "You are overriding the original host"
-      });
-      
-      console.log("Configuration Firestore avec cache activée");
-    } catch (err) {
-      console.warn("Erreur lors de la configuration du cache Firestore:", err);
-    }
+    // Nous ne configurons pas Firestore ici car c'est déjà fait dans index.html
+    console.log("Vérification de la configuration Firebase");
     
     // Configuration de Firebase Realtime Database
     try {

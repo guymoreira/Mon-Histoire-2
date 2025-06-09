@@ -13,6 +13,30 @@ MonHistoire.ui = {
     
     // Initialise le long press pour les appareils mobiles
     this.bindLongPress();
+    
+    // Initialise les écouteurs pour les notifications
+    this.initNotificationListeners();
+  },
+  
+  // Initialise les écouteurs pour les notifications
+  initNotificationListeners() {
+    // Écouteur pour les changements de profil
+    MonHistoire.events.on("profilChange", (nouveauProfil) => {
+      // Mettre à jour l'indicateur de notification
+      if (MonHistoire.features && MonHistoire.features.sharing) {
+        setTimeout(() => {
+          MonHistoire.features.sharing.mettreAJourIndicateurNotification();
+        }, 500);
+      }
+    });
+    
+    // Écouteur pour les nouvelles notifications
+    MonHistoire.events.on("nouvelleNotification", (data) => {
+      // Mettre à jour l'indicateur de notification
+      if (MonHistoire.features && MonHistoire.features.sharing) {
+        MonHistoire.features.sharing.mettreAJourIndicateurNotification();
+      }
+    });
   },
   
   // Fonction utilitaire pour protéger les boutons contre les clics multiples

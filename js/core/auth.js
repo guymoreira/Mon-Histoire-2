@@ -260,9 +260,11 @@ MonHistoire.core.auth = {
         enfantsSnap.forEach(docEnfant => {
           const data = docEnfant.data();
           const btn = document.createElement("button");
-          btn.className = "button button-blue";
+          btn.className = "button button-blue profile-item";
           btn.textContent = data.prenom;
           btn.style.marginBottom = "0.75em";
+          btn.style.position = "relative"; // Pour positionner l'indicateur de notification
+          btn.dataset.profilId = docEnfant.id; // Ajouter l'ID du profil comme attribut data
           btn.onclick = () => {
             // Utiliser le module profiles pour changer de profil
             if (MonHistoire.core && MonHistoire.core.profiles) {
@@ -284,6 +286,13 @@ MonHistoire.core.auth = {
         });
       } catch (e) {
         console.error("Erreur lecture profils enfants :", e);
+      }
+      
+      // Mettre à jour les indicateurs de notification
+      if (MonHistoire.features && MonHistoire.features.sharing) {
+        setTimeout(() => {
+          MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe();
+        }, 100);
       }
 
       // Afficher les boutons "Mon Compte" et "Déconnecter"
@@ -312,9 +321,11 @@ MonHistoire.core.auth = {
       }
       
       const btnParent = document.createElement("button");
-      btnParent.className = "button button-blue";
+      btnParent.className = "button button-blue profile-item";
       btnParent.textContent = prenomParent;
       btnParent.style.marginBottom = "0.75em";
+      btnParent.style.position = "relative"; // Pour positionner l'indicateur de notification
+      btnParent.dataset.profilId = "parent"; // Ajouter l'ID du profil comme attribut data
       btnParent.onclick = () => {
         // Fermer d'abord la modale de sélection de profil
         this.fermerLogoutModal();
@@ -337,9 +348,11 @@ MonHistoire.core.auth = {
           if (docEnfant.id === MonHistoire.state.profilActif.id) return;
           
           const btn = document.createElement("button");
-          btn.className = "button button-blue";
+          btn.className = "button button-blue profile-item";
           btn.textContent = data.prenom;
           btn.style.marginBottom = "0.75em";
+          btn.style.position = "relative"; // Pour positionner l'indicateur de notification
+          btn.dataset.profilId = docEnfant.id; // Ajouter l'ID du profil comme attribut data
           btn.onclick = () => {
             // Utiliser le module profiles pour changer de profil
             if (MonHistoire.core && MonHistoire.core.profiles) {
@@ -361,6 +374,13 @@ MonHistoire.core.auth = {
         });
       } catch (e) {
         console.error("Erreur lecture autres profils enfants :", e);
+      }
+      
+      // Mettre à jour les indicateurs de notification
+      if (MonHistoire.features && MonHistoire.features.sharing) {
+        setTimeout(() => {
+          MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe();
+        }, 100);
       }
 
       // Masquer "Mon Compte" et "Déconnecter" quand un enfant est actif

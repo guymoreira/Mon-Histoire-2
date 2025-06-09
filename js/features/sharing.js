@@ -162,9 +162,24 @@ MonHistoire.features.sharing = {
           MonHistoire.state.profilActif.type !== "parent" && 
           data.partageParProfil === MonHistoire.state.profilActif.id;
         
+        // Vérifier si cette notification a déjà été affichée récemment
+        const notificationId = doc.id;
+        if (!this.notificationsTraitees) {
+          this.notificationsTraitees = new Set();
+        }
+        
+        // Ne pas afficher automatiquement la notification lors du changement de profil
+        // Juste mettre à jour le compteur pour l'interface
         if (data.partageParPrenom && !estPartageParProfilActif) {
-          // Affiche la notification sans marquer l'histoire comme vue immédiatement
-          this.afficherNotificationPartage(data.partageParPrenom, doc.ref);
+          // Ajouter l'ID à la liste des notifications traitées
+          this.notificationsTraitees.add(notificationId);
+          
+          // Mettre à jour le compteur de notifications
+          const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+          this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+          
+          // Log pour debug
+          console.log(`Notification disponible pour ${profilId}: ${data.partageParPrenom} a partagé une histoire`);
         }
       }
     });
@@ -281,8 +296,8 @@ MonHistoire.features.sharing = {
 
       // Parcourt les documents ajoutés ou modifiés
       snapshot.docChanges().forEach(change => {
-        // Ne traite que les documents ajoutés
-        if (change.type === "added") {
+        // Ne traite que les documents ajoutés ou modifiés
+        if (change.type === "added" || change.type === "modified") {
           const data = change.doc.data();
           
           // Vérifie si l'histoire n'a pas été partagée par le profil actif lui-même
@@ -291,10 +306,23 @@ MonHistoire.features.sharing = {
             MonHistoire.state.profilActif.type !== "parent" && 
             data.partageParProfil === MonHistoire.state.profilActif.id;
           
-          if (data.partageParPrenom && !estPartageParProfilActif) {
+          // Vérifier si cette notification a déjà été affichée récemment
+          const notificationId = change.doc.id;
+          if (!this.notificationsTraitees) {
+            this.notificationsTraitees = new Set();
+          }
+          
+          // Si la notification n'a pas déjà été traitée et n'est pas partagée par le profil actif
+          if (data.partageParPrenom && !estPartageParProfilActif && !this.notificationsTraitees.has(notificationId)) {
+            // Ajouter l'ID à la liste des notifications traitées
+            this.notificationsTraitees.add(notificationId);
+            
             // Incrémente le compteur de notifications non lues
             const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
             this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+            
+            // Mettre à jour l'indicateur de notification dans l'interface utilisateur
+            this.mettreAJourIndicateurNotification();
             
             // Affiche la notification sans marquer l'histoire comme vue immédiatement
             this.afficherNotificationPartage(data.partageParPrenom, change.doc.ref);
@@ -370,12 +398,38 @@ MonHistoire.features.sharing = {
       if (changesCount === 0) return;
       
       snapshot.docChanges().forEach(change => {
-        if (change.type === "added") {
+        if (change.type === "added" || change.type === "modified") {
           const data = change.doc.data();
           
-          if (data.partageParPrenom) {
-            // Affiche la notification
-            this.afficherNotificationPartage(data.partageParPrenom, change.doc.ref);
+          // Vérifier si cette histoire est destinée au profil actif
+          const destinataireProfil = data.destinataireProfil;
+          const profilActifId = MonHistoire.state.profilActif.id;
+          
+          // Si l'histoire est destinée au profil actif ou à tous les profils enfants
+          if (data.partageParPrenom && 
+              (destinataireProfil === profilActifId || destinataireProfil === "tous_enfants")) {
+            
+            // Vérifier si cette notification a déjà été affichée récemment
+            const notificationId = change.doc.id;
+            if (!this.notificationsTraitees) {
+              this.notificationsTraitees = new Set();
+            }
+            
+            // Si la notification n'a pas déjà été traitée
+            if (!this.notificationsTraitees.has(notificationId)) {
+              // Ajouter l'ID à la liste des notifications traitées
+              this.notificationsTraitees.add(notificationId);
+              
+              // Incrémente le compteur de notifications non lues
+              const profilId = MonHistoire.state.profilActif.id;
+              this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+              
+              // Mettre à jour l'indicateur de notification dans l'interface utilisateur
+              this.mettreAJourIndicateurNotification();
+              
+              // Affiche la notification
+              this.afficherNotificationPartage(data.partageParPrenom, change.doc.ref);
+            }
           }
         }
       });
@@ -1023,9 +1077,16 @@ MonHistoire.features.sharing = {
     }
     
     try {
+      // Vérifier si Firebase est disponible
+      if (typeof firebase === 'undefined') {
+        console.warn("Firebase n'est pas disponible, impossible de configurer l'écouteur de notifications");
+        return;
+      }
+      
       const user = firebase.auth().currentUser;
       if (!user) {
-        MonHistoire.logger.warning("Impossible de configurer l'écouteur de notifications Realtime: utilisateur non connecté");
+        // Utiliser un log moins alarmant car c'est un cas normal au démarrage
+        console.log("Écouteur de notifications en attente: utilisateur non connecté");
         
         // Configurer un écouteur pour réessayer quand l'utilisateur se connecte
         const authListener = firebase.auth().onAuthStateChanged(newUser => {
@@ -1083,7 +1144,7 @@ MonHistoire.features.sharing = {
       
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
-      // Référence à la notification en temps réel
+      // Référence à la notification en temps réel pour le profil actif
       const notificationsRef = firebase.database()
         .ref(`users/${user.uid}/notifications/${profilId}`);
       
@@ -1137,6 +1198,12 @@ MonHistoire.features.sharing = {
           return;
         }
         
+        // Incrémenter le compteur de notifications non lues pour ce profil
+        this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+        
+        // Mettre à jour l'indicateur de notification
+        this.mettreAJourIndicateurNotification();
+        
         // Afficher la notification
         this.afficherNotificationPartage(notification.partageParPrenom, null);
         
@@ -1162,18 +1229,10 @@ MonHistoire.features.sharing = {
         detach: () => notificationsRef.off('child_added', childAddedListener)
       });
       
-      // Configurer l'écouteur pour les erreurs
-      const childChangedListener = notificationsRef.on('child_changed', (snapshot) => {
-        // Rien à faire pour l'instant
-      }, error => {
-        console.error("Erreur lors de l'écoute des modifications de notifications:", error);
-      });
-      
-      // Ajouter l'écouteur à la liste
-      this.realtimeListeners.push({
-        ref: notificationsRef,
-        detach: () => notificationsRef.off('child_changed', childChangedListener)
-      });
+      // Si on est sur le profil parent, configurer également des écouteurs pour tous les profils enfants
+      if (MonHistoire.state.profilActif.type === "parent") {
+        this.configurerEcouteursNotificationsProfilsEnfants(user);
+      }
       
       // Nettoyer les anciennes notifications au démarrage
       notificationsRef.once('value', snapshot => {
@@ -1209,11 +1268,197 @@ MonHistoire.features.sharing = {
     }
   },
   
+  // Configure des écouteurs de notifications pour tous les profils enfants (quand on est sur le profil parent)
+  async configurerEcouteursNotificationsProfilsEnfants(user) {
+    try {
+      // Récupérer tous les profils enfants
+      const profilsEnfantsSnapshot = await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .get();
+      
+      // Pour chaque profil enfant, configurer un écouteur de notifications
+      for (const profilDoc of profilsEnfantsSnapshot.docs) {
+        const profilId = profilDoc.id;
+        const profilData = profilDoc.data();
+        
+        // Référence aux notifications pour ce profil enfant
+        const notificationsEnfantRef = firebase.database()
+          .ref(`users/${user.uid}/notifications/${profilId}`);
+        
+        // Configurer l'écouteur pour les nouvelles notifications
+        const childAddedListener = notificationsEnfantRef.on('child_added', (snapshot) => {
+          const notificationId = snapshot.key;
+          const notification = snapshot.val();
+          
+          // Vérifier si la notification a déjà été traitée
+          if (this.notificationsTraitees.has(notificationId)) {
+            return;
+          }
+          
+          // Ajouter la notification au cache
+          this.notificationsTraitees.add(notificationId);
+          
+          // Vérifier si la notification est valide
+          if (!notification || !notification.partageParPrenom) {
+            // Supprimer les notifications invalides
+            snapshot.ref.remove();
+            return;
+          }
+          
+          // Vérifier si la notification n'est pas trop ancienne
+          const maintenant = Date.now();
+          const tempsNotification = notification.timestamp || maintenant;
+          const differenceTemps = maintenant - tempsNotification;
+          const cinqMinutesEnMs = 5 * 60 * 1000;
+          
+          if (differenceTemps > cinqMinutesEnMs) {
+            // Supprimer les notifications trop anciennes
+            snapshot.ref.remove();
+            return;
+          }
+          
+          // Incrémenter le compteur de notifications non lues pour ce profil enfant
+          this.notificationsNonLues[profilId] = (this.notificationsNonLues[profilId] || 0) + 1;
+          
+          // Mettre à jour l'indicateur de notification dans la liste des profils
+          this.mettreAJourIndicateurNotificationProfilsListe();
+          
+          // Supprimer la notification après l'avoir traitée
+          snapshot.ref.remove().catch(error => {
+            console.warn(`Erreur lors de la suppression de la notification pour le profil ${profilId}:`, error);
+          });
+          
+        }, error => {
+          console.error(`Erreur lors de l'écoute des notifications pour le profil enfant ${profilId}:`, error);
+        });
+        
+        // Ajouter l'écouteur à la liste
+        this.realtimeListeners.push({
+          ref: notificationsEnfantRef,
+          detach: () => notificationsEnfantRef.off('child_added', childAddedListener)
+        });
+        
+        // Nettoyer les anciennes notifications au démarrage
+        notificationsEnfantRef.once('value', snapshot => {
+          if (snapshot.exists()) {
+            snapshot.forEach(childSnapshot => {
+              const notification = childSnapshot.val();
+              const maintenant = Date.now();
+              const tempsNotification = notification.timestamp || 0;
+              const differenceTemps = maintenant - tempsNotification;
+              const cinqMinutesEnMs = 5 * 60 * 1000;
+              
+              if (differenceTemps > cinqMinutesEnMs) {
+                childSnapshot.ref.remove().catch(error => {
+                  console.warn(`Erreur lors du nettoyage d'une ancienne notification pour le profil ${profilId}:`, error);
+                });
+              }
+            });
+          }
+        }).catch(error => {
+          console.warn(`Erreur lors du nettoyage des anciennes notifications pour le profil ${profilId}:`, error);
+        });
+      }
+      
+      MonHistoire.logger.info(`Écouteurs de notifications configurés pour ${profilsEnfantsSnapshot.size} profils enfants`);
+    } catch (error) {
+      MonHistoire.logger.error("Erreur lors de la configuration des écouteurs de notifications pour les profils enfants", error);
+    }
+  },
+  
   // Vérifie l'état de la connexion
   isConnected() {
     const isNetworkConnected = navigator.onLine;
     const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
     return isNetworkConnected && isFirebaseConnected && MonHistoire.state.isConnected;
+  },
+  
+  // Met à jour l'indicateur de notification dans l'interface utilisateur
+  mettreAJourIndicateurNotification() {
+    // Récupère l'ID du profil actif
+    const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+    
+    // Récupère le nombre de notifications non lues pour ce profil
+    const nbNotifs = this.notificationsNonLues[profilId] || 0;
+    
+    // Récupère l'élément d'icône utilisateur (où on affichera l'indicateur)
+    const userIcon = document.getElementById("user-icon");
+    
+    // Si l'élément existe et qu'il y a des notifications non lues
+    if (userIcon && nbNotifs > 0) {
+      // Vérifie si l'indicateur existe déjà
+      let indicateur = userIcon.querySelector(".notification-indicator");
+      
+      // Si l'indicateur n'existe pas, on le crée
+      if (!indicateur) {
+        indicateur = document.createElement("span");
+        indicateur.className = "notification-indicator";
+        userIcon.appendChild(indicateur);
+      }
+      
+      // Met à jour le contenu de l'indicateur
+      indicateur.textContent = nbNotifs > 9 ? "9+" : nbNotifs.toString();
+      indicateur.style.display = "flex";
+    } 
+    // Si l'élément existe mais qu'il n'y a pas de notifications non lues
+    else if (userIcon) {
+      // Récupère l'indicateur s'il existe
+      const indicateur = userIcon.querySelector(".notification-indicator");
+      
+      // Si l'indicateur existe, on le masque
+      if (indicateur) {
+        indicateur.style.display = "none";
+      }
+    }
+    
+    // Mettre à jour également l'indicateur dans la liste des profils du modal de déconnexion
+    this.mettreAJourIndicateurNotificationProfilsListe();
+    
+    // Émettre un événement pour informer les autres modules
+    MonHistoire.events.emit("notificationUpdate", {
+      profilId: profilId,
+      count: nbNotifs
+    });
+  },
+  
+  // Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
+  mettreAJourIndicateurNotificationProfilsListe() {
+    // Récupère la liste des profils dans le modal de déconnexion
+    const profilsList = document.getElementById("logout-profiles-list");
+    
+    // Si la liste n'existe pas, on ne fait rien
+    if (!profilsList) return;
+    
+    // Parcourt tous les profils de la liste
+    const profilItems = profilsList.querySelectorAll(".profile-item");
+    profilItems.forEach(item => {
+      // Récupère l'ID du profil
+      const profilId = item.dataset.profilId;
+      
+      // Si l'ID existe et qu'il y a des notifications non lues pour ce profil
+      if (profilId && this.notificationsNonLues[profilId] && this.notificationsNonLues[profilId] > 0) {
+        // Récupère ou crée l'indicateur de notification
+        let indicateur = item.querySelector(".notification-indicator");
+        
+        if (!indicateur) {
+          indicateur = document.createElement("span");
+          indicateur.className = "notification-indicator";
+          item.appendChild(indicateur);
+        }
+        
+        // Met à jour le contenu de l'indicateur
+        indicateur.textContent = this.notificationsNonLues[profilId] > 9 ? "9+" : this.notificationsNonLues[profilId].toString();
+        indicateur.style.display = "flex";
+      } else {
+        // Si pas de notifications, masque l'indicateur s'il existe
+        const indicateur = item.querySelector(".notification-indicator");
+        if (indicateur) {
+          indicateur.style.display = "none";
+        }
+      }
+    });
   }
 };
 
