@@ -400,6 +400,13 @@ MonHistoire.core.profiles = {
                 profilType: profil.type,
                 profilPrenom: profil.type === "parent" ? "parent" : profil.prenom
               });
+              
+              // Configurer l'écouteur de notifications en temps réel pour ce profil
+              if (MonHistoire.features && MonHistoire.features.sharing) {
+                setTimeout(() => {
+                  MonHistoire.features.sharing.configurerEcouteurNotificationsRealtime();
+                }, 500);
+              }
             }
           });
         } catch (dbError) {
