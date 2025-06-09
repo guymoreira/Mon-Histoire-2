@@ -15,6 +15,43 @@ MonHistoire.ui = {
     this.bindLongPress();
   },
   
+  // Fonction utilitaire pour protéger les boutons contre les clics multiples
+  protegerBouton(id, callback) {
+    const bouton = document.getElementById(id);
+    if (!bouton) return;
+    
+    // Remplace l'écouteur existant par un écouteur protégé
+    bouton.removeEventListener("click", bouton._clickHandler); // Supprime l'ancien écouteur si présent
+    
+    // Crée un nouvel écouteur protégé
+    bouton._clickHandler = async (event) => {
+      // Si le bouton est déjà en cours de traitement, ignore le clic
+      if (bouton.dataset.processing === "true") {
+        console.log(`Clic ignoré sur ${id} - traitement en cours`);
+        return;
+      }
+      
+      // Marque le bouton comme étant en cours de traitement
+      bouton.dataset.processing = "true";
+      
+      try {
+        // Exécute le callback (qui peut être asynchrone)
+        await callback(event);
+      } catch (error) {
+        console.error(`Erreur lors du traitement du clic sur ${id}:`, error);
+      } finally {
+        // Réinitialise l'état du bouton après un court délai
+        // Le délai empêche les clics accidentels trop rapprochés
+        setTimeout(() => {
+          bouton.dataset.processing = "false";
+        }, 500); // 500ms de protection
+      }
+    };
+    
+    // Ajoute le nouvel écouteur protégé
+    bouton.addEventListener("click", bouton._clickHandler);
+  },
+  
   // Attache les gestionnaires d'événements
   bindEvents() {
     // Boutons de navigation
@@ -56,8 +93,8 @@ MonHistoire.ui = {
       }
     });
     
-    // Bouton Générer Histoire
-    document.getElementById("btn-generer")?.addEventListener("click", () => {
+    // Bouton Générer Histoire (protégé contre les clics multiples)
+    this.protegerBouton("btn-generer", () => {
       if (MonHistoire.features && 
           MonHistoire.features.stories && 
           MonHistoire.features.stories.generator) {
@@ -65,8 +102,8 @@ MonHistoire.ui = {
       }
     });
     
-    // Bouton Sauvegarder Histoire
-    document.getElementById("btn-sauvegarde")?.addEventListener("click", () => {
+    // Bouton Sauvegarder Histoire (protégé contre les clics multiples)
+    this.protegerBouton("btn-sauvegarde", () => {
       if (MonHistoire.features && 
           MonHistoire.features.stories && 
           MonHistoire.features.stories.management) {
@@ -74,29 +111,29 @@ MonHistoire.ui = {
       }
     });
     
-    // Bouton Audio
-    document.getElementById("btn-audio")?.addEventListener("click", () => {
+    // Bouton Audio (protégé contre les clics multiples)
+    this.protegerBouton("btn-audio", () => {
       if (MonHistoire.features && MonHistoire.features.audio) {
         MonHistoire.features.audio.gererClicBoutonAudio();
       }
     });
     
-    // Bouton Export PDF
-    document.getElementById("btn-export-pdf")?.addEventListener("click", () => {
+    // Bouton Export PDF (protégé contre les clics multiples)
+    this.protegerBouton("btn-export-pdf", () => {
       if (MonHistoire.features && MonHistoire.features.export) {
         MonHistoire.features.export.exporterHistoirePDF();
       }
     });
     
-    // Bouton Partage
-    document.getElementById("btn-partage")?.addEventListener("click", () => {
+    // Bouton Partage (protégé contre les clics multiples)
+    this.protegerBouton("btn-partage", () => {
       if (MonHistoire.features && MonHistoire.features.sharing) {
         MonHistoire.features.sharing.ouvrirModalePartage();
       }
     });
     
-    // Bouton Fermer Modale Partage
-    document.getElementById("btn-fermer-partage")?.addEventListener("click", () => {
+    // Bouton Fermer Modale Partage (protégé contre les clics multiples)
+    this.protegerBouton("btn-fermer-partage", () => {
       if (MonHistoire.features && MonHistoire.features.sharing) {
         MonHistoire.features.sharing.fermerModalePartage();
       }

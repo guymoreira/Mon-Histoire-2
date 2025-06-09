@@ -288,21 +288,8 @@ MonHistoire.features.sharing = {
   
   // Initialise les écouteurs d'événements pour le partage
   initPartageListeners() {
-    // Bouton de partage dans l'écran de résultat
-    const btnPartage = document.getElementById("btn-partage");
-    if (btnPartage) {
-      btnPartage.addEventListener("click", () => {
-        this.ouvrirModalePartage();
-      });
-    }
-    
-    // Bouton de fermeture de la modale de partage
-    const btnFermerPartage = document.getElementById("btn-fermer-partage");
-    if (btnFermerPartage) {
-      btnFermerPartage.addEventListener("click", () => {
-        this.fermerModalePartage();
-      });
-    }
+    // Les écouteurs pour les boutons de partage et de fermeture de modale
+    // sont centralisés dans ui.js pour éviter les doublons
   },
   
   // Ouvre la modale de partage et affiche la liste des profils disponibles
