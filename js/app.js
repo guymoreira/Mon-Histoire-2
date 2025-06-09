@@ -212,19 +212,55 @@ MonHistoire.init = function() {
   });
   
   // Configurer l'écouteur de connexion Firebase
-  firebase.database().ref('.info/connected').on('value', (snapshot) => {
-    const isConnected = snapshot.val();
-    const previousState = MonHistoire.state.isConnected;
-    MonHistoire.state.isConnected = isConnected;
-    
-    if (isConnected && !previousState) {
-      // Reconnexion
-      MonHistoire.handleReconnection();
-    } else if (!isConnected && previousState) {
-      // Déconnexion
-      MonHistoire.handleDisconnection();
+  try {
+    if (firebase.database) {
+      firebase.database().ref('.info/connected').on('value', (snapshot) => {
+        const isConnected = snapshot.val();
+        const previousState = MonHistoire.state.isConnected;
+        MonHistoire.state.isConnected = isConnected;
+        
+        if (isConnected && !previousState) {
+          // Reconnexion
+          MonHistoire.handleReconnection();
+        } else if (!isConnected && previousState) {
+          // Déconnexion
+          MonHistoire.handleDisconnection();
+        }
+      });
+    } else {
+      console.warn("Firebase Realtime Database n'est pas disponible, utilisation du mode de détection de connexion basique");
+      // Utiliser les événements online/offline du navigateur comme fallback
+      window.addEventListener('online', () => {
+        if (!MonHistoire.state.isConnected) {
+          MonHistoire.state.isConnected = true;
+          MonHistoire.handleReconnection();
+        }
+      });
+      
+      window.addEventListener('offline', () => {
+        if (MonHistoire.state.isConnected) {
+          MonHistoire.state.isConnected = false;
+          MonHistoire.handleDisconnection();
+        }
+      });
     }
-  });
+  } catch (error) {
+    console.warn("Erreur lors de la configuration de l'écouteur de connexion Firebase:", error);
+    // Utiliser les événements online/offline du navigateur comme fallback
+    window.addEventListener('online', () => {
+      if (!MonHistoire.state.isConnected) {
+        MonHistoire.state.isConnected = true;
+        MonHistoire.handleReconnection();
+      }
+    });
+    
+    window.addEventListener('offline', () => {
+      if (MonHistoire.state.isConnected) {
+        MonHistoire.state.isConnected = false;
+        MonHistoire.handleDisconnection();
+      }
+    });
+  }
   
 // Initialiser les modules core
   console.log("[DEBUG] Initialisation des modules core");

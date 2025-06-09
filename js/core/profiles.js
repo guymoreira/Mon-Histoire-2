@@ -344,31 +344,40 @@ MonHistoire.core.profiles = {
         isConnected: MonHistoire.state.isConnected
       }, { merge: true });
       
-      // Configurer la suppression automatique à la déconnexion
-      const connectedRef = firebase.database().ref(".info/connected");
-      connectedRef.on("value", (snap) => {
-        if (snap.val() === true) {
-          // Nous sommes connectés
-          const onlineStatusRef = firebase.database()
-            .ref(`users/${user.uid}/online/${deviceId}`);
-          
-          // Quand nous nous déconnectons, mettre à jour le statut
-          onlineStatusRef.onDisconnect().update({
-            isConnected: false,
-            lastDisconnect: firebase.database.ServerValue.TIMESTAMP,
-            profilId: profilId
+      // Vérifier si firebase.database est disponible
+      if (firebase.database) {
+        try {
+          // Configurer la suppression automatique à la déconnexion
+          const connectedRef = firebase.database().ref(".info/connected");
+          connectedRef.on("value", (snap) => {
+            if (snap.val() === true) {
+              // Nous sommes connectés
+              const onlineStatusRef = firebase.database()
+                .ref(`users/${user.uid}/online/${deviceId}`);
+              
+              // Quand nous nous déconnectons, mettre à jour le statut
+              onlineStatusRef.onDisconnect().update({
+                isConnected: false,
+                lastDisconnect: firebase.database.ServerValue.TIMESTAMP,
+                profilId: profilId
+              });
+              
+              // Mettre à jour le statut en ligne
+              onlineStatusRef.update({
+                isConnected: true,
+                lastConnect: firebase.database.ServerValue.TIMESTAMP,
+                profilId: profilId,
+                deviceId: deviceId,
+                userAgent: navigator.userAgent
+              });
+            }
           });
-          
-          // Mettre à jour le statut en ligne
-          onlineStatusRef.update({
-            isConnected: true,
-            lastConnect: firebase.database.ServerValue.TIMESTAMP,
-            profilId: profilId,
-            deviceId: deviceId,
-            userAgent: navigator.userAgent
-          });
+        } catch (dbError) {
+          console.warn("Erreur lors de l'utilisation de Firebase Realtime Database:", dbError);
         }
-      });
+      } else {
+        console.warn("Firebase Realtime Database n'est pas disponible, le statut en ligne ne sera pas mis à jour");
+      }
       
     } catch (error) {
       MonHistoire.logger.error("Erreur lors de la mise à jour du timestamp de dernière activité:", error);

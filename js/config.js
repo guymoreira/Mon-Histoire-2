@@ -45,14 +45,22 @@ MonHistoire.config = {
     }
     
     // Configurer les écouteurs de connectivité Firebase
-    const connectedRef = firebase.database().ref(".info/connected");
-    connectedRef.on("value", (snap) => {
-      if (snap.val() === true) {
-        console.log("Connecté à Firebase");
+    try {
+      if (firebase.database) {
+        const connectedRef = firebase.database().ref(".info/connected");
+        connectedRef.on("value", (snap) => {
+          if (snap.val() === true) {
+            console.log("Connecté à Firebase");
+          } else {
+            console.log("Déconnecté de Firebase");
+          }
+        });
       } else {
-        console.log("Déconnecté de Firebase");
+        console.warn("Firebase Realtime Database n'est pas disponible");
       }
-    });
+    } catch (error) {
+      console.warn("Erreur lors de la configuration des écouteurs de connectivité:", error);
+    }
   },
   
   // Règles de validation
