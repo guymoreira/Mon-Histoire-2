@@ -44,22 +44,48 @@ MonHistoire.config = {
       console.warn("Erreur lors de la configuration du cache Firestore:", err);
     }
     
-    // Configurer les écouteurs de connectivité Firebase
+    // Configuration de Firebase Realtime Database
     try {
       if (firebase.database) {
+        // Vérifier si l'URL de la base de données est correcte
+        const dbURL = firebase.database().ref().toString();
+        console.log("URL Firebase Realtime Database:", dbURL);
+        
+        // Configurer les écouteurs de connectivité Firebase
         const connectedRef = firebase.database().ref(".info/connected");
         connectedRef.on("value", (snap) => {
           if (snap.val() === true) {
-            console.log("Connecté à Firebase");
+            console.log("Connecté à Firebase Realtime Database");
+            // Émettre un événement pour informer les autres modules
+            if (MonHistoire.events) {
+              MonHistoire.events.emit("realtimeDbConnected", true);
+            }
           } else {
-            console.log("Déconnecté de Firebase");
+            console.log("Déconnecté de Firebase Realtime Database");
+            // Émettre un événement pour informer les autres modules
+            if (MonHistoire.events) {
+              MonHistoire.events.emit("realtimeDbConnected", false);
+            }
           }
+        });
+        
+        // Configurer la persistance des données hors ligne
+        firebase.database().setPersistenceEnabled(true).catch(err => {
+          console.warn("Erreur lors de l'activation de la persistance Realtime Database:", err);
         });
       } else {
         console.warn("Firebase Realtime Database n'est pas disponible");
+        // Émettre un événement pour informer les autres modules
+        if (MonHistoire.events) {
+          MonHistoire.events.emit("realtimeDbAvailable", false);
+        }
       }
     } catch (error) {
-      console.warn("Erreur lors de la configuration des écouteurs de connectivité:", error);
+      console.warn("Erreur lors de la configuration de Firebase Realtime Database:", error);
+      // Émettre un événement pour informer les autres modules
+      if (MonHistoire.events) {
+        MonHistoire.events.emit("realtimeDbAvailable", false);
+      }
     }
   },
   

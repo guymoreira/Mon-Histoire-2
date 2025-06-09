@@ -32,6 +32,8 @@ MonHistoire.state = {
   
   // État de la connexion
   isConnected: navigator.onLine,
+  realtimeDbConnected: null, // État de connexion à Firebase Realtime Database
+  realtimeDbAvailable: null, // Disponibilité de Firebase Realtime Database
   
   // File d'attente des opérations hors ligne
   offlineOperations: []
@@ -112,24 +114,61 @@ MonHistoire.logger = {
 MonHistoire.handleReconnection = function() {
   MonHistoire.logger.info("Connexion rétablie");
   
+  // Mettre à jour l'état de connexion
+  MonHistoire.state.isConnected = true;
+  
   // Vérifier que le profil actif est toujours valide
   if (this.core && this.core.profiles) {
     this.core.profiles.verifierExistenceProfil();
   }
   
-  // Réinitialiser les écouteurs de notifications
+  // Réinitialiser les écouteurs de notifications avec un délai pour s'assurer que Firebase est prêt
   if (this.features && this.features.sharing) {
-    this.features.sharing.verifierHistoiresPartagees();
+    setTimeout(() => {
+      this.features.sharing.verifierHistoiresPartagees();
+    }, 1000);
   }
   
   // Traiter la file d'attente des opérations hors ligne
   this.processOfflineQueue();
+  
+  // Émettre un événement pour informer les autres modules
+  if (this.events) {
+    this.events.emit("connectionStateChanged", true);
+  }
 };
 
 // Gestion de la déconnexion
 MonHistoire.handleDisconnection = function() {
   MonHistoire.logger.warning("Connexion perdue");
   MonHistoire.state.isConnected = false;
+  
+  // Émettre un événement pour informer les autres modules
+  if (this.events) {
+    this.events.emit("connectionStateChanged", false);
+  }
+};
+
+// Vérification de l'état de connexion
+MonHistoire.checkConnectionState = function() {
+  // Vérifier la connexion réseau
+  const networkConnected = navigator.onLine;
+  
+  // Vérifier la connexion à Firebase
+  const firebaseConnected = MonHistoire.state.realtimeDbConnected;
+  
+  // Mettre à jour l'état de connexion global
+  const previousState = MonHistoire.state.isConnected;
+  MonHistoire.state.isConnected = networkConnected && (firebaseConnected !== false);
+  
+  // Si l'état a changé, déclencher les actions appropriées
+  if (MonHistoire.state.isConnected && !previousState) {
+    MonHistoire.handleReconnection();
+  } else if (!MonHistoire.state.isConnected && previousState) {
+    MonHistoire.handleDisconnection();
+  }
+  
+  return MonHistoire.state.isConnected;
 };
 
 // Traitement de la file d'attente des opérations hors ligne
@@ -203,12 +242,23 @@ MonHistoire.init = function() {
   
   // Configurer les écouteurs d'état de connexion
   window.addEventListener('online', () => {
-    MonHistoire.state.isConnected = true;
-    MonHistoire.handleReconnection();
+    MonHistoire.checkConnectionState();
   });
   
   window.addEventListener('offline', () => {
+    MonHistoire.state.isConnected = false;
     MonHistoire.handleDisconnection();
+  });
+  
+  // Configurer les écouteurs d'événements pour Firebase Realtime Database
+  this.events.on("realtimeDbConnected", (isConnected) => {
+    MonHistoire.state.realtimeDbConnected = isConnected;
+    MonHistoire.checkConnectionState();
+  });
+  
+  this.events.on("realtimeDbAvailable", (isAvailable) => {
+    MonHistoire.state.realtimeDbAvailable = isAvailable;
+    MonHistoire.checkConnectionState();
   });
   
   // Configurer l'écouteur de connexion Firebase

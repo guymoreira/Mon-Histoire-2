@@ -186,10 +186,34 @@ MonHistoire.features.sharing = {
         this.histoiresPartageesListener = [];
       }
 
-      // Vérifier si l'utilisateur est connecté et si la connexion est active
+      // Vérifier si l'utilisateur est connecté
       const user = firebase.auth().currentUser;
-      if (!user || !MonHistoire.state.isConnected) {
-        MonHistoire.logger.warning("Impossible de configurer les écouteurs: utilisateur non connecté ou connexion inactive");
+      if (!user) {
+        MonHistoire.logger.warning("Impossible de configurer les écouteurs: utilisateur non connecté");
+        // Configurer un écouteur pour réessayer quand l'utilisateur se connecte
+        firebase.auth().onAuthStateChanged(newUser => {
+          if (newUser && !this.histoiresPartageesListener.length) {
+            setTimeout(() => this.configurerEcouteurHistoiresPartagees(), 1000);
+          }
+        });
+        return;
+      }
+      
+      // Vérifier si la connexion est active
+      if (!MonHistoire.state.isConnected) {
+        MonHistoire.logger.warning("Impossible de configurer les écouteurs: connexion inactive");
+        // Configurer un écouteur pour réessayer quand la connexion est rétablie
+        MonHistoire.events.on("connectionStateChanged", isConnected => {
+          if (isConnected && !this.histoiresPartageesListener.length) {
+            setTimeout(() => this.configurerEcouteurHistoiresPartagees(), 1000);
+          }
+        });
+        return;
+      }
+      
+      // Vérifier si Firebase Realtime Database est disponible
+      if (MonHistoire.state.realtimeDbAvailable === false) {
+        MonHistoire.logger.warning("Impossible de configurer les écouteurs: Firebase Realtime Database n'est pas disponible");
         return;
       }
       
@@ -208,6 +232,13 @@ MonHistoire.features.sharing = {
       MonHistoire.logger.info("Écouteurs de notifications configurés avec succès");
     } catch (error) {
       MonHistoire.logger.error("Erreur lors de la configuration des écouteurs de notifications", error);
+      // Planifier une nouvelle tentative après un délai
+      setTimeout(() => {
+        if (!this.histoiresPartageesListener || !this.histoiresPartageesListener.length) {
+          MonHistoire.logger.info("Nouvelle tentative de configuration des écouteurs de notifications");
+          this.configurerEcouteurHistoiresPartagees();
+        }
+      }, 5000);
     }
   },
   
@@ -649,8 +680,13 @@ MonHistoire.features.sharing = {
       return;
     }
     
-    // Vérifier si l'appareil est connecté
-    if (!navigator.onLine || !MonHistoire.state.isConnected) {
+    // Vérifier l'état de connexion
+    const isNetworkConnected = navigator.onLine;
+    const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
+    const isConnected = isNetworkConnected && isFirebaseConnected;
+    
+    // Si l'appareil n'est pas connecté, ajouter l'opération à la file d'attente hors ligne
+    if (!isConnected) {
       // Ajouter l'opération à la file d'attente hors ligne
       MonHistoire.addToOfflineQueue('partageHistoire', {
         type: type,
@@ -661,7 +697,13 @@ MonHistoire.features.sharing = {
       });
       
       this.fermerModalePartage();
-      MonHistoire.showMessageModal(`L'histoire sera partagée avec ${prenom} dès que la connexion sera rétablie.`);
+      
+      // Message différent selon le type de déconnexion
+      if (!isNetworkConnected) {
+        MonHistoire.showMessageModal(`L'histoire sera partagée avec ${prenom} dès que la connexion Internet sera rétablie.`);
+      } else {
+        MonHistoire.showMessageModal(`L'histoire sera partagée avec ${prenom} dès que la connexion au serveur sera rétablie.`);
+      }
       return;
     }
 
@@ -893,7 +935,9 @@ MonHistoire.features.sharing = {
   
   // Vérifie l'état de la connexion
   isConnected() {
-    return navigator.onLine && MonHistoire.state.isConnected;
+    const isNetworkConnected = navigator.onLine;
+    const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
+    return isNetworkConnected && isFirebaseConnected && MonHistoire.state.isConnected;
   }
 };
 

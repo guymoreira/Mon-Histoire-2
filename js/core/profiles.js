@@ -336,22 +336,30 @@ MonHistoire.core.profiles = {
         .collection("profils_actifs")
         .doc(profilId);
       
+      // Vérifier l'état de connexion
+      const isNetworkConnected = navigator.onLine;
+      const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
+      const isConnected = isNetworkConnected && isFirebaseConnected;
+      
       // Mettre à jour le timestamp de dernière activité
       await profilActifRef.set({
         lastActive: firebase.firestore.FieldValue.serverTimestamp(),
         deviceId: deviceId,
         userAgent: navigator.userAgent,
-        isConnected: MonHistoire.state.isConnected
+        isConnected: isConnected,
+        networkConnected: isNetworkConnected,
+        firebaseConnected: isFirebaseConnected,
+        lastUpdateTimestamp: Date.now()
       }, { merge: true });
       
-      // Vérifier si firebase.database est disponible
-      if (firebase.database) {
+      // Vérifier si firebase.database est disponible et si la connexion est active
+      if (firebase.database && MonHistoire.state.realtimeDbAvailable !== false) {
         try {
           // Configurer la suppression automatique à la déconnexion
           const connectedRef = firebase.database().ref(".info/connected");
           connectedRef.on("value", (snap) => {
             if (snap.val() === true) {
-              // Nous sommes connectés
+              // Nous sommes connectés à Firebase Realtime Database
               const onlineStatusRef = firebase.database()
                 .ref(`users/${user.uid}/online/${deviceId}`);
               
@@ -368,15 +376,45 @@ MonHistoire.core.profiles = {
                 lastConnect: firebase.database.ServerValue.TIMESTAMP,
                 profilId: profilId,
                 deviceId: deviceId,
-                userAgent: navigator.userAgent
+                userAgent: navigator.userAgent,
+                profilType: profil.type,
+                profilPrenom: profil.type === "parent" ? "parent" : profil.prenom
+              });
+              
+              // Mettre à jour le statut du profil actif
+              const profilStatusRef = firebase.database()
+                .ref(`users/${user.uid}/profils/${profilId}`);
+              
+              // Quand nous nous déconnectons, mettre à jour le statut du profil
+              profilStatusRef.onDisconnect().update({
+                isActive: false,
+                lastDisconnect: firebase.database.ServerValue.TIMESTAMP,
+                deviceId: deviceId
+              });
+              
+              // Mettre à jour le statut du profil
+              profilStatusRef.update({
+                isActive: true,
+                lastConnect: firebase.database.ServerValue.TIMESTAMP,
+                deviceId: deviceId,
+                profilType: profil.type,
+                profilPrenom: profil.type === "parent" ? "parent" : profil.prenom
               });
             }
           });
         } catch (dbError) {
           console.warn("Erreur lors de l'utilisation de Firebase Realtime Database:", dbError);
+          // Émettre un événement pour informer les autres modules
+          if (MonHistoire.events) {
+            MonHistoire.events.emit("realtimeDbError", dbError);
+          }
         }
       } else {
         console.warn("Firebase Realtime Database n'est pas disponible, le statut en ligne ne sera pas mis à jour");
+        // Émettre un événement pour informer les autres modules
+        if (MonHistoire.events) {
+          MonHistoire.events.emit("realtimeDbAvailable", false);
+        }
       }
       
     } catch (error) {
