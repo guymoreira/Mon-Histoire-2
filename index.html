@@ -274,6 +274,29 @@ const firebaseConfig = {
   if ('measurementId' in firebaseConfig) {
     firebase.analytics();
   }
+  
+  // Activer la persistance Firestore pour le mode hors ligne
+  // Cela doit être fait avant toute autre opération Firestore
+  firebase.firestore().enablePersistence({
+    synchronizeTabs: true // Synchronisation entre onglets
+  }).then(() => {
+    console.log("Persistence Firestore activée avec succès");
+  }).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      // Plusieurs onglets ouverts, la persistance ne peut être activée que dans un seul
+      console.warn("La persistance ne peut pas être activée car plusieurs onglets sont ouverts");
+    } else if (err.code === 'unimplemented') {
+      // Le navigateur ne prend pas en charge la persistance
+      console.warn("Ce navigateur ne prend pas en charge la persistance Firestore");
+    } else {
+      console.error("Erreur lors de l'activation de la persistance:", err);
+    }
+  });
+  
+  // Configuration du cache Firestore
+  firebase.firestore().settings({
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+  });
 </script>
 <!-- Fichiers de configuration -->
 <script src="js/config.js" defer></script>

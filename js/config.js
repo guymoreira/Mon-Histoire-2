@@ -33,41 +33,15 @@ MonHistoire.config = {
     const db = firebase.firestore();
     
     try {
-      // Activer la persistance pour une meilleure expérience hors ligne
-      db.enablePersistence({
-        synchronizeTabs: true // Synchronisation entre onglets
-      }).then(() => {
-        console.log("Persistance Firestore activée avec succès");
-      }).catch((err) => {
-        if (err.code === 'failed-precondition') {
-          // Plusieurs onglets ouverts, la persistance ne peut être activée que dans un seul
-          console.warn("La persistance ne peut pas être activée car plusieurs onglets sont ouverts");
-        } else if (err.code === 'unimplemented') {
-          // Le navigateur ne prend pas en charge la persistance
-          console.warn("Ce navigateur ne prend pas en charge la persistance Firestore");
-        } else {
-          console.error("Erreur lors de l'activation de la persistance:", err);
-        }
-      });
-      
       // Utilisation de la nouvelle méthode de cache recommandée
       db.settings({
         cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true, // Évite l'avertissement "You are overriding the original host"
-        cache: {
-          synchronizeTabs: true
-        }
+        merge: true // Évite l'avertissement "You are overriding the original host"
       });
       
-      console.log("Configuration Firestore avec cache multi-onglets activée");
+      console.log("Configuration Firestore avec cache activée");
     } catch (err) {
       console.warn("Erreur lors de la configuration du cache Firestore:", err);
-      
-      // Fallback à la configuration de base si la nouvelle méthode échoue
-      db.settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true
-      });
     }
     
     // Configurer les écouteurs de connectivité Firebase
