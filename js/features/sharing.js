@@ -48,58 +48,87 @@ MonHistoire.features.sharing = {
     }
 
     try {
-      // Détermine la collection à vérifier selon le profil actif
-      let storiesRef;
-      if (MonHistoire.state.profilActif.type === "parent") {
-        storiesRef = firebase.firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("stories")
-          .where("nouvelleHistoire", "==", true)
-          .limit(1);
-      } else {
-        storiesRef = firebase.firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("profils_enfant")
-          .doc(MonHistoire.state.profilActif.id)
-          .collection("stories")
-          .where("nouvelleHistoire", "==", true)
-          .limit(1);
-      }
-
-      // Vérifie s'il y a des histoires partagées
-      storiesRef.get().then(snapshot => {
-        if (!snapshot.empty) {
-          // Il y a au moins une histoire partagée
-          const doc = snapshot.docs[0];
-          const data = doc.data();
-          
-          if (data.partageParPrenom) {
-            // Affiche la notification sans marquer l'histoire comme vue immédiatement
-            this.afficherNotificationPartage(data.partageParPrenom, doc.ref);
-          }
-        }
-        
-        // Configure l'écouteur en temps réel pour les futures histoires partagées
-        this.configurerEcouteurHistoiresPartagees();
-      });
+      // Vérifie d'abord les histoires partagées pour le profil actif
+      this.verifierHistoiresPartageesProfilActif(user);
+      
+      // Configure l'écouteur en temps réel pour les futures histoires partagées
+      this.configurerEcouteurHistoiresPartagees();
     } catch (error) {
       console.error("Erreur lors de la vérification des histoires partagées:", error);
     }
   },
   
+  // Vérifie les histoires partagées pour le profil actif
+  verifierHistoiresPartageesProfilActif(user) {
+    // Détermine la collection à vérifier selon le profil actif
+    let storiesRef;
+    if (MonHistoire.state.profilActif.type === "parent") {
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .where("nouvelleHistoire", "==", true)
+        .limit(1);
+    } else {
+      storiesRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(MonHistoire.state.profilActif.id)
+        .collection("stories")
+        .where("nouvelleHistoire", "==", true)
+        .limit(1);
+    }
+
+    // Vérifie s'il y a des histoires partagées
+    return storiesRef.get().then(snapshot => {
+      if (!snapshot.empty) {
+        // Il y a au moins une histoire partagée
+        const doc = snapshot.docs[0];
+        const data = doc.data();
+        
+        if (data.partageParPrenom) {
+          // Affiche la notification sans marquer l'histoire comme vue immédiatement
+          this.afficherNotificationPartage(data.partageParPrenom, doc.ref);
+        }
+      }
+    });
+  },
+  
   // Configure un écouteur en temps réel pour les nouvelles histoires partagées
   configurerEcouteurHistoiresPartagees() {
-    // Arrête l'écouteur précédent s'il existe
+    // Arrête les écouteurs précédents s'ils existent
     if (this.histoiresPartageesListener) {
-      this.histoiresPartageesListener();
-      this.histoiresPartageesListener = null;
+      if (Array.isArray(this.histoiresPartageesListener)) {
+        this.histoiresPartageesListener.forEach(listener => {
+          if (typeof listener === 'function') listener();
+        });
+      } else if (typeof this.histoiresPartageesListener === 'function') {
+        this.histoiresPartageesListener();
+      }
+      this.histoiresPartageesListener = [];
+    } else {
+      this.histoiresPartageesListener = [];
     }
 
     const user = firebase.auth().currentUser;
     if (!user) return;
     
+    // 1. Configurer l'écouteur pour le profil actif
+    this.configurerEcouteurProfilActif(user);
+    
+    // 2. Si on est sur le profil parent, configurer des écouteurs pour tous les profils enfants
+    if (MonHistoire.state.profilActif.type === "parent") {
+      this.configurerEcouteursProfilsEnfants(user);
+    } 
+    // 3. Si on est sur un profil enfant, configurer un écouteur pour le profil parent
+    else {
+      this.configurerEcouteurProfilParent(user);
+    }
+  },
+  
+  // Configure l'écouteur pour le profil actif
+  configurerEcouteurProfilActif(user) {
     // Détermine la collection à surveiller selon le profil actif
     let storiesRef;
     if (MonHistoire.state.profilActif.type === "parent") {
@@ -119,7 +148,7 @@ MonHistoire.features.sharing = {
     }
 
     // Configure l'écouteur en temps réel
-    this.histoiresPartageesListener = storiesRef.onSnapshot(snapshot => {
+    const listener = storiesRef.onSnapshot(snapshot => {
       // Vérifie s'il y a des changements
       const changesCount = snapshot.docChanges().length;
       if (changesCount === 0) return;
@@ -137,8 +166,88 @@ MonHistoire.features.sharing = {
         }
       });
     }, error => {
-      console.error("Erreur lors de l'écoute des histoires partagées:", error);
+      console.error("Erreur lors de l'écoute des histoires partagées pour le profil actif:", error);
     });
+    
+    this.histoiresPartageesListener.push(listener);
+  },
+  
+  // Configure des écouteurs pour tous les profils enfants (quand on est sur le profil parent)
+  configurerEcouteursProfilsEnfants(user) {
+    // Récupère tous les profils enfants
+    firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("profils_enfant")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const profilId = doc.id;
+          const profilData = doc.data();
+          
+          // Configure un écouteur pour ce profil enfant
+          const storiesRef = firebase.firestore()
+            .collection("users")
+            .doc(user.uid)
+            .collection("profils_enfant")
+            .doc(profilId)
+            .collection("stories")
+            .where("nouvelleHistoire", "==", true);
+            
+          const listener = storiesRef.onSnapshot(storiesSnapshot => {
+            const changesCount = storiesSnapshot.docChanges().length;
+            if (changesCount === 0) return;
+            
+            storiesSnapshot.docChanges().forEach(change => {
+              if (change.type === "added") {
+                const data = change.doc.data();
+                
+                if (data.partageParPrenom) {
+                  // Affiche la notification avec le nom du profil enfant
+                  const message = `${data.partageParPrenom} a partagé une histoire avec ${profilData.prenom}`;
+                  this.afficherNotificationPartage(message, change.doc.ref);
+                }
+              }
+            });
+          }, error => {
+            console.error(`Erreur lors de l'écoute des histoires partagées pour le profil enfant ${profilId}:`, error);
+          });
+          
+          this.histoiresPartageesListener.push(listener);
+        });
+      })
+      .catch(error => {
+        console.error("Erreur lors de la récupération des profils enfants:", error);
+      });
+  },
+  
+  // Configure un écouteur pour le profil parent (quand on est sur un profil enfant)
+  configurerEcouteurProfilParent(user) {
+    const storiesRef = firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("stories")
+      .where("nouvelleHistoire", "==", true);
+      
+    const listener = storiesRef.onSnapshot(snapshot => {
+      const changesCount = snapshot.docChanges().length;
+      if (changesCount === 0) return;
+      
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          const data = change.doc.data();
+          
+          if (data.partageParPrenom) {
+            // Affiche la notification
+            this.afficherNotificationPartage(data.partageParPrenom, change.doc.ref);
+          }
+        }
+      });
+    }, error => {
+      console.error("Erreur lors de l'écoute des histoires partagées pour le profil parent:", error);
+    });
+    
+    this.histoiresPartageesListener.push(listener);
   },
   
   // Affiche la notification de partage
@@ -432,6 +541,25 @@ MonHistoire.features.sharing = {
           .collection("stories");
       }
 
+      // Récupère le prénom du profil qui partage
+      let partageParPrenom = "";
+      if (MonHistoire.state.profilActif.type === "parent") {
+        // Si c'est le parent qui partage, récupère son prénom
+        const userDoc = await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
+        
+        if (userDoc.exists && userDoc.data().prenom) {
+          partageParPrenom = userDoc.data().prenom;
+        } else {
+          partageParPrenom = "Parent";
+        }
+      } else {
+        // Si c'est un enfant qui partage, utilise son prénom
+        partageParPrenom = MonHistoire.state.profilActif.prenom;
+      }
+
       // Ajoute l'histoire partagée
       await targetRef.add({
         titre: this.histoireAPartager.titre,
@@ -443,8 +571,8 @@ MonHistoire.features.sharing = {
         contenu: this.histoireAPartager.contenu || "",
         images: this.histoireAPartager.images || [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        partageParProfil: this.histoireAPartager.partageParProfil,
-        partageParPrenom: this.histoireAPartager.partageParPrenom,
+        partageParProfil: MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id,
+        partageParPrenom: partageParPrenom,
         nouvelleHistoire: true // Marque l'histoire comme nouvelle pour la notification
       });
 

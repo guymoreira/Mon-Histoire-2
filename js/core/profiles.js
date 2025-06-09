@@ -50,6 +50,22 @@ MonHistoire.core.profiles = {
     // Sauvegarde l'ancien profil pour les logs
     const ancienProfil = MonHistoire.state.profilActif;
     
+    // Arrête les écouteurs de notifications du profil actuel
+    if (MonHistoire.features && MonHistoire.features.sharing && 
+        MonHistoire.features.sharing.histoiresPartageesListener) {
+      // Si c'est un tableau d'écouteurs
+      if (Array.isArray(MonHistoire.features.sharing.histoiresPartageesListener)) {
+        MonHistoire.features.sharing.histoiresPartageesListener.forEach(listener => {
+          if (typeof listener === 'function') listener();
+        });
+      } 
+      // Si c'est une fonction unique
+      else if (typeof MonHistoire.features.sharing.histoiresPartageesListener === 'function') {
+        MonHistoire.features.sharing.histoiresPartageesListener();
+      }
+      MonHistoire.features.sharing.histoiresPartageesListener = null;
+    }
+    
     // Met à jour le profil actif
     MonHistoire.state.profilActif = nouveauProfil;
     
@@ -69,7 +85,10 @@ MonHistoire.core.profiles = {
     
     // Vérifie les histoires partagées pour le nouveau profil
     if (MonHistoire.features && MonHistoire.features.sharing) {
-      MonHistoire.features.sharing.verifierHistoiresPartagees();
+      // Utilise setTimeout pour s'assurer que la vérification se fait après le changement de profil
+      setTimeout(() => {
+        MonHistoire.features.sharing.verifierHistoiresPartagees();
+      }, 100);
     }
     
     // Met à jour le quota et l'affichage des histoires sauvegardées

@@ -149,7 +149,10 @@ MonHistoire.init = function() {
       // Vérifie s'il y a des histoires partagées
       if (MonHistoire.features && MonHistoire.features.sharing) {
         console.log("[DEBUG] Vérification des histoires partagées après connexion");
-        MonHistoire.features.sharing.verifierHistoiresPartagees();
+        // Utilise setTimeout pour s'assurer que la vérification se fait après l'initialisation complète
+        setTimeout(() => {
+          MonHistoire.features.sharing.verifierHistoiresPartagees();
+        }, 500);
       }
     } else {
       if (MonHistoire.core && MonHistoire.core.auth) {
