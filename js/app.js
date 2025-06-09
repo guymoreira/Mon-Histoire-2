@@ -28,7 +28,13 @@ MonHistoire.state = {
   
   // Gestion des profils enfants
   profilsEnfantModifies: [],
-  idProfilEnfantActif: null
+  idProfilEnfantActif: null,
+  
+  // État de la connexion
+  isConnected: navigator.onLine,
+  
+  // File d'attente des opérations hors ligne
+  offlineOperations: []
 };
 
 // Système d'événements pour la communication entre modules
@@ -50,6 +56,143 @@ MonHistoire.events = {
   }
 };
 
+// Fonction pour générer un ID unique pour l'appareil
+MonHistoire.generateDeviceId = function() {
+  // Vérifier si un ID existe déjà dans le localStorage
+  let deviceId = localStorage.getItem("deviceId");
+  
+  // Si aucun ID n'existe, en générer un nouveau
+  if (!deviceId) {
+    deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("deviceId", deviceId);
+  }
+  
+  return deviceId;
+};
+
+// Système de journalisation amélioré
+MonHistoire.logger = {
+  log(level, message, data = {}) {
+    console.log(`[${level}] ${message}`, data);
+    
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    // Enregistrer dans Firestore uniquement les événements importants
+    if (level === 'ERROR' || level === 'WARNING') {
+      firebase.firestore().collection("users").doc(user.uid)
+        .collection("error_logs").add({
+          level,
+          message,
+          data,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          deviceInfo: {
+            userAgent: navigator.userAgent,
+            deviceId: MonHistoire.generateDeviceId(),
+            profilActif: MonHistoire.state.profilActif
+          }
+        }).catch(err => console.error("Erreur lors de l'enregistrement du log:", err));
+    }
+  },
+  
+  error(message, data = {}) {
+    this.log('ERROR', message, data);
+  },
+  
+  warning(message, data = {}) {
+    this.log('WARNING', message, data);
+  },
+  
+  info(message, data = {}) {
+    this.log('INFO', message, data);
+  }
+};
+
+// Gestion de la reconnexion
+MonHistoire.handleReconnection = function() {
+  MonHistoire.logger.info("Connexion rétablie");
+  
+  // Vérifier que le profil actif est toujours valide
+  if (this.core && this.core.profiles) {
+    this.core.profiles.verifierExistenceProfil();
+  }
+  
+  // Réinitialiser les écouteurs de notifications
+  if (this.features && this.features.sharing) {
+    this.features.sharing.verifierHistoiresPartagees();
+  }
+  
+  // Traiter la file d'attente des opérations hors ligne
+  this.processOfflineQueue();
+};
+
+// Gestion de la déconnexion
+MonHistoire.handleDisconnection = function() {
+  MonHistoire.logger.warning("Connexion perdue");
+  MonHistoire.state.isConnected = false;
+};
+
+// Traitement de la file d'attente des opérations hors ligne
+MonHistoire.processOfflineQueue = function() {
+  if (!navigator.onLine || !MonHistoire.state.isConnected) return;
+  
+  // Charger la file d'attente depuis le localStorage
+  const savedQueue = localStorage.getItem('offlineOperationsQueue');
+  if (savedQueue) {
+    try {
+      MonHistoire.state.offlineOperations = JSON.parse(savedQueue);
+    } catch (e) {
+      MonHistoire.logger.error("Erreur lors du chargement de la file d'attente hors ligne", e);
+      MonHistoire.state.offlineOperations = [];
+      localStorage.removeItem('offlineOperationsQueue');
+      return;
+    }
+  }
+  
+  if (MonHistoire.state.offlineOperations.length === 0) return;
+  
+  MonHistoire.logger.info(`Traitement de ${MonHistoire.state.offlineOperations.length} opérations en attente`);
+  
+  // Traiter chaque opération
+  const processNext = () => {
+    if (MonHistoire.state.offlineOperations.length === 0) {
+      localStorage.removeItem('offlineOperationsQueue');
+      return;
+    }
+    
+    const item = MonHistoire.state.offlineOperations.shift();
+    localStorage.setItem('offlineOperationsQueue', JSON.stringify(MonHistoire.state.offlineOperations));
+    
+    // Exécuter l'opération selon son type
+    switch(item.operation) {
+      case 'partageHistoire':
+        if (MonHistoire.features && MonHistoire.features.sharing) {
+          MonHistoire.features.sharing.processOfflinePartage(item.data);
+        }
+        break;
+      // Autres types d'opérations...
+    }
+    
+    // Traiter l'opération suivante
+    setTimeout(processNext, 1000);
+  };
+  
+  processNext();
+};
+
+// Ajouter une opération à la file d'attente hors ligne
+MonHistoire.addToOfflineQueue = function(operation, data) {
+  MonHistoire.state.offlineOperations.push({ 
+    operation, 
+    data, 
+    timestamp: Date.now(),
+    deviceId: this.generateDeviceId()
+  });
+  
+  localStorage.setItem('offlineOperationsQueue', JSON.stringify(MonHistoire.state.offlineOperations));
+  MonHistoire.logger.info(`Opération ${operation} ajoutée à la file d'attente hors ligne`);
+};
+
 // Initialisation de l'application
 MonHistoire.init = function() {
   console.log("[DEBUG] Initialisation de l'application MonHistoire");
@@ -57,6 +200,31 @@ MonHistoire.init = function() {
   // Initialiser Firebase
   console.log("[DEBUG] Initialisation de Firebase");
   this.config.initFirebase();
+  
+  // Configurer les écouteurs d'état de connexion
+  window.addEventListener('online', () => {
+    MonHistoire.state.isConnected = true;
+    MonHistoire.handleReconnection();
+  });
+  
+  window.addEventListener('offline', () => {
+    MonHistoire.handleDisconnection();
+  });
+  
+  // Configurer l'écouteur de connexion Firebase
+  firebase.database().ref('.info/connected').on('value', (snapshot) => {
+    const isConnected = snapshot.val();
+    const previousState = MonHistoire.state.isConnected;
+    MonHistoire.state.isConnected = isConnected;
+    
+    if (isConnected && !previousState) {
+      // Reconnexion
+      MonHistoire.handleReconnection();
+    } else if (!isConnected && previousState) {
+      // Déconnexion
+      MonHistoire.handleDisconnection();
+    }
+  });
   
 // Initialiser les modules core
   console.log("[DEBUG] Initialisation des modules core");
@@ -231,6 +399,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
   
+  // Vérifier l'état de connexion initial
+  MonHistoire.state.isConnected = navigator.onLine;
   
   // Initialiser l'application
   MonHistoire.init();

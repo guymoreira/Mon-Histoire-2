@@ -72,6 +72,9 @@ MonHistoire.core.profiles = {
     // Sauvegarde dans localStorage
     localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
     
+    // Met à jour le timestamp de dernière activité du profil
+    this.updateLastActiveTimestamp(nouveauProfil);
+    
     // Log l'activité
     if (MonHistoire.core && MonHistoire.core.auth) {
       MonHistoire.core.auth.logActivite("changement_profil", {
@@ -194,10 +197,16 @@ MonHistoire.core.profiles = {
               }
             }
           );
+        } else {
+          // Le profil existe, mettre à jour le timestamp de dernière activité
+          this.updateLastActiveTimestamp(MonHistoire.state.profilActif);
         }
       } catch (error) {
-        console.error("Erreur lors de la vérification du profil:", error);
+        MonHistoire.logger.error("Erreur lors de la vérification du profil:", error);
       }
+    } else if (MonHistoire.state.profilActif && MonHistoire.state.profilActif.type === "parent") {
+      // Mettre à jour le timestamp de dernière activité pour le profil parent
+      this.updateLastActiveTimestamp(MonHistoire.state.profilActif);
     }
   },
   
@@ -305,6 +314,64 @@ MonHistoire.core.profiles = {
       MonHistoire.events.emit("profilChangeForcé", {
         raison: "profil_supprimé"
       });
+    }
+    
+    // Mettre à jour le timestamp de dernière activité pour le profil parent
+    this.updateLastActiveTimestamp({ type: "parent" });
+  },
+  
+  // Met à jour le timestamp de dernière activité du profil
+  async updateLastActiveTimestamp(profil) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user || !profil) return;
+      
+      const profilId = profil.type === "parent" ? "parent" : profil.id;
+      const deviceId = MonHistoire.generateDeviceId();
+      
+      // Référence au document de profil actif
+      const profilActifRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_actifs")
+        .doc(profilId);
+      
+      // Mettre à jour le timestamp de dernière activité
+      await profilActifRef.set({
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        deviceId: deviceId,
+        userAgent: navigator.userAgent,
+        isConnected: MonHistoire.state.isConnected
+      }, { merge: true });
+      
+      // Configurer la suppression automatique à la déconnexion
+      const connectedRef = firebase.database().ref(".info/connected");
+      connectedRef.on("value", (snap) => {
+        if (snap.val() === true) {
+          // Nous sommes connectés
+          const onlineStatusRef = firebase.database()
+            .ref(`users/${user.uid}/online/${deviceId}`);
+          
+          // Quand nous nous déconnectons, mettre à jour le statut
+          onlineStatusRef.onDisconnect().update({
+            isConnected: false,
+            lastDisconnect: firebase.database.ServerValue.TIMESTAMP,
+            profilId: profilId
+          });
+          
+          // Mettre à jour le statut en ligne
+          onlineStatusRef.update({
+            isConnected: true,
+            lastConnect: firebase.database.ServerValue.TIMESTAMP,
+            profilId: profilId,
+            deviceId: deviceId,
+            userAgent: navigator.userAgent
+          });
+        }
+      });
+      
+    } catch (error) {
+      MonHistoire.logger.error("Erreur lors de la mise à jour du timestamp de dernière activité:", error);
     }
   }
 };

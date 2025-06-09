@@ -161,33 +161,53 @@ MonHistoire.features.sharing = {
   
   // Configure un écouteur en temps réel pour les nouvelles histoires partagées
   configurerEcouteurHistoiresPartagees() {
-    // Arrête les écouteurs précédents s'ils existent
-    if (this.histoiresPartageesListener) {
-      if (Array.isArray(this.histoiresPartageesListener)) {
-        this.histoiresPartageesListener.forEach(listener => {
-          if (typeof listener === 'function') listener();
-        });
-      } else if (typeof this.histoiresPartageesListener === 'function') {
-        this.histoiresPartageesListener();
+    try {
+      // Arrête les écouteurs précédents s'ils existent
+      if (this.histoiresPartageesListener) {
+        if (Array.isArray(this.histoiresPartageesListener)) {
+          this.histoiresPartageesListener.forEach(listener => {
+            if (typeof listener === 'function') {
+              try {
+                listener();
+              } catch (e) {
+                MonHistoire.logger.error("Erreur lors de l'arrêt d'un écouteur", e);
+              }
+            }
+          });
+        } else if (typeof this.histoiresPartageesListener === 'function') {
+          try {
+            this.histoiresPartageesListener();
+          } catch (e) {
+            MonHistoire.logger.error("Erreur lors de l'arrêt de l'écouteur", e);
+          }
+        }
+        this.histoiresPartageesListener = [];
+      } else {
+        this.histoiresPartageesListener = [];
       }
-      this.histoiresPartageesListener = [];
-    } else {
-      this.histoiresPartageesListener = [];
-    }
 
-    const user = firebase.auth().currentUser;
-    if (!user) return;
-    
-    // 1. Configurer l'écouteur pour le profil actif
-    this.configurerEcouteurProfilActif(user);
-    
-    // 2. Si on est sur le profil parent, configurer des écouteurs pour tous les profils enfants
-    if (MonHistoire.state.profilActif.type === "parent") {
-      this.configurerEcouteursProfilsEnfants(user);
-    } 
-    // 3. Si on est sur un profil enfant, configurer un écouteur pour le profil parent
-    else {
-      this.configurerEcouteurProfilParent(user);
+      // Vérifier si l'utilisateur est connecté et si la connexion est active
+      const user = firebase.auth().currentUser;
+      if (!user || !MonHistoire.state.isConnected) {
+        MonHistoire.logger.warning("Impossible de configurer les écouteurs: utilisateur non connecté ou connexion inactive");
+        return;
+      }
+      
+      // 1. Configurer l'écouteur pour le profil actif
+      this.configurerEcouteurProfilActif(user);
+      
+      // 2. Si on est sur le profil parent, configurer des écouteurs pour tous les profils enfants
+      if (MonHistoire.state.profilActif.type === "parent") {
+        this.configurerEcouteursProfilsEnfants(user);
+      } 
+      // 3. Si on est sur un profil enfant, configurer un écouteur pour le profil parent
+      else {
+        this.configurerEcouteurProfilParent(user);
+      }
+      
+      MonHistoire.logger.info("Écouteurs de notifications configurés avec succès");
+    } catch (error) {
+      MonHistoire.logger.error("Erreur lors de la configuration des écouteurs de notifications", error);
     }
   },
   
@@ -628,8 +648,38 @@ MonHistoire.features.sharing = {
       this.fermerModalePartage();
       return;
     }
+    
+    // Vérifier si l'appareil est connecté
+    if (!navigator.onLine || !MonHistoire.state.isConnected) {
+      // Ajouter l'opération à la file d'attente hors ligne
+      MonHistoire.addToOfflineQueue('partageHistoire', {
+        type: type,
+        id: id,
+        prenom: prenom,
+        histoire: this.histoireAPartager,
+        profilActif: MonHistoire.state.profilActif
+      });
+      
+      this.fermerModalePartage();
+      MonHistoire.showMessageModal(`L'histoire sera partagée avec ${prenom} dès que la connexion sera rétablie.`);
+      return;
+    }
 
     try {
+      // Acquérir un verrou pour éviter les conflits
+      const lockId = `partage_${Date.now()}_${MonHistoire.generateDeviceId()}`;
+      const lockRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("locks")
+        .doc(lockId);
+      
+      await lockRef.set({
+        operation: "partage",
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        deviceId: MonHistoire.generateDeviceId()
+      });
+      
       // Détermine la collection cible selon le type de profil
       let targetRef;
       if (type === "parent") {
@@ -693,8 +743,13 @@ MonHistoire.features.sharing = {
         destinataireProfil: destinataireProfil,
         destinatairePrenom: prenom,
         vueParProfils: vueParProfils,
-        nouvelleHistoire: true // Marque l'histoire comme nouvelle pour la notification
+        nouvelleHistoire: true, // Marque l'histoire comme nouvelle pour la notification
+        deviceId: MonHistoire.generateDeviceId(), // Identifiant de l'appareil qui a partagé
+        version: 1 // Version initiale du document
       });
+      
+      // Supprimer le verrou
+      await lockRef.delete();
 
       // Si on partage avec un profil enfant, incrémente son compteur d'histoires
       if (type === "enfant") {
@@ -725,6 +780,120 @@ MonHistoire.features.sharing = {
       MonHistoire.showMessageModal("Erreur lors du partage : " + error.message);
       this.fermerModalePartage();
     }
+  },
+  
+  // Traite un partage d'histoire qui a été mis en file d'attente hors ligne
+  async processOfflinePartage(data) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        MonHistoire.logger.error("Impossible de traiter le partage hors ligne: utilisateur non connecté");
+        return false;
+      }
+      
+      const { type, id, prenom, histoire, profilActif } = data;
+      
+      // Détermine la collection cible selon le type de profil
+      let targetRef;
+      if (type === "parent") {
+        targetRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("stories");
+      } else {
+        targetRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .doc(id)
+          .collection("stories");
+      }
+
+      // Récupère le prénom du profil qui partage
+      let partageParPrenom = "";
+      if (profilActif.type === "parent") {
+        // Si c'est le parent qui partage, récupère son prénom
+        const userDoc = await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
+        
+        if (userDoc.exists && userDoc.data().prenom) {
+          partageParPrenom = userDoc.data().prenom;
+        } else {
+          partageParPrenom = "Parent";
+        }
+      } else {
+        // Si c'est un enfant qui partage, utilise son prénom
+        partageParPrenom = profilActif.prenom;
+      }
+
+      // Détermine l'ID du profil qui partage
+      const partageParProfil = profilActif.type === "parent" 
+        ? "parent" 
+        : profilActif.id;
+      
+      // Détermine l'ID du profil destinataire
+      const destinataireProfil = type === "parent" ? "parent" : id;
+      
+      // Initialise vueParProfils avec le profil qui partage
+      const vueParProfils = [partageParProfil];
+
+      // Ajoute l'histoire partagée
+      await targetRef.add({
+        titre: histoire.titre,
+        chapitre1: histoire.chapitre1 || "",
+        chapitre2: histoire.chapitre2 || "",
+        chapitre3: histoire.chapitre3 || "",
+        chapitre4: histoire.chapitre4 || "",
+        chapitre5: histoire.chapitre5 || "",
+        contenu: histoire.contenu || "",
+        images: histoire.images || [],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        partageParProfil: partageParProfil,
+        partageParPrenom: partageParPrenom,
+        destinataireProfil: destinataireProfil,
+        destinatairePrenom: prenom,
+        vueParProfils: vueParProfils,
+        nouvelleHistoire: true,
+        deviceId: MonHistoire.generateDeviceId(),
+        version: 1,
+        processedOffline: true
+      });
+
+      // Si on partage avec un profil enfant, incrémente son compteur d'histoires
+      if (type === "enfant") {
+        const profilDocRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .doc(id);
+        
+        await profilDocRef.update({
+          nb_histoires: firebase.firestore.FieldValue.increment(1)
+        });
+      }
+
+      // Log de l'activité
+      if (MonHistoire.core && MonHistoire.core.auth) {
+        MonHistoire.core.auth.logActivite("partage_histoire_offline", { 
+          destinataire_type: type,
+          destinataire_id: id,
+          destinataire_prenom: prenom
+        });
+      }
+      
+      MonHistoire.logger.info("Partage hors ligne traité avec succès");
+      return true;
+    } catch (error) {
+      MonHistoire.logger.error("Erreur lors du traitement du partage hors ligne", error);
+      return false;
+    }
+  },
+  
+  // Vérifie l'état de la connexion
+  isConnected() {
+    return navigator.onLine && MonHistoire.state.isConnected;
   }
 };
 
