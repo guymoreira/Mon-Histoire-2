@@ -12,6 +12,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  height: 100%;
 }
 
 
@@ -22,37 +23,55 @@ body {
   background: url('illustration-accueil.jpg') no-repeat center center fixed;
   background-size: cover;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
- .screen {
-  /* inclus padding dans la largeur/hauteur */
+.screen {
   box-sizing: border-box;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.6s ease;
-  position: absolute;
-  inset: 0;            /* raccourci top:0;right:0;bottom:0;left:0; */
-  padding: 2rem;
-  overflow-x: hidden;  /* empêche le scroll horizontal */
-  overflow-y: hidden;  /* empêche le scroll vertical par défaut */
-  z-index: 1;
-  /* inclus padding dans la largeur/hauteur */
-  box-sizing: border-box;
-  /* début invisible et réduit pour le zoom-fade */
   opacity: 0;
   visibility: hidden;
   transform: scale(0.95);
-  /* fade + zoom plus marqué et plus long */
-  transition:
-    opacity 1s ease-in-out,
-    transform 1s ease-in-out;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
   position: absolute;
   inset: 0;
   padding: 2rem;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
   z-index: 1;
- }
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Animations pour les écrans */
+.screen.fade-in {
+  animation: screen-fade-in 0.3s forwards;
+}
+
+.screen.fade-out {
+  animation: screen-fade-out 0.25s forwards;
+}
+
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes screen-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
 
 /* ================
    Scroll vertical autorisé *seulement* ici
@@ -70,23 +89,19 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-
-/* Page Connexion (et modales de reset éventuelles) et Création d’Histoire */
+/* Page Connexion (et modales de reset éventuelles) et Création d'Histoire */
 #connexion,
 #formulaire {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-
- .screen.active {
-  opacity: 1; visibility: visible; z-index: 2;
-  /* écran visible à pleine opacité et échelle normale */
+.screen.active {
   opacity: 1;
   visibility: visible;
   transform: scale(1);
   z-index: 2;
- }
+}
 
 .bloc-centre,
 .modal .bloc-centre,
@@ -118,7 +133,7 @@ body {
   margin: 0.38em 0 0.28em 0;    /* ESPACEMENT réduit */
   padding: 0.85em 0;             /* HAUTEUR augmentée */
   border: none;
-  border-radius: 28px;            /* ARRONDI réduit pour un aspect plus “carte” que “pilule” */
+  border-radius: 28px;            /* ARRONDI réduit pour un aspect plus "carte" que "pilule" */
   font-size: 1.22em;
   font-family: 'Fredoka', Arial, sans-serif;
   font-weight: 700;
@@ -163,32 +178,36 @@ body {
   box-sizing: border-box;
 }
 
- .button-group {
-   display: flex;
-   justify-content: space-between; /* espace max entre les deux boutons */
-   gap: 1rem;                       /* espace intermédiaire conservé */
- }
+.button-group {
+  display: flex;
+  justify-content: space-between; /* espace max entre les deux boutons */
+  gap: 1rem;                       /* espace intermédiaire conservé */
+}
+
 #connexion  .button-group button[type="button"],
 #signup-form .button-group button[type="button"],
 #reset-form .button-group button[type="button"] {
-  order: -1;  /* remonte “Annuler” avant le ou les boutons submit */
+  order: -1;  /* remonte "Annuler" avant le ou les boutons submit */
 }
+
 .form-buttons {
   display: flex;                   
-  flex-direction: row-reverse;     
+  flex-direction: row;     
   justify-content: space-between;  
   gap: 1rem;                       
-  margin-top: 1.5rem;             
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
 }
+
 .form-buttons .button {
   margin: 0; 
   flex: 1;  
 }
 
- /* Connexion : Annuler à gauche, Se connecter à droite */
- #connexion .button-group button[type="button"] {
-   order: -1;  /* remonte le bouton “Annuler” avant les autres */
- }
+/* Connexion : Annuler à gauche, Se connecter à droite */
+#connexion .button-group button[type="button"] {
+  order: -1;  /* remonte le bouton "Annuler" avant les autres */
+}
 
 .illustration-chapitre img {
   display: block;
@@ -196,7 +215,6 @@ body {
   height: auto;
   margin: 1rem auto;  /* espace vertical plus confortable */
 }
-
 
 .actions-resultat {
   display: block;
@@ -215,7 +233,7 @@ body {
   padding: 2rem;
   text-align: center;
   width: 90%;
-  max-width: 400px;  /* ou 90% / 600px selon l’importance du contenu */
+  max-width: 400px;  /* ou 90% / 600px selon l'importance du contenu */
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 .message-card {
@@ -275,7 +293,7 @@ body {
 
 
 
-/* 3) Rond “GM” en haut à droite */
+/* 3) Rond "GM" en haut à droite */
 #user-icon {
   position: absolute;
   top: 1rem;
@@ -320,7 +338,7 @@ body {
   padding: 0.8rem 1.5rem;
 }
 /* ─────────────────────────────────────
-   Centrage vertical du bloc d’accueil
+   Centrage vertical du bloc d'accueil
    ───────────────────────────────────── */
 #accueil {
   position: relative;
@@ -328,8 +346,8 @@ body {
   flex-direction: column;
   justify-content: flex-start;  /* on commence en haut */
   align-items: center;          /* toujours centré horizontalement */
-  padding-top: 15vh;            /* 15% de la hauteur en “gutter” au-dessus */
-  min-height: 100vh;            /* au moins la hauteur de l’écran */
+  padding-top: 15vh;            /* 15% de la hauteur en "gutter" au-dessus */
+  min-height: 100vh;            /* au moins la hauteur de l'écran */
   height: auto;                 /* laisser le navigateur gérer */
   box-sizing: border-box;       /* inclure padding dans la hauteur */
 }
@@ -338,6 +356,7 @@ body {
   /* supprime la marge verticale générée par .bloc-centre */
   margin: 0;                
 }
+
 /* Override pour écrans Formulaire, Connexion et Résultats */
 /* Rendre les cards un peu moins larges, et les centrer */
 #formulaire .bloc-centre,
@@ -349,6 +368,7 @@ body {
   max-width: 400px;    /* ne pas dépasser une taille confortable */
   margin: 2vh auto;    /* 2vh haut/bas, centré horizontalement */
 }
+
 #connexion .bloc-centre {
   /* on prend plus de place horizontalement : 95 % au lieu de 90 % */
   width:      100%;
@@ -357,26 +377,47 @@ body {
   /* ou changer la marge latérale précisément : 2vh haut/bas, 1rem gauche/droite */
   /* margin: 2vh 1rem; */
 }
+
 #mes-histoires .bloc-centre {
   width: 100%;
   max-width: 600px; /* ou 500px si tu préfères moins large */
   margin: 2vh auto;
 }
+
 #connexion.screen {
   padding-left: 1rem;   /* ou 0 si tu veux vraiment coller aux bords */
   padding-right: 1rem;
 }
+
 /* ─── ÉCRAN FORMULAIRE ─────────────────────────────────── */
 /* 1) on réduit le padding horizontal du parent */
 #formulaire.screen {
   padding-left: 1rem;
   padding-right: 1rem;
+  padding-bottom: 2rem; /* Réduit l'espace en bas */
+  max-height: 100vh;  /* Limite la hauteur à la hauteur de la fenêtre */
+  overflow-y: auto;   /* Permet le défilement vertical */
 }
+
 /* 2) on force le bloc-centre à 100 % de cette nouvelle largeur */
 #formulaire .bloc-centre {
-  width:      100%;
-  max-width:  500px;    /* ajustez à votre convenance */
-  margin:     2vh 0;    /* uniquement marge verticale */
+  width: 100%;
+  max-width: 500px;    /* ajustez à votre convenance */
+  margin: 2vh auto;    /* uniquement marge verticale */
+  padding-bottom: 1rem; /* Réduit l'espace en bas */
+}
+
+/* Style spécifique pour le formulaire de création d'histoire */
+#form-generer-histoire {
+  padding-bottom: 0.5rem; /* Réduit l'espace en bas */
+}
+
+/* Style spécifique pour les boutons du formulaire */
+#form-generer-histoire .form-buttons {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 10;
 }
 
 /* ─── ÉCRAN RÉSULTATS ─────────────────────────────────── */
@@ -413,23 +454,48 @@ body {
   user-select: none;
   /* On supprime line-height, ça n'a pas d'effet en flex et peut décentrer */
 }
+/* Classe pour les éléments cachés */
 .hidden {
-  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+
+/* Exception pour les boutons dans #accueil-content */
+#accueil-content .button.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: static !important; /* Garde sa place dans le flux */
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  transition: height 0.3s, margin 0.3s, padding 0.3s, opacity 0.3s, visibility 0.3s;
 }
 
 .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s;
+  transition: opacity 0.35s, transform 0.35s;
   align-items: center;
   justify-content: center;
   z-index: 2000; /* optionnel pour s'assurer que la modale passe devant */
+  transform: scale(0.95);
 }
 
 .modal.show {
   opacity: 1;
   pointer-events: auto;
+  transform: scale(1);
 }
 .form-buttons {
   display: flex;
@@ -485,7 +551,7 @@ body {
 }
 /* Barre de suppression quand il y a le bouton renommer */
 .actions-footer.with-rename {
-  gap: 2rem !important; /* Réduit l’espace horizontal entre les éléments */
+  gap: 2rem !important; /* Réduit l'espace horizontal entre les éléments */
   justify-content: center;
 }
 
@@ -525,7 +591,8 @@ body {
 }
 
 #btn-export-pdf.icon-action,
-#btn-audio.icon-action {
+#btn-audio.icon-action,
+#btn-partage.icon-action {
   background: #fff;
   color: #1161a5;
   border-radius: 50%;
@@ -545,7 +612,8 @@ body {
   padding: 0;
 }
 #btn-export-pdf.icon-action:hover,
-#btn-audio.icon-action:hover {
+#btn-audio.icon-action:hover,
+#btn-partage.icon-action:hover {
   background: #f7fbff;
   box-shadow: 0 0 12px rgba(16,97,165,0.18);
 }
@@ -569,7 +637,7 @@ body {
 }
 
 .bloc-compte {
-  background-color: #fff !important;  /* Force l’opacité 100% pour “Mon Compte” seulement */
+  background-color: #fff !important;  /* Force l'opacité 100% pour "Mon Compte" seulement */
 }
 .password-field {
   position: relative;
@@ -685,7 +753,18 @@ button::-moz-focus-inner,
   }
 }
 .modal.fade-out {
-  animation: fadeoutform 300ms ease-out forwards;
+  animation: fadeoutmodal 300ms ease-out forwards;
+}
+
+@keyframes fadeoutmodal {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 }
 
 /* S'assurer que la modale de renommage profil passe AU-DESSUS de la modale Mon Compte */
@@ -698,8 +777,30 @@ button::-moz-focus-inner,
   background-color: #fffef9 !important;
 }
 
+/* Styles pour l'indicateur de chargement */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #79d4e7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #395872;
+  font-weight: bold;
+}
+
 /* ========== NOTIFICATION DE PARTAGE D'HISTOIRE ========== */
-.notification-partage {
+.notification {
   position: fixed;
   top: -100px; /* Commence hors de l'écran */
   left: 0;
@@ -717,7 +818,7 @@ button::-moz-focus-inner,
   touch-action: none; /* Pour gérer manuellement les événements tactiles */
 }
 
-.notification-partage.show {
+.notification.show {
   top: 0; /* Animation vers le bas */
 }
 
@@ -731,7 +832,7 @@ button::-moz-focus-inner,
   }
 }
 
-.notification-partage.animate-in {
+.notification.animate-in {
   animation: notification-slide-in 0.5s forwards;
 }
 
@@ -745,6 +846,293 @@ button::-moz-focus-inner,
   }
 }
 
-.notification-partage.animate-out {
+.notification.animate-out {
   animation: notification-slide-out 0.5s forwards;
+}
+
+.notification-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style pour le footer avec le lien RGPD */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+}
+
+footer a {
+  color: #395872;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+footer a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* ========== STYLES POUR LA GESTION DES COOKIES ========== */
+
+/* Bannière de cookies */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff8e1;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  z-index: 9999;
+  display: none;
+  border-top: 2px solid #79d4e7;
+}
+
+.cookie-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cookie-content h3 {
+  margin-top: 0;
+  color: #395872;
+}
+
+.cookie-content p {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.cookie-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.cookie-buttons .button {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+/* Onglets RGPD */
+.rgpd-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.rgpd-tab-button {
+  background-color: #f1f1f1;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  flex: 1;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  margin-right: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ajuster la taille et le padding des boutons d'onglet pour les petits écrans */
+@media (max-width: 480px) {
+  .rgpd-tab-button {
+    padding: 8px 5px; /* Réduire le padding horizontal */
+    font-size: 0.8rem; /* Réduire la taille de la police */
+  }
+  
+  /* Assurer que chaque onglet prend exactement 1/3 de l'espace */
+  .rgpd-tab-button {
+    flex: 1 1 33.33%;
+    min-width: 0; /* Permettre aux onglets de rétrécir en dessous de leur contenu */
+  }
+}
+
+/* Pour les très petits écrans, utiliser des textes plus courts */
+@media (max-width: 360px) {
+  .rgpd-tab-button[onclick*="tab-policy"] {
+    font-size: 0.7rem;
+  }
+  
+  .rgpd-tab-button[onclick*="tab-settings"] {
+    font-size: 0.7rem;
+  }
+}
+
+.rgpd-tab-button:last-child {
+  margin-right: 0;
+}
+
+.rgpd-tab-button:hover {
+  background-color: #ddd;
+}
+
+.rgpd-tab-button.active {
+  background-color: #79d4e7;
+  color: #395872;
+  font-weight: bold;
+}
+
+.rgpd-tab-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.rgpd-tab-pane {
+  display: none;
+  padding: 10px 0;
+  text-align: left;
+}
+
+.rgpd-tab-pane.active {
+  display: block;
+}
+
+.rgpd-tab-pane h3 {
+  margin-top: 0;
+  color: #395872;
+}
+
+.rgpd-tab-pane h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #395872;
+}
+
+.rgpd-tab-pane h5 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #395872;
+}
+
+.rgpd-tab-pane p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.rgpd-tab-pane ul {
+  margin-bottom: 15px;
+  padding-left: 20px;
+}
+
+.rgpd-tab-pane li {
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+/* Options de cookies avec interrupteurs */
+.cookie-options {
+  margin: 20px 0;
+}
+
+.cookie-option {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.switch-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.switch-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 24px;
+  margin-right: 15px;
+  flex-shrink: 0;
+  transition: background-color 0.3s;
+}
+
+.switch:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+input:checked + .switch {
+  background-color: #79d4e7;
+}
+
+input:checked + .switch:before {
+  transform: translateX(26px);
+}
+
+input:disabled + .switch {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch-label div {
+  flex: 1;
+}
+
+.switch-label strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #395872;
+}
+
+.switch-label p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.cookie-modal-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Bouton de fermeture pour la modale RGPD */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: #395872;
 }

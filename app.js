@@ -66,51 +66,21 @@ function closeMessageModal() {
 // —————————————
 // State de navigation
 // —————————————
-let currentScreen  = "accueil";
-let previousScreen = null;
-
-// Affiche un écran, mémorise l’historique et gère le bouton “Sauvegarder”
-function showScreen(screen) {
-  if (screen === currentScreen) return;
-  previousScreen = currentScreen;
-  // masque tous les écrans actifs
-  document.querySelectorAll('.screen.active')
-          .forEach(el => el.classList.remove('active'));
-  // affiche le nouvel écran
-  document.getElementById(screen).classList.add('active');
-  currentScreen = screen;
-
-  // cas spécial Résultat : affiche ou cache le bouton “Sauvegarder”
-if (screen === "resultat") {
-  const btn = document.getElementById("btn-sauvegarde");
-  // Affiche le bouton sauvegarde uniquement si connecté ET si on vient du formulaire de création
-  if (firebase.auth().currentUser && resultatSource === "formulaire") {
-    btn.style.display = "inline-block";
-  } else {
-    btn.style.display = "none";
+// Initialisation des variables d'état pour la navigation
+// Ces variables sont maintenant gérées par le module MonHistoire.core.navigation
+window.MonHistoire = window.MonHistoire || {};
+MonHistoire.state = MonHistoire.state || {};
+MonHistoire.state.currentScreen = "accueil";
+MonHistoire.state.previousScreen = null;
+MonHistoire.state.resultatSource = "formulaire";
+MonHistoire.state.lectureAudioEnCours = false;
+MonHistoire.events = MonHistoire.events || {
+  emit: function(event, data) {
+    // Émet un événement personnalisé
+    const customEvent = new CustomEvent('monhistoire:' + event, { detail: data });
+    document.dispatchEvent(customEvent);
   }
-}
-
-
-  // cas particulier : si c’est Mes Histoires, on rafraîchit la liste
-if (screen === "mes-histoires") {
-  afficherHistoiresSauvegardees();
-  // Affiche le bouton Accueil seulement si tu viens de "resultat"
-  const btnAccueil = document.getElementById("btn-accueil-mes-histoires");
-  const group = document.getElementById("mes-histoires-actions");
-  if (previousScreen === "resultat") {
-    btnAccueil.style.display = "inline-block";
-    group.classList.remove('single');
-  } else {
-    btnAccueil.style.display = "none";
-    group.classList.add('single');
-  }
-}
-}
-/** Bouton “Retour” : revient à l’écran précédent (ou accueil par défaut) */
-function goBack() {
-  showScreen(previousScreen || "accueil");
-}
+};
 
 function loginUser() {
   const email = document.getElementById("email").value.trim();
@@ -1308,49 +1278,18 @@ function toggleLectureAudio() {
   }
 }
 
-// Arrête la lecture audio lorsqu'on change d'écran
+// Fonction de compatibilité pour rediriger vers le module de navigation
 function showScreen(screen) {
-  if (screen === currentScreen) return;
-  
-  // Arrête la lecture audio si elle est en cours
-  if (lectureAudioEnCours) {
-    arreterLectureAudio();
-  }
-  
-  previousScreen = currentScreen;
-  // masque tous les écrans actifs
-  document.querySelectorAll('.screen.active')
-          .forEach(el => el.classList.remove('active'));
-  // affiche le nouvel écran
-  document.getElementById(screen).classList.add('active');
-  currentScreen = screen;
-
-  // cas spécial Résultat : affiche ou cache le bouton "Sauvegarder"
-if (screen === "resultat") {
-  const btn = document.getElementById("btn-sauvegarde");
-  // Affiche le bouton sauvegarde uniquement si connecté ET si on vient du formulaire de création
-  if (firebase.auth().currentUser && resultatSource === "formulaire") {
-    btn.style.display = "inline-block";
-  } else {
-    btn.style.display = "none";
+  if (MonHistoire.core && MonHistoire.core.navigation) {
+    MonHistoire.core.navigation.showScreen(screen);
   }
 }
 
-
-  // cas particulier : si c'est Mes Histoires, on rafraîchit la liste
-if (screen === "mes-histoires") {
-  afficherHistoiresSauvegardees();
-  // Affiche le bouton Accueil seulement si tu viens de "resultat"
-  const btnAccueil = document.getElementById("btn-accueil-mes-histoires");
-  const group = document.getElementById("mes-histoires-actions");
-  if (previousScreen === "resultat") {
-    btnAccueil.style.display = "inline-block";
-    group.classList.remove('single');
-  } else {
-    btnAccueil.style.display = "none";
-    group.classList.add('single');
+// Fonction de compatibilité pour rediriger vers le module de navigation
+function goBack() {
+  if (MonHistoire.core && MonHistoire.core.navigation) {
+    MonHistoire.core.navigation.goBack();
   }
-}
 }
 // Ouvre la modale "Mon Compte" et remplit les champs avec les infos actuelles
 function ouvrirMonCompte() {
