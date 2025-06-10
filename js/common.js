@@ -21,7 +21,14 @@ MonHistoire.common.waitForEvents = function(callback, maxAttempts = 10) {
       attempts++;
       setTimeout(tryRegister, 200);
     } else {
-      console.error("Système d'événements non disponible");
+      if (MonHistoire.logger) {
+        MonHistoire.logger.error("Système d'événements non disponible après plusieurs tentatives", {
+          attempts: attempts,
+          maxAttempts: maxAttempts
+        });
+      } else {
+        console.error("Système d'événements non disponible");
+      }
     }
   }
   

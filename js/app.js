@@ -74,39 +74,166 @@ MonHistoire.generateDeviceId = function() {
 
 // Système de journalisation amélioré
 MonHistoire.logger = {
-  log(level, message, data = {}) {
-    console.log(`[${level}] ${message}`, data);
+  // Niveaux de log
+  LEVELS: {
+    DEBUG: 'DEBUG',
+    INFO: 'INFO',
+    WARNING: 'WARNING',
+    ERROR: 'ERROR',
+    FIREBASE: 'FIREBASE' // Niveau spécifique pour les logs Firebase
+  },
+  
+  // Préfixes pour les différents types de logs
+  PREFIXES: {
+    FIREBASE_REALTIME: 'FIREBASE_REALTIME',
+    FIREBASE_FIRESTORE: 'FIREBASE_FIRESTORE',
+    FIREBASE_AUTH: 'FIREBASE_AUTH',
+    FIREBASE_STORAGE: 'FIREBASE_STORAGE',
+    FIREBASE_CONFIG: 'FIREBASE_CONFIG',
+    STORY: 'STORY',
+    SHARING: 'SHARING',
+    CONNECTION: 'CONNECTION',
+    AUTH: 'AUTH',
+    PROFILE: 'PROFILE'
+  },
+  
+  // Fonction principale de log
+  log(level, prefix, message, data = {}) {
+    // Formater les données pour éviter de logger des objets trop volumineux
+    let formattedData = this._formatData(data);
+    
+    // Horodatage
+    const timestamp = new Date().toISOString();
+    
+    // Afficher le log dans la console
+    console.log(`[${timestamp}] [${level}] [${prefix}] ${message}`, formattedData);
+    
+    // Enregistrer dans Firestore uniquement les événements importants
+    this._saveToFirestore(level, prefix, message, data);
+  },
+  
+  // Formater les données pour éviter de logger des objets trop volumineux
+  _formatData(data) {
+    if (!data) return {};
+    
+    // Créer une copie pour ne pas modifier l'original
+    let formattedData = {};
+    
+    // Si c'est une histoire, ne pas logger le contenu complet
+    if (data.histoire && typeof data.histoire === 'object') {
+      formattedData = { ...data };
+      if (data.histoire.contenu && typeof data.histoire.contenu === 'string' && data.histoire.contenu.length > 100) {
+        formattedData.histoire = {
+          ...data.histoire,
+          contenu: `[CONTENU TRONQUÉ - ${data.histoire.contenu.length} caractères]`,
+          status: 'OK'
+        };
+      }
+    } 
+    // Si c'est une erreur Firebase, extraire les informations importantes
+    else if (data instanceof Error && data.code && data.message) {
+      formattedData = {
+        code: data.code,
+        message: data.message,
+        stack: data.stack ? data.stack.split('\n').slice(0, 3).join('\n') : null
+      };
+    }
+    // Pour les autres types de données
+    else {
+      formattedData = data;
+    }
+    
+    return formattedData;
+  },
+  
+  // Enregistrer les logs importants dans Firestore
+  _saveToFirestore(level, prefix, message, data) {
+    // Ne sauvegarder que les erreurs et avertissements
+    if (level !== this.LEVELS.ERROR && level !== this.LEVELS.WARNING) return;
     
     const user = firebase.auth().currentUser;
     if (!user) return;
     
-    // Enregistrer dans Firestore uniquement les événements importants
-    if (level === 'ERROR' || level === 'WARNING') {
-      firebase.firestore().collection("users").doc(user.uid)
-        .collection("error_logs").add({
-          level,
-          message,
-          data,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          deviceInfo: {
-            userAgent: navigator.userAgent,
-            deviceId: MonHistoire.generateDeviceId(),
-            profilActif: MonHistoire.state.profilActif
+    try {
+      // Préparer les données à sauvegarder
+      const logData = {
+        level,
+        prefix,
+        message,
+        data: this._formatData(data),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          deviceId: MonHistoire.generateDeviceId(),
+          profilActif: MonHistoire.state.profilActif,
+          connectionState: {
+            online: navigator.onLine,
+            realtimeDbConnected: MonHistoire.state.realtimeDbConnected,
+            realtimeDbAvailable: MonHistoire.state.realtimeDbAvailable
           }
-        }).catch(err => console.error("Erreur lors de l'enregistrement du log:", err));
+        }
+      };
+      
+      // Sauvegarder dans Firestore
+      firebase.firestore().collection("users").doc(user.uid)
+        .collection("error_logs").add(logData)
+        .catch(err => console.error("Erreur lors de l'enregistrement du log:", err));
+    } catch (err) {
+      console.error("Erreur lors de la sauvegarde du log dans Firestore:", err);
     }
   },
   
-  error(message, data = {}) {
-    this.log('ERROR', message, data);
+  // Méthodes de log par niveau
+  debug(prefix, message, data = {}) {
+    this.log(this.LEVELS.DEBUG, prefix, message, data);
   },
   
-  warning(message, data = {}) {
-    this.log('WARNING', message, data);
+  info(prefix, message, data = {}) {
+    this.log(this.LEVELS.INFO, prefix, message, data);
   },
   
-  info(message, data = {}) {
-    this.log('INFO', message, data);
+  warning(prefix, message, data = {}) {
+    this.log(this.LEVELS.WARNING, prefix, message, data);
+  },
+  
+  error(prefix, message, data = {}) {
+    this.log(this.LEVELS.ERROR, prefix, message, data);
+  },
+  
+  // Méthodes spécifiques pour Firebase
+  firebase(prefix, message, data = {}) {
+    this.log(this.LEVELS.FIREBASE, prefix, message, data);
+  },
+  
+  // Méthodes pour les différents services Firebase
+  firebaseRealtime(message, data = {}) {
+    this.firebase(this.PREFIXES.FIREBASE_REALTIME, message, data);
+  },
+  
+  firebaseFirestore(message, data = {}) {
+    this.firebase(this.PREFIXES.FIREBASE_FIRESTORE, message, data);
+  },
+  
+  firebaseAuth(message, data = {}) {
+    this.firebase(this.PREFIXES.FIREBASE_AUTH, message, data);
+  },
+  
+  // Méthodes pour les histoires
+  storyInfo(message, data = {}) {
+    this.info(this.PREFIXES.STORY, message, data);
+  },
+  
+  storyError(message, data = {}) {
+    this.error(this.PREFIXES.STORY, message, data);
+  },
+  
+  // Méthodes pour le partage
+  sharingInfo(message, data = {}) {
+    this.info(this.PREFIXES.SHARING, message, data);
+  },
+  
+  sharingError(message, data = {}) {
+    this.error(this.PREFIXES.SHARING, message, data);
   }
 };
 

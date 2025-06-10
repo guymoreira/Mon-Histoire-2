@@ -20,7 +20,11 @@ MonHistoire.features.sharing = {
    */
   init() {
     try {
-      console.log("Module de partage d'histoires initialisé");
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Module de partage d'histoires initialisé");
+      } else {
+        console.log("Module de partage d'histoires initialisé");
+      }
       
       // Initialiser les variables
       this.notificationsNonLues = this.notificationsNonLues || {};
@@ -29,14 +33,22 @@ MonHistoire.features.sharing = {
       
       // S'assurer que les fonctions essentielles sont disponibles
       this.mettreAJourIndicateurNotification = this.mettreAJourIndicateurNotification || function() {
-        console.warn("Fonction mettreAJourIndicateurNotification non disponible");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingWarning("Fonction mettreAJourIndicateurNotification non disponible");
+        } else {
+          console.warn("Fonction mettreAJourIndicateurNotification non disponible");
+        }
         if (this.notifications && typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
           return this.notifications.mettreAJourIndicateurNotification();
         }
       };
       
       this.mettreAJourIndicateurNotificationProfilsListe = this.mettreAJourIndicateurNotificationProfilsListe || function() {
-        console.warn("Fonction mettreAJourIndicateurNotificationProfilsListe non disponible");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingWarning("Fonction mettreAJourIndicateurNotificationProfilsListe non disponible");
+        } else {
+          console.warn("Fonction mettreAJourIndicateurNotificationProfilsListe non disponible");
+        }
         if (this.notifications && typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
           return this.notifications.mettreAJourIndicateurNotificationProfilsListe();
         }
@@ -62,14 +74,22 @@ MonHistoire.features.sharing = {
             }
           }
         } catch (error) {
-          console.error("Erreur lors de la configuration des écouteurs de notifications:", error);
+          if (MonHistoire.logger) {
+            MonHistoire.logger.sharingError("Erreur lors de la configuration des écouteurs de notifications", error);
+          } else {
+            console.error("Erreur lors de la configuration des écouteurs de notifications:", error);
+          }
         }
       }, 1000);
       
       // Configurer l'écouteur d'événements pour les changements de profil
       this.registerProfilChangeListener();
     } catch (error) {
-      console.error("Erreur lors de l'initialisation du module de partage:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation du module de partage", error);
+      } else {
+        console.error("Erreur lors de l'initialisation du module de partage:", error);
+      }
     }
   },
   
@@ -77,13 +97,20 @@ MonHistoire.features.sharing = {
    * Enregistre l'écouteur de changement de profil.
    * Utilise MonHistoire.common.waitForEvents pour attendre que le système d'événements soit disponible.
    */
-  registerProfilChangeListener() {
+  registerProfilChangeListener(compteur = 0) {
     const handler = (nouveauProfil) => {
       try {
-        console.log(
-          "Changement de profil détecté dans le module principal:",
-          nouveauProfil ? nouveauProfil.type : "inconnu"
-        );
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Changement de profil détecté", {
+            profilType: nouveauProfil ? nouveauProfil.type : "inconnu",
+            profilId: nouveauProfil && nouveauProfil.id ? nouveauProfil.id : null
+          });
+        } else {
+          console.log(
+            "Changement de profil détecté dans le module principal:",
+            nouveauProfil ? nouveauProfil.type : "inconnu"
+          );
+        }
           
         // Reconfigurer les écouteurs après un changement de profil
         setTimeout(() => {
@@ -118,11 +145,19 @@ MonHistoire.features.sharing = {
             // Vérifier s'il y a des histoires partagées pour ce profil
             this.verifierHistoiresPartagees();
           } catch (error) {
-            console.error("Erreur lors de la reconfiguration des écouteurs après changement de profil:", error);
+            if (MonHistoire.logger) {
+              MonHistoire.logger.sharingError("Erreur lors de la reconfiguration des écouteurs après changement de profil", error);
+            } else {
+              console.error("Erreur lors de la reconfiguration des écouteurs après changement de profil:", error);
+            }
           }
         }, 1000);
       } catch (error) {
-        console.error("Erreur dans l'écouteur de changement de profil:", error);
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingError("Erreur dans l'écouteur de changement de profil", error);
+        } else {
+          console.error("Erreur dans l'écouteur de changement de profil:", error);
+        }
       }
     };
     
@@ -134,9 +169,31 @@ MonHistoire.features.sharing = {
       // Fallback si MonHistoire.common n'est pas disponible
       MonHistoire.events.on("profilChange", handler);
     } else {
-      console.error(
-        "Système d'événements non disponible pour l'écouteur de changement de profil"
-      );
+      // Mécanisme de réessai si le système d'événements n'est pas disponible
+      if (compteur < 5) {
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Système d'événements non disponible, nouvelle tentative programmée", {
+            attempt: compteur + 1,
+            maxAttempts: 5,
+            delay: 200
+          });
+        } else {
+          console.warn("Système d'événements non disponible, nouvelle tentative programmée dans 200ms");
+        }
+        
+        setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
+      } else {
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingError("Système d'événements non disponible pour l'écouteur de changement de profil après plusieurs tentatives", {
+            attempts: compteur,
+            maxAttempts: 5
+          });
+        } else {
+          console.error(
+            "Système d'événements non disponible pour l'écouteur de changement de profil"
+          );
+        }
+      }
     }
   },
   
@@ -149,19 +206,31 @@ MonHistoire.features.sharing = {
       
       // 1. Storage (pas de dépendances)
       if (this.storage && typeof this.storage.init === 'function') {
-        console.log("Initialisation du sous-module storage");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Initialisation du sous-module storage");
+        } else {
+          console.log("Initialisation du sous-module storage");
+        }
         this.storage.init();
       }
       
       // 2. UI (dépend de storage)
       if (this.ui && typeof this.ui.init === 'function') {
-        console.log("Initialisation du sous-module ui");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Initialisation du sous-module ui");
+        } else {
+          console.log("Initialisation du sous-module ui");
+        }
         this.ui.init();
       }
       
       // 3. Notifications (dépend de ui)
       if (this.notifications && typeof this.notifications.init === 'function') {
-        console.log("Initialisation du sous-module notifications");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Initialisation du sous-module notifications");
+        } else {
+          console.log("Initialisation du sous-module notifications");
+        }
         this.notifications.init();
         
         // Exposer les fonctions importantes au module principal
@@ -176,13 +245,25 @@ MonHistoire.features.sharing = {
       
       // 4. Realtime (dépend de notifications)
       if (this.realtime && typeof this.realtime.init === 'function') {
-        console.log("Initialisation du sous-module realtime");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Initialisation du sous-module realtime");
+        } else {
+          console.log("Initialisation du sous-module realtime");
+        }
         this.realtime.init();
       }
       
-      console.log("Tous les sous-modules de partage ont été initialisés");
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Tous les sous-modules de partage ont été initialisés");
+      } else {
+        console.log("Tous les sous-modules de partage ont été initialisés");
+      }
     } catch (error) {
-      console.error("Erreur lors de l'initialisation des sous-modules:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation des sous-modules", error);
+      } else {
+        console.error("Erreur lors de l'initialisation des sous-modules:", error);
+      }
     }
   },
   
@@ -202,7 +283,11 @@ MonHistoire.features.sharing = {
       
       // Écouteur pour les changements de connexion
       window.addEventListener('online', () => {
-        console.log("Connexion rétablie, vérification des histoires partagées");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Connexion rétablie, vérification des histoires partagées");
+        } else {
+          console.log("Connexion rétablie, vérification des histoires partagées");
+        }
         MonHistoire.state.isConnected = true;
         
         // Attendre un court instant pour s'assurer que Firebase est prêt
@@ -212,11 +297,19 @@ MonHistoire.features.sharing = {
       });
       
       window.addEventListener('offline', () => {
-        console.log("Connexion perdue");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Connexion perdue");
+        } else {
+          console.log("Connexion perdue");
+        }
         MonHistoire.state.isConnected = false;
       });
     } catch (error) {
-      console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation des écouteurs de notifications", error);
+      } else {
+        console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
+      }
     }
   },
   
@@ -239,7 +332,11 @@ MonHistoire.features.sharing = {
         MonHistoire.core.navigation.showScreen("mes-histoires");
       }
     } catch (error) {
-      console.error("Erreur lors du clic sur la notification:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors du clic sur la notification", error);
+      } else {
+        console.error("Erreur lors du clic sur la notification:", error);
+      }
     }
   },
   
@@ -250,7 +347,11 @@ MonHistoire.features.sharing = {
     try {
       // Vérifier si Firebase est disponible
       if (!firebase || !firebase.auth) {
-        console.warn("Vérification des histoires partagées: Firebase non disponible");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingWarning("Vérification des histoires partagées: Firebase non disponible");
+        } else {
+          console.warn("Vérification des histoires partagées: Firebase non disponible");
+        }
         
         // Planifier une nouvelle tentative après un délai
         setTimeout(() => this.verifierHistoiresPartagees(), 5000);
@@ -259,7 +360,11 @@ MonHistoire.features.sharing = {
       
       const user = firebase.auth().currentUser;
       if (!user) {
-        console.log("Vérification des histoires partagées: utilisateur non connecté");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Vérification des histoires partagées: utilisateur non connecté");
+        } else {
+          console.log("Vérification des histoires partagées: utilisateur non connecté");
+        }
         return;
       }
 
@@ -273,15 +378,26 @@ MonHistoire.features.sharing = {
 
       // Vérifier l'état de connexion
       if (!this.isConnected()) {
-        console.log("Vérification des histoires partagées: appareil non connecté");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Vérification des histoires partagées: appareil non connecté");
+        } else {
+          console.log("Vérification des histoires partagées: appareil non connecté");
+        }
         
         // Planifier une nouvelle tentative après un délai
         setTimeout(() => this.verifierHistoiresPartagees(), 5000);
         return;
       }
 
-      console.log("Vérification des histoires partagées pour", MonHistoire.state.profilActif.type, 
-                  MonHistoire.state.profilActif.type === "enfant" ? MonHistoire.state.profilActif.id : "");
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Vérification des histoires partagées", {
+          profilType: MonHistoire.state.profilActif.type,
+          profilId: MonHistoire.state.profilActif.type === "enfant" ? MonHistoire.state.profilActif.id : null
+        });
+      } else {
+        console.log("Vérification des histoires partagées pour", MonHistoire.state.profilActif.type, 
+                    MonHistoire.state.profilActif.type === "enfant" ? MonHistoire.state.profilActif.id : "");
+      }
       
       // Initialise le compteur de notifications non lues pour le profil actif
       if (this.notifications && typeof this.notifications.initialiserCompteurNotifications === 'function') {
@@ -410,7 +526,11 @@ MonHistoire.features.sharing = {
     }
     
     // Sinon, retourner false pour indiquer que le traitement a échoué
-    console.error("Traitement du partage hors ligne non disponible");
+    if (MonHistoire.logger) {
+      MonHistoire.logger.sharingError("Traitement du partage hors ligne non disponible");
+    } else {
+      console.error("Traitement du partage hors ligne non disponible");
+    }
     return false;
   },
   
@@ -444,7 +564,11 @@ MonHistoire.features.sharing = {
       const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
       return isNetworkConnected && isFirebaseConnected && MonHistoire.state.isConnected;
     } catch (error) {
-      console.error("Erreur lors de la vérification de l'état de connexion:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de la vérification de l'état de connexion", error);
+      } else {
+        console.error("Erreur lors de la vérification de l'état de connexion:", error);
+      }
       return false;
     }
   },
@@ -462,7 +586,11 @@ MonHistoire.features.sharing = {
       }
       
       if (!user) {
-        console.log("Impossible d'initialiser le compteur de notifications: utilisateur non connecté");
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingInfo("Impossible d'initialiser le compteur de notifications: utilisateur non connecté");
+        } else {
+          console.log("Impossible d'initialiser le compteur de notifications: utilisateur non connecté");
+        }
         return;
       }
       
@@ -519,9 +647,19 @@ MonHistoire.features.sharing = {
         }
       }
       
-      console.log("Compteur de notifications initialisé:", this.notificationsNonLues);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Compteur de notifications initialisé", {
+          notificationsCount: this.notificationsNonLues
+        });
+      } else {
+        console.log("Compteur de notifications initialisé:", this.notificationsNonLues);
+      }
     } catch (error) {
-      console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation du compteur de notifications", error);
+      } else {
+        console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
+      }
     }
   }
 };

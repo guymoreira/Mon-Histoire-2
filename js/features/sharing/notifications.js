@@ -26,7 +26,11 @@ MonHistoire.features.sharing.notifications = {
    * Initialisation du module
    */
   init() {
-    console.log("Module de notifications de partage initialisé");
+    if (MonHistoire.logger) {
+      MonHistoire.logger.sharingInfo("Module de notifications de partage initialisé");
+    } else {
+      console.log("Module de notifications de partage initialisé");
+    }
     
     // Initialiser les écouteurs d'événements pour les notifications
     this.initNotificationListeners();
@@ -56,6 +60,13 @@ MonHistoire.features.sharing.notifications = {
       if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
         if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
           // Utiliser la fonction utilitaire pour attendre que MonHistoire.events soit disponible
+          if (MonHistoire.logger) {
+            MonHistoire.logger.sharingInfo("Attente du système d'événements pour les notifications", {
+              waitMethod: "waitForEvents",
+              maxAttempts: this.maxInitAttempts
+            });
+          }
+          
           MonHistoire.common.waitForEvents(() => {
             // Écouteur pour les changements de profil
             MonHistoire.events.on("profilChange", () => {
@@ -69,14 +80,33 @@ MonHistoire.features.sharing.notifications = {
             
             // Réinitialiser le compteur de tentatives
             this.initAttempts = 0;
+            
+            if (MonHistoire.logger) {
+              MonHistoire.logger.sharingInfo("Écouteurs d'événements de notifications initialisés avec succès après attente");
+            }
           }, this.maxInitAttempts);
         } else {
           // Fallback si MonHistoire.common n'est pas disponible
           if (this.initAttempts < this.maxInitAttempts) {
             this.initAttempts++;
+            
+            if (MonHistoire.logger) {
+              MonHistoire.logger.sharingInfo("Tentative d'initialisation des écouteurs de notifications", {
+                attempt: this.initAttempts,
+                maxAttempts: this.maxInitAttempts
+              });
+            }
+            
             setTimeout(() => this.initNotificationListeners(), 200);
           } else {
-            console.warn("Système d'événements non disponible pour les notifications");
+            if (MonHistoire.logger) {
+              MonHistoire.logger.sharingError("Système d'événements non disponible pour les notifications après plusieurs tentatives", {
+                attempts: this.initAttempts,
+                maxAttempts: this.maxInitAttempts
+              });
+            } else {
+              console.warn("Système d'événements non disponible pour les notifications");
+            }
           }
         }
         return;
@@ -95,7 +125,11 @@ MonHistoire.features.sharing.notifications = {
         this.initAttempts = 0;
       }
     } catch (error) {
-      console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation des écouteurs de notifications", error);
+      } else {
+        console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
+      }
     }
   },
   
@@ -159,9 +193,20 @@ MonHistoire.features.sharing.notifications = {
         }
       }
       
-      console.log("Compteur de notifications initialisé:", MonHistoire.features.sharing.notificationsNonLues);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Compteur de notifications initialisé", {
+          notificationsCount: Object.keys(MonHistoire.features.sharing.notificationsNonLues).length,
+          status: "OK"
+        });
+      } else {
+        console.log("Compteur de notifications initialisé:", MonHistoire.features.sharing.notificationsNonLues);
+      }
     } catch (error) {
-      console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de l'initialisation du compteur de notifications", error);
+      } else {
+        console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
+      }
     }
   },
   
@@ -268,9 +313,21 @@ MonHistoire.features.sharing.notifications = {
             nouvelleHistoire: nouvelleHistoire,
             vueParProfils: vueParProfils,
             vueLe: firebase.firestore.FieldValue.serverTimestamp()
-          }).catch(error => console.error("Erreur lors du marquage de l'histoire comme vue:", error));
+          }).catch(error => {
+            if (MonHistoire.logger) {
+              MonHistoire.logger.sharingError("Erreur lors du marquage de l'histoire comme vue", error);
+            } else {
+              console.error("Erreur lors du marquage de l'histoire comme vue:", error);
+            }
+          });
         }
-      }).catch(error => console.error("Erreur lors de la récupération de l'histoire:", error));
+      }).catch(error => {
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingError("Erreur lors de la récupération de l'histoire", error);
+        } else {
+          console.error("Erreur lors de la récupération de l'histoire:", error);
+        }
+      });
       
       // Réinitialise la référence
       MonHistoire.features.sharing.histoireNotifieeActuelle = null;
@@ -441,7 +498,11 @@ MonHistoire.features.sharing.notifications = {
         });
       }
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'indicateur de notification:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de la mise à jour de l'indicateur de notification", error);
+      } else {
+        console.error("Erreur lors de la mise à jour de l'indicateur de notification:", error);
+      }
     }
   },
   
@@ -490,7 +551,11 @@ MonHistoire.features.sharing.notifications = {
         }
       });
     } catch (error) {
-      console.error("Erreur lors de la mise à jour des indicateurs de notification dans la liste des profils:", error);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors de la mise à jour des indicateurs de notification dans la liste des profils", error);
+      } else {
+        console.error("Erreur lors de la mise à jour des indicateurs de notification dans la liste des profils:", error);
+      }
     }
   }
 };
