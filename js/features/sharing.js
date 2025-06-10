@@ -98,15 +98,12 @@ MonHistoire.features.sharing = {
    * Réessaie toutes les 200 ms jusqu'à 5 tentatives si MonHistoire.events n'est pas disponible.
    */
   registerProfilChangeListener(compteur = 0) {
-    /**
-     * Gestionnaire d'événement pour les changements de profil
-     */
+    // Définir le gestionnaire d'événements
     const handler = (nouveauProfil) => {
       try {
         if (MonHistoire.logger) {
-          MonHistoire.logger.sharingInfo("Changement de profil détecté", {
-            profilType: nouveauProfil ? nouveauProfil.type : "inconnu",
-            profilId: nouveauProfil && nouveauProfil.id ? nouveauProfil.id : null
+          MonHistoire.logger.sharingInfo("Changement de profil détecté dans le module principal", {
+            profilType: nouveauProfil ? nouveauProfil.type : "inconnu"
           });
         } else {
           console.log(
@@ -114,7 +111,7 @@ MonHistoire.features.sharing = {
             nouveauProfil ? nouveauProfil.type : "inconnu"
           );
         }
-          
+        
         // Reconfigurer les écouteurs après un changement de profil
         setTimeout(() => {
           try {
@@ -122,6 +119,7 @@ MonHistoire.features.sharing = {
               if (typeof this.realtime.configurerEcouteurNotificationsRealtime === 'function') {
                 this.realtime.configurerEcouteurNotificationsRealtime();
               }
+              
               if (typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
                 this.realtime.configurerEcouteurHistoiresPartagees();
               }
@@ -129,20 +127,8 @@ MonHistoire.features.sharing = {
             
             // Mettre à jour les indicateurs de notification
             if (this.notifications) {
-              if (typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
-                this.notifications.mettreAJourIndicateurNotification();
-              }
-              if (typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-                this.notifications.mettreAJourIndicateurNotificationProfilsListe();
-              }
-            } else {
-              // Utiliser les fonctions exposées au module principal si disponibles
-              if (typeof this.mettreAJourIndicateurNotification === 'function') {
-                this.mettreAJourIndicateurNotification();
-              }
-              if (typeof this.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-                this.mettreAJourIndicateurNotificationProfilsListe();
-              }
+              this.notifications.mettreAJourIndicateurNotification();
+              this.notifications.mettreAJourIndicateurNotificationProfilsListe();
             }
             
             // Vérifier s'il y a des histoires partagées pour ce profil

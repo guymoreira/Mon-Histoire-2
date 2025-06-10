@@ -147,6 +147,12 @@ MonHistoire.features.sharing.notifications = {
           : { type: "parent" };
       }
       
+      // Récupère l'ID du profil actif
+      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+      
+      // Réinitialiser le compteur avant de compter les nouvelles notifications
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = 0;
+      
       // Détermine la collection à vérifier selon le profil actif
       let storiesRef;
       if (MonHistoire.state.profilActif.type === "parent") {
@@ -167,7 +173,6 @@ MonHistoire.features.sharing.notifications = {
 
       // Compte le nombre de notifications non lues
       const snapshot = await storiesRef.get();
-      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       MonHistoire.features.sharing.notificationsNonLues[profilId] = snapshot.size;
       
       // Si le profil actif est le parent, compte aussi les notifications non lues pour chaque profil enfant
@@ -179,17 +184,20 @@ MonHistoire.features.sharing.notifications = {
           .get();
           
         for (const profilDoc of profilsEnfantsSnapshot.docs) {
-          const profilId = profilDoc.id;
+          const enfantProfilId = profilDoc.id;
+          // Réinitialiser le compteur pour ce profil enfant
+          MonHistoire.features.sharing.notificationsNonLues[enfantProfilId] = 0;
+          
           const storiesEnfantRef = firebase.firestore()
             .collection("users")
             .doc(user.uid)
             .collection("profils_enfant")
-            .doc(profilId)
+            .doc(enfantProfilId)
             .collection("stories")
             .where("nouvelleHistoire", "==", true);
             
           const storiesEnfantSnapshot = await storiesEnfantRef.get();
-          MonHistoire.features.sharing.notificationsNonLues[profilId] = storiesEnfantSnapshot.size;
+          MonHistoire.features.sharing.notificationsNonLues[enfantProfilId] = storiesEnfantSnapshot.size;
         }
       }
       
@@ -291,43 +299,61 @@ MonHistoire.features.sharing.notifications = {
         MonHistoire.features.sharing.notificationsNonLues[profilId]--;
       }
       
-      // Met à jour le document Firestore
-      MonHistoire.features.sharing.histoireNotifieeActuelle.get().then(doc => {
-        if (doc.exists) {
-          const data = doc.data();
+      try {
+        // Vérifier que histoireNotifieeActuelle est valide avant d'appeler get()
+        if (MonHistoire.features.sharing.histoireNotifieeActuelle && 
+            typeof MonHistoire.features.sharing.histoireNotifieeActuelle.get === 'function') {
           
-          // Initialise vueParProfils s'il n'existe pas
-          const vueParProfils = data.vueParProfils || [];
-          
-          // Ajoute le profil actif à la liste des profils ayant vu l'histoire
-          if (!vueParProfils.includes(profilId)) {
-            vueParProfils.push(profilId);
-          }
-          
-          // Détermine si l'histoire doit être marquée comme vue
-          // (si tous les destinataires l'ont vue)
-          const nouvelleHistoire = vueParProfils.length < 2; // Simplifié pour l'instant
-          
-          // Met à jour le document
-          MonHistoire.features.sharing.histoireNotifieeActuelle.update({ 
-            nouvelleHistoire: nouvelleHistoire,
-            vueParProfils: vueParProfils,
-            vueLe: firebase.firestore.FieldValue.serverTimestamp()
+          // Met à jour le document Firestore
+          MonHistoire.features.sharing.histoireNotifieeActuelle.get().then(doc => {
+            if (doc.exists) {
+              const data = doc.data();
+              
+              // Initialise vueParProfils s'il n'existe pas
+              const vueParProfils = data.vueParProfils || [];
+              
+              // Ajoute le profil actif à la liste des profils ayant vu l'histoire
+              if (!vueParProfils.includes(profilId)) {
+                vueParProfils.push(profilId);
+              }
+              
+              // Détermine si l'histoire doit être marquée comme vue
+              // (si tous les destinataires l'ont vue)
+              const nouvelleHistoire = vueParProfils.length < 2; // Simplifié pour l'instant
+              
+              // Vérifier que histoireNotifieeActuelle est toujours valide avant d'appeler update()
+              if (MonHistoire.features.sharing.histoireNotifieeActuelle && 
+                  typeof MonHistoire.features.sharing.histoireNotifieeActuelle.update === 'function') {
+                
+                // Met à jour le document
+                MonHistoire.features.sharing.histoireNotifieeActuelle.update({ 
+                  nouvelleHistoire: nouvelleHistoire,
+                  vueParProfils: vueParProfils,
+                  vueLe: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(error => {
+                  if (MonHistoire.logger) {
+                    MonHistoire.logger.sharingError("Erreur lors du marquage de l'histoire comme vue", error);
+                  } else {
+                    console.error("Erreur lors du marquage de l'histoire comme vue:", error);
+                  }
+                });
+              }
+            }
           }).catch(error => {
             if (MonHistoire.logger) {
-              MonHistoire.logger.sharingError("Erreur lors du marquage de l'histoire comme vue", error);
+              MonHistoire.logger.sharingError("Erreur lors de la récupération de l'histoire", error);
             } else {
-              console.error("Erreur lors du marquage de l'histoire comme vue:", error);
+              console.error("Erreur lors de la récupération de l'histoire:", error);
             }
           });
         }
-      }).catch(error => {
+      } catch (error) {
         if (MonHistoire.logger) {
-          MonHistoire.logger.sharingError("Erreur lors de la récupération de l'histoire", error);
+          MonHistoire.logger.sharingError("Erreur lors du traitement de l'histoire notifiée", error);
         } else {
-          console.error("Erreur lors de la récupération de l'histoire:", error);
+          console.error("Erreur lors du traitement de l'histoire notifiée:", error);
         }
-      });
+      }
       
       // Réinitialise la référence
       MonHistoire.features.sharing.histoireNotifieeActuelle = null;

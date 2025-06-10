@@ -412,9 +412,9 @@ MonHistoire.core.profiles = {
               });
               
               // Configurer l'écouteur de notifications en temps réel pour ce profil
-              if (MonHistoire.features && MonHistoire.features.sharing) {
+              if (MonHistoire.features && MonHistoire.features.sharing && MonHistoire.features.sharing.realtime) {
                 setTimeout(() => {
-                  MonHistoire.features.sharing.configurerEcouteurNotificationsRealtime();
+                  MonHistoire.features.sharing.realtime.configurerEcouteurNotificationsRealtime();
                 }, 500);
               }
             }
