@@ -18,6 +18,10 @@ MonHistoire.features.sharing.notificationSwipeStartY = 0;
  * Responsable de l'affichage et de la gestion des notifications de partage
  */
 MonHistoire.features.sharing.notifications = {
+  // Compteur de tentatives d'initialisation des écouteurs
+  initAttempts: 0,
+  // Nombre maximal de tentatives
+  maxInitAttempts: 10,
   /**
    * Initialisation du module
    */
@@ -48,19 +52,29 @@ MonHistoire.features.sharing.notifications = {
         notification.addEventListener("click", this.clicNotificationPartage.bind(this));
       }
       
-      // Écouteur pour les changements de profil
-      if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
-        MonHistoire.events.on("profilChange", () => {
-          // Mettre à jour l'indicateur de notification après un court délai
-          // pour laisser le temps aux données de se charger
-          setTimeout(() => {
-            this.mettreAJourIndicateurNotification();
-            this.mettreAJourIndicateurNotificationProfilsListe();
-          }, 1000);
-        });
-      } else {
-        console.warn("Système d'événements non disponible pour les notifications");
+      // Vérifier la disponibilité du système d'événements
+      if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
+        if (this.initAttempts < this.maxInitAttempts) {
+          this.initAttempts++;
+          setTimeout(() => this.initNotificationListeners(), 200);
+        } else {
+          console.warn("Système d'événements non disponible pour les notifications");
+        }
+        return;
       }
+      
+      // Écouteur pour les changements de profil
+      MonHistoire.events.on("profilChange", () => {
+        // Mettre à jour l'indicateur de notification après un court délai
+        // pour laisser le temps aux données de se charger
+        setTimeout(() => {
+          this.mettreAJourIndicateurNotification();
+          this.mettreAJourIndicateurNotificationProfilsListe();
+        }, 1000);
+      });
+      
+      // Réinitialiser le compteur de tentatives
+      this.initAttempts = 0;
     } catch (error) {
       console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
     }

@@ -69,11 +69,22 @@ MonHistoire.features.sharing = {
       console.error("Erreur lors de l'initialisation du module de partage:", error);
     }
     
-    // Configurer l'écouteur d'événements pour les changements de profil
+  // Configurer l'écouteur d'événements pour les changements de profil
+  this.registerProfilChangeListener();
+  },
+  
+  /**
+   * Enregistre l'écouteur de changement de profil.
+   * Réessaie toutes les 200 ms jusqu'à 5 tentatives si MonHistoire.events n'est pas disponible.
+   */
+  registerProfilChangeListener(compteur = 0) {
     if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
       MonHistoire.events.on("profilChange", (nouveauProfil) => {
         try {
-          console.log("Changement de profil détecté dans le module principal:", nouveauProfil ? nouveauProfil.type : "inconnu");
+          console.log(
+            "Changement de profil détecté dans le module principal:",
+            nouveauProfil ? nouveauProfil.type : "inconnu"
+          );
           
           // Reconfigurer les écouteurs après un changement de profil
           setTimeout(() => {
@@ -115,8 +126,12 @@ MonHistoire.features.sharing = {
           console.error("Erreur dans l'écouteur de changement de profil:", error);
         }
       });
+    } else if (compteur < 5) {
+      setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
     } else {
-      console.error("Système d'événements non disponible pour l'écouteur de changement de profil");
+      console.error(
+        "Système d'événements non disponible pour l'écouteur de changement de profil"
+      );
     }
   },
   
