@@ -6,9 +6,14 @@ window.MonHistoire = window.MonHistoire || {};
 MonHistoire.features = MonHistoire.features || {};
 MonHistoire.features.sharing = MonHistoire.features.sharing || {};
 
-// Module de gestion des notifications
+/**
+ * Module de gestion des notifications
+ * Responsable de l'affichage et de la gestion des notifications de partage
+ */
 MonHistoire.features.sharing.notifications = {
-  // Initialisation du module
+  /**
+   * Initialisation du module
+   */
   init() {
     console.log("Module de notifications de partage initialisé");
     
@@ -16,18 +21,40 @@ MonHistoire.features.sharing.notifications = {
     this.initNotificationListeners();
   },
   
-  // Initialise les écouteurs d'événements pour les notifications
+  /**
+   * Initialise les écouteurs d'événements pour les notifications
+   */
   initNotificationListeners() {
     // Écouteur pour le clic sur la notification
     const notification = document.getElementById("notification-partage");
     if (notification) {
       notification.addEventListener("click", this.clicNotificationPartage.bind(this));
     }
+    
+    // Écouteur pour les changements de profil
+    MonHistoire.events.on("profilChange", () => {
+      // Mettre à jour l'indicateur de notification après un court délai
+      // pour laisser le temps aux données de se charger
+      setTimeout(() => {
+        this.mettreAJourIndicateurNotification();
+      }, 500);
+    });
   },
   
-  // Initialise le compteur de notifications non lues pour le profil actif
+  /**
+   * Initialise le compteur de notifications non lues pour le profil actif
+   * @param {Object} user - L'utilisateur Firebase actuel
+   * @returns {Promise} - Promise résolue quand l'initialisation est terminée
+   */
   async initialiserCompteurNotifications(user) {
     try {
+      // S'assurer que le profilActif est correctement initialisé
+      if (!MonHistoire.state.profilActif) {
+        MonHistoire.state.profilActif = localStorage.getItem("profilActif")
+          ? JSON.parse(localStorage.getItem("profilActif"))
+          : { type: "parent" };
+      }
+      
       // Détermine la collection à vérifier selon le profil actif
       let storiesRef;
       if (MonHistoire.state.profilActif.type === "parent") {
@@ -48,7 +75,8 @@ MonHistoire.features.sharing.notifications = {
 
       // Compte le nombre de notifications non lues
       const snapshot = await storiesRef.get();
-      MonHistoire.features.sharing.notificationsNonLues[MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id] = snapshot.size;
+      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = snapshot.size;
       
       // Si le profil actif est le parent, compte aussi les notifications non lues pour chaque profil enfant
       if (MonHistoire.state.profilActif.type === "parent") {
@@ -79,7 +107,11 @@ MonHistoire.features.sharing.notifications = {
     }
   },
   
-  // Affiche la notification de partage
+  /**
+   * Affiche la notification de partage
+   * @param {string} prenomPartageur - Prénom de la personne qui a partagé l'histoire
+   * @param {Object} histoireRef - Référence Firestore à l'histoire partagée
+   */
   afficherNotificationPartage(prenomPartageur, histoireRef) {
     const notification = document.getElementById("notification-partage");
     const message = document.getElementById("notification-message");
@@ -92,6 +124,15 @@ MonHistoire.features.sharing.notifications = {
     // Définit le message
     message.textContent = `${prenomPartageur} t'a partagé une histoire`;
     
+    // Supprime les anciens écouteurs d'événements pour éviter les doublons
+    notification.removeEventListener("touchstart", this.demarrerSwipeNotification);
+    notification.removeEventListener("touchmove", this.deplacerSwipeNotification);
+    notification.removeEventListener("touchend", this.terminerSwipeNotification);
+    notification.removeEventListener("mousedown", this.demarrerSwipeNotification);
+    notification.removeEventListener("mousemove", this.deplacerSwipeNotification);
+    notification.removeEventListener("mouseup", this.terminerSwipeNotification);
+    notification.removeEventListener("mouseleave", this.terminerSwipeNotification);
+    
     // Ajoute les écouteurs d'événements pour le swipe
     notification.addEventListener("touchstart", this.demarrerSwipeNotification.bind(this), { passive: true });
     notification.addEventListener("touchmove", this.deplacerSwipeNotification.bind(this), { passive: true });
@@ -101,7 +142,14 @@ MonHistoire.features.sharing.notifications = {
     notification.addEventListener("mouseup", this.terminerSwipeNotification.bind(this));
     notification.addEventListener("mouseleave", this.terminerSwipeNotification.bind(this));
     
+    // Annule le timeout précédent s'il existe
+    if (MonHistoire.features.sharing.notificationTimeout) {
+      clearTimeout(MonHistoire.features.sharing.notificationTimeout);
+      MonHistoire.features.sharing.notificationTimeout = null;
+    }
+    
     // Affiche la notification avec animation
+    notification.classList.remove("show", "animate-out");
     notification.classList.add("animate-in");
     
     // Supprime la classe d'animation après qu'elle soit terminée
@@ -116,7 +164,10 @@ MonHistoire.features.sharing.notifications = {
     }, 5000);
   },
   
-  // Ferme la notification de partage
+  /**
+   * Ferme la notification de partage
+   * @param {boolean} marquerCommeVue - Si true, marque l'histoire comme vue
+   */
   fermerNotificationPartage(marquerCommeVue = true) {
     const notification = document.getElementById("notification-partage");
     if (!notification) return;
@@ -165,6 +216,9 @@ MonHistoire.features.sharing.notifications = {
       
       // Réinitialise la référence
       MonHistoire.features.sharing.histoireNotifieeActuelle = null;
+      
+      // Met à jour l'indicateur de notification
+      this.mettreAJourIndicateurNotification();
     }
     
     // Ajoute l'animation de sortie
@@ -186,7 +240,10 @@ MonHistoire.features.sharing.notifications = {
     }, 500);
   },
   
-  // Gestion du swipe - Début
+  /**
+   * Gestion du swipe - Début
+   * @param {Event} e - Événement de début de swipe
+   */
   demarrerSwipeNotification(e) {
     // Annule le timeout automatique
     if (MonHistoire.features.sharing.notificationTimeout) {
@@ -204,7 +261,10 @@ MonHistoire.features.sharing.notifications = {
     }
   },
   
-  // Gestion du swipe - Déplacement
+  /**
+   * Gestion du swipe - Déplacement
+   * @param {Event} e - Événement de déplacement
+   */
   deplacerSwipeNotification(e) {
     // Ne fait rien si on n'a pas commencé un swipe
     if (MonHistoire.features.sharing.notificationSwipeStartX === 0 && MonHistoire.features.sharing.notificationSwipeStartY === 0) return;
@@ -233,14 +293,19 @@ MonHistoire.features.sharing.notifications = {
     }
   },
   
-  // Gestion du swipe - Fin
+  /**
+   * Gestion du swipe - Fin
+   */
   terminerSwipeNotification() {
     // Réinitialise les positions
     MonHistoire.features.sharing.notificationSwipeStartX = 0;
     MonHistoire.features.sharing.notificationSwipeStartY = 0;
   },
   
-  // Gestion du clic sur la notification
+  /**
+   * Gestion du clic sur la notification
+   * @param {Event} e - Événement de clic
+   */
   clicNotificationPartage(e) {
     // Empêche la propagation du clic
     e.preventDefault();
@@ -255,7 +320,9 @@ MonHistoire.features.sharing.notifications = {
     }
   },
   
-  // Met à jour l'indicateur de notification dans l'interface utilisateur
+  /**
+   * Met à jour l'indicateur de notification dans l'interface utilisateur
+   */
   mettreAJourIndicateurNotification() {
     // Récupère l'ID du profil actif
     const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
@@ -303,7 +370,9 @@ MonHistoire.features.sharing.notifications = {
     });
   },
   
-  // Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
+  /**
+   * Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
+   */
   mettreAJourIndicateurNotificationProfilsListe() {
     // Récupère la liste des profils dans le modal de déconnexion
     const profilsList = document.getElementById("logout-profiles-list");
