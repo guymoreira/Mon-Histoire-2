@@ -170,12 +170,19 @@ MonHistoire.features.sharing.realtime.notifications = {
           return;
         }
         
-        // Incrémenter le compteur de notifications non lues pour ce profil
-        MonHistoire.features.sharing.notificationsNonLues[profilId] = (MonHistoire.features.sharing.notificationsNonLues[profilId] || 0) + 1;
-        
-        // Mettre à jour l'indicateur de notification
-        if (MonHistoire.features.sharing.notifications) {
-          MonHistoire.features.sharing.notifications.mettreAJourIndicateurNotification();
+        // Au lieu d'incrémenter directement le compteur, recalculer le nombre de notifications
+        if (MonHistoire.features.sharing.notifications && 
+            typeof MonHistoire.features.sharing.notifications.recalculerNotificationsNonLues === 'function') {
+          MonHistoire.features.sharing.notifications.recalculerNotificationsNonLues(profilId);
+        } else {
+          console.warn("Fonction de recalcul des notifications non disponible");
+          // Fallback: incrémenter directement le compteur (ancien comportement)
+          MonHistoire.features.sharing.notificationsNonLues[profilId] = (MonHistoire.features.sharing.notificationsNonLues[profilId] || 0) + 1;
+          
+          // Mettre à jour l'indicateur de notification
+          if (MonHistoire.features.sharing.notifications) {
+            MonHistoire.features.sharing.notifications.mettreAJourIndicateurNotification();
+          }
         }
         
         // Afficher la notification
@@ -318,12 +325,19 @@ MonHistoire.features.sharing.realtime.notifications = {
             return;
           }
           
-          // Incrémenter le compteur de notifications non lues pour ce profil enfant
-          MonHistoire.features.sharing.notificationsNonLues[profilId] = (MonHistoire.features.sharing.notificationsNonLues[profilId] || 0) + 1;
-          
-          // Mettre à jour l'indicateur de notification dans la liste des profils
-          if (MonHistoire.features.sharing.notifications) {
-            MonHistoire.features.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe();
+          // Au lieu d'incrémenter directement le compteur, recalculer le nombre de notifications
+          if (MonHistoire.features.sharing.notifications && 
+              typeof MonHistoire.features.sharing.notifications.recalculerNotificationsNonLues === 'function') {
+            MonHistoire.features.sharing.notifications.recalculerNotificationsNonLues(profilId);
+          } else {
+            console.warn("Fonction de recalcul des notifications non disponible pour le profil enfant");
+            // Fallback: incrémenter directement le compteur (ancien comportement)
+            MonHistoire.features.sharing.notificationsNonLues[profilId] = (MonHistoire.features.sharing.notificationsNonLues[profilId] || 0) + 1;
+            
+            // Mettre à jour l'indicateur de notification dans la liste des profils
+            if (MonHistoire.features.sharing.notifications) {
+              MonHistoire.features.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe();
+            }
           }
           
           // Supprimer la notification après l'avoir traitée

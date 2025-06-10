@@ -551,6 +551,63 @@ MonHistoire.features.sharing.notifications = {
   },
   
   /**
+   * Recalcule le nombre de notifications non lues pour un profil spécifique
+   * @param {string} profilId - ID du profil pour lequel recalculer les notifications
+   * @returns {Promise} - Promise résolue quand le recalcul est terminé
+   */
+  async recalculerNotificationsNonLues(profilId) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) return 0;
+      
+      // Réinitialiser le compteur
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = 0;
+      
+      // Déterminer la collection à vérifier
+      let storiesRef;
+      if (profilId === "parent") {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      } else {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .doc(profilId)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      }
+      
+      // Compter le nombre de notifications non lues
+      const snapshot = await storiesRef.get();
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = snapshot.size;
+      
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingInfo("Notifications recalculées pour le profil", {
+          profilId: profilId,
+          count: MonHistoire.features.sharing.notificationsNonLues[profilId]
+        });
+      }
+      
+      // Mettre à jour l'indicateur
+      this.mettreAJourIndicateurNotification();
+      this.mettreAJourIndicateurNotificationProfilsListe();
+      
+      return MonHistoire.features.sharing.notificationsNonLues[profilId];
+    } catch (error) {
+      if (MonHistoire.logger) {
+        MonHistoire.logger.sharingError("Erreur lors du recalcul des notifications non lues", error);
+      } else {
+        console.error("Erreur lors du recalcul des notifications non lues:", error);
+      }
+      return 0;
+    }
+  },
+  
+  /**
    * Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
    */
   mettreAJourIndicateurNotificationProfilsListe() {
