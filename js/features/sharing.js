@@ -95,9 +95,12 @@ MonHistoire.features.sharing = {
   
   /**
    * Enregistre l'écouteur de changement de profil.
-   * Utilise MonHistoire.common.waitForEvents pour attendre que le système d'événements soit disponible.
+   * Réessaie toutes les 200 ms jusqu'à 5 tentatives si MonHistoire.events n'est pas disponible.
    */
   registerProfilChangeListener(compteur = 0) {
+    /**
+     * Gestionnaire d'événement pour les changements de profil
+     */
     const handler = (nouveauProfil) => {
       try {
         if (MonHistoire.logger) {
@@ -161,39 +164,59 @@ MonHistoire.features.sharing = {
       }
     };
     
-    if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
-      MonHistoire.common.waitForEvents(() => {
-        MonHistoire.events.on("profilChange", handler);
-      });
-    } else if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
-      // Fallback si MonHistoire.common n'est pas disponible
-      MonHistoire.events.on("profilChange", handler);
-    } else {
-      // Mécanisme de réessai si le système d'événements n'est pas disponible
-      if (compteur < 5) {
+    // Vérifier la disponibilité du système d'événements
+    if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
+      if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
+        // Utiliser la fonction utilitaire pour attendre que MonHistoire.events soit disponible
         if (MonHistoire.logger) {
-          MonHistoire.logger.sharingInfo("Système d'événements non disponible, nouvelle tentative programmée", {
-            attempt: compteur + 1,
-            maxAttempts: 5,
-            delay: 200
+          MonHistoire.logger.sharingInfo("Attente du système d'événements pour l'écouteur de changement de profil", {
+            waitMethod: "waitForEvents",
+            maxAttempts: 10
           });
-        } else {
-          console.warn("Système d'événements non disponible, nouvelle tentative programmée dans 200ms");
         }
         
-        setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
+        MonHistoire.common.waitForEvents(() => {
+          MonHistoire.events.on("profilChange", handler);
+          
+          if (MonHistoire.logger) {
+            MonHistoire.logger.sharingInfo("Écouteur de changement de profil initialisé avec succès après attente");
+          }
+        }, 10);
       } else {
-        if (MonHistoire.logger) {
-          MonHistoire.logger.sharingError("Système d'événements non disponible pour l'écouteur de changement de profil après plusieurs tentatives", {
-            attempts: compteur,
-            maxAttempts: 5
-          });
+        // Fallback si MonHistoire.common n'est pas disponible
+        if (compteur < 5) {
+          setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
+          
+          if (MonHistoire.logger) {
+            MonHistoire.logger.sharingInfo("Système d'événements non disponible, nouvelle tentative programmée", {
+              attempt: compteur + 1,
+              maxAttempts: 5,
+              delay: 200
+            });
+          } else {
+            console.warn("Système d'événements non disponible pour l'écouteur de changement de profil");
+          }
         } else {
-          console.error(
-            "Système d'événements non disponible pour l'écouteur de changement de profil"
-          );
+          if (MonHistoire.logger) {
+            MonHistoire.logger.sharingError("Système d'événements non disponible pour l'écouteur de changement de profil après plusieurs tentatives", {
+              attempts: compteur,
+              maxAttempts: 5
+            });
+          } else {
+            console.error(
+              "Système d'événements non disponible pour l'écouteur de changement de profil"
+            );
+          }
         }
       }
+      return;
+    }
+    
+    // Si le système d'événements est disponible, enregistrer l'écouteur directement
+    MonHistoire.events.on("profilChange", handler);
+    
+    if (MonHistoire.logger) {
+      MonHistoire.logger.sharingInfo("Écouteur de changement de profil initialisé avec succès");
     }
   },
   
