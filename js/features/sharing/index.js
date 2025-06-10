@@ -11,9 +11,14 @@ MonHistoire.features.sharing = MonHistoire.features.sharing || {};
  * Ce fichier est responsable de charger tous les sous-modules et de les attacher au module principal
  */
 (function() {
+  // Référence au module principal
+  const sharingModule = MonHistoire.features.sharing;
+  
+  // Compteur de tentatives pour l'initialisation des écouteurs
+  let eventInitAttempts = 0;
+  const MAX_EVENT_INIT_ATTEMPTS = 5;
+  
   try {
-    // Référence au module principal
-    const sharingModule = MonHistoire.features.sharing;
     
     // Initialiser les variables de notification si elles n'existent pas
     sharingModule.notificationsNonLues = sharingModule.notificationsNonLues || {};
@@ -64,7 +69,12 @@ MonHistoire.features.sharing = MonHistoire.features.sharing || {};
     try {
       // Vérifier que le système d'événements est disponible
       if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
-        console.error("Système d'événements non disponible");
+        if (eventInitAttempts < MAX_EVENT_INIT_ATTEMPTS) {
+          eventInitAttempts++;
+          setTimeout(initEventListeners, 200);
+        } else {
+          console.error("Système d'événements non disponible");
+        }
         return;
       }
       

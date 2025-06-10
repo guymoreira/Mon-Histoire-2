@@ -277,6 +277,11 @@ const firebaseConfig = {
     firebase.analytics();
   }
   
+  // Configuration du cache Firestore
+  firebase.firestore().settings({
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+  });
+
   // Activer la persistance Firestore pour le mode hors ligne
   // Cela doit être fait avant toute autre opération Firestore
   firebase.firestore().enablePersistence({
@@ -293,11 +298,6 @@ const firebaseConfig = {
     } else {
       console.error("Erreur lors de l'activation de la persistance:", err);
     }
-  });
-  
-  // Configuration du cache Firestore
-  firebase.firestore().settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
   });
 </script>
 <!-- Fichiers de configuration -->
