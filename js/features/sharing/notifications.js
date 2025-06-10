@@ -6,6 +6,13 @@ window.MonHistoire = window.MonHistoire || {};
 MonHistoire.features = MonHistoire.features || {};
 MonHistoire.features.sharing = MonHistoire.features.sharing || {};
 
+// Initialiser les variables de notification si elles n'existent pas
+MonHistoire.features.sharing.notificationsNonLues = MonHistoire.features.sharing.notificationsNonLues || {};
+MonHistoire.features.sharing.notificationsTraitees = MonHistoire.features.sharing.notificationsTraitees || new Set();
+MonHistoire.features.sharing.notificationTimeout = null;
+MonHistoire.features.sharing.notificationSwipeStartX = 0;
+MonHistoire.features.sharing.notificationSwipeStartY = 0;
+
 /**
  * Module de gestion des notifications
  * Responsable de l'affichage et de la gestion des notifications de partage
@@ -19,26 +26,44 @@ MonHistoire.features.sharing.notifications = {
     
     // Initialiser les écouteurs d'événements pour les notifications
     this.initNotificationListeners();
+    
+    // Exposer les fonctions importantes au module principal
+    if (MonHistoire.features.sharing) {
+      MonHistoire.features.sharing.mettreAJourIndicateurNotification = this.mettreAJourIndicateurNotification.bind(this);
+      MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe = this.mettreAJourIndicateurNotificationProfilsListe.bind(this);
+    }
   },
   
   /**
    * Initialise les écouteurs d'événements pour les notifications
    */
   initNotificationListeners() {
-    // Écouteur pour le clic sur la notification
-    const notification = document.getElementById("notification-partage");
-    if (notification) {
-      notification.addEventListener("click", this.clicNotificationPartage.bind(this));
+    try {
+      // Écouteur pour le clic sur la notification
+      const notification = document.getElementById("notification-partage");
+      if (notification) {
+        // Supprimer les anciens écouteurs pour éviter les doublons
+        notification.removeEventListener("click", this.clicNotificationPartage);
+        // Ajouter le nouvel écouteur
+        notification.addEventListener("click", this.clicNotificationPartage.bind(this));
+      }
+      
+      // Écouteur pour les changements de profil
+      if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
+        MonHistoire.events.on("profilChange", () => {
+          // Mettre à jour l'indicateur de notification après un court délai
+          // pour laisser le temps aux données de se charger
+          setTimeout(() => {
+            this.mettreAJourIndicateurNotification();
+            this.mettreAJourIndicateurNotificationProfilsListe();
+          }, 1000);
+        });
+      } else {
+        console.warn("Système d'événements non disponible pour les notifications");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
     }
-    
-    // Écouteur pour les changements de profil
-    MonHistoire.events.on("profilChange", () => {
-      // Mettre à jour l'indicateur de notification après un court délai
-      // pour laisser le temps aux données de se charger
-      setTimeout(() => {
-        this.mettreAJourIndicateurNotification();
-      }, 500);
-    });
   },
   
   /**
@@ -324,89 +349,115 @@ MonHistoire.features.sharing.notifications = {
    * Met à jour l'indicateur de notification dans l'interface utilisateur
    */
   mettreAJourIndicateurNotification() {
-    // Récupère l'ID du profil actif
-    const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
-    
-    // Récupère le nombre de notifications non lues pour ce profil
-    const nbNotifs = MonHistoire.features.sharing.notificationsNonLues[profilId] || 0;
-    
-    // Récupère l'élément d'icône utilisateur (où on affichera l'indicateur)
-    const userIcon = document.getElementById("user-icon");
-    
-    // Si l'élément existe et qu'il y a des notifications non lues
-    if (userIcon && nbNotifs > 0) {
-      // Vérifie si l'indicateur existe déjà
-      let indicateur = userIcon.querySelector(".notification-indicator");
-      
-      // Si l'indicateur n'existe pas, on le crée
-      if (!indicateur) {
-        indicateur = document.createElement("span");
-        indicateur.className = "notification-indicator";
-        userIcon.appendChild(indicateur);
+    try {
+      // S'assurer que l'état est correctement initialisé
+      if (!MonHistoire.state || !MonHistoire.state.profilActif) {
+        console.warn("État non initialisé pour la mise à jour des notifications");
+        return;
       }
       
-      // Met à jour le contenu de l'indicateur
-      indicateur.textContent = nbNotifs > 9 ? "9+" : nbNotifs.toString();
-      indicateur.style.display = "flex";
-    } 
-    // Si l'élément existe mais qu'il n'y a pas de notifications non lues
-    else if (userIcon) {
-      // Récupère l'indicateur s'il existe
-      const indicateur = userIcon.querySelector(".notification-indicator");
+      // Récupère l'ID du profil actif
+      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
-      // Si l'indicateur existe, on le masque
-      if (indicateur) {
-        indicateur.style.display = "none";
+      // S'assurer que les notifications non lues sont initialisées
+      if (!MonHistoire.features.sharing.notificationsNonLues) {
+        MonHistoire.features.sharing.notificationsNonLues = {};
       }
+      
+      // Récupère le nombre de notifications non lues pour ce profil
+      const nbNotifs = MonHistoire.features.sharing.notificationsNonLues[profilId] || 0;
+      
+      // Récupère l'élément d'icône utilisateur (où on affichera l'indicateur)
+      const userIcon = document.getElementById("user-icon");
+      
+      // Si l'élément existe et qu'il y a des notifications non lues
+      if (userIcon && nbNotifs > 0) {
+        // Vérifie si l'indicateur existe déjà
+        let indicateur = userIcon.querySelector(".notification-indicator");
+        
+        // Si l'indicateur n'existe pas, on le crée
+        if (!indicateur) {
+          indicateur = document.createElement("span");
+          indicateur.className = "notification-indicator";
+          userIcon.appendChild(indicateur);
+        }
+        
+        // Met à jour le contenu de l'indicateur
+        indicateur.textContent = nbNotifs > 9 ? "9+" : nbNotifs.toString();
+        indicateur.style.display = "flex";
+      } 
+      // Si l'élément existe mais qu'il n'y a pas de notifications non lues
+      else if (userIcon) {
+        // Récupère l'indicateur s'il existe
+        const indicateur = userIcon.querySelector(".notification-indicator");
+        
+        // Si l'indicateur existe, on le masque
+        if (indicateur) {
+          indicateur.style.display = "none";
+        }
+      }
+      
+      // Mettre à jour également l'indicateur dans la liste des profils du modal de déconnexion
+      this.mettreAJourIndicateurNotificationProfilsListe();
+      
+      // Émettre un événement pour informer les autres modules
+      if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+        MonHistoire.events.emit("notificationUpdate", {
+          profilId: profilId,
+          count: nbNotifs
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'indicateur de notification:", error);
     }
-    
-    // Mettre à jour également l'indicateur dans la liste des profils du modal de déconnexion
-    this.mettreAJourIndicateurNotificationProfilsListe();
-    
-    // Émettre un événement pour informer les autres modules
-    MonHistoire.events.emit("notificationUpdate", {
-      profilId: profilId,
-      count: nbNotifs
-    });
   },
   
   /**
    * Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
    */
   mettreAJourIndicateurNotificationProfilsListe() {
-    // Récupère la liste des profils dans le modal de déconnexion
-    const profilsList = document.getElementById("logout-profiles-list");
-    
-    // Si la liste n'existe pas, on ne fait rien
-    if (!profilsList) return;
-    
-    // Parcourt tous les profils de la liste
-    const profilItems = profilsList.querySelectorAll(".profile-item");
-    profilItems.forEach(item => {
-      // Récupère l'ID du profil
-      const profilId = item.dataset.profilId;
-      
-      // Si l'ID existe et qu'il y a des notifications non lues pour ce profil
-      if (profilId && MonHistoire.features.sharing.notificationsNonLues[profilId] && MonHistoire.features.sharing.notificationsNonLues[profilId] > 0) {
-        // Récupère ou crée l'indicateur de notification
-        let indicateur = item.querySelector(".notification-indicator");
-        
-        if (!indicateur) {
-          indicateur = document.createElement("span");
-          indicateur.className = "notification-indicator";
-          item.appendChild(indicateur);
-        }
-        
-        // Met à jour le contenu de l'indicateur
-        indicateur.textContent = MonHistoire.features.sharing.notificationsNonLues[profilId] > 9 ? "9+" : MonHistoire.features.sharing.notificationsNonLues[profilId].toString();
-        indicateur.style.display = "flex";
-      } else {
-        // Si pas de notifications, masque l'indicateur s'il existe
-        const indicateur = item.querySelector(".notification-indicator");
-        if (indicateur) {
-          indicateur.style.display = "none";
-        }
+    try {
+      // S'assurer que les notifications non lues sont initialisées
+      if (!MonHistoire.features.sharing.notificationsNonLues) {
+        MonHistoire.features.sharing.notificationsNonLues = {};
       }
-    });
+      
+      // Récupère la liste des profils dans le modal de déconnexion
+      const profilsList = document.getElementById("logout-profiles-list");
+      
+      // Si la liste n'existe pas, on ne fait rien
+      if (!profilsList) return;
+      
+      // Parcourt tous les profils de la liste
+      const profilItems = profilsList.querySelectorAll(".profile-item");
+      profilItems.forEach(item => {
+        // Récupère l'ID du profil
+        const profilId = item.dataset.profilId;
+        
+        // Si l'ID existe et qu'il y a des notifications non lues pour ce profil
+        if (profilId && MonHistoire.features.sharing.notificationsNonLues[profilId] && MonHistoire.features.sharing.notificationsNonLues[profilId] > 0) {
+          // Récupère ou crée l'indicateur de notification
+          let indicateur = item.querySelector(".notification-indicator");
+          
+          if (!indicateur) {
+            indicateur = document.createElement("span");
+            indicateur.className = "notification-indicator";
+            item.appendChild(indicateur);
+          }
+          
+          // Met à jour le contenu de l'indicateur
+          indicateur.textContent = MonHistoire.features.sharing.notificationsNonLues[profilId] > 9 ? "9+" : MonHistoire.features.sharing.notificationsNonLues[profilId].toString();
+          indicateur.style.display = "flex";
+        } else {
+          // Si pas de notifications, masque l'indicateur s'il existe
+          const indicateur = item.querySelector(".notification-indicator");
+          if (indicateur) {
+            indicateur.style.display = "none";
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour des indicateurs de notification dans la liste des profils:", error);
+    }
   }
 };

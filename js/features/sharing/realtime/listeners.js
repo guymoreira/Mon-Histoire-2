@@ -12,6 +12,12 @@ MonHistoire.features.sharing.realtime = MonHistoire.features.sharing.realtime ||
  * Responsable de la configuration et de la gestion des écouteurs pour les histoires partagées
  */
 MonHistoire.features.sharing.realtime.listeners = {
+  // Compteur de tentatives de configuration des écouteurs
+  tentativesConfiguration: 0,
+  
+  // Délai maximum entre les tentatives (en ms)
+  delaiMaxTentatives: 30000,
+  
   /**
    * Initialisation du module
    */
@@ -31,9 +37,19 @@ MonHistoire.features.sharing.realtime.listeners = {
   /**
    * Configure un écouteur en temps réel pour les nouvelles histoires partagées
    * Cette fonction est appelée au démarrage et après un changement de profil
+   * @param {boolean} estRetentative - Indique s'il s'agit d'une retentative automatique
    */
-  configurerEcouteurHistoiresPartagees() {
+  configurerEcouteurHistoiresPartagees(estRetentative = false) {
     try {
+      // Si c'est une retentative, incrémenter le compteur
+      if (estRetentative) {
+        this.tentativesConfiguration++;
+        console.log(`Tentative #${this.tentativesConfiguration} de configuration des écouteurs`);
+      } else {
+        // Réinitialiser le compteur si c'est un appel initial
+        this.tentativesConfiguration = 0;
+      }
+      
       // Arrête les écouteurs précédents s'ils existent
       this.detacherEcouteursHistoiresPartagees();
       
@@ -41,30 +57,69 @@ MonHistoire.features.sharing.realtime.listeners = {
       const user = firebase.auth().currentUser;
       if (!user) {
         console.log("Impossible de configurer les écouteurs: utilisateur non connecté");
-        // Configurer un écouteur pour réessayer quand l'utilisateur se connecte
-        firebase.auth().onAuthStateChanged(newUser => {
+        
+        // Configurer un écouteur unique pour réessayer quand l'utilisateur se connecte
+        const authListener = firebase.auth().onAuthStateChanged(newUser => {
           if (newUser && !MonHistoire.features.sharing.histoiresPartageesListener.length) {
-            setTimeout(() => this.configurerEcouteurHistoiresPartagees(), 1000);
+            // Détacher cet écouteur pour éviter les doublons
+            authListener();
+            setTimeout(() => this.configurerEcouteurHistoiresPartagees(true), 1000);
           }
         });
+        
+        // Planifier une nouvelle tentative après un délai
+        this.planifierNouvelleTentative();
         return;
       }
       
       // Vérifier si la connexion est active
       if (!MonHistoire.state.isConnected) {
         console.log("Impossible de configurer les écouteurs: connexion inactive");
-        // Configurer un écouteur pour réessayer quand la connexion est rétablie
-        MonHistoire.events.on("connectionStateChanged", isConnected => {
+        
+        // Configurer un écouteur unique pour réessayer quand la connexion est rétablie
+        const connectionListener = (isConnected) => {
           if (isConnected && !MonHistoire.features.sharing.histoiresPartageesListener.length) {
-            setTimeout(() => this.configurerEcouteurHistoiresPartagees(), 1000);
+            // Détacher cet écouteur pour éviter les doublons
+            if (MonHistoire.events.listeners && MonHistoire.events.listeners.connectionStateChanged) {
+              MonHistoire.events.listeners.connectionStateChanged = 
+                MonHistoire.events.listeners.connectionStateChanged.filter(l => l !== connectionListener);
+            }
+            
+            setTimeout(() => this.configurerEcouteurHistoiresPartagees(true), 1000);
           }
-        });
+        };
+        
+        MonHistoire.events.on("connectionStateChanged", connectionListener);
+        
+        // Planifier une nouvelle tentative après un délai
+        this.planifierNouvelleTentative();
         return;
       }
       
       // Vérifier si Firebase Realtime Database est disponible
       if (MonHistoire.state.realtimeDbAvailable === false) {
         console.log("Impossible de configurer les écouteurs: Firebase Realtime Database n'est pas disponible");
+        
+        // Configurer un écouteur unique pour réessayer quand Firebase devient disponible
+        const dbListener = (isAvailable) => {
+          if (isAvailable && !MonHistoire.features.sharing.histoiresPartageesListener.length) {
+            // Détacher cet écouteur pour éviter les doublons
+            if (MonHistoire.events.listeners && MonHistoire.events.listeners.realtimeDbAvailable) {
+              MonHistoire.events.listeners.realtimeDbAvailable = 
+                MonHistoire.events.listeners.realtimeDbAvailable.filter(l => l !== dbListener);
+            }
+            
+            setTimeout(() => this.configurerEcouteurHistoiresPartagees(true), 1000);
+          }
+        };
+        
+        // Ajouter l'écouteur si l'événement existe
+        if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
+          MonHistoire.events.on("realtimeDbAvailable", dbListener);
+        }
+        
+        // Planifier une nouvelle tentative après un délai
+        this.planifierNouvelleTentative();
         return;
       }
       
@@ -88,16 +143,38 @@ MonHistoire.features.sharing.realtime.listeners = {
       }
       
       console.log("Écouteurs de notifications configurés avec succès");
+      
+      // Réinitialiser le compteur de tentatives
+      this.tentativesConfiguration = 0;
     } catch (error) {
       console.error("Erreur lors de la configuration des écouteurs de notifications", error);
+      
       // Planifier une nouvelle tentative après un délai
-      setTimeout(() => {
-        if (!MonHistoire.features.sharing.histoiresPartageesListener || !MonHistoire.features.sharing.histoiresPartageesListener.length) {
-          console.log("Nouvelle tentative de configuration des écouteurs de notifications");
-          this.configurerEcouteurHistoiresPartagees();
-        }
-      }, 5000);
+      this.planifierNouvelleTentative();
     }
+  },
+  
+  /**
+   * Planifie une nouvelle tentative de configuration des écouteurs
+   * avec un délai exponentiel (backoff)
+   */
+  planifierNouvelleTentative() {
+    // Calculer le délai avec backoff exponentiel (1s, 2s, 4s, 8s, 16s, etc.)
+    // mais plafonné à delaiMaxTentatives
+    const delai = Math.min(
+      1000 * Math.pow(2, this.tentativesConfiguration),
+      this.delaiMaxTentatives
+    );
+    
+    console.log(`Planification d'une nouvelle tentative dans ${delai/1000} secondes`);
+    
+    setTimeout(() => {
+      if (!MonHistoire.features.sharing.histoiresPartageesListener || 
+          !MonHistoire.features.sharing.histoiresPartageesListener.length) {
+        console.log("Nouvelle tentative de configuration des écouteurs de notifications");
+        this.configurerEcouteurHistoiresPartagees(true);
+      }
+    }, delai);
   },
   
   /**

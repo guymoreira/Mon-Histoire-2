@@ -25,13 +25,19 @@ MonHistoire.features.sharing.storage = {
       // Vérifie si l'appareil est connecté
       if (!MonHistoire.features.sharing.isConnected()) {
         // Ajoute l'opération à la file d'attente hors ligne
-        MonHistoire.addOfflineOperation("partageHistoire", {
-          type: type,
-          id: id,
-          prenom: prenom,
-          histoire: histoire,
-          profilActif: MonHistoire.state.profilActif
-        });
+        if (typeof MonHistoire.addToOfflineQueue === 'function') {
+          MonHistoire.addToOfflineQueue("partageHistoire", {
+            type: type,
+            id: id,
+            prenom: prenom,
+            histoire: histoire,
+            profilActif: MonHistoire.state.profilActif
+          });
+        } else {
+          console.error("La fonction addToOfflineQueue n'est pas disponible");
+          MonHistoire.showMessageModal("Une erreur est survenue. Réessaie plus tard quand tu seras connecté à Internet.");
+          return false;
+        }
         
         // Ferme la modale de partage
         if (MonHistoire.features.sharing.fermerModalePartage) {
