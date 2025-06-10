@@ -32,6 +32,16 @@ MonHistoire.features.sharing.notifications = {
       console.log("Module de notifications de partage initialisé");
     }
     
+    // Charger le cache des notifications traitées depuis localStorage
+    try {
+      const cachedNotifications = localStorage.getItem('notificationsTraitees');
+      if (cachedNotifications) {
+        MonHistoire.features.sharing.notificationsTraitees = new Set(JSON.parse(cachedNotifications));
+      }
+    } catch (e) {
+      console.error("Erreur lors du chargement du cache des notifications", e);
+    }
+    
     // Initialiser les écouteurs d'événements pour les notifications
     this.initNotificationListeners();
     
@@ -357,6 +367,14 @@ MonHistoire.features.sharing.notifications = {
       
       // Réinitialise la référence
       MonHistoire.features.sharing.histoireNotifieeActuelle = null;
+      
+      // Sauvegarder le cache des notifications traitées
+      try {
+        localStorage.setItem('notificationsTraitees', 
+          JSON.stringify([...MonHistoire.features.sharing.notificationsTraitees]));
+      } catch (e) {
+        console.error("Erreur lors de la sauvegarde du cache des notifications", e);
+      }
       
       // Met à jour l'indicateur de notification
       this.mettreAJourIndicateurNotification();

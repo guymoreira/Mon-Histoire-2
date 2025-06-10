@@ -150,13 +150,16 @@ MonHistoire.core.navigation = {
       }
     }
 
-    // Cas particulier : si c'est Mes Histoires, on rafraîchit la liste
+    // Cas particulier : si c'est Mes Histoires, on rafraîchit la liste et on marque les histoires comme vues
     if (screen === "mes-histoires") {
       if (MonHistoire.features && 
           MonHistoire.features.stories && 
           MonHistoire.features.stories.management) {
         MonHistoire.features.stories.management.afficherHistoiresSauvegardees();
       }
+      
+      // Marquer toutes les histoires comme vues
+      this.marquerHistoiresCommeVues();
       
       // Affiche le bouton Accueil seulement si tu viens de "resultat"
       const btnAccueil = document.getElementById("btn-accueil-mes-histoires");
@@ -221,6 +224,85 @@ MonHistoire.core.navigation = {
       this.showScreen("mes-histoires");
     } else {
       this.showScreen("formulaire");
+    }
+  },
+  
+  /**
+   * Marque toutes les histoires comme vues pour le profil actif
+   * Cette fonction est appelée lorsque l'utilisateur accède à la page "Mes histoires"
+   */
+  marquerHistoiresCommeVues() {
+    try {
+      // Vérifier si l'utilisateur est connecté
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      
+      // S'assurer que le profil actif est correctement initialisé
+      if (!MonHistoire.state || !MonHistoire.state.profilActif) {
+        MonHistoire.state = MonHistoire.state || {};
+        MonHistoire.state.profilActif = localStorage.getItem("profilActif")
+          ? JSON.parse(localStorage.getItem("profilActif"))
+          : { type: "parent" };
+      }
+      
+      // Récupérer l'ID du profil actif
+      const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
+      
+      // Référence à la collection appropriée
+      let storiesRef;
+      if (MonHistoire.state.profilActif.type === "parent") {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      } else {
+        storiesRef = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("profils_enfant")
+          .doc(MonHistoire.state.profilActif.id)
+          .collection("stories")
+          .where("nouvelleHistoire", "==", true);
+      }
+      
+      // Marquer toutes les histoires comme vues
+      storiesRef.get().then(snapshot => {
+        if (snapshot.empty) return;
+        
+        // Batch pour les mises à jour groupées
+        const batch = firebase.firestore().batch();
+        
+        snapshot.forEach(doc => {
+          batch.update(doc.ref, {
+            nouvelleHistoire: false,
+            vueLe: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+        
+        // Exécuter le batch
+        return batch.commit();
+      }).then(() => {
+        // Réinitialiser le compteur de notifications
+        if (MonHistoire.features && 
+            MonHistoire.features.sharing && 
+            MonHistoire.features.sharing.notificationsNonLues) {
+          MonHistoire.features.sharing.notificationsNonLues[profilId] = 0;
+          
+          // Mettre à jour l'indicateur
+          if (typeof MonHistoire.features.sharing.mettreAJourIndicateurNotification === 'function') {
+            MonHistoire.features.sharing.mettreAJourIndicateurNotification();
+          }
+          
+          if (typeof MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+            MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe();
+          }
+        }
+      }).catch(error => {
+        console.error("Erreur lors du marquage des histoires comme vues:", error);
+      });
+    } catch (error) {
+      console.error("Erreur lors du marquage des histoires comme vues:", error);
     }
   }
 };

@@ -117,13 +117,26 @@ MonHistoire.features.sharing.realtime.notifications = {
         const notificationId = snapshot.key;
         const notification = snapshot.val();
         
+        // Créer un identifiant unique plus robuste pour la notification
+        const notificationUniqueId = `${notification.partageParProfil || ''}_${notification.partageParPrenom || ''}_${notification.timestamp || Date.now()}`;
+        
         // Vérifier si la notification a déjà été traitée
-        if (MonHistoire.features.sharing.notificationsTraitees.has(notificationId)) {
+        if (MonHistoire.features.sharing.notificationsTraitees.has(notificationId) || 
+            MonHistoire.features.sharing.notificationsTraitees.has(notificationUniqueId)) {
           return;
         }
         
-        // Ajouter la notification au cache
+        // Ajouter la notification au cache avec les deux identifiants
         MonHistoire.features.sharing.notificationsTraitees.add(notificationId);
+        MonHistoire.features.sharing.notificationsTraitees.add(notificationUniqueId);
+        
+        // Sauvegarder le cache dans localStorage
+        try {
+          localStorage.setItem('notificationsTraitees', 
+            JSON.stringify([...MonHistoire.features.sharing.notificationsTraitees]));
+        } catch (e) {
+          console.warn("Erreur lors de la sauvegarde du cache des notifications", e);
+        }
         
         // Limiter la taille du cache (garder les 50 dernières notifications)
         if (MonHistoire.features.sharing.notificationsTraitees.size > 50) {
