@@ -65,69 +65,74 @@ MonHistoire.features.sharing = {
           console.error("Erreur lors de la configuration des écouteurs de notifications:", error);
         }
       }, 1000);
+      
+      // Configurer l'écouteur d'événements pour les changements de profil
+      this.registerProfilChangeListener();
     } catch (error) {
       console.error("Erreur lors de l'initialisation du module de partage:", error);
     }
-    
-  // Configurer l'écouteur d'événements pour les changements de profil
-  this.registerProfilChangeListener();
   },
   
   /**
    * Enregistre l'écouteur de changement de profil.
-   * Réessaie toutes les 200 ms jusqu'à 5 tentatives si MonHistoire.events n'est pas disponible.
+   * Utilise MonHistoire.common.waitForEvents pour attendre que le système d'événements soit disponible.
    */
-  registerProfilChangeListener(compteur = 0) {
-    if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
-      MonHistoire.events.on("profilChange", (nouveauProfil) => {
-        try {
-          console.log(
-            "Changement de profil détecté dans le module principal:",
-            nouveauProfil ? nouveauProfil.type : "inconnu"
-          );
+  registerProfilChangeListener() {
+    const handler = (nouveauProfil) => {
+      try {
+        console.log(
+          "Changement de profil détecté dans le module principal:",
+          nouveauProfil ? nouveauProfil.type : "inconnu"
+        );
           
-          // Reconfigurer les écouteurs après un changement de profil
-          setTimeout(() => {
-            try {
-              if (this.realtime) {
-                if (typeof this.realtime.configurerEcouteurNotificationsRealtime === 'function') {
-                  this.realtime.configurerEcouteurNotificationsRealtime();
-                }
-                if (typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
-                  this.realtime.configurerEcouteurHistoiresPartagees();
-                }
+        // Reconfigurer les écouteurs après un changement de profil
+        setTimeout(() => {
+          try {
+            if (this.realtime) {
+              if (typeof this.realtime.configurerEcouteurNotificationsRealtime === 'function') {
+                this.realtime.configurerEcouteurNotificationsRealtime();
               }
-              
-              // Mettre à jour les indicateurs de notification
-              if (this.notifications) {
-                if (typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
-                  this.notifications.mettreAJourIndicateurNotification();
-                }
-                if (typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-                  this.notifications.mettreAJourIndicateurNotificationProfilsListe();
-                }
-              } else {
-                // Utiliser les fonctions exposées au module principal si disponibles
-                if (typeof this.mettreAJourIndicateurNotification === 'function') {
-                  this.mettreAJourIndicateurNotification();
-                }
-                if (typeof this.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-                  this.mettreAJourIndicateurNotificationProfilsListe();
-                }
+              if (typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+                this.realtime.configurerEcouteurHistoiresPartagees();
               }
-              
-              // Vérifier s'il y a des histoires partagées pour ce profil
-              this.verifierHistoiresPartagees();
-            } catch (error) {
-              console.error("Erreur lors de la reconfiguration des écouteurs après changement de profil:", error);
             }
-          }, 1000);
-        } catch (error) {
-          console.error("Erreur dans l'écouteur de changement de profil:", error);
-        }
+            
+            // Mettre à jour les indicateurs de notification
+            if (this.notifications) {
+              if (typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
+                this.notifications.mettreAJourIndicateurNotification();
+              }
+              if (typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+                this.notifications.mettreAJourIndicateurNotificationProfilsListe();
+              }
+            } else {
+              // Utiliser les fonctions exposées au module principal si disponibles
+              if (typeof this.mettreAJourIndicateurNotification === 'function') {
+                this.mettreAJourIndicateurNotification();
+              }
+              if (typeof this.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+                this.mettreAJourIndicateurNotificationProfilsListe();
+              }
+            }
+            
+            // Vérifier s'il y a des histoires partagées pour ce profil
+            this.verifierHistoiresPartagees();
+          } catch (error) {
+            console.error("Erreur lors de la reconfiguration des écouteurs après changement de profil:", error);
+          }
+        }, 1000);
+      } catch (error) {
+        console.error("Erreur dans l'écouteur de changement de profil:", error);
+      }
+    };
+    
+    if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
+      MonHistoire.common.waitForEvents(() => {
+        MonHistoire.events.on("profilChange", handler);
       });
-    } else if (compteur < 5) {
-      setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
+    } else if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
+      // Fallback si MonHistoire.common n'est pas disponible
+      MonHistoire.events.on("profilChange", handler);
     } else {
       console.error(
         "Système d'événements non disponible pour l'écouteur de changement de profil"

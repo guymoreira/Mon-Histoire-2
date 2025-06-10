@@ -54,27 +54,46 @@ MonHistoire.features.sharing.notifications = {
       
       // Vérifier la disponibilité du système d'événements
       if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
-        if (this.initAttempts < this.maxInitAttempts) {
-          this.initAttempts++;
-          setTimeout(() => this.initNotificationListeners(), 200);
+        if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
+          // Utiliser la fonction utilitaire pour attendre que MonHistoire.events soit disponible
+          MonHistoire.common.waitForEvents(() => {
+            // Écouteur pour les changements de profil
+            MonHistoire.events.on("profilChange", () => {
+              // Mettre à jour l'indicateur de notification après un court délai
+              // pour laisser le temps aux données de se charger
+              setTimeout(() => {
+                this.mettreAJourIndicateurNotification();
+                this.mettreAJourIndicateurNotificationProfilsListe();
+              }, 1000);
+            });
+            
+            // Réinitialiser le compteur de tentatives
+            this.initAttempts = 0;
+          }, this.maxInitAttempts);
         } else {
-          console.warn("Système d'événements non disponible pour les notifications");
+          // Fallback si MonHistoire.common n'est pas disponible
+          if (this.initAttempts < this.maxInitAttempts) {
+            this.initAttempts++;
+            setTimeout(() => this.initNotificationListeners(), 200);
+          } else {
+            console.warn("Système d'événements non disponible pour les notifications");
+          }
         }
         return;
+      } else {
+        // Écouteur pour les changements de profil
+        MonHistoire.events.on("profilChange", () => {
+          // Mettre à jour l'indicateur de notification après un court délai
+          // pour laisser le temps aux données de se charger
+          setTimeout(() => {
+            this.mettreAJourIndicateurNotification();
+            this.mettreAJourIndicateurNotificationProfilsListe();
+          }, 1000);
+        });
+        
+        // Réinitialiser le compteur de tentatives
+        this.initAttempts = 0;
       }
-      
-      // Écouteur pour les changements de profil
-      MonHistoire.events.on("profilChange", () => {
-        // Mettre à jour l'indicateur de notification après un court délai
-        // pour laisser le temps aux données de se charger
-        setTimeout(() => {
-          this.mettreAJourIndicateurNotification();
-          this.mettreAJourIndicateurNotificationProfilsListe();
-        }, 1000);
-      });
-      
-      // Réinitialiser le compteur de tentatives
-      this.initAttempts = 0;
     } catch (error) {
       console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
     }

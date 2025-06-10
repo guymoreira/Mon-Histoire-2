@@ -69,11 +69,106 @@ MonHistoire.features.sharing = MonHistoire.features.sharing || {};
     try {
       // Vérifier que le système d'événements est disponible
       if (!MonHistoire.events || typeof MonHistoire.events.on !== 'function') {
-        if (eventInitAttempts < MAX_EVENT_INIT_ATTEMPTS) {
-          eventInitAttempts++;
-          setTimeout(initEventListeners, 200);
+        if (MonHistoire.common && typeof MonHistoire.common.waitForEvents === 'function') {
+          // Utiliser la fonction utilitaire pour attendre que MonHistoire.events soit disponible
+          MonHistoire.common.waitForEvents(() => {
+            // Écouteur pour le changement de profil
+            MonHistoire.events.on("profilChange", function(profilActif) {
+              try {
+                console.log("Changement de profil détecté:", profilActif ? profilActif.type : "inconnu");
+                
+                // Attendre un court instant pour s'assurer que le changement de profil est bien pris en compte
+                setTimeout(function() {
+                  try {
+                    // Réinitialiser les écouteurs de notifications
+                    if (sharingModule.realtime) {
+                      if (typeof sharingModule.realtime.configurerEcouteurNotificationsRealtime === 'function') {
+                        sharingModule.realtime.configurerEcouteurNotificationsRealtime();
+                      }
+                      if (typeof sharingModule.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+                        sharingModule.realtime.configurerEcouteurHistoiresPartagees();
+                      }
+                    }
+                    
+                    // Vérifier s'il y a des histoires partagées pour ce profil
+                    const user = firebase.auth().currentUser;
+                    if (user && sharingModule.storage && typeof sharingModule.storage.verifierHistoiresPartageesProfilActif === 'function') {
+                      sharingModule.storage.verifierHistoiresPartageesProfilActif(user)
+                        .then(function() {
+                          // Mettre à jour l'indicateur de notification
+                          if (sharingModule.notifications) {
+                            if (typeof sharingModule.notifications.mettreAJourIndicateurNotification === 'function') {
+                              sharingModule.notifications.mettreAJourIndicateurNotification();
+                            }
+                            if (typeof sharingModule.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+                              sharingModule.notifications.mettreAJourIndicateurNotificationProfilsListe();
+                            }
+                          } else if (typeof sharingModule.mettreAJourIndicateurNotification === 'function') {
+                            // Utiliser la fonction exposée au module principal si disponible
+                            sharingModule.mettreAJourIndicateurNotification();
+                          }
+                        })
+                        .catch(function(error) {
+                          console.error("Erreur lors de la vérification des histoires partagées:", error);
+                        });
+                    }
+                  } catch (innerError) {
+                    console.error("Erreur lors du traitement du changement de profil:", innerError);
+                  }
+                }, 1000);
+              } catch (error) {
+                console.error("Erreur dans l'écouteur de changement de profil:", error);
+              }
+            });
+            
+            // Écouteur pour le traitement des opérations hors ligne
+            MonHistoire.events.on("processOfflineQueue", function(operations) {
+              try {
+                if (!operations || !operations.length) return;
+                
+                // Traiter les opérations de partage d'histoire
+                const partageOperations = operations.filter(function(op) { return op.type === "partageHistoire"; });
+                if (partageOperations.length > 0) {
+                  console.log(`Traitement de ${partageOperations.length} opérations de partage hors ligne`);
+                  
+                  // Traiter chaque opération de partage
+                  partageOperations.forEach(function(op) {
+                    if (sharingModule.storage && typeof sharingModule.storage.processOfflinePartage === 'function') {
+                      sharingModule.storage.processOfflinePartage(op.data)
+                        .then(function(success) {
+                          if (success) {
+                            // Marquer l'opération comme traitée
+                            if (typeof MonHistoire.markOfflineOperationProcessed === 'function') {
+                              MonHistoire.markOfflineOperationProcessed(op.id);
+                            } else if (typeof MonHistoire.markOfflineQueueItemProcessed === 'function') {
+                              // Nom alternatif possible de la fonction
+                              MonHistoire.markOfflineQueueItemProcessed(op.id);
+                            } else {
+                              console.warn("Fonction de marquage des opérations hors ligne non disponible");
+                            }
+                          }
+                        })
+                        .catch(function(error) {
+                          console.error("Erreur lors du traitement du partage hors ligne:", error);
+                        });
+                    } else {
+                      console.warn("Module de stockage non disponible pour traiter les opérations hors ligne");
+                    }
+                  });
+                }
+              } catch (error) {
+                console.error("Erreur dans l'écouteur de traitement des opérations hors ligne:", error);
+              }
+            });
+          }, MAX_EVENT_INIT_ATTEMPTS);
         } else {
-          console.error("Système d'événements non disponible");
+          // Fallback si MonHistoire.common n'est pas disponible
+          if (eventInitAttempts < MAX_EVENT_INIT_ATTEMPTS) {
+            eventInitAttempts++;
+            setTimeout(initEventListeners, 200);
+          } else {
+            console.error("Système d'événements non disponible");
+          }
         }
         return;
       }
