@@ -1,0 +1,115 @@
+/* Styles de l'écran de formulaire */
+
+/* Conteneur principal du formulaire */
+#formulaire.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 2rem;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Bloc central du formulaire */
+#formulaire .bloc-centre {
+  width: 100%;
+  max-width: 500px;
+  margin: 2vh auto;
+  padding-bottom: 1rem;
+}
+
+/* Titre du formulaire */
+#formulaire h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #000000; /* Changé de bleu à noir pour correspondre aux autres titres de l'application */
+}
+
+/* Formulaire de génération d'histoire */
+#form-generer-histoire {
+  padding-bottom: 0.5rem;
+}
+
+/* Champs du formulaire */
+#form-generer-histoire .input-style {
+  margin-bottom: 1rem;
+}
+
+/* Labels du formulaire */
+#form-generer-histoire label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #000000; /* Changé de bleu à noir pour correspondre aux autres titres de l'application */
+  font-weight: bold;
+}
+
+/* Groupe de boutons du formulaire */
+#form-generer-histoire .form-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Boutons du formulaire */
+#form-generer-histoire .form-buttons .button {
+  margin: 0;
+  flex: 1;
+}
+
+/* Bouton unique du formulaire */
+#form-generer-histoire .form-buttons .button:only-child {
+  flex: 0 0 48%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Sélecteur de profil */
+#select-profil {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #333;
+  font-family: 'Fredoka', Arial, sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #formulaire .bloc-centre {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  #formulaire.screen {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  #formulaire .bloc-centre {
+    width: 100%;
+    border-radius: 24px;
+    padding: 1rem;
+  }
+  
+  #form-generer-histoire .form-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #form-generer-histoire .form-buttons .button {
+    max-width: none;
+  }
+  
+  #form-generer-histoire .form-buttons .button:only-child {
+    max-width: none;
+  }
+}

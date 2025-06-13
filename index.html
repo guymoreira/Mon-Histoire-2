@@ -5,33 +5,87 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mon Histoire</title>
-   <link href="https://fonts.googleapis.com/css?family=Fredoka:400,700&display=swap" rel="stylesheet">
-  <link href="style.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css?family=Fredoka:400,700&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet"/>
+  <link href="css/components/auth-forms.css" rel="stylesheet"/>
+  <link href="css/components/profiles.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  
+  <!-- Initialisation Firebase -->
+  <script src="js/firebase-init.js"></script>
+  
+  <!-- Point d'entrée principal -->
+  <script src="js/index.js" defer></script>
+  
+  <!-- Fichiers de configuration -->
+  <script src="js/config.js" defer></script>
+
+  <!-- Utilitaires communs -->
+  <script src="js/common.js" defer></script>
+
+  <!-- Modules core -->
+  <script src="js/core/navigation.js" defer></script>
+  <script src="js/core/auth.js" defer></script>
+  <script src="js/core/profiles.js" defer></script>
+  <script src="js/core/storage.js" defer></script>
+
+  <!-- Modules features -->
+  <script src="js/features/stories/generator.js" defer></script>
+  <script src="js/features/stories/display.js" defer></script>
+  <script src="js/features/stories/management.js" defer></script>
+  <!-- Module de partage modulaire -->
+  <script src="js/features/sharing.js" defer></script>
+  <script src="js/features/sharing/notifications.js" defer></script>
+  <script src="js/features/sharing/storage.js" defer></script>
+  <script src="js/features/sharing/ui.js" defer></script>
+  <!-- Modules de partage en temps réel -->
+  <script src="js/features/sharing/realtime/index.js" defer></script>
+  <script src="js/features/sharing/realtime/listeners.js" defer></script>
+  <script src="js/features/sharing/realtime/notifications.js" defer></script>
+  <!-- Point d'entrée du module de partage -->
+  <script src="js/features/sharing/index.js" defer></script>
+  <script src="js/features/export.js" defer></script>
+  <script src="js/features/audio.js" defer></script>
+  <script src="js/features/cookies.js" defer></script>
+
+  <!-- Interface utilisateur -->
+  <script src="js/ui.js" defer></script>
+
+  <!-- Point d'entrée principal -->
+  <script src="js/app.js" defer></script>
 </head>
 <body>
   <!-- Accueil -->
   <section class="screen active" id="accueil">
-    <div class="bloc-centre" id="accueil-content">
-      <h1>Mon Histoire</h1>
-     <button class="button button-blue" id="create-button" data-screen="formulaire">Créer une histoire</button>
-<button class="button button-purple hidden" id="login-button" data-screen="connexion">Me connecter</button>
-<button class="button button-purple hidden" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
+    <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md" id="accueil-content">
+      <h1 class="ui-text-center">Mon Histoire</h1>
+      <div class="ui-flex ui-flex-column ui-align-center" style="gap: 1rem;">
+        <button class="ui-button ui-button--primary ui-button--medium" id="create-button" data-screen="formulaire">Créer une histoire</button>
+        <button class="ui-button ui-button--secondary ui-button--medium" id="login-button" data-screen="connexion">Me connecter</button>
+        <button class="ui-button ui-button--secondary ui-button--medium ui-hidden" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
+      </div>
     </div>
-    <div id="user-icon" class="hidden"></div>
+    <div id="user-icon" class="ui-hidden"></div>
   </section>
 
-  <!-- Modal de déconnexion -->
-<div class="modal" id="logout-modal">
-  <div class="bloc-centre" style="max-width:350px;">
-    <p id="logout-profile-name" style="font-weight:bold;"></p>
+<!-- Modal de déconnexion -->
+<div class="ui-modal" id="logout-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream" style="background-color: #fff8e1 !important;">
+    <p id="logout-profile-name" class="ui-text-center" style="font-weight:bold;"></p>
     <div id="logout-profiles-list"></div>
-<button class="button button-purple" style="margin-bottom: 1.1em;" id="btn-mon-compte">Mon Compte</button>
-<div class="button-group" style="display: flex; justify-content: center; gap: 1em;">
-  <button class="button button-purple" style="flex:1;" id="btn-fermer-logout">Annuler</button>
-  <button class="button button-blue" style="flex:1;" id="btn-logout">Déconnecter</button>
-</div>
+    <button class="ui-button ui-button--secondary ui-mb-3" id="btn-mon-compte" style="background-color: #d5b8f6 !important; color: #5c4683 !important;">Mon Compte</button>
+    <div class="ui-button-group ui-button-group--center ui-button-group--equal">
+      <button class="ui-button ui-button--secondary" id="btn-fermer-logout">Annuler</button>
+      <button class="ui-button ui-button--primary" id="btn-logout" style="background-color: #79d4e7 !important; color: #395872 !important;">Déconnecter</button>
     </div>
   </div>
 </div>
@@ -40,54 +94,68 @@
 
   <!-- Connexion -->
   <section class="screen" id="connexion">
-    <div class="bloc-centre">
-      <h2>Connexion</h2>
+    <div class="ui-card ui-card--cream ui-card--medium ui-card--padding-md">
+      <h2 class="ui-text-center">Connexion</h2>
      <form id="login-form" autocomplete="off">
-         <input class="input-style" id="email" placeholder="Adresse e-mail" required type="email" autocomplete="username"/>
-         <div class="password-field">
-  <input class="input-style" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
-  <span class="toggle-password" data-input="password">👁️</span>
-</div>
-      <div class="button-group">
-    <button class="button button-blue" type="submit">Se connecter</button>
-     <button class="button button-purple" type="button" data-screen="accueil">Annuler</button>
+       <div class="ui-form-group">
+         <input class="ui-input" id="email" placeholder="Adresse e-mail" required type="email" autocomplete="username"/>
+       </div>
+       <div class="ui-form-group">
+         <div class="ui-input-group">
+           <input class="ui-input" id="password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+           <span class="ui-input-icon" data-input="password">👁️</span>
+         </div>
+       </div>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3">
+    <button class="ui-button ui-button--secondary" type="button" data-screen="accueil">Annuler</button>
+    <button class="ui-button ui-button--primary" type="submit">Se connecter</button>
   </div>
 </form>
-      <p style="text-align:center;">
-        <button class="button button-purple small" id="btn-signup" type="button">Créer un compte</button><br/>
+      <p class="ui-text-center ui-mt-3">
+        <button class="ui-button ui-button--secondary ui-button--full" id="btn-signup" type="button">Créer un compte</button><br/>
         <a href="#" id="btn-forgot" style="font-size:0.9rem; display:inline-block; margin-top:0.5rem;">Mot de passe oublié ?</a>
       </p>
-      <div class="bloc-centre" id="signup-form" style="display:none;">
-        <h2>Créer un compte</h2>
-        <input class="input-style" id="prenom" placeholder="Prénom" required type="text" style="margin-top:0.5em;"/>
-        <input class="input-style" id="signup-email" placeholder="Adresse mail" required type="email" autocomplete="email"/>
-<div class="password-field">
-  <input class="input-style" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
-  <span class="toggle-password" data-input="signup-password">👁️</span>
-</div>
-<div class="password-field">
-  <input class="input-style" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
-  <span class="toggle-password" data-input="signup-confirm">👁️</span>
-</div>
-        <label style="display:flex;align-items:flex-start; margin:0.8em 0; font-size:0.97em;">
-  <input type="checkbox" id="checkbox-consent" required style="margin-top:0.2em; margin-right:0.5em;">
-  <span>
-    J'atteste avoir l'accord d'un parent ou responsable légal pour l'utilisation de cette application et l'enregistrement de mes données, conformément à la
-    <a href="#" onclick="document.getElementById('modal-rgpd').classList.add('show');return false;">politique de confidentialité</a>.
-  </span>
-</label>
+      <div class="ui-card ui-card--cream ui-card--medium ui-card--padding-md" id="signup-form" style="display:none;">
+        <h2 class="ui-text-center">Créer un compte</h2>
+        <div class="ui-form-group">
+          <input class="ui-input" id="prenom" placeholder="Prénom" required type="text"/>
+        </div>
+        <div class="ui-form-group">
+          <input class="ui-input" id="signup-email" placeholder="Adresse mail" required type="email" autocomplete="email"/>
+        </div>
+        <div class="ui-form-group">
+          <div class="ui-input-group">
+            <input class="ui-input" id="signup-password" placeholder="Mot de passe" required type="password" autocomplete="new-password"/>
+            <span class="ui-input-icon" data-input="signup-password">👁️</span>
+          </div>
+        </div>
+        <div class="ui-form-group">
+          <div class="ui-input-group">
+            <input class="ui-input" id="signup-confirm" placeholder="Confirmer le mot de passe" required type="password" autocomplete="new-password"/>
+            <span class="ui-input-icon" data-input="signup-confirm">👁️</span>
+          </div>
+        </div>
+        <div class="ui-checkbox-group">
+          <input type="checkbox" id="checkbox-consent" class="ui-checkbox" required>
+          <span>
+            J'atteste avoir l'accord d'un parent ou responsable légal pour l'utilisation de cette application et l'enregistrement de mes données, conformément à la
+            <a href="#" onclick="document.getElementById('modal-rgpd').classList.add('show');return false;">politique de confidentialité</a>.
+          </span>
+        </div>
 
-        <div class="button-group">
-<button class="button button-blue" id="btn-register" type="submit">Valider</button>
-<button class="button button-purple" type="button" id="btn-back-to-login">Annuler</button>
+        <div class="ui-button-group ui-button-group--equal ui-mt-3">
+<button class="ui-button ui-button--secondary" type="button" id="btn-back-to-login">Annuler</button>
+<button class="ui-button ui-button--primary" id="btn-register" type="submit">Valider</button>
   </div>
 </div>
-      <div class="bloc-centre" id="reset-form" style="display:none;">
-        <h2>Réinitialisation</h2>
-        <input class="input-style" id="reset-email" placeholder="Votre adresse e-mail" required type="email" autocomplete="username"/>
-        <div class="button-group">
-<button class="button button-blue" id="btn-send-reset" type="submit">Envoyer</button>
-<button class="button button-purple" type="button" id="btn-back-to-login-reset">Annuler</button>
+      <div class="ui-card ui-card--cream ui-card--medium ui-card--padding-md" id="reset-form" style="display:none;">
+        <h2 class="ui-text-center">Réinitialisation</h2>
+        <div class="ui-form-group">
+          <input class="ui-input" id="reset-email" placeholder="Votre adresse e-mail" required type="email" autocomplete="username"/>
+        </div>
+        <div class="ui-button-group ui-button-group--equal ui-mt-3">
+          <button class="ui-button ui-button--secondary" type="button" id="btn-back-to-login-reset">Annuler</button>
+          <button class="ui-button ui-button--primary" id="btn-send-reset" type="submit">Envoyer</button>
         </div>
       </div>
     </div>
@@ -95,54 +163,66 @@
 
   <!-- Formulaire de création -->
 <section class="screen" id="formulaire">
-  <div class="bloc-centre">
-    <h2>Créer une Histoire</h2>
+  <div class="ui-card ui-card--cream ui-card--medium ui-card--padding-md">
+    <h2 class="ui-text-center">Créer une Histoire</h2>
     <form id="form-generer-histoire">
 
-      <!-- 1. Réintégration du champ Prénom du héros -->
-<input class="input-style" id="hero-prenom" placeholder="Prénom du héros" required type="text" style="margin-top:0.5em;"/>
+      <!-- 1. Prénom du héros -->
+      <div class="ui-form-group">
+        <input class="ui-input" id="hero-prenom" placeholder="Prénom du héros" required type="text"/>
+      </div>
 
       <!-- 2. PERSONNAGE (fixé à « Fille » pour l'instant) -->
-      <label for="personnage" style="font-weight:bold;margin-top:0.7em;display:block;">Personnage&nbsp;:</label>
-      <select class="input-style" id="personnage" required>
-        <option value="fille">Fille</option>
-      </select>
+      <div class="ui-form-group">
+        <label class="ui-label" for="personnage">Personnage :</label>
+        <select class="ui-select" id="personnage" required>
+          <option value="fille">Fille</option>
+        </select>
+      </div>
 
       <!-- 3. LIEU / DÉCOR -->
-      <label for="lieu" style="font-weight:bold;margin-top:0.7em;display:block;">Lieu / Décor&nbsp;:</label>
-      <select class="input-style" id="lieu" required>
-        <option value="foret_enchantee">Forêt enchantée</option>
-        <option value="chateau_ancien">Château ancien</option>
-        <option value="ile_perdue">Île perdue</option>
-      </select>
+      <div class="ui-form-group">
+        <label class="ui-label" for="lieu">Lieu / Décor :</label>
+        <select class="ui-select" id="lieu" required>
+          <option value="foret_enchantee">Forêt enchantée</option>
+          <option value="chateau_ancien">Château ancien</option>
+          <option value="ile_perdue">Île perdue</option>
+        </select>
+      </div>
 
       <!-- 4. OBJET MAGIQUE -->
-      <label for="objet" style="font-weight:bold;margin-top:0.7em;display:block;">Objet magique&nbsp;:</label>
-      <select class="input-style" id="objet" required>
-        <option value="baguette_magique">Baguette magique</option>
-        <option value="epee_legendaire">Épée légendaire</option>
-        <option value="bouclier_enchante">Bouclier enchanté</option>
-      </select>
+      <div class="ui-form-group">
+        <label class="ui-label" for="objet">Objet magique :</label>
+        <select class="ui-select" id="objet" required>
+          <option value="baguette_magique">Baguette magique</option>
+          <option value="epee_legendaire">Épée légendaire</option>
+          <option value="bouclier_enchante">Bouclier enchanté</option>
+        </select>
+      </div>
 
       <!-- 5. COMPAGNON (optionnel) -->
-      <label for="compagnon" style="font-weight:bold;margin-top:0.7em;display:block;">Compagnon (optionnel)&nbsp;:</label>
-      <select class="input-style" id="compagnon">
-        <option value="dragon">Dragon</option>
-        <option value="licorne">Licorne</option>
-        <option value="lion_majestueux">Lion majestueux</option>
-      </select>
+      <div class="ui-form-group">
+        <label class="ui-label" for="compagnon">Compagnon (optionnel) :</label>
+        <select class="ui-select" id="compagnon">
+          <option value="dragon">Dragon</option>
+          <option value="licorne">Licorne</option>
+          <option value="lion_majestueux">Lion majestueux</option>
+        </select>
+      </div>
 
       <!-- 6. OBJECTIF / MISSION -->
-      <label for="objectif" style="font-weight:bold;margin-top:0.7em;display:block;">Objectif / Mission&nbsp;:</label>
-      <select class="input-style" id="objectif" required>
-        <option value="sauver_un_village">Sauver un village</option>
-        <option value="decouvrir_un_tresor_cache">Découvrir un trésor caché</option>
-        <option value="retrouver_un_ami_perdu">Retrouver un ami perdu</option>
-      </select>
+      <div class="ui-form-group">
+        <label class="ui-label" for="objectif">Objectif / Mission :</label>
+        <select class="ui-select" id="objectif" required>
+          <option value="sauver_un_village">Sauver un village</option>
+          <option value="decouvrir_un_tresor_cache">Découvrir un trésor caché</option>
+          <option value="retrouver_un_ami_perdu">Retrouver un ami perdu</option>
+        </select>
+      </div>
 
-      <div class="form-buttons" style="margin-top:2rem;margin-bottom:1rem;">
-        <button class="button button-purple" type="button" data-screen="accueil">Annuler</button>
-        <button class="button button-blue" type="submit">C'est parti !</button>
+      <div class="ui-button-group ui-button-group--equal ui-mt-4">
+        <button class="ui-button ui-button--secondary" type="button" data-screen="accueil">Annuler</button>
+        <button class="ui-button ui-button--primary" type="submit">C'est parti !</button>
       </div>
     </form>
   </div>
@@ -152,71 +232,67 @@
 
   <!-- Résultat -->
 <section class="screen" id="resultat">
-  <div class="bloc-centre">
+  <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md">
     <h2>Ton Histoire</h2>
-<div style="display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
-  <h3 id="titre-histoire-resultat" style="margin:0; color:#1161a5; font-weight:bold; display:inline-block;"></h3>
-  <button id="btn-audio" class="icon-action" title="Écouter l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+<div class="ui-flex ui-align-center ui-justify-center ui-mb-4">
+  <h3 id="titre-histoire-resultat" style="margin:0; color:#1161a5; font-weight:bold;"></h3>
+  <button id="btn-audio" class="ui-button-icon ui-ml-2" title="Écouter l'histoire">
     <span id="icon-audio" aria-label="Écouter l'histoire" style="pointer-events:none;">🔊</span>
   </button>
-  <button id="btn-export-pdf" class="icon-action" title="Télécharger en PDF" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+  <button id="btn-export-pdf" class="ui-button-icon ui-ml-2" title="Télécharger en PDF">
     <span aria-label="Télécharger en PDF" style="pointer-events:none;">⬇️</span>
   </button>
-  <button id="btn-partage" class="icon-action" title="Partager l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+  <button id="btn-partage" class="ui-button-icon ui-ml-2" title="Partager l'histoire">
     <span aria-label="Partager l'histoire" style="pointer-events:none;">🔄</span>
   </button>
 </div>
    <div id="histoire"></div>
 <div class="actions-resultat">
-  <button id="btn-sauvegarde" class="button button-blue" style="margin-bottom: 1em;">Sauvegarder</button>
-  <div class="button-group">
-    <button class="button button-purple" id="btn-retour-resultat">Retour</button>
-    <button class="button button-purple" data-screen="accueil">Accueil</button>
+  <button id="btn-sauvegarde" class="ui-button ui-button--primary ui-mb-3">Sauvegarder</button>
+  <div class="ui-button-group ui-button-group--equal">
+    <button class="ui-button ui-button--secondary" id="btn-retour-resultat">Retour</button>
+    <button class="ui-button ui-button--secondary" data-screen="accueil">Accueil</button>
   </div>
 </div>
   </div>
 </section>
 
-<!-- Notification de partage -->
-<div id="notification-partage" class="notification">
-  <div class="notification-content">
-    <span id="notification-message"></span>
-  </div>
-</div>
 
 <!-- Modale de partage -->
-<div id="modal-partage" class="modal">
-  <div class="modal-content">
-    <h3>Partager avec</h3>
+<div id="modal-partage" class="ui-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Partager avec</h3>
     <div id="liste-partage-profils"></div>
-    <button class="button button-purple" id="btn-fermer-partage">Annuler</button>
+    <button class="ui-button ui-button--secondary ui-mt-3" id="btn-fermer-partage">Annuler</button>
   </div>
 </div>
 
-  <div id="modal-limite" class="modal">
-    <div class="modal-content">
-      <p>Tu as atteint le maximum de 10 histoires sauvegardées. Supprime une histoire pour en créer une nouvelle.</p>
-      <div class="button-group">
-<button class="button button-purple" id="btn-fermer-limite">Annuler</button>
-<button class="button button-blue" id="btn-valider-limite" data-screen="mes-histoires">Supprimer Histoires</button>
+  <div id="modal-limite" class="ui-modal">
+    <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+      <p class="ui-text-center">Tu as atteint le maximum de 10 histoires sauvegardées. Supprime une histoire pour en créer une nouvelle.</p>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3">
+<button class="ui-button ui-button--secondary" id="btn-fermer-limite">Annuler</button>
+<button class="ui-button ui-button--primary" id="btn-valider-limite" data-screen="mes-histoires">Supprimer Histoires</button>
       </div>
     </div>
   </div>
 
-  <div class="modal" id="delete-modal">
-    <div class="modal-content">
-      <p>Supprimer les histoires sélectionnées ?</p>
-      <div class="button-group">
-<button class="button button-blue" id="btn-confirm-delete">Oui</button>
-<button class="button button-purple" id="btn-cancel-delete">Non</button>
+  <div class="ui-modal" id="delete-modal">
+    <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+      <p class="ui-text-center">Supprimer les histoires sélectionnées ?</p>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3">
+<button class="ui-button ui-button--primary" id="btn-confirm-delete">Oui</button>
+<button class="ui-button ui-button--secondary" id="btn-cancel-delete">Non</button>
       </div>
     </div>
   </div>
-<div class="modal" id="modal-renommer">
-  <div class="modal-content">
-    <h3>Renommer l'histoire</h3>
-    <input id="input-nouveau-titre" type="text" class="input-style" maxlength="50" style="margin-bottom:1em;" />
-<div class="button-group" style="justify-content: center; gap: 2em;">
+<div class="ui-modal" id="modal-renommer">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Renommer l'histoire</h3>
+    <div class="ui-form-group">
+      <input id="input-nouveau-titre" type="text" class="ui-input" maxlength="50" />
+    </div>
+<div class="ui-flex ui-justify-center" style="gap: 2em;">
   <img src="croix-cartoon.png" alt="Annuler" title="Annuler" style="height: 48px; cursor: pointer;" id="btn-annuler-renommer" />
   <img src="coche-verte-cartoon.png" alt="Valider" title="Valider" style="height: 48px; cursor: pointer;" id="btn-confirmer-renommer" />
 </div>
@@ -224,201 +300,128 @@
 </div>
 <!-- Mes Histoires -->
 <section class="screen" id="mes-histoires">
-  <div class="bloc-centre">
-    <h2 style="display: flex; align-items: center; justify-content: space-between;">
-  Mes Histoires
-  <span id="compteur-histoires" style="margin-left:1rem; font-size:1.1rem;"></span>
-</h2>
-   <ul id="liste-histoires"></ul>
+  <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md">
+    <div class="ui-flex ui-justify-between ui-align-center">
+      <h2>Mes Histoires</h2>
+      <span id="compteur-histoires" style="font-size:1.1rem;"></span>
+    </div>
+    <ul id="liste-histoires"></ul>
     <div class="actions-footer" id="barre-suppression" style="display:none;">
       <img
         src="corbeille-cartoon.png"
         alt="Corbeille"
         id="btn-corbeille"
+        class="ui-ml-2"
       >
-      <button class="icon-action" id="btn-renommer-histoire" style="display:none;">✏️</button>
+      <button class="ui-button-icon" id="btn-renommer-histoire" style="display:none;">✏️</button>
       <img
         src="croix-cartoon.png"
         alt="Annuler sélection"
         id="btn-annuler-selection"
+        class="ui-ml-2"
       >
     </div>
-    <!-- Bloc à insérer à la place du simple bouton -->
-<div class="form-buttons" id="mes-histoires-actions">
-<button class="button button-purple btn-back" id="btn-retour-mes-histoires">Retour</button>
-<button class="button button-purple" id="btn-accueil-mes-histoires" data-screen="accueil" style="display:none;">Accueil</button>
-</div>
-
+    <div class="ui-button-group ui-button-group--equal ui-mt-3" id="mes-histoires-actions">
+      <button class="ui-button ui-button--secondary" id="btn-retour-mes-histoires">Retour</button>
+      <button class="ui-button ui-button--secondary ui-hidden" id="btn-accueil-mes-histoires" data-screen="accueil">Accueil</button>
+    </div>
   </div>
 </section>
 
 
-  <!-- ====== CI-DESSOUS : SCRIPTS FIREBASE (pas de type=module, pas d'import/export) ====== -->
-<!-- Firebase SDK compatibilité navigateur -->
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBZdLStt6vpHY1pI5lHnPhwGQxFY4LPEQk",
-  authDomain: "monhistoire-3.firebaseapp.com",
-  projectId: "monhistoire-3",
-  storageBucket: "monhistoire-3.firebasestorage.app",
-  messagingSenderId: "936891025632",
-  appId: "1:936891025632:web:3672fd54638abfedf5e885",
-  measurementId: "G-TQ8F3CBX74",
-  databaseURL: "https://monhistoire-3-default-rtdb.europe-west1.firebasedatabase.app"
-};
-  firebase.initializeApp(firebaseConfig);
-  if ('measurementId' in firebaseConfig) {
-    firebase.analytics();
-  }
-  
-  // Configuration du cache Firestore
-  firebase.firestore().settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
-  });
-
-  // Activer la persistance Firestore pour le mode hors ligne
-  // Cela doit être fait avant toute autre opération Firestore
-  firebase.firestore().enablePersistence({
-    synchronizeTabs: true // Synchronisation entre onglets
-  }).then(() => {
-    console.log("Persistence Firestore activée avec succès");
-  }).catch((err) => {
-    if (err.code === 'failed-precondition') {
-      // Plusieurs onglets ouverts, la persistance ne peut être activée que dans un seul
-      console.warn("La persistance ne peut pas être activée car plusieurs onglets sont ouverts");
-    } else if (err.code === 'unimplemented') {
-      // Le navigateur ne prend pas en charge la persistance
-      console.warn("Ce navigateur ne prend pas en charge la persistance Firestore");
-    } else {
-      console.error("Erreur lors de l'activation de la persistance:", err);
-    }
-  });
-</script>
-<!-- Fichiers de configuration -->
-<script src="js/config.js" defer></script>
-
-<!-- Utilitaires communs -->
-<script src="js/common.js" defer></script>
-
-<!-- Modules core -->
-<script src="js/core/navigation.js" defer></script>
-<script src="js/core/auth.js" defer></script>
-<script src="js/core/profiles.js" defer></script>
-<script src="js/core/storage.js" defer></script>
-
-<!-- Modules features -->
-<script src="js/features/stories/generator.js" defer></script>
-<script src="js/features/stories/display.js" defer></script>
-<script src="js/features/stories/management.js" defer></script>
-<!-- Module de partage modulaire -->
-<script src="js/features/sharing.js" defer></script>
-<script src="js/features/sharing/notifications.js" defer></script>
-<script src="js/features/sharing/storage.js" defer></script>
-<script src="js/features/sharing/ui.js" defer></script>
-<!-- Modules de partage en temps réel -->
-<script src="js/features/sharing/realtime/index.js" defer></script>
-<script src="js/features/sharing/realtime/listeners.js" defer></script>
-<script src="js/features/sharing/realtime/notifications.js" defer></script>
-<!-- Point d'entrée du module de partage -->
-<script src="js/features/sharing/index.js" defer></script>
-<script src="js/features/export.js" defer></script>
-<script src="js/features/audio.js" defer></script>
-<script src="js/features/cookies.js" defer></script>
-
-<!-- Interface utilisateur -->
-<script src="js/ui.js" defer></script>
-
-<!-- Point d'entrée principal -->
-<script src="js/app.js" defer></script>
-
-
   <!-- Modal générique pour messages -->
-<div id="message-modal" class="modal">
-  <div class="message-card">
-    <p id="message-modal-text"></p>
-   <button class="button button-blue" id="close-message-modal">OK</button>
+<div id="message-modal" class="ui-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <p id="message-modal-text" class="ui-text-center"></p>
+   <button class="ui-button ui-button--primary ui-mt-3" id="close-message-modal">OK</button>
   </div>
 </div>
 
 
-<div class="modal" id="delete-account-modal">
-  <div class="message-card">
-    <p style="color:#e74c3c; font-weight:bold;">
+<div class="ui-modal" id="delete-account-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <p class="ui-text-center" style="color:#e74c3c; font-weight:bold;">
       Action irréversible.<br>Toutes vos données seront supprimées.<br>Êtes-vous sûr ?
     </p>
-<button class="button" style="background:#e74c3c; color:#fff;" id="btn-confirm-delete-account">Oui, supprimer mon compte</button>
-<button class="button button-purple" id="btn-cancel-delete-account">Annuler</button>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button class="ui-button" style="background:#e74c3c; color:#fff;" id="btn-confirm-delete-account">Oui, supprimer mon compte</button>
+      <button class="ui-button ui-button--secondary" id="btn-cancel-delete-account">Annuler</button>
+    </div>
   </div>
 </div>
 
 <!-- Modale de ré-authentification pour les opérations sensibles -->
-<div class="modal" id="modal-reauthentication">
-  <div class="bloc-centre" style="max-width:350px;">
-    <h3>Vérification de sécurité</h3>
-    <p style="text-align:center; margin-bottom:1em;">Pour des raisons de sécurité, veuillez confirmer votre mot de passe avant de modifier votre adresse email.</p>
-    <input id="input-reauthentication-password" class="input-style" placeholder="Votre mot de passe" type="password" />
-    <div style="margin-top:1.2em; display:flex; justify-content:center; gap:1em;">
-      <button class="button button-purple" id="btn-cancel-reauthentication">Annuler</button>
-      <button class="button button-blue" id="btn-confirm-reauthentication">Valider</button>
+<div class="ui-modal" id="modal-reauthentication">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Vérification de sécurité</h3>
+    <p class="ui-text-center ui-mb-3">Pour des raisons de sécurité, veuillez confirmer votre mot de passe avant de modifier votre adresse email.</p>
+    <div class="ui-form-group">
+      <input id="input-reauthentication-password" class="ui-input" placeholder="Votre mot de passe" type="password" />
+    </div>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button class="ui-button ui-button--secondary" id="btn-cancel-reauthentication">Annuler</button>
+      <button class="ui-button ui-button--primary" id="btn-confirm-reauthentication">Valider</button>
     </div>
     <p id="reauthentication-error" style="color:red; margin-top:0.8em; display:none; text-align:center; font-size:0.9em;"></p>
   </div>
 </div>
 
 <!-- Modale de mot de passe parent pour changer de profil -->
-<div class="modal" id="modal-password-parent">
-  <div class="bloc-centre" style="max-width:350px;">
-    <h3>Mot de passe parent</h3>
-    <p style="text-align:center; margin-bottom:1em;">Pour des raisons de sécurité, veuillez saisir le mot de passe du compte parent pour changer de profil.</p>
-    <input id="input-password-parent" class="input-style" placeholder="Mot de passe parent" type="password" />
-    <div style="margin-top:1.2em; display:flex; justify-content:center; gap:1em;">
-      <button class="button button-purple" id="btn-cancel-password-parent">Annuler</button>
-      <button class="button button-blue" id="btn-confirm-password-parent">Valider</button>
+<div class="ui-modal" id="modal-password-parent">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Mot de passe parent</h3>
+    <p class="ui-text-center ui-mb-3">Pour des raisons de sécurité, veuillez saisir le mot de passe du compte parent pour changer de profil.</p>
+    <div class="ui-form-group">
+      <input id="input-password-parent" class="ui-input" placeholder="Mot de passe parent" type="password" />
+    </div>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button class="ui-button ui-button--secondary" id="btn-cancel-password-parent">Annuler</button>
+      <button class="ui-button ui-button--primary" id="btn-confirm-password-parent">Valider</button>
     </div>
     <p id="password-parent-error" style="color:red; margin-top:0.8em; display:none; text-align:center; font-size:0.9em;"></p>
   </div>
 </div>
 
-<div class="modal" id="modal-moncompte">
-  <div class="bloc-centre bloc-compte" style="max-width:430px; overflow-y:auto; max-height:90vh;">
-    <h3 style="margin-top:0;">Mon Compte</h3>
+<div class="ui-modal" id="modal-moncompte">
+<div class="ui-modal-content ui-modal-content--medium ui-card--cream" style="overflow-y:auto; max-height:90vh; background-color: #fff8e1 !important;">
+    <h3 class="ui-text-center">Mon Compte</h3>
     <form id="form-mon-compte">
-      <label style="margin-top:1em;">Prénom :</label>
-      <input class="input-style" id="compte-prenom" type="text" required>
-      <label style="margin-top:1em;">Adresse e-mail :</label>
-      <input class="input-style" id="compte-email" type="email" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
-      <div id="compte-stock-histoires" style="margin: 1rem 0; text-align: center;"></div>
+      <div class="ui-form-group">
+        <label class="ui-label">Prénom :</label>
+        <input class="ui-input" id="compte-prenom" type="text" required>
+      </div>
+      <div class="ui-form-group">
+        <label class="ui-label">Adresse e-mail :</label>
+        <input class="ui-input" id="compte-email" type="email" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
+      </div>
+      <div id="compte-stock-histoires" class="ui-text-center ui-mt-3 ui-mb-3"></div>
       
       <!-- Section des profils enfants -->
       <div id="section-profils-enfants" style="margin-top: 2em; border-top: 1px solid #ddd; padding-top: 1em;">
         <h4 style="margin-bottom: 1em;">Profils enfants</h4>
         <ul id="liste-profils-enfants" style="list-style: none; padding: 0; margin: 0;"></ul>
-        <button type="button" id="btn-ajouter-enfant" class="button button-blue" style="margin-top: 1em;">Ajouter un profil</button>
+        <button type="button" id="btn-ajouter-enfant" class="ui-button ui-button--primary ui-mt-3" style="background-color: #79d4e7 !important; color: #395872 !important;">Ajouter un profil</button>
         
         <!-- Formulaire d'ajout de profil enfant (masqué par défaut) -->
-        <div id="form-ajout-enfant" style="display: none; margin-top: 1em; padding: 1em; background: #f9f9f9; border-radius: 8px;">
-          <input id="input-prenom-enfant" class="input-style" placeholder="Prénom de l'enfant" type="text">
-          <div class="button-group" style="margin-top: 0.8em;">
-            <button type="button" id="btn-valider-ajout-enfant" class="button button-blue">Ajouter</button>
-            <button type="button" id="btn-annuler-ajout-enfant" class="button button-purple">Annuler</button>
+        <div id="form-ajout-enfant" style="display: none; margin-top: 1em; padding: 1em; background: #fff8e1; border-radius: 8px;">
+          <div class="ui-form-group">
+            <input id="input-prenom-enfant" class="ui-input" placeholder="Prénom de l'enfant" type="text">
+          </div>
+          <div class="ui-button-group ui-button-group--equal ui-mt-3">
+            <button type="button" id="btn-annuler-ajout-enfant" class="ui-button ui-button--secondary">Annuler</button>
+            <button type="button" id="btn-valider-ajout-enfant" class="ui-button ui-button--primary" style="background-color: #79d4e7 !important; color: #395872 !important;">Ajouter</button>
           </div>
         </div>
       </div>
 
-      <p style="text-align: center; margin: 2em 0 1.2em;">
+      <p style="margin: 2em 0 1.2em;">
         <a href="#" id="btn-delete-account" style="color:#e74c3c; font-weight:bold; text-decoration:none;">
           Supprimer mon compte
         </a>
       </p>
-      <div class="form-buttons">
-        <button class="button button-purple" type="button" id="btn-close-account">Annuler</button>
-        <button class="button button-blue" type="submit" id="btn-save-account">Enregistrer</button>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3">
+        <button class="ui-button ui-button--secondary" type="button" id="btn-close-account">Annuler</button>
+        <button class="ui-button ui-button--primary" type="submit" id="btn-save-account">Enregistrer</button>
       </div>
     </form>
   </div>
@@ -430,20 +433,22 @@ const firebaseConfig = {
   <a href="#" id="cookie-settings-link" style="font-size:1rem;">Paramètres des cookies</a>
 </footer>
 <!-- Modale de renommage de profil enfant -->
-<div class="modal" id="modal-renommer-profil">
-  <div class="modal-content">
-    <h3>Renommer le profil</h3>
-    <input id="input-nouveau-prenom" type="text" class="input-style" maxlength="30" style="margin-bottom:1em;" />
-    <div class="button-group" style="justify-content: center; gap: 2em;">
-      <button class="button button-purple" id="btn-annuler-renommer-profil">Annuler</button>
-      <button class="button button-blue" id="btn-confirmer-renommer-profil">Valider</button>
+<div class="ui-modal" id="modal-renommer-profil">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Renommer le profil</h3>
+    <div class="ui-form-group">
+      <input id="input-nouveau-prenom" type="text" class="ui-input" maxlength="30" />
+    </div>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button class="ui-button ui-button--secondary" id="btn-annuler-renommer-profil">Annuler</button>
+      <button class="ui-button ui-button--primary" id="btn-confirmer-renommer-profil">Valider</button>
     </div>
   </div>
 </div>
 
-<div class="modal" id="modal-rgpd">
-  <div class="modal-content" style="max-width:500px;">
-    <span class="close-button" onclick="document.getElementById('modal-rgpd').classList.remove('show')">×</span>
+<div class="ui-modal" id="modal-rgpd">
+  <div class="ui-modal-content ui-modal-content--large ui-card--cream" style="max-width:500px;">
+    <span class="ui-modal-close" onclick="document.getElementById('modal-rgpd').classList.remove('show')">×</span>
     
     <!-- Navigation par onglets -->
     <div class="rgpd-tabs">
@@ -569,13 +574,13 @@ const firebaseConfig = {
         </div>
         
         <div class="cookie-modal-footer">
-          <button id="cookie-save" class="button button-blue">Enregistrer mes préférences</button>
+          <button id="cookie-save" class="ui-button ui-button--primary">Enregistrer mes préférences</button>
         </div>
       </div>
     </div>
     
-    <div class="button-group" style="justify-content:center; margin-top: 20px;">
-      <button class="button button-purple" id="close-rgpd-modal" onclick="document.getElementById('modal-rgpd').classList.remove('show')">Fermer</button>
+    <div class="ui-button-group ui-button-group--center" style="margin-top: 20px;">
+      <button class="ui-button ui-button--secondary" id="close-rgpd-modal" onclick="document.getElementById('modal-rgpd').classList.remove('show')">Fermer</button>
     </div>
   </div>
 </div>
@@ -583,12 +588,12 @@ const firebaseConfig = {
 
 <!-- Bannière de consentement aux cookies -->
 <div id="cookie-banner" class="cookie-banner">
-  <div class="cookie-content">
-    <h3>🍪 Nous utilisons des cookies</h3>
-    <p>Notre application utilise des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos préférences ou accepter tous les cookies.</p>
-    <div class="cookie-buttons">
-      <button id="cookie-accept-all" class="button button-blue">Tout accepter</button>
-      <button id="cookie-customize" class="button button-purple">Personnaliser</button>
+  <div class="cookie-content ui-card--cream">
+    <h3 class="ui-text-center">🍪 Nous utilisons des cookies</h3>
+    <p class="ui-text-center">Notre application utilise des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos préférences ou accepter tous les cookies.</p>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button id="cookie-accept-all" class="ui-button ui-button--primary">Tout accepter</button>
+      <button id="cookie-customize" class="ui-button ui-button--secondary">Personnaliser</button>
     </div>
   </div>
 </div>

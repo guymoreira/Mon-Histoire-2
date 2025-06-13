@@ -1,0 +1,212 @@
+/* 
+ * Système UI - Composants de cartes et blocs
+ * Partie du système UI standardisé pour Mon Histoire
+ * Note: Ce fichier est maintenu pour la compatibilité avec le code existant.
+ * Les nouveaux styles sont définis dans ui-system.css.
+ */
+
+/* 
+ * CLASSES STANDARDISÉES
+ * Toutes les classes ci-dessous sont des alias vers les classes ui-* correspondantes
+ * pour assurer la compatibilité avec le code existant.
+ */
+
+/* Base des cartes et blocs */
+.bloc-centre,
+.modal .bloc-centre,
+.bloc-compte,
+.modal-content,
+.message-card {
+  background: #fff8e1 !important;
+  border-radius: 36px !important;
+  padding: 1rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 2vh auto;
+  box-shadow: 0 8px 34px rgba(76,195,247,0.11), 0 3px 12px rgba(180,150,240,0.10);
+}
+
+/* Variantes spécifiques */
+.bloc-compte {
+  background-color: #fff !important;
+}
+
+/* Tailles spécifiques pour différents écrans */
+#formulaire .bloc-centre,
+#connexion .bloc-centre,
+#resultat .bloc-centre,
+#signup-form.bloc-centre,
+#reset-form.bloc-centre {
+  width: 90%;
+  max-width: 400px;
+  margin: 2vh auto;
+}
+
+#connexion .bloc-centre {
+  width: 100%;
+  max-width: 360px;
+}
+
+#mes-histoires .bloc-centre {
+  width: 100%;
+  max-width: 600px;
+  margin: 2vh auto;
+}
+
+/* Ajustements pour l'écran formulaire */
+#formulaire.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 2rem;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+#formulaire .bloc-centre {
+  width: 100%;
+  max-width: 500px;
+  margin: 2vh auto;
+  padding-bottom: 1rem;
+}
+
+#form-generer-histoire {
+  padding-bottom: 0.5rem;
+}
+
+/* Ajustements pour l'écran résultats */
+#resultat.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+#resultat .bloc-centre {
+  width: 100%;
+  max-width: 500px;
+  margin: 2vh 0;
+}
+
+/* Illustration chapitre */
+.illustration-chapitre img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+}
+
+/* Mes Histoires */
+#liste-histoires {
+  list-style: none; 
+  padding: 0;
+}
+
+#liste-histoires li {
+  position: relative; 
+  margin-bottom: 0.5rem;
+}
+
+#liste-histoires li .button,
+#liste-histoires li .ui-button {
+  width: 100%;
+  max-width: 300px;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: center;
+  padding-right: 0;
+}
+
+/* coche rouge */
+#liste-histoires li.selected .button::after,
+#liste-histoires li.selected .ui-button::after {
+  content: '✔'; 
+  color: red; 
+  font-size: 1.5rem;
+  position: absolute; 
+  right: 1rem; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Compteur d'histoires */
+#compteur-histoires {
+  background: none !important;
+  color: #1161a5;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 1.5em;
+  padding: 0.1em 0.7em;
+  margin-left: 0.5em;
+  transition: color 0.3s;
+  border: none !important;
+  display: inline-block;
+  box-shadow: none !important;
+}
+
+#compteur-histoires.quota-alerte {
+  background: none !important;
+  color: #b91c1c !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: quota-pulse 0.7s 1;
+}
+
+/* Gestion profils enfant (modale Mon Compte) */
+.liste-profils {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.ligne-profil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7eb;
+  border-radius: 16px;
+  padding: 0.6em 1em;
+  margin-bottom: 0.6em;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ligne-profil .prenom {
+  font-weight: bold;
+  flex: 1;
+}
+
+.ligne-profil .quota {
+  font-size: 0.95em;
+  margin: 0 1em;
+  color: #444;
+  white-space: nowrap;
+}
+
+.ligne-profil .btn-corbeille {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.ligne-profil .btn-edit {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #666;
+  margin-left: 0.4em;
+  cursor: pointer;
+}
+
+/* 
+ * MAPPINGS VERS LE NOUVEAU SYSTÈME UI
+ * Ces classes sont des alias pour faciliter la migration vers le nouveau système UI.
+ */
+
+/* Mappings de base */
+.bloc-centre { composes: ui-card ui-card--cream ui-card--large ui-card--padding-md from './ui-system.css'; }
+.modal-content { composes: ui-modal-content ui-modal-content--medium ui-card--cream from './ui-system.css'; }
+.message-card { composes: ui-card ui-card--cream ui-card--medium ui-card--padding-md from './ui-system.css'; }
+.bloc-compte { composes: ui-card ui-card--white ui-card--medium ui-card--padding-md from './ui-system.css'; }
+
+/* Note: Les sélecteurs spécifiques comme #formulaire .bloc-centre
+   continueront à fonctionner car ils sont plus spécifiques que les classes génériques */

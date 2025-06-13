@@ -1,0 +1,251 @@
+/* 
+ * Système UI - Composants de notification
+ * Partie du système UI standardisé pour Mon Histoire
+ */
+
+/* Base pour toutes les notifications */
+.ui-notification {
+  position: fixed;
+  top: -100px; /* Commence hors de l'écran par le haut */
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  padding: 20px 25px; /* Augmenté pour donner plus d'espace au texte plus grand */
+  border-radius: 0 0 15px 15px;
+  background-color: #79d4e7; /* Couleur bleue comme les boutons */
+  color: #395872;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 3000;
+  animation: ui-notification-slide-in 0.5s ease-out forwards;
+  font-family: 'Fredoka', Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  transition: top 0.5s ease-out;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  touch-action: none; /* Pour gérer manuellement les événements tactiles */
+}
+
+.ui-notification.ui-notification--closing {
+  animation: ui-notification-slide-out 0.5s ease-in forwards;
+}
+
+/* Icône de notification */
+.ui-notification-icon {
+  flex-shrink: 0;
+  margin-right: 1.2rem; /* Augmenté pour plus d'espace avec le texte plus grand */
+  font-size: 2.2rem; /* Augmenté pour être proportionnel au texte plus grand */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenu de la notification */
+.ui-notification-content {
+  flex-grow: 1;
+}
+
+.ui-notification-title {
+  font-weight: bold;
+  margin: 0 0 0.3rem 0;
+  font-size: 1.1rem;
+}
+
+.ui-notification-message {
+  margin: 0;
+  font-size: 1.8rem; /* Augmenté significativement pour rendre le texte beaucoup plus visible */
+  line-height: 1.3;
+  font-weight: bold; /* Ajouté pour renforcer la visibilité */
+}
+
+/* Bouton de fermeture */
+.ui-notification-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem; /* Augmenté pour être plus visible et facile à cliquer */
+  cursor: pointer;
+  color: #395872; /* Changé pour correspondre à la couleur du texte */
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  padding: 0.3rem; /* Augmenté pour une zone de clic plus grande */
+  line-height: 1;
+  width: 40px; /* Ajouté pour une zone de clic plus grande */
+  height: 40px; /* Ajouté pour une zone de clic plus grande */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-notification-close:hover {
+  opacity: 1;
+}
+
+/* Types de notifications */
+.ui-notification--success {
+  background-color: #e6f7ef;
+  border-left: 4px solid #2ecc71;
+}
+
+.ui-notification--success .ui-notification-icon {
+  color: #2ecc71;
+}
+
+.ui-notification--error {
+  background-color: #fdecea;
+  border-left: 4px solid #e74c3c;
+}
+
+.ui-notification--error .ui-notification-icon {
+  color: #e74c3c;
+}
+
+.ui-notification--info {
+  background-color: #e6f3ff;
+  border-left: 4px solid #3498db;
+}
+
+.ui-notification--info .ui-notification-icon {
+  color: #3498db;
+}
+
+.ui-notification--warning {
+  background-color: #fef5e7;
+  border-left: 4px solid #f39c12;
+}
+
+.ui-notification--warning .ui-notification-icon {
+  color: #f39c12;
+}
+
+/* Positions */
+.ui-notification--top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.ui-notification--top-left {
+  top: 20px;
+  left: 20px;
+}
+
+.ui-notification--bottom-right {
+  bottom: 20px;
+  top: auto;
+  right: 20px;
+}
+
+.ui-notification--bottom-left {
+  bottom: 20px;
+  top: auto;
+  left: 20px;
+}
+
+.ui-notification--top-center {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ui-notification--bottom-center {
+  bottom: 20px;
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Animations */
+@keyframes ui-notification-slide-in {
+  from {
+    top: -100px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes ui-notification-slide-out {
+  from {
+    top: 0;
+    opacity: 1;
+  }
+  to {
+    top: -100px;
+    opacity: 0;
+  }
+}
+
+/* Notification inline (non-popup) */
+.ui-notification-inline {
+  position: relative;
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-family: 'Fredoka', Arial, sans-serif;
+  display: flex;
+  align-items: flex-start;
+}
+
+.ui-notification-inline.ui-notification--success {
+  background-color: #e6f7ef;
+  border-left: 4px solid #2ecc71;
+}
+
+.ui-notification-inline.ui-notification--error {
+  background-color: #fdecea;
+  border-left: 4px solid #e74c3c;
+}
+
+.ui-notification-inline.ui-notification--info {
+  background-color: #e6f3ff;
+  border-left: 4px solid #3498db;
+}
+
+.ui-notification-inline.ui-notification--warning {
+  background-color: #fef5e7;
+  border-left: 4px solid #f39c12;
+}
+
+/* Indicateur de notification (badge) */
+.notification-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 3001; /* S'assurer qu'il est au-dessus de tout */
+}
+
+/* Version UI du badge de notification */
+.ui-notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 3001; /* S'assurer qu'il est au-dessus de tout */
+}

@@ -1,0 +1,9 @@
+/* css/components/index.css */
+/* Importe tous les fichiers CSS des composants */
+
+@import 'ui-system.css';
+@import 'buttons.css';
+@import 'forms.css';
+@import 'modals.css';
+@import 'cards.css';
+@import 'notifications.css';

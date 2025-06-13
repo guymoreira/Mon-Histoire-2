@@ -1,0 +1,203 @@
+/* Styles des cartes et blocs */
+
+.bloc-centre,
+.modal .bloc-centre,
+.bloc-compte,
+.modal-content,
+.message-card {
+  background: #fff8e1 !important;   /* crème pastel, effet carte douce */
+  border-radius: 36px !important;   /* très arrondi */
+  padding: 1rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 2vh auto;
+  box-shadow: 0 6px 28px rgba(76,195,247,0.09), 0 2px 7px rgba(180,150,240,0.08);
+}
+
+/* Assurer que les blocs centrés ont le bon style après modularisation */
+#accueil-content {
+  background: var(--color-background-cream) !important;
+  border-radius: var(--border-radius-xl) !important;
+  box-shadow: var(--shadow-card);
+}
+
+.bloc-centre,
+.modal-content,
+.message-card {
+  box-shadow: 0 8px 34px rgba(76,195,247,0.11), 0 3px 12px rgba(180,150,240,0.10);
+}
+
+/* Override pour écrans Formulaire, Connexion et Résultats */
+/* Rendre les cards un peu moins larges, et les centrer */
+#formulaire .bloc-centre,
+#connexion .bloc-centre,
+#resultat .bloc-centre,
+#signup-form.bloc-centre,
+#reset-form.bloc-centre {
+  width: 90%;          /* largeur relative raisonnable */
+  max-width: 400px;    /* ne pas dépasser une taille confortable */
+  margin: 2vh auto;    /* 2vh haut/bas, centré horizontalement */
+}
+
+#connexion .bloc-centre {
+  /* on prend plus de place horizontalement : 95 % au lieu de 90 % */
+  width: 100%;
+  /* si besoin, on peut aussi ajuster le plafond : */
+  max-width: 360px;
+}
+
+#mes-histoires .bloc-centre {
+  width: 100%;
+  max-width: 600px; /* ou 500px si tu préfères moins large */
+  margin: 2vh auto;
+}
+
+/* ÉCRAN FORMULAIRE */
+/* 1) on réduit le padding horizontal du parent */
+#formulaire.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 2rem; /* Réduit l'espace en bas */
+  max-height: 100vh;  /* Limite la hauteur à la hauteur de la fenêtre */
+  overflow-y: auto;   /* Permet le défilement vertical */
+}
+
+/* 2) on force le bloc-centre à 100 % de cette nouvelle largeur */
+#formulaire .bloc-centre {
+  width: 100%;
+  max-width: 500px;    /* ajustez à votre convenance */
+  margin: 2vh auto;    /* uniquement marge verticale */
+  padding-bottom: 1rem; /* Réduit l'espace en bas */
+}
+
+/* Style spécifique pour le formulaire de création d'histoire */
+#form-generer-histoire {
+  padding-bottom: 0.5rem; /* Réduit l'espace en bas */
+}
+
+/* ÉCRAN RÉSULTATS */
+/* 1) idem pour le conteneur */
+#resultat.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+/* 2) idem pour le bloc-centre */
+#resultat .bloc-centre {
+  width: 100%;
+  max-width: 500px;    /* même valeur que pour formulaire ou différente */
+  margin: 2vh 0;
+}
+
+/* Illustration chapitre */
+.illustration-chapitre img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;  /* espace vertical plus confortable */
+}
+
+/* Mes Histoires */
+#liste-histoires {
+  list-style: none; 
+  padding: 0;
+}
+
+#liste-histoires li {
+  position: relative; 
+  margin-bottom: 0.5rem;
+}
+
+#liste-histoires li .button {
+  width: 100%;
+  max-width: 300px;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: center;   /* <-- centré */
+  padding-right: 0;     /* optionnel : ou 1rem, mais 0 c'est parfait */
+}
+
+/* coche rouge */
+#liste-histoires li.selected .button::after {
+  content: '✔'; 
+  color: red; 
+  font-size: 1.5rem;
+  position: absolute; 
+  right: 1rem; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Compteur d'histoires */
+#compteur-histoires {
+  background: none !important;
+  color: #1161a5;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 1.5em;
+  padding: 0.1em 0.7em;
+  margin-left: 0.5em;
+  transition: color 0.3s;
+  border: none !important;
+  display: inline-block;
+  box-shadow: none !important;
+}
+
+#compteur-histoires.quota-alerte {
+  background: none !important;
+  color: #b91c1c !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: quota-pulse 0.7s 1;
+}
+
+/* Gestion profils enfant (modale Mon Compte) */
+.liste-profils {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.ligne-profil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7eb;
+  border-radius: 16px;
+  padding: 0.6em 1em;
+  margin-bottom: 0.6em;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ligne-profil .prenom {
+  font-weight: bold;
+  flex: 1;
+}
+
+.ligne-profil .quota {
+  font-size: 0.95em;
+  margin: 0 1em;
+  color: #444;
+  white-space: nowrap;
+}
+
+.ligne-profil .btn-corbeille {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.ligne-profil .btn-edit {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #666;
+  margin-left: 0.4em;
+  cursor: pointer;
+}
+
+.bloc-compte {
+  background-color: #fff !important;  /* Force l'opacité 100% pour "Mon Compte" seulement */
+}

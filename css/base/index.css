@@ -1,0 +1,7 @@
+/* css/base/index.css */
+/* Importe tous les fichiers CSS de base */
+
+@import 'reset.css';
+@import 'typography.css';
+@import 'layout.css';
+@import 'animations.css';

@@ -1,0 +1,41 @@
+/* 
+ * Styles spécifiques pour les formulaires d'authentification
+ * Permet d'afficher les formulaires de création de compte et de réinitialisation
+ * en dessous du formulaire de connexion principal
+ */
+
+/* Conteneur principal pour les formulaires d'authentification */
+#connexion .ui-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Formulaire de connexion */
+#login-form {
+  width: 100%;
+}
+
+/* Formulaires de création de compte et de réinitialisation */
+#signup-form,
+#reset-form {
+  width: 100%;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 1rem;
+}
+
+/* Ajustement des marges pour éviter trop d'espace */
+#signup-form h2,
+#reset-form h2 {
+  margin-top: 0;
+}
+
+/* Ajustement pour les petits écrans */
+@media (max-width: 480px) {
+  #signup-form,
+  #reset-form {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+}

@@ -1,0 +1,147 @@
+/* 
+ * Système UI - Composants de formulaire
+ * Partie du système UI standardisé pour Mon Histoire
+ */
+
+/* Base pour tous les champs de formulaire */
+.ui-input {
+  display: block;
+  width: 100%;
+  padding: 0.85em 1em;
+  margin: 0.5em 0;
+  border: 2px solid #dde7f3;
+  border-radius: 18px;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 1.1em;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ui-input:focus {
+  outline: none;
+  border-color: #79d4e7;
+  box-shadow: 0 0 0 3px rgba(121, 212, 231, 0.25);
+}
+
+.ui-input::placeholder {
+  color: #a0aec0;
+}
+
+/* Champ de saisie avec icône */
+.ui-input-group {
+  position: relative;
+  width: 100%;
+}
+
+.ui-input-group .ui-input {
+  padding-right: 2.5em;
+}
+
+.ui-input-icon {
+  position: absolute;
+  right: 0.8em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 1.2em;
+  z-index: 2;
+}
+
+/* Select */
+.ui-select {
+  display: block;
+  width: 100%;
+  padding: 0.85em 1em;
+  margin: 0.5em 0;
+  border: 2px solid #dde7f3;
+  border-radius: 18px;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 1.1em;
+  background-color: #fff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8em center;
+  background-size: 1.2em;
+  padding-right: 2.5em;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ui-select:focus {
+  outline: none;
+  border-color: #79d4e7;
+  box-shadow: 0 0 0 3px rgba(121, 212, 231, 0.25);
+}
+
+/* Checkbox et Radio */
+.ui-checkbox-group,
+.ui-radio-group {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.8em 0;
+  font-size: 0.97em;
+}
+
+.ui-checkbox,
+.ui-radio {
+  margin-top: 0.2em;
+  margin-right: 0.5em;
+  cursor: pointer;
+}
+
+/* Label */
+.ui-label {
+  display: block;
+  font-weight: bold;
+  margin-top: 0.7em;
+  margin-bottom: 0.3em;
+  color: #395872;
+}
+
+/* Groupe de formulaire */
+.ui-form-group {
+  margin-bottom: 1em;
+}
+
+/* États */
+.ui-input:disabled,
+.ui-select:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ui-input.ui-input--error,
+.ui-select.ui-input--error {
+  border-color: #e74c3c;
+}
+
+.ui-input.ui-input--success,
+.ui-select.ui-input--success {
+  border-color: #2ecc71;
+}
+
+/* Message d'erreur */
+.ui-input-error {
+  color: #e74c3c;
+  font-size: 0.9em;
+  margin-top: 0.3em;
+  display: block;
+}
+
+/* Tailles */
+.ui-input--small,
+.ui-select--small {
+  padding: 0.6em 0.8em;
+  font-size: 0.95em;
+  border-radius: 14px;
+}
+
+.ui-input--large,
+.ui-select--large {
+  padding: 1em 1.2em;
+  font-size: 1.2em;
+  border-radius: 22px;
+}

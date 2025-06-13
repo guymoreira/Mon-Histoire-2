@@ -117,6 +117,13 @@ MonHistoire.ui = {
       }
     });
     
+    // Bouton Retour depuis l'écran mes-histoires
+    document.getElementById("btn-retour-mes-histoires")?.addEventListener("click", () => {
+      if (MonHistoire.core && MonHistoire.core.navigation) {
+        MonHistoire.core.navigation.goBack();
+      }
+    });
+    
     // Bouton Générer Histoire (protégé contre les clics multiples)
     this.protegerBouton("btn-generer", () => {
       if (MonHistoire.features && 
@@ -385,7 +392,7 @@ MonHistoire.ui = {
     });
     
     // Boutons Toggle Password
-    document.querySelectorAll(".toggle-password").forEach(button => {
+    document.querySelectorAll(".ui-input-icon").forEach(button => {
       button.addEventListener("click", () => {
         const inputId = button.getAttribute("data-input");
         if (MonHistoire.core && MonHistoire.core.auth) {
@@ -398,7 +405,7 @@ MonHistoire.ui = {
   // Initialise le long press pour les appareils mobiles
   bindLongPress() {
     // Sélectionne tous les éléments qui peuvent avoir un long press
-    const elements = document.querySelectorAll(".histoire-card, .button-blue");
+    const elements = document.querySelectorAll(".histoire-card, .ui-button--primary");
     
     elements.forEach(element => {
       let pressTimer;
@@ -650,7 +657,7 @@ MonHistoire.ui = {
     
     const prenom = input.value.trim();
     if (!prenom) {
-      MonHistoire.showMessageModal("Le prénom ne peut pas être vide.");
+      MonHistoire.showMessageModal("Le prénom ne peut pas être vide.", { forceTop: true });
       return;
     }
     
@@ -851,7 +858,7 @@ MonHistoire.ui = {
   confirmerRenommerProfil() {
     const nouveauPrenom = document.getElementById("input-nouveau-prenom")?.value.trim();
     if (!nouveauPrenom) {
-      MonHistoire.showMessageModal("Le prénom ne peut pas être vide.");
+      MonHistoire.showMessageModal("Le prénom ne peut pas être vide.", { forceTop: true });
       return;
     }
     

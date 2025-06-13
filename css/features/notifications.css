@@ -1,0 +1,25 @@
+/* 
+ * Styles des notifications
+ * 
+ * REMARQUE : Ces styles ont été déplacés vers css/components/notifications.css
+ * et utilisent maintenant les classes préfixées par "ui-" (par exemple, "ui-notification" 
+ * au lieu de "notification").
+ * 
+ * Ce fichier est conservé pour des raisons de compatibilité, mais il sera supprimé
+ * dans une future version.
+ */
+
+/* Référence des anciennes classes et leurs équivalents dans le nouveau système UI :
+ * 
+ * .notification -> .ui-notification
+ * .notification.show -> .ui-notification (toujours visible par défaut)
+ * .notification.animate-in -> (animation par défaut)
+ * .notification.animate-out -> .ui-notification.ui-notification--closing
+ * .notification-content -> .ui-notification-content
+ * .notification-text -> .ui-notification-message
+ * .notification.success -> .ui-notification.ui-notification--success
+ * .notification.error -> .ui-notification.ui-notification--error
+ * .notification.warning -> .ui-notification.ui-notification--warning
+ * .notification.info -> .ui-notification.ui-notification--info
+ * .notification-close -> .ui-notification-close
+ */

@@ -1,0 +1,313 @@
+/* css/components/ui-system.css */
+/* Système de classes standardisées pour les boutons, modales et blocs centrés */
+
+/* ======================================
+   SYSTÈME DE BOUTONS
+   ====================================== */
+
+/* Base des boutons - Styles standardisés */
+.ui-button {
+  display: block;
+  width: 100%;
+  margin: 0.38em 0 0.28em 0;
+  padding: 0.85em 0;
+  border: none;
+  border-radius: 28px;
+  font-size: 1.22em;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 5px 18px 0 rgba(211,174,114,0.17);
+  transition: transform 0.09s, box-shadow 0.11s;
+}
+
+/* Variantes de couleur */
+.ui-button--primary {
+  background: #79d4e7;
+  color: #395872;
+  box-shadow: 0 7px 18px 0 rgba(211,174,114,0.22);
+}
+
+.ui-button--secondary {
+  background: #d5b8f6;
+  color: #5c4683;
+  box-shadow: 0 7px 18px 0 rgba(211,174,114,0.22);
+}
+
+/* États des boutons */
+.ui-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 4px rgba(211,174,114,0.13);
+}
+
+.ui-button:focus {
+  outline: none;
+  box-shadow: 0 7px 18px 0 rgba(211,174,114,0.25);
+}
+
+/* Tailles des boutons */
+.ui-button--small {
+  font-size: 1rem;
+  padding: 0.6em 0;
+}
+
+.ui-button--medium {
+  font-size: 1.22em;
+  padding: 0.85em 0;
+}
+
+.ui-button--large {
+  font-size: 1.4em;
+  padding: 1em 0;
+}
+
+/* Largeurs des boutons */
+.ui-button--auto {
+  width: auto;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+
+.ui-button--full {
+  width: 100%;
+}
+
+.ui-button--half {
+  width: 48%;
+}
+
+/* Boutons d'action (icônes) */
+.ui-button-icon {
+  background: #fff;
+  color: #1161a5;
+  border-radius: 50%;
+  border: 2px solid #dde7f3;
+  width: 2.3em;
+  height: 2.3em;
+  min-width: 2.3em;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(50,100,150,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
+  padding: 0;
+  margin: 0;
+}
+
+.ui-button-icon:hover {
+  background: #f7fbff;
+  box-shadow: 0 0 12px rgba(16,97,165,0.18);
+}
+
+.ui-button-icon.active {
+  background: #e6f7ff;
+  border-color: #79d4e7;
+  box-shadow: 0 0 12px rgba(16,97,165,0.25);
+}
+
+/* Groupes de boutons */
+.ui-button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.ui-button-group--center {
+  justify-content: center;
+}
+
+.ui-button-group--end {
+  justify-content: flex-end;
+}
+
+.ui-button-group--equal > .ui-button {
+  flex: 1;
+}
+
+/* ======================================
+   SYSTÈME DE BLOCS CENTRÉS
+   ====================================== */
+
+/* Base des blocs centrés */
+.ui-card {
+  background: #fff8e1;
+  border-radius: 36px;
+  padding: 1rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 2vh auto;
+  box-shadow: 0 8px 34px rgba(76,195,247,0.11), 0 3px 12px rgba(180,150,240,0.10);
+}
+
+/* Variantes de blocs */
+.ui-card--white {
+  background: #fff;
+}
+
+.ui-card--cream {
+  background: #fff8e1;
+}
+
+/* Tailles des blocs */
+.ui-card--small {
+  max-width: 350px;
+}
+
+.ui-card--medium {
+  max-width: 500px;
+}
+
+.ui-card--large {
+  max-width: 600px;
+}
+
+/* Variantes de padding */
+.ui-card--padding-sm {
+  padding: 0.5rem;
+}
+
+.ui-card--padding-md {
+  padding: 1rem;
+}
+
+.ui-card--padding-lg {
+  padding: 2rem;
+}
+
+/* ======================================
+   SYSTÈME DE MODALES
+   ====================================== */
+
+/* Base des modales */
+.ui-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s, transform 0.35s;
+  transform: scale(0.95);
+}
+
+.ui-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+/* Contenu des modales */
+.ui-modal-content {
+  background: #fff;
+  border-radius: 36px;
+  padding: 2rem;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Variantes de taille */
+.ui-modal-content--small {
+  max-width: 350px;
+}
+
+.ui-modal-content--medium {
+  max-width: 400px;
+}
+
+.ui-modal-content--large {
+  max-width: 500px;
+}
+
+/* Bouton de fermeture */
+.ui-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.ui-modal-close:hover {
+  color: #395872;
+  background-color: #f5f5f5;
+}
+
+/* ======================================
+   UTILITAIRES
+   ====================================== */
+
+/* Marges */
+.ui-mt-1 { margin-top: var(--spacing-xs, 0.25rem); }
+.ui-mt-2 { margin-top: var(--spacing-sm, 0.5rem); }
+.ui-mt-3 { margin-top: var(--spacing-md, 1rem); }
+.ui-mt-4 { margin-top: var(--spacing-lg, 1.5rem); }
+.ui-mt-5 { margin-top: var(--spacing-xl, 2rem); }
+
+.ui-mb-1 { margin-bottom: var(--spacing-xs, 0.25rem); }
+.ui-mb-2 { margin-bottom: var(--spacing-sm, 0.5rem); }
+.ui-mb-3 { margin-bottom: var(--spacing-md, 1rem); }
+.ui-mb-4 { margin-bottom: var(--spacing-lg, 1.5rem); }
+.ui-mb-5 { margin-bottom: var(--spacing-xl, 2rem); }
+
+.ui-ml-1 { margin-left: var(--spacing-xs, 0.25rem); }
+.ui-ml-2 { margin-left: var(--spacing-sm, 0.5rem); }
+.ui-ml-3 { margin-left: var(--spacing-md, 1rem); }
+.ui-ml-4 { margin-left: var(--spacing-lg, 1.5rem); }
+.ui-ml-5 { margin-left: var(--spacing-xl, 2rem); }
+
+.ui-mr-1 { margin-right: var(--spacing-xs, 0.25rem); }
+.ui-mr-2 { margin-right: var(--spacing-sm, 0.5rem); }
+.ui-mr-3 { margin-right: var(--spacing-md, 1rem); }
+.ui-mr-4 { margin-right: var(--spacing-lg, 1.5rem); }
+.ui-mr-5 { margin-right: var(--spacing-xl, 2rem); }
+
+/* Paddings */
+.ui-p-1 { padding: var(--spacing-xs, 0.25rem); }
+.ui-p-2 { padding: var(--spacing-sm, 0.5rem); }
+.ui-p-3 { padding: var(--spacing-md, 1rem); }
+.ui-p-4 { padding: var(--spacing-lg, 1.5rem); }
+.ui-p-5 { padding: var(--spacing-xl, 2rem); }
+
+/* Flexbox */
+.ui-flex { display: flex; }
+.ui-flex-column { flex-direction: column; }
+.ui-justify-center { justify-content: center; }
+.ui-justify-between { justify-content: space-between; }
+.ui-justify-around { justify-content: space-around; }
+.ui-align-center { align-items: center; }
+.ui-flex-wrap { flex-wrap: wrap; }
+.ui-flex-grow { flex-grow: 1; }
+
+/* Texte */
+.ui-text-center { text-align: center; }
+.ui-text-left { text-align: left; }
+.ui-text-right { text-align: right; }
+
+/* Visibilité */
+.ui-hidden { display: none !important; }

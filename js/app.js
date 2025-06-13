@@ -572,14 +572,11 @@ MonHistoire.showMessageModal = function(message, options = {}) {
   
   // Si on force l'affichage au-dessus des autres modales
   if (settings.forceTop) {
-    // Augmenter temporairement le z-index
-    const originalZIndex = modal.style.zIndex || '';
+    // Augmenter le z-index pour s'assurer que la modale reste au-dessus des autres
     modal.style.zIndex = '3000'; // Valeur supérieure aux autres modales
     
-    // Restaurer le z-index original après l'animation
-    setTimeout(() => {
-      modal.style.zIndex = originalZIndex;
-    }, 1000);
+    // Stocker l'information que cette modale a un z-index élevé
+    modal.dataset.hasElevatedZIndex = 'true';
   }
   
   // Afficher la modale après le délai spécifié
@@ -599,6 +596,12 @@ MonHistoire.showMessageModal = function(message, options = {}) {
 MonHistoire.closeMessageModal = function() {
   const modal = document.getElementById("message-modal");
   modal.classList.remove("show");
+  
+  // Réinitialiser le z-index si la modale avait un z-index élevé
+  if (modal.dataset.hasElevatedZIndex === 'true') {
+    modal.style.zIndex = '';
+    delete modal.dataset.hasElevatedZIndex;
+  }
 };
 
 // Initialiser l'application quand le DOM est chargé
@@ -611,6 +614,9 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('modal-rgpd').classList.add('show');
     };
   }
+  
+  // Nous ne définissons pas d'écouteur d'événement ici pour éviter les conflits
+  // L'écouteur est défini dans js/ui.js ou js/modules/ui/common.js
   
   // Vérifier l'état de connexion initial
   MonHistoire.state.isConnected = navigator.onLine;

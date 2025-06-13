@@ -1,0 +1,75 @@
+/* Styles pour l'écran de connexion */
+
+/* Formulaire de connexion */
+#login-form {
+  margin-bottom: 1rem;
+}
+
+/* Formulaire d'inscription */
+#signup-form {
+  margin-top: 1rem;
+  display: none; /* Masqué par défaut */
+}
+
+/* Formulaire de réinitialisation */
+#reset-form {
+  margin-top: 1rem;
+  display: none; /* Masqué par défaut */
+}
+
+/* Positionnement du formulaire d'inscription sous "Mot de passe oublié ?" */
+#connexion .bloc-centre {
+  position: relative;
+}
+
+/* Positionnement spécifique pour le lien "Mot de passe oublié ?" */
+#btn-forgot {
+  display: inline-block;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+/* Positionnement du bouton "Créer un compte" */
+#btn-signup {
+  margin-bottom: 0.5rem;
+}
+
+/* Animation pour l'affichage du formulaire d'inscription */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Appliquer l'animation lorsque le formulaire est affiché */
+#signup-form[style*="display: block"] {
+  animation: slideIn 0.3s ease-out;
+}
+
+#reset-form[style*="display: block"] {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Assurer que le formulaire d'inscription s'affiche correctement */
+#connexion p {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* Ajuster l'espacement entre les éléments */
+#connexion h2 {
+  margin-bottom: 1.5rem;
+}
+
+/* Assurer que le formulaire d'inscription est bien positionné */
+#signup-form h2 {
+  margin-top: 0;
+}

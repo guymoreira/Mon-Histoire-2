@@ -1,0 +1,118 @@
+/* Animations et transitions */
+
+/* Animations pour les écrans */
+.screen.fade-in {
+  animation: screen-fade-in 0.3s forwards;
+}
+
+.screen.fade-out {
+  animation: screen-fade-out 0.25s forwards;
+}
+
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes screen-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Animation pour les formulaires */
+@keyframes fadeinform {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeoutform {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* Animation pour les modales */
+.modal.fade-out {
+  animation: fadeoutmodal 300ms ease-out forwards;
+}
+
+@keyframes fadeoutmodal {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Animation pour l'indicateur de chargement */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animation pour l'icône audio pendant la lecture */
+@keyframes audio-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+#icon-audio.playing {
+  animation: audio-pulse 1.5s infinite;
+}
+
+/* Animation pour le quota */
+@keyframes quota-pulse {
+  0% { text-shadow: 0 0 0 #fab1a0; }
+  60% { text-shadow: 0 0 8px #f5c6c6; }
+  100% { text-shadow: 0 0 0 #fab1a0; }
+}
+
+/* Animation pour les notifications */
+@keyframes notification-slide-in {
+  from {
+    top: -100px;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.notification.animate-in {
+  animation: notification-slide-in 0.5s forwards;
+}
+
+@keyframes notification-slide-out {
+  from {
+    top: 0;
+  }
+  to {
+    top: -100px;
+  }
+}
+
+.notification.animate-out {
+  animation: notification-slide-out 0.5s forwards;
+}

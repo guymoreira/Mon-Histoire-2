@@ -1,0 +1,102 @@
+/* Styles de mise en page générale */
+
+body {
+  margin: 0; 
+  padding: 0;
+  background: url('../../illustration-accueil.jpg') no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Centrage vertical du bloc d'accueil */
+#accueil {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;  /* on commence en haut */
+  align-items: center;          /* toujours centré horizontalement */
+  padding-top: 15vh;            /* 15% de la hauteur en "gutter" au-dessus */
+  min-height: 100vh;            /* au moins la hauteur de l'écran */
+  height: auto;                 /* laisser le navigateur gérer */
+  box-sizing: border-box;       /* inclure padding dans la hauteur */
+}
+
+#accueil .bloc-centre {
+  /* supprime la marge verticale générée par .bloc-centre */
+  margin: 0;                
+}
+
+/* Titre + boutons empilés et centrés */
+#accueil-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;                   /* espace vertical entre chaque bouton */
+  text-align: center;
+}
+
+/* Rond "GM" en haut à droite */
+#user-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 70px; /* Augmenté davantage pour rendre l'icône encore plus grande */
+  height: 70px; /* Augmenté davantage pour rendre l'icône encore plus grande */
+  background-color: white;
+  color: #0a3d62;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 2.4rem; /* Augmenté davantage pour rendre le texte encore plus grand */
+  box-shadow: 0 0 8px rgba(0,0,0,0.3); /* Ombre plus prononcée */
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  user-select: none;
+}
+
+/* Footer actions | corbeille + Retour + croix */
+.actions-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  margin-top: 1.5rem;
+}
+
+.actions-footer img {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 72px;
+  min-height: 72px;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+
+.actions-footer .button {
+  margin: 0;
+  padding: 0.8rem 1.5rem;
+}
+
+/* Barre de suppression quand il y a le bouton renommer */
+.actions-footer.with-rename {
+  gap: 2rem !important; /* Réduit l'espace horizontal entre les éléments */
+  justify-content: center;
+}
+
+/* Option : réajuste la taille des icônes pour ne pas qu'elles soient trop grandes */
+.actions-footer img,
+.actions-footer .button#btn-renommer-histoire {
+  width: 56px;
+  height: 56px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  box-sizing: border-box;
+}

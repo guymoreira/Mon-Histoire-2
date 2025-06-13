@@ -1,0 +1,6 @@
+/* css/layout/index.css */
+/* Importe tous les fichiers CSS de mise en page */
+
+@import 'screens.css';
+@import 'header.css';
+@import 'footer.css';

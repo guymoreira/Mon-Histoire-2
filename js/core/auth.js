@@ -167,9 +167,9 @@ MonHistoire.core.auth = {
   
   // Affiche l'utilisateur connecté
   afficherUtilisateurConnecté() {
-    document.getElementById("user-icon").classList.remove("hidden");
-    document.getElementById("login-button").classList.add("hidden");
-    document.getElementById("my-stories-button").classList.remove("hidden");
+    document.getElementById("user-icon").classList.remove("ui-hidden");
+    document.getElementById("login-button").classList.add("ui-hidden");
+    document.getElementById("my-stories-button").classList.remove("ui-hidden");
 
     // → Si un profil enfant est actif, on court-circuite tout :
     if (MonHistoire.state.profilActif.type === "enfant") {
@@ -206,9 +206,9 @@ MonHistoire.core.auth = {
   
   // Affiche l'utilisateur déconnecté
   afficherUtilisateurDéconnecté() {
-    document.getElementById("user-icon").classList.add("hidden");
-    document.getElementById("login-button").classList.remove("hidden");
-    document.getElementById("my-stories-button").classList.add("hidden");
+    document.getElementById("user-icon").classList.add("ui-hidden");
+    document.getElementById("login-button").classList.remove("ui-hidden");
+    document.getElementById("my-stories-button").classList.add("ui-hidden");
   },
   
   // Ouvre la modale de déconnexion
@@ -260,7 +260,7 @@ MonHistoire.core.auth = {
         enfantsSnap.forEach(docEnfant => {
           const data = docEnfant.data();
           const btn = document.createElement("button");
-          btn.className = "button button-blue profile-item";
+          btn.className = "ui-button ui-button--primary ui-button--full profile-item";
           btn.textContent = data.prenom;
           btn.style.marginBottom = "0.75em";
           btn.style.position = "relative"; // Pour positionner l'indicateur de notification
@@ -321,7 +321,7 @@ MonHistoire.core.auth = {
       }
       
       const btnParent = document.createElement("button");
-      btnParent.className = "button button-blue profile-item";
+      btnParent.className = "ui-button ui-button--primary ui-button--full profile-item";
       btnParent.textContent = prenomParent;
       btnParent.style.marginBottom = "0.75em";
       btnParent.style.position = "relative"; // Pour positionner l'indicateur de notification
@@ -348,7 +348,7 @@ MonHistoire.core.auth = {
           if (docEnfant.id === MonHistoire.state.profilActif.id) return;
           
           const btn = document.createElement("button");
-          btn.className = "button button-blue profile-item";
+          btn.className = "ui-button ui-button--primary ui-button--full profile-item";
           btn.textContent = data.prenom;
           btn.style.marginBottom = "0.75em";
           btn.style.position = "relative"; // Pour positionner l'indicateur de notification
@@ -400,14 +400,24 @@ MonHistoire.core.auth = {
   
   // Bascule l'affichage du formulaire d'inscription
   toggleSignup(show) {
-    document.getElementById("signup-form").style.display = show ? "block" : "none";
-    document.getElementById("reset-form").style.display = "none";
+    const signupForm = document.getElementById("signup-form");
+    const resetForm = document.getElementById("reset-form");
+    
+    if (signupForm) signupForm.style.display = show ? "block" : "none";
+    if (resetForm) resetForm.style.display = "none";
+    
+    console.log(`Formulaire d'inscription ${show ? 'affiché' : 'masqué'}`);
   },
   
   // Bascule l'affichage du formulaire de réinitialisation
   toggleReset(show) {
-    document.getElementById("reset-form").style.display = show ? "block" : "none";
-    document.getElementById("signup-form").style.display = "none";
+    const resetForm = document.getElementById("reset-form");
+    const signupForm = document.getElementById("signup-form");
+    
+    if (resetForm) resetForm.style.display = show ? "block" : "none";
+    if (signupForm) signupForm.style.display = "none";
+    
+    console.log(`Formulaire de réinitialisation ${show ? 'affiché' : 'masqué'}`);
   },
   
   // Envoie un email de réinitialisation de mot de passe

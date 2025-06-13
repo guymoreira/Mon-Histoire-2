@@ -89,7 +89,7 @@ MonHistoire.features.sharing.ui = {
           }
 
           const btnParent = document.createElement("button");
-          btnParent.className = "button button-blue";
+          btnParent.className = "ui-button ui-button--primary";
           btnParent.textContent = prenomParent;
           btnParent.style.marginBottom = "0.75em";
           btnParent.onclick = () => this.partagerHistoire("parent", null, prenomParent);
@@ -103,7 +103,7 @@ MonHistoire.features.sharing.ui = {
           if (MonHistoire.state.profilActif.type === "enfant" && docEnfant.id === MonHistoire.state.profilActif.id) return;
 
           const btn = document.createElement("button");
-          btn.className = "button button-blue";
+          btn.className = "ui-button ui-button--primary";
           btn.textContent = data.prenom;
           btn.style.marginBottom = "0.75em";
           btn.onclick = () => this.partagerHistoire("enfant", docEnfant.id, data.prenom);

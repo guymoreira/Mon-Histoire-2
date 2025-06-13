@@ -1,0 +1,106 @@
+/* Styles communs à tous les écrans */
+
+/* Conteneur principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Bloc central */
+.bloc-centre {
+  background: #fff8e1;
+  border-radius: 36px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 2vh auto;
+  box-shadow: 0 6px 28px rgba(76,195,247,0.09), 0 2px 7px rgba(180,150,240,0.08);
+}
+
+/* Titre de section */
+.section-title {
+  font-size: 1.5rem;
+  color: #395872;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Texte d'information */
+.info-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Message d'erreur */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Message de succès */
+.success-message {
+  color: #2ecc71;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Séparateur */
+.separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 1.5rem 0;
+}
+
+/* Loader */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #79d4e7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #395872;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bloc-centre {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bloc-centre {
+    width: 100%;
+    border-radius: 24px;
+  }
+  
+  .section-title {
+    font-size: 1.2rem;
+  }
+}

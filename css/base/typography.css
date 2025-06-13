@@ -1,0 +1,71 @@
+/* Styles de typographie */
+
+body {
+  font-family: 'Fredoka', Arial, sans-serif;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fredoka', Arial, sans-serif;
+  margin-top: 0;
+}
+
+/* Titre « Mon Histoire » (page accueil) */
+#accueil-content h1 {
+  font-size: 2.5rem;      /* augmente la taille du titre */
+  margin-bottom: 1rem;    /* conserve un petit espace sous le titre */
+}
+
+/* Style pour le footer avec le lien RGPD */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+}
+
+footer a {
+  color: #395872;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+footer a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Styles pour les animations de fondu */
+.fade-in {
+  opacity: 0;
+  transform: translateY(-8px);
+  display: block !important;
+  animation: fadeinform 300ms ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeoutform 250ms ease-in forwards;
+}
+
+/* Styles pour l'indicateur de chargement */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 10px auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #79d4e7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #395872;
+  font-weight: bold;
+}

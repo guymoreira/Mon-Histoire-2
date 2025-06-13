@@ -1,0 +1,233 @@
+/* Styles du compte utilisateur */
+
+/* Icône utilisateur */
+#user-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  background-color: white;
+  color: #0a3d62;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 1.6rem;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  user-select: none;
+}
+
+/* Modale du compte */
+#modal-compte .bloc-compte {
+  background-color: #fff !important;
+  max-width: 500px;
+  padding: 1.5rem;
+}
+
+/* Titre de la modale */
+#modal-compte h3 {
+  color: #395872;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Informations du compte */
+.compte-info {
+  margin-bottom: 1.5rem;
+}
+
+.compte-info p {
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.compte-info strong {
+  color: #395872;
+}
+
+/* Séparateur */
+.compte-separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 1.5rem 0;
+}
+
+/* Gestion des profils */
+.gestion-profils h4 {
+  color: #395872;
+  margin-bottom: 1rem;
+}
+
+/* Liste des profils */
+.liste-profils {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.ligne-profil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7eb;
+  border-radius: 16px;
+  padding: 0.6em 1em;
+  margin-bottom: 0.6em;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ligne-profil .prenom {
+  font-weight: bold;
+  flex: 1;
+}
+
+.ligne-profil .quota {
+  font-size: 0.95em;
+  margin: 0 1em;
+  color: #444;
+  white-space: nowrap;
+}
+
+.ligne-profil .btn-corbeille {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.ligne-profil .btn-edit {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #666;
+  margin-left: 0.4em;
+  cursor: pointer;
+}
+
+/* Formulaire d'ajout de profil */
+.form-add-profile {
+  margin-top: 1.5rem;
+}
+
+.form-add-profile label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #395872;
+  font-weight: bold;
+}
+
+.form-add-profile input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
+
+/* Boutons du compte */
+.compte-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.compte-buttons .button {
+  margin: 0;
+}
+
+/* Bouton de déconnexion */
+#btn-logout {
+  background-color: #f8f8f8;
+  color: #666;
+}
+
+/* Bouton de suppression de compte */
+#btn-delete-account {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Modale de renommage de profil */
+#modal-renommer-profil {
+  z-index: 3000;
+}
+
+#modal-renommer-profil .bloc-centre {
+  background-color: #fffef9 !important;
+  max-width: 400px;
+}
+
+/* Modale de ré-authentification */
+#modal-reauthentication .bloc-centre,
+#modal-password-parent .bloc-centre {
+  max-width: 350px;
+}
+
+/* Modale de suppression de compte */
+#delete-account-modal .message-card p {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+#btn-confirm-delete-account {
+  background: #e74c3c;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #user-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.4rem;
+  }
+  
+  #modal-compte .bloc-compte {
+    max-width: 450px;
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #user-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+  
+  #modal-compte .bloc-compte {
+    width: 100%;
+    max-width: none;
+    padding: 1rem;
+    border-radius: 24px;
+  }
+  
+  .ligne-profil {
+    padding: 0.5em 0.8em;
+    font-size: 0.9rem;
+  }
+  
+  .ligne-profil .quota {
+    font-size: 0.85em;
+    margin: 0 0.5em;
+  }
+  
+  .ligne-profil .btn-corbeille {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .ligne-profil .btn-edit {
+    font-size: 1.1em;
+  }
+}

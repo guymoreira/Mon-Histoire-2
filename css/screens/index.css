@@ -1,0 +1,9 @@
+/* css/screens/index.css */
+/* Importe tous les fichiers CSS des écrans */
+
+@import 'common.css';
+@import 'accueil.css';
+@import 'connexion.css';
+@import 'formulaire.css';
+@import 'resultat.css';
+@import 'mes-histoires.css';

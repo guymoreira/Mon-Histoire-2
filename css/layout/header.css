@@ -1,0 +1,100 @@
+/* Styles de l'en-tête */
+
+/* En-tête avec titre et boutons d'action */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #395872;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Titre de l'histoire dans l'écran résultat */
+.titre-histoire {
+  font-size: 1.8rem;
+  color: #395872;
+  margin-bottom: 1rem;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* Titre de l'écran Mes Histoires */
+#mes-histoires h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Titre de l'écran Formulaire */
+#formulaire h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Titre de l'écran Connexion */
+#connexion h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Titre de l'écran Résultat */
+#resultat h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Barre de navigation supérieure */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.nav-bar .logo {
+  font-weight: bold;
+  color: #395872;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.nav-bar .nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-bar .nav-links a {
+  color: #395872;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.nav-bar .nav-links a:hover {
+  background-color: rgba(57, 88, 114, 0.1);
+}
+
+.nav-bar .nav-links a.active {
+  font-weight: bold;
+  background-color: rgba(57, 88, 114, 0.1);
+}

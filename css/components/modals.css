@@ -1,0 +1,172 @@
+/* 
+ * Système UI - Composants de modales
+ * Partie du système UI standardisé pour Mon Histoire
+ * Note: Ce fichier est maintenu pour la compatibilité avec le code existant.
+ * Les nouveaux styles sont définis dans ui-system.css.
+ */
+
+/* 
+ * CLASSES STANDARDISÉES
+ * Toutes les classes ci-dessous sont des alias vers les classes ui-* correspondantes
+ * pour assurer la compatibilité avec le code existant.
+ */
+
+/* Base des modales */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s, transform 0.35s;
+  transform: scale(0.95);
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+/* Contenu des modales */
+.modal-content {
+  background: #fff;
+  border-radius: 36px;
+  padding: 2rem;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Bouton de fermeture */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: #395872;
+}
+
+/* Modales spécifiques */
+#modal-renommer-profil {
+  z-index: 3000;
+}
+
+#modal-renommer-profil .bloc-centre {
+  background-color: #fffef9 !important;
+}
+
+#message-modal .bloc-centre {
+  width: 60%;
+  max-width: 400px;
+}
+
+#modal-reauthentication .bloc-centre,
+#modal-password-parent .bloc-centre {
+  max-width: 350px;
+}
+
+/* Modale de suppression de compte */
+#delete-account-modal .message-card p {
+  color: #e74c3c; 
+  font-weight: bold;
+}
+
+#btn-confirm-delete-account {
+  background: #e74c3c; 
+  color: #fff;
+}
+
+/* Modale RGPD et Modale de partage */
+#modal-rgpd .ui-modal-content,
+#modal-partage .ui-modal-content {
+  background-color: #fff8e1 !important;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.cookie-option {
+  background-color: #fff8e1;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+/* Bannière de cookies */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff8e1;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  z-index: 9999;
+  display: none;
+  border-top: 2px solid #79d4e7;
+}
+
+.cookie-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cookie-content h3 {
+  margin-top: 0;
+  color: #395872;
+}
+
+.cookie-content p {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.cookie-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.cookie-buttons .button,
+.cookie-buttons .ui-button {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.cookie-modal-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* 
+ * MAPPINGS VERS LE NOUVEAU SYSTÈME UI
+ * Ces classes sont des alias pour faciliter la migration vers le nouveau système UI.
+ */
+
+/* Mappings de base */
+.modal { composes: ui-modal from './ui-system.css'; }
+.modal.show { composes: show from './ui-system.css'; }
+.modal-content { composes: ui-modal-content ui-modal-content--medium ui-card--cream from './ui-system.css'; }
+.close-button { composes: ui-modal-close from './ui-system.css'; }
+
+/* Note: Les sélecteurs spécifiques comme #modal-renommer-profil
+   continueront à fonctionner car ils sont plus spécifiques que les classes génériques */

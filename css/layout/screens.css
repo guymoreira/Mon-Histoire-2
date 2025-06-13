@@ -1,0 +1,92 @@
+/* Styles des écrans */
+
+.screen {
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  position: absolute;
+  inset: 0;
+  padding: 2rem;
+  overflow-x: hidden;
+  overflow-y: hidden; /* Par défaut, pas de défilement vertical */
+  z-index: 1;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  z-index: 2;
+}
+
+/* Animations pour les écrans */
+.screen.fade-in {
+  animation: screen-fade-in 0.3s forwards;
+}
+
+.screen.fade-out {
+  animation: screen-fade-out 0.25s forwards;
+}
+
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes screen-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Scroll vertical autorisé *seulement* sur certains écrans */
+
+/* Page Mes Histoires */
+#mes-histoires {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Page Résultat */
+#resultat {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Page Connexion (et modales de reset éventuelles) et Création d'Histoire */
+#connexion,
+#formulaire {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Connexion : Annuler à gauche, Se connecter à droite */
+#connexion .button-group button[type="button"] {
+  order: -1;  /* remonte le bouton "Annuler" avant les autres */
+}
+
+#connexion.screen {
+  padding-left: 1rem;   /* ou 0 si tu veux vraiment coller aux bords */
+  padding-right: 1rem;
+}
+
+/* Actions pour l'écran résultat */
+.actions-resultat {
+  display: block;
+  margin-top: 2rem;
+}

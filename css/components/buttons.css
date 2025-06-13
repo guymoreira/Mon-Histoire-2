@@ -1,0 +1,71 @@
+/* 
+ * Système UI - Composants de boutons
+ * Partie du système UI standardisé pour Mon Histoire
+ * Note: Ce fichier est maintenu pour la compatibilité avec le code existant.
+ * Les nouveaux styles sont définis dans ui-system.css.
+ */
+
+/* 
+ * CLASSES STANDARDISÉES
+ * Toutes les classes ci-dessous sont des alias vers les classes ui-* correspondantes
+ * pour assurer la compatibilité avec le code existant.
+ */
+
+/* Note: Les styles de base des boutons sont maintenant entièrement définis dans ui-system.css */
+/* Ce fichier ne contient que des styles spécifiques qui ne sont pas couverts par le système UI */
+
+/* Mappings de base - Ces classes héritent des styles du système UI */
+.button { composes: ui-button from './ui-system.css'; }
+.button-blue { composes: ui-button--primary from './ui-system.css'; }
+.button-purple { composes: ui-button--secondary from './ui-system.css'; }
+.button-group { composes: ui-button-group from './ui-system.css'; }
+.icon-action { composes: ui-button-icon from './ui-system.css'; }
+
+/* Styles spécifiques pour les boutons de formulaire */
+.form-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-buttons .button,
+.form-buttons .ui-button {
+  margin: 0;
+  flex: 1;
+}
+
+.form-buttons .button:only-child,
+.form-buttons .ui-button:only-child {
+  flex: 0 0 48%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Styles spécifiques pour les boutons dans mes-histoires */
+#mes-histoires-actions.single .button,
+#mes-histoires-actions.single .ui-button {
+  flex: 0 0 48%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Styles spécifiques pour certains boutons d'action */
+#btn-renommer-histoire.icon-action,
+#btn-renommer-histoire.ui-button-icon {
+  min-width: 56px;
+  min-height: 56px;
+  width: 56px;
+  height: 56px;
+  font-size: 2rem;
+}
+
+/* Note: Les sélecteurs spécifiques comme #btn-renommer-histoire.icon-action
+   continueront à fonctionner car ils sont plus spécifiques que les classes génériques */

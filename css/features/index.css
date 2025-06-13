@@ -1,0 +1,6 @@
+/* css/features/index.css */
+/* Importe tous les fichiers CSS des fonctionnalités */
+
+@import 'notifications.css';
+@import 'cookies.css';
+@import 'user-account.css';

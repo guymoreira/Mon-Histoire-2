@@ -1,0 +1,60 @@
+/* ─────────────────────────────
+   1) box-sizing global
+   ───────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────
+   2) plus de scroll horizontal
+   ───────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* Classe pour les éléments cachés */
+.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+
+/* Exception pour les boutons dans #accueil-content */
+#accueil-content .button.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: static !important; /* Garde sa place dans le flux */
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  transition: height 0.3s, margin 0.3s, padding 0.3s, opacity 0.3s, visibility 0.3s;
+}
+
+/* Suppression des effets de focus par défaut */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+}
+
+button:focus,
+.button:focus,
+button:focus-visible,
+.button:focus-visible,
+input[type="button"]:focus,
+input[type="submit"]:focus,
+a:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button::-moz-focus-inner,
+.button::-moz-focus-inner {
+  border: 0 !important;
+}

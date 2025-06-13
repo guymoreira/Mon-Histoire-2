@@ -1,0 +1,374 @@
+<!-- Exemple de refactorisation de l'écran d'accueil avec le nouveau système UI -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mon Histoire - Exemple Refactorisé</title>
+  <link href="https://fonts.googleapis.com/css?family=Fredoka:400,700&display=swap" rel="stylesheet">
+  <!-- Importation directe des fichiers CSS nécessaires -->
+  <link href="css/components/ui-system.css" rel="stylesheet"/>
+  <link href="css/components/buttons.css" rel="stylesheet"/>
+  <link href="css/components/cards.css" rel="stylesheet"/>
+  <link href="css/components/modals.css" rel="stylesheet"/>
+  <link href="css/main.css" rel="stylesheet"/>
+  <style>
+    /* Style pour la démonstration uniquement */
+    .demo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .demo-section {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    
+    .demo-section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+    
+    .demo-comparison {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    
+    .demo-column {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .demo-label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #395872;
+    }
+    
+    .code-example {
+      background: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+    
+    /* Styles de secours pour les classes UI au cas où les fichiers CSS ne seraient pas chargés correctement */
+    .ui-button {
+      display: block;
+      width: 100%;
+      margin: 0.38em 0 0.28em 0;
+      padding: 0.85em 0;
+      border: none;
+      border-radius: 28px;
+      font-size: 1.22em;
+      font-family: 'Fredoka', Arial, sans-serif;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 5px 18px 0 rgba(211,174,114,0.17);
+    }
+    
+    .ui-button--primary {
+      background: #79d4e7;
+      color: #395872;
+    }
+    
+    .ui-button--secondary {
+      background: #d5b8f6;
+      color: #5c4683;
+    }
+    
+    .ui-card {
+      background: #fff8e1;
+      border-radius: 36px;
+      padding: 1rem;
+      width: 90%;
+      max-width: 600px;
+      margin: 2vh auto;
+      box-shadow: 0 8px 34px rgba(76,195,247,0.11), 0 3px 12px rgba(180,150,240,0.10);
+    }
+    
+    .ui-card--cream {
+      background: #fff8e1;
+    }
+    
+    .ui-card--large {
+      max-width: 600px;
+    }
+    
+    .ui-card--padding-md {
+      padding: 1rem;
+    }
+    
+    .ui-button-icon {
+      background: #fff;
+      color: #1161a5;
+      border-radius: 50%;
+      border: 2px solid #dde7f3;
+      width: 2.3em;
+      height: 2.3em;
+      min-width: 2.3em;
+      min-height: 2.3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4em;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(50,100,150,0.10);
+    }
+    
+    .ui-button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+    }
+    
+    .ui-button-group--equal > .ui-button {
+      flex: 1;
+    }
+    
+    .ui-flex {
+      display: flex;
+    }
+    
+    .ui-flex-column {
+      flex-direction: column;
+    }
+    
+    .ui-align-center {
+      align-items: center;
+    }
+    
+    .ui-justify-center {
+      justify-content: center;
+    }
+    
+    .ui-text-center {
+      text-align: center;
+    }
+    
+    .ui-hidden {
+      display: none !important;
+    }
+    
+    .ui-mt-4 {
+      margin-top: 1.5rem;
+    }
+    
+    .ui-mb-3 {
+      margin-bottom: 1rem;
+    }
+    
+    .ui-ml-2 {
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <h1>Exemple de refactorisation avec le système UI</h1>
+    
+    <div class="demo-section">
+      <h2>1. Écran d'accueil</h2>
+      
+      <div class="demo-comparison">
+        <div class="demo-column">
+          <div class="demo-label">Avant la refactorisation</div>
+          <div class="code-example">
+&lt;section class="screen active" id="accueil"&gt;
+  &lt;div class="bloc-centre" id="accueil-content"&gt;
+    &lt;h1&gt;Mon Histoire&lt;/h1&gt;
+    &lt;button class="button button-blue" id="create-button" data-screen="formulaire"&gt;Créer une histoire&lt;/button&gt;
+    &lt;button class="button button-purple" id="login-button" data-screen="connexion"&gt;Me connecter&lt;/button&gt;
+    &lt;button class="button button-purple hidden" id="my-stories-button" data-screen="mes-histoires"&gt;Mes Histoires&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div id="user-icon" class="hidden"&gt;&lt;/div&gt;
+&lt;/section&gt;
+          </div>
+          
+          <div class="bloc-centre" id="accueil-content" style="position: relative;">
+            <h1>Mon Histoire</h1>
+            <button class="button button-blue" id="create-button" data-screen="formulaire">Créer une histoire</button>
+            <button class="button button-purple" id="login-button" data-screen="connexion">Me connecter</button>
+            <button class="button button-purple" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
+          </div>
+        </div>
+        
+        <div class="demo-column">
+          <div class="demo-label">Après la refactorisation</div>
+          <div class="code-example">
+&lt;section class="screen active" id="accueil"&gt;
+  &lt;div class="ui-card ui-card--cream ui-card--large ui-card--padding-md" id="accueil-content"&gt;
+    &lt;h1 class="ui-text-center"&gt;Mon Histoire&lt;/h1&gt;
+    &lt;div class="ui-flex ui-flex-column ui-align-center" style="gap: 1rem;"&gt;
+      &lt;button class="ui-button ui-button--primary ui-button--medium" style="max-width: 300px;" id="create-button" data-screen="formulaire"&gt;Créer une histoire&lt;/button&gt;
+      &lt;button class="ui-button ui-button--secondary ui-button--medium" style="max-width: 300px;" id="login-button" data-screen="connexion"&gt;Me connecter&lt;/button&gt;
+      &lt;button class="ui-button ui-button--secondary ui-button--medium ui-hidden" style="max-width: 300px;" id="my-stories-button" data-screen="mes-histoires"&gt;Mes Histoires&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div id="user-icon" class="ui-hidden"&gt;&lt;/div&gt;
+&lt;/section&gt;
+          </div>
+          
+          <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md" style="position: relative;">
+            <h1 class="ui-text-center">Mon Histoire</h1>
+            <div class="ui-flex ui-flex-column ui-align-center" style="gap: 1rem;">
+              <button class="ui-button ui-button--primary ui-button--medium" style="max-width: 300px;" id="create-button" data-screen="formulaire">Créer une histoire</button>
+              <button class="ui-button ui-button--secondary ui-button--medium" style="max-width: 300px;" id="login-button" data-screen="connexion">Me connecter</button>
+              <button class="ui-button ui-button--secondary ui-button--medium" style="max-width: 300px;" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>2. Modale de déconnexion</h2>
+      
+      <div class="demo-comparison">
+        <div class="demo-column">
+          <div class="demo-label">Avant la refactorisation</div>
+          <div class="code-example">
+&lt;div class="modal" id="logout-modal"&gt;
+  &lt;div class="bloc-centre" style="max-width:350px;"&gt;
+    &lt;p id="logout-profile-name" style="font-weight:bold;"&gt;&lt;/p&gt;
+    &lt;div id="logout-profiles-list"&gt;&lt;/div&gt;
+    &lt;button class="button button-purple" style="margin-bottom: 1.1em;" id="btn-mon-compte"&gt;Mon Compte&lt;/button&gt;
+    &lt;div class="button-group" style="display: flex; justify-content: center; gap: 1em;"&gt;
+      &lt;button class="button button-purple" style="flex:1;" id="btn-fermer-logout"&gt;Annuler&lt;/button&gt;
+      &lt;button class="button button-blue" style="flex:1;" id="btn-logout"&gt;Déconnecter&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+          </div>
+        </div>
+        
+        <div class="demo-column">
+          <div class="demo-label">Après la refactorisation</div>
+          <div class="code-example">
+&lt;div class="ui-modal" id="logout-modal"&gt;
+  &lt;div class="ui-modal-content ui-modal-content--small ui-card--cream"&gt;
+    &lt;p id="logout-profile-name" class="ui-text-center" style="font-weight:bold;"&gt;&lt;/p&gt;
+    &lt;div id="logout-profiles-list"&gt;&lt;/div&gt;
+    &lt;button class="ui-button ui-button--secondary ui-mb-3" id="btn-mon-compte"&gt;Mon Compte&lt;/button&gt;
+    &lt;div class="ui-button-group ui-button-group--center ui-button-group--equal"&gt;
+      &lt;button class="ui-button ui-button--secondary" id="btn-fermer-logout"&gt;Annuler&lt;/button&gt;
+      &lt;button class="ui-button ui-button--primary" id="btn-logout"&gt;Déconnecter&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>3. Boutons d'action (icônes)</h2>
+      
+      <div class="demo-comparison">
+        <div class="demo-column">
+          <div class="demo-label">Avant la refactorisation</div>
+          <div class="code-example">
+&lt;button id="btn-audio" class="icon-action" title="Écouter l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;"&gt;
+  &lt;span id="icon-audio" aria-label="Écouter l'histoire" style="pointer-events:none;"&gt;🔊&lt;/span&gt;
+&lt;/button&gt;
+&lt;button id="btn-export-pdf" class="icon-action" title="Télécharger en PDF" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;"&gt;
+  &lt;span aria-label="Télécharger en PDF" style="pointer-events:none;"&gt;⬇️&lt;/span&gt;
+&lt;/button&gt;
+&lt;button id="btn-partage" class="icon-action" title="Partager l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;"&gt;
+  &lt;span aria-label="Partager l'histoire" style="pointer-events:none;"&gt;🔄&lt;/span&gt;
+&lt;/button&gt;
+          </div>
+          
+          <div style="display: flex; align-items: center; justify-content: center; margin-top: 1rem;">
+            <button id="btn-audio" class="icon-action" title="Écouter l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+              <span id="icon-audio" aria-label="Écouter l'histoire" style="pointer-events:none;">🔊</span>
+            </button>
+            <button id="btn-export-pdf" class="icon-action" title="Télécharger en PDF" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+              <span aria-label="Télécharger en PDF" style="pointer-events:none;">⬇️</span>
+            </button>
+            <button id="btn-partage" class="icon-action" title="Partager l'histoire" style="margin-left:0.7em; font-size:1.5em; width:2.3em; height:2.3em; display:flex; align-items:center; justify-content:center;">
+              <span aria-label="Partager l'histoire" style="pointer-events:none;">🔄</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="demo-column">
+          <div class="demo-label">Après la refactorisation</div>
+          <div class="code-example">
+&lt;div class="ui-flex ui-align-center ui-justify-center"&gt;
+  &lt;button id="btn-audio" class="ui-button-icon ui-ml-2" title="Écouter l'histoire"&gt;
+    &lt;span id="icon-audio" aria-label="Écouter l'histoire" style="pointer-events:none;"&gt;🔊&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button id="btn-export-pdf" class="ui-button-icon ui-ml-2" title="Télécharger en PDF"&gt;
+    &lt;span aria-label="Télécharger en PDF" style="pointer-events:none;"&gt;⬇️&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button id="btn-partage" class="ui-button-icon ui-ml-2" title="Partager l'histoire"&gt;
+    &lt;span aria-label="Partager l'histoire" style="pointer-events:none;"&gt;🔄&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+          </div>
+          
+          <div class="ui-flex ui-align-center ui-justify-center" style="margin-top: 1rem;">
+            <button id="btn-audio" class="ui-button-icon ui-ml-2" title="Écouter l'histoire">
+              <span id="icon-audio" aria-label="Écouter l'histoire" style="pointer-events:none;">🔊</span>
+            </button>
+            <button id="btn-export-pdf" class="ui-button-icon ui-ml-2" title="Télécharger en PDF">
+              <span aria-label="Télécharger en PDF" style="pointer-events:none;">⬇️</span>
+            </button>
+            <button id="btn-partage" class="ui-button-icon ui-ml-2" title="Partager l'histoire">
+              <span aria-label="Partager l'histoire" style="pointer-events:none;">🔄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>4. Groupe de boutons dans un formulaire</h2>
+      
+      <div class="demo-comparison">
+        <div class="demo-column">
+          <div class="demo-label">Avant la refactorisation</div>
+          <div class="code-example">
+&lt;div class="form-buttons" style="margin-top:2rem;margin-bottom:1rem;"&gt;
+  &lt;button class="button button-purple" type="button" data-screen="accueil"&gt;Annuler&lt;/button&gt;
+  &lt;button class="button button-blue" type="submit"&gt;C'est parti !&lt;/button&gt;
+&lt;/div&gt;
+          </div>
+          
+          <div class="form-buttons" style="margin-top:2rem;margin-bottom:1rem;">
+            <button class="button button-purple" type="button" data-screen="accueil">Annuler</button>
+            <button class="button button-blue" type="submit">C'est parti !</button>
+          </div>
+        </div>
+        
+        <div class="demo-column">
+          <div class="demo-label">Après la refactorisation</div>
+          <div class="code-example">
+&lt;div class="ui-button-group ui-button-group--equal ui-mt-4 ui-mb-3"&gt;
+  &lt;button class="ui-button ui-button--secondary" type="button" data-screen="accueil"&gt;Annuler&lt;/button&gt;
+  &lt;button class="ui-button ui-button--primary" type="submit"&gt;C'est parti !&lt;/button&gt;
+&lt;/div&gt;
+          </div>
+          
+          <div class="ui-button-group ui-button-group--equal ui-mt-4 ui-mb-3">
+            <button class="ui-button ui-button--secondary" type="button" data-screen="accueil">Annuler</button>
+            <button class="ui-button ui-button--primary" type="submit">C'est parti !</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

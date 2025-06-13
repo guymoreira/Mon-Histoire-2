@@ -1,0 +1,91 @@
+/* Styles du pied de page */
+
+/* Pied de page principal */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+}
+
+footer a {
+  color: #395872;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+footer a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Pied de page avec actions (boutons retour, supprimer, etc.) */
+.actions-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  margin-top: 1.5rem;
+}
+
+.actions-footer img {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 72px;
+  min-height: 72px;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+
+.actions-footer .button {
+  margin: 0;
+  padding: 0.8rem 1.5rem;
+}
+
+/* Barre de suppression quand il y a le bouton renommer */
+.actions-footer.with-rename {
+  gap: 2rem !important; /* Réduit l'espace horizontal entre les éléments */
+  justify-content: center;
+}
+
+/* Pied de page pour les écrans spécifiques */
+#formulaire .actions-footer,
+#resultat .actions-footer,
+#mes-histoires .actions-footer {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Pied de page pour les modales */
+.modal-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+/* Pied de page pour la bannière de cookies */
+.cookie-banner-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.cookie-banner-footer a {
+  color: #395872;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+/* Pied de page pour la modale RGPD */
+.rgpd-modal-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}

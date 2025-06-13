@@ -1,0 +1,252 @@
+/* Styles des cookies */
+
+/* Bannière de cookies */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff8e1;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  z-index: 9999;
+  display: none;
+  border-top: 2px solid #79d4e7;
+}
+
+/* Contenu de la bannière */
+.cookie-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Titre de la bannière */
+.cookie-content h3 {
+  margin-top: 0;
+  color: #395872;
+}
+
+/* Texte de la bannière */
+.cookie-content p {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* Boutons de la bannière */
+.cookie-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.cookie-buttons .button {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+/* Pied de page de la bannière */
+.cookie-banner-footer {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.cookie-banner-footer a {
+  color: #395872;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+/* Modale des cookies */
+.cookie-modal .modal-content {
+  max-width: 600px;
+  padding: 2rem;
+}
+
+/* Onglets de la modale */
+.cookie-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.cookie-tab-button {
+  background-color: #f1f1f1;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  flex: 1;
+  font-family: 'Fredoka', Arial, sans-serif;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  margin-right: 2px;
+}
+
+.cookie-tab-button:last-child {
+  margin-right: 0;
+}
+
+.cookie-tab-button:hover {
+  background-color: #ddd;
+}
+
+.cookie-tab-button.active {
+  background-color: #79d4e7;
+  color: #395872;
+  font-weight: bold;
+}
+
+/* Contenu des onglets */
+.cookie-tab-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.cookie-tab-pane {
+  display: none;
+  padding: 10px 0;
+  text-align: left;
+}
+
+.cookie-tab-pane.active {
+  display: block;
+}
+
+/* Options de cookies */
+.cookie-options {
+  margin: 20px 0;
+}
+
+.cookie-option {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Interrupteurs */
+.switch-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.switch-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 24px;
+  margin-right: 15px;
+  flex-shrink: 0;
+  transition: background-color 0.3s;
+}
+
+.switch:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+input:checked + .switch {
+  background-color: #79d4e7;
+}
+
+input:checked + .switch:before {
+  transform: translateX(26px);
+}
+
+input:disabled + .switch {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch-label div {
+  flex: 1;
+}
+
+.switch-label strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #395872;
+}
+
+.switch-label p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Pied de page de la modale */
+.cookie-modal-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cookie-banner {
+    padding: 12px 15px;
+  }
+  
+  .cookie-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .cookie-content p {
+    font-size: 0.9rem;
+  }
+  
+  .cookie-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cookie-buttons .button {
+    max-width: none;
+  }
+  
+  .cookie-tab-button {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cookie-banner {
+    padding: 10px;
+  }
+  
+  .cookie-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .cookie-content p {
+    font-size: 0.8rem;
+  }
+  
+  .cookie-tab-button {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+  }
+}

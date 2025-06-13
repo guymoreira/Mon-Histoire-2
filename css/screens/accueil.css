@@ -1,0 +1,177 @@
+/* Styles de l'écran d'accueil */
+
+/* Conteneur principal de l'accueil */
+#accueil {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 25vh; /* Ajusté pour positionner la modale plus bas */
+  min-height: 100vh;
+  height: auto;
+  box-sizing: border-box;
+}
+
+/* Suppression de tout élément cliquable en haut de l'écran */
+#accueil::before {
+  content: none !important;
+  display: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Suppression de l'élément blanc en haut de l'écran */
+body > div:first-child:not(.screen):not(.modal):not(.notification):not(.cookie-banner),
+body > div:empty,
+body > div[style*="background-color: white"],
+body > div[style*="background: white"],
+body > div[style*="background-color: #fff"],
+body > div[style*="background: #fff"],
+body > div[style*="background-color: rgb(255, 255, 255)"],
+body > div[style*="background: rgb(255, 255, 255)"],
+body > div:not([id]):not([class]),
+body > div.message-modal:not(.show),
+body > div.confirm-modal:not(.show),
+body > div#message-modal:not(.show),
+body > div#confirm-modal:not(.show) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -999 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Contenu de l'accueil (titre + boutons) */
+#accueil-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem; /* Réduit l'espace entre les éléments */
+  text-align: center;
+  background: var(--color-background-cream) !important;
+  border-radius: var(--border-radius-xl) !important;
+  padding: 0.7rem; /* Réduit le padding pour rapprocher les boutons du bord */
+  width: 90%;
+  max-width: 600px;
+  margin: 0;
+  box-shadow: var(--shadow-card);
+}
+
+/* Titre de l'accueil */
+#accueil-content h1 {
+  font-size: 4rem; /* Augmenté davantage pour rendre le titre encore plus grand */
+  margin-top: 1.5rem; /* Ajouté pour mieux centrer entre le haut et le bouton */
+  margin-bottom: 1.5rem; /* Augmenté pour plus d'espace avant les boutons */
+  color: #000000;
+  font-weight: bold;
+}
+
+/* Boutons de l'accueil - Styles spécifiques conservés intentionnellement différents */
+#accueil-content .button,
+#accueil-content .ui-button {
+  max-width: 340px; /* Ajusté pour un meilleur équilibre */
+  width: 95%; /* Augmenté pour que les boutons occupent plus d'espace horizontal */
+  margin: 0.3em auto; /* Réduit pour moins d'espace entre les boutons */
+  padding: 1.1em 1.5em; /* Maintenu pour que le texte ne touche pas les bords */
+  border-radius: 32px; /* Maintenu pour un look arrondi */
+  font-size: 1.3em; /* Maintenu pour une bonne lisibilité */
+}
+
+/* Exception pour les boutons cachés dans #accueil-content */
+#accueil-content .button.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: static !important; /* Garde sa place dans le flux */
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  transition: height 0.3s, margin 0.3s, padding 0.3s, opacity 0.3s, visibility 0.3s;
+}
+
+/* Styles pour #user-icon sont définis dans layout.css */
+
+/* Responsive */
+@media (max-width: 768px) {
+  #accueil {
+    padding-top: 20vh; /* Augmenté pour positionner la modale plus bas */
+  }
+  
+  #accueil-content {
+    padding: 0.6rem; /* Réduit le padding pour rapprocher les boutons du bord */
+    gap: 0.4rem; /* Réduit l'espace entre les éléments */
+  }
+  
+  #accueil-content h1 {
+    font-size: 3.7rem; /* Augmenté davantage pour rendre le titre encore plus grand */
+    margin-top: 1.2rem; /* Ajouté pour mieux centrer entre le haut et le bouton */
+    margin-bottom: 1.2rem; /* Augmenté pour plus d'espace avant les boutons */
+    font-weight: bold;
+  }
+  
+  #accueil-content .button,
+  #accueil-content .ui-button {
+    max-width: 320px; /* Ajusté pour un meilleur équilibre */
+    width: 95%; /* Augmenté pour que les boutons occupent plus d'espace horizontal */
+    padding: 1.1em 1.5em; /* Maintenu pour que le texte ne touche pas les bords */
+    margin: 0.3em auto; /* Réduit pour moins d'espace entre les boutons */
+    font-size: 1.3em; /* Maintenu pour une bonne lisibilité */
+  }
+}
+
+@media (max-width: 480px) {
+  #accueil {
+    padding-top: 18vh !important; /* Ajusté pour un meilleur positionnement */
+  }
+  
+  #accueil-content {
+    padding: 0.5rem !important; /* Réduit davantage le padding pour les mobiles */
+    gap: 0.3rem !important; /* Réduit davantage l'espace entre les éléments pour les mobiles */
+  }
+  
+  #accueil-content h1 {
+    font-size: 3.2rem !important; /* Augmenté davantage pour rendre le titre encore plus grand */
+    margin-top: 0.8rem !important; /* Réduit pour moins d'espace au-dessus du titre */
+    margin-bottom: 0.8rem !important; /* Réduit pour moins d'espace sous le titre */
+    font-weight: bold !important;
+  }
+  
+  #accueil-content .button,
+  #accueil-content .ui-button {
+    max-width: 300px !important; /* Ajusté pour un meilleur équilibre */
+    width: 95% !important; /* Augmenté pour que les boutons occupent plus d'espace horizontal */
+    padding: 1em 1.5em !important; /* Légèrement réduit pour des boutons moins hauts */
+    margin: 0.25em auto !important; /* Réduit davantage pour moins d'espace entre les boutons */
+    font-size: 1.3em !important; /* Maintenu pour une bonne lisibilité */
+    border-radius: 32px !important; /* Maintenu pour un look arrondi */
+  }
+}
+
+/* Styles spécifiques pour l'icône utilisateur sur mobile uniquement */
+@media (max-width: 480px) {
+  #user-icon {
+    width: 65px !important; /* Taille optimale pour mobile */
+    height: 65px !important;
+    font-size: 2.2rem !important;
+    top: 0.8rem !important;
+    right: 0.8rem !important;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3) !important;
+  }
+}
