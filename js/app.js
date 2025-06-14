@@ -336,6 +336,21 @@ MonHistoire.processOfflineQueue = function() {
           MonHistoire.features.sharing.processOfflinePartage(item.data);
         }
         break;
+      case 'notationHistoire':
+        if (MonHistoire.features && MonHistoire.features.stories &&
+            MonHistoire.features.stories.management &&
+            typeof MonHistoire.features.stories.management.noterHistoire === 'function') {
+          MonHistoire.features.stories.management.noterHistoire(
+            item.data.storyId,
+            item.data.note
+          );
+        } else {
+          MonHistoire.logger.warning(
+            "Fonction de notation d'histoire non disponible",
+            item
+          );
+        }
+        break;
       // Autres types d'opérations...
     }
     
@@ -348,9 +363,14 @@ MonHistoire.processOfflineQueue = function() {
 
 // Ajouter une opération à la file d'attente hors ligne
 MonHistoire.addToOfflineQueue = function(operation, data) {
-  MonHistoire.state.offlineOperations.push({ 
-    operation, 
-    data, 
+  if (operation === 'notationHistoire' && data && data.storyId) {
+    MonHistoire.state.offlineOperations = MonHistoire.state.offlineOperations.filter(
+      op => !(op.operation === 'notationHistoire' && op.data && op.data.storyId === data.storyId)
+    );
+  }
+  MonHistoire.state.offlineOperations.push({
+    operation,
+    data,
     timestamp: Date.now(),
     deviceId: this.generateDeviceId()
   });
