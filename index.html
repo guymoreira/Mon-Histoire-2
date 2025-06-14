@@ -42,6 +42,7 @@
   <script src="js/features/stories/generator.js" defer></script>
   <script src="js/features/stories/display.js" defer></script>
   <script src="js/features/stories/management.js" defer></script>
+  <script src="js/features/stories/notation.js" defer></script>
   <!-- Module de partage modulaire -->
   <script src="js/features/sharing.js" defer></script>
   <script src="js/features/sharing/notifications.js" defer></script>
@@ -246,7 +247,17 @@
     <span aria-label="Partager l'histoire" style="pointer-events:none;">🔄</span>
   </button>
 </div>
-   <div id="histoire"></div>
+  <div id="histoire"></div>
+  <div id="bloc-notation" class="notation-container hidden">
+    <p>Tu as aimé cette histoire ?</p>
+    <div class="notation">
+      <span class="etoile" data-note="1">☆</span>
+      <span class="etoile" data-note="2">☆</span>
+      <span class="etoile" data-note="3">☆</span>
+      <span class="etoile" data-note="4">☆</span>
+      <span class="etoile" data-note="5">☆</span>
+    </div>
+  </div>
 <div class="actions-resultat">
   <button id="btn-sauvegarde" class="ui-button ui-button--primary ui-mb-3">Sauvegarder</button>
   <div class="ui-button-group ui-button-group--equal">
