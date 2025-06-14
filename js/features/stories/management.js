@@ -261,6 +261,18 @@ MonHistoire.features.stories.management = {
     titre.textContent = histoire.titre || "Histoire sans titre";
     titre.style.fontWeight = "bold";
     card.appendChild(titre);
+
+    if (typeof histoire.note === 'number') {
+      const notationDiv = document.createElement('div');
+      notationDiv.className = 'notation';
+      for (let i = 1; i <= 5; i++) {
+        const span = document.createElement('span');
+        span.className = 'etoile';
+        span.textContent = i <= histoire.note ? '★' : '☆';
+        notationDiv.appendChild(span);
+      }
+      card.appendChild(notationDiv);
+    }
     
     // Vérifie si l'histoire a été partagée (gère les différents formats possibles)
     const estHistoirePartagee = histoire.partageParPrenom || 

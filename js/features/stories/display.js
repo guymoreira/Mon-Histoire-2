@@ -24,6 +24,9 @@ MonHistoire.features.stories.display = {
         .then(histoire => {
           // Affiche l'histoire
           this.afficherHistoire(histoire);
+          MonHistoire.features.stories.notation.afficherNote(histoire.id);
+          MonHistoire.features.stories.notation.bindNotation(histoire.id);
+          document.getElementById("bloc-notation").classList.remove("hidden");
           
           // Affiche l'écran de résultat
           MonHistoire.core.navigation.showScreen("resultat");
@@ -51,7 +54,10 @@ MonHistoire.features.stories.display = {
         .then(histoire => {
           // Affiche l'histoire
           this.afficherHistoire(histoire);
-          
+          MonHistoire.features.stories.notation.afficherNote(histoire.id);
+          MonHistoire.features.stories.notation.bindNotation(histoire.id);
+          document.getElementById("bloc-notation").classList.remove("hidden");
+
           // Affiche l'écran de résultat
           MonHistoire.core.navigation.showScreen("resultat");
           
