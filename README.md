@@ -86,6 +86,252 @@ css/
 - **notifications.js** : Gestion des notifications de partage
 - **storage.js** : Stockage des données de partage
 
+## Schéma d'Architecture Détaillé
+
+```
++--------------------------------------------------------------------------------------------------------------+
+|                                        INITIALISATION ET CHARGEMENT                                           |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|  | firebase-init.js |---->| index.js          |---->| config.js        |---->| common.js        |            |
+|  | (1)              |     | (2)               |     | (3)              |     | (4)              |            |
+|  | - initFirebase   |     | - DOMContentLoaded|     | - firebaseConfig |     | - utilitaires    |            |
+|  | - authDomain     |     | - vérif Firebase  |     | - constantes     |     | - fonctions      |            |
+|  | - enablePersist. |     |                   |     | - quotas         |     | - helpers        |            |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+                                                      |
+                                                      v
++--------------------------------------------------------------------------------------------------------------+
+|                                           NOYAU DE L'APPLICATION                                              |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  +----------------------------------------------------------+                                                |
+|  |                         app.js (5)                        |                                                |
+|  |                                                          |                                                |
+|  |  +----------------+    +-------------------+             |                                                |
+|  |  | MonHistoire.   |<-->| MonHistoire.      |             |                                                |
+|  |  | state          |    | events            |             |                                                |
+|  |  | - currentScreen|    | - on(event, cb)   |             |                                                |
+|  |  | - profilActif  |    | - emit(event,data)|             |                                                |
+|  |  | - isConnected  |    |                   |             |                                                |
+|  |  +----------------+    +-------------------+             |                                                |
+|  |                                                          |                                                |
+|  |  +----------------+    +-------------------+             |                                                |
+|  |  | MonHistoire.   |    | MonHistoire.      |             |                                                |
+|  |  | logger         |    | init()            |             |                                                |
+|  |  | - log()        |    | - initFirebase    |             |                                                |
+|  |  | - error()      |    | - initCore        |             |                                                |
+|  |  | - debug()      |    | - initFeatures    |             |                                                |
+|  |  +----------------+    | - initUI          |             |                                                |
+|  |                        +-------------------+             |                                                |
+|  +----------------------------------------------------------+                                                |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+                |                                                   ^
+                |                                                   |
+                v                                                   |
++--------------------------------------------------------------------------------------------------------------+
+|                                           MODULES CORE (6)                                                    |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|  | core/auth.js     |<--->| core/navigation.js|<--->| core/profiles.js |<--->| core/storage.js  |            |
+|  | - init()         |     | - init()          |     | - init()         |     | - init()         |            |
+|  | - loginUser()    |     | - showScreen()    |     | - profilActif    |     | - saveData()     |            |
+|  | - logoutUser()   |     | - goBack()        |     | - passerAuProfil |     | - loadData()     |            |
+|  | - registerUser() |     | - getScreen()     |     | - verifierProfil |     | - deleteData()   |            |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+                |                                                   ^
+                |                                                   |
+                v                                                   |
++--------------------------------------------------------------------------------------------------------------+
+|                                         MODULES FEATURES (7)                                                  |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|  | features/stories |<--->| features/sharing  |<--->| features/export  |<--->| features/audio   |            |
+|  | - generator      |     | - init()          |     | - init()         |     | - init()         |            |
+|  |   - init()       |     | - notifications   |     | - exporterPDF()  |     | - lireHistoire() |            |
+|  |   - genererHist()|     |   - init()        |     | - preparerPDF()  |     | - pauserLecture()|            |
+|  | - display        |     |   - verifierNotif |     |                  |     |                  |            |
+|  |   - init()       |     | - storage         |     |                  |     |                  |            |
+|  |   - afficherHist |     |   - init()        |     |                  |     |                  |            |
+|  | - management     |     |   - sauvegarder   |     |                  |     |                  |            |
+|  |   - init()       |     | - ui              |     |                  |     |                  |            |
+|  |   - sauvegarder()|     |   - init()        |     |                  |     |                  |            |
+|  |   - supprimer()  |     |   - afficherUI    |     |                  |     |                  |            |
+|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|                                                                                                              |
+|  +------------------+                                                                                        |
+|  | features/cookies |                                                                                        |
+|  | - init()         |                                                                                        |
+|  | - accepter()     |                                                                                        |
+|  | - refuser()      |                                                                                        |
+|  | - sauvegarder()  |                                                                                        |
+|  +------------------+                                                                                        |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+                |                                                   ^
+                |                                                   |
+                v                                                   |
++--------------------------------------------------------------------------------------------------------------+
+|                                           MODULE UI (8)                                                       |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  +----------------------------------------------------------+                                                |
+|  |                         ui.js                             |                                                |
+|  |                                                          |                                                |
+|  |  +----------------+    +-------------------+             |                                                |
+|  |  | MonHistoire.ui |    | MonHistoire.ui.   |             |                                                |
+|  |  | - init()       |    | bindEvents()      |             |                                                |
+|  |  | - bindEvents() |    | - data-screen     |             |                                                |
+|  |  | - bindLongPress|    | - form-submit     |             |                                                |
+|  |  | - protegerBtn()|    | - btn-click       |             |                                                |
+|  |  +----------------+    +-------------------+             |                                                |
+|  |                                                          |                                                |
+|  +----------------------------------------------------------+                                                |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+
++--------------------------------------------------------------------------------------------------------------+
+|                                           FLUX D'ÉVÉNEMENTS                                                   |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  1. Événements DOM                                                                                           |
+|     DOMContentLoaded → index.js → app.js:init() → initialisation séquentielle                                |
+|                                                                                                              |
+|  2. Événements d'authentification                                                                            |
+|     firebase.auth().onAuthStateChanged → app.js → core/auth.js → features/stories/management.js              |
+|                                                                                                              |
+|  3. Événements de navigation                                                                                 |
+|     UI (click) → ui.js → core/navigation.js:showScreen() → MonHistoire.state.currentScreen                   |
+|                                                                                                              |
+|  4. Événements de génération d'histoire                                                                      |
+|     UI (submit) → ui.js → features/stories/generator.js → features/stories/display.js                        |
+|                                                                                                              |
+|  5. Événements de partage                                                                                    |
+|     UI (click) → ui.js → features/sharing/ui.js → features/sharing/storage.js → features/sharing/notif.js    |
+|                                                                                                              |
+|  6. Événements de changement de profil                                                                       |
+|     UI (click) → ui.js → core/profiles.js → MonHistoire.events.emit("profilChange") → features/sharing       |
+|                                                                                                              |
+|  7. Événements de connexion/déconnexion                                                                      |
+|     Network → app.js:checkConnectionState() → MonHistoire.events.emit("connectionStateChanged")              |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+
++--------------------------------------------------------------------------------------------------------------+
+|                                      ORDRE D'INITIALISATION DÉTAILLÉ                                          |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  1. firebase-init.js - Initialisation de Firebase                                                            |
+|     - Configuration Firebase                                                                                 |
+|     - Activation de la persistance Firestore                                                                 |
+|                                                                                                              |
+|  2. index.js - Point d'entrée                                                                                |
+|     - Écouteur DOMContentLoaded                                                                              |
+|     - Vérification de l'initialisation Firebase                                                              |
+|                                                                                                              |
+|  3. config.js - Configuration de l'application                                                               |
+|     - Constantes                                                                                             |
+|     - Quotas                                                                                                 |
+|     - Messages d'erreur                                                                                      |
+|                                                                                                              |
+|  4. common.js - Utilitaires communs                                                                          |
+|     - Fonctions helper                                                                                       |
+|                                                                                                              |
+|  5. app.js - Noyau de l'application                                                                          |
+|     - Création de l'objet global MonHistoire                                                                 |
+|     - Initialisation du state                                                                                |
+|     - Initialisation du système d'événements                                                                 |
+|     - Initialisation du logger                                                                               |
+|                                                                                                              |
+|  6. Modules Core - Fonctionnalités de base                                                                   |
+|     a. core/auth.js - Authentification                                                                       |
+|     b. core/navigation.js - Navigation entre écrans                                                          |
+|     c. core/profiles.js - Gestion des profils                                                                |
+|     d. core/storage.js - Stockage des données                                                                |
+|                                                                                                              |
+|  7. Modules Features - Fonctionnalités spécifiques                                                           |
+|     a. features/stories/generator.js - Génération d'histoires                                                |
+|     b. features/stories/display.js - Affichage des histoires                                                 |
+|     c. features/stories/management.js - Gestion des histoires                                                |
+|     d. features/sharing/* - Partage d'histoires                                                              |
+|     e. features/export.js - Export des histoires                                                             |
+|     f. features/audio.js - Lecture audio des histoires                                                       |
+|     g. features/cookies.js - Gestion des cookies                                                             |
+|                                                                                                              |
+|  8. ui.js - Interface utilisateur                                                                            |
+|     - Binding des événements UI                                                                              |
+|     - Gestion des interactions utilisateur                                                                   |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+
++--------------------------------------------------------------------------------------------------------------+
+|                                      STRUCTURES DE DONNÉES PARTAGÉES                                          |
++--------------------------------------------------------------------------------------------------------------+
+|                                                                                                              |
+|  1. MonHistoire.state                                                                                        |
+|     - currentScreen: Écran actuel                                                                            |
+|     - previousScreen: Écran précédent                                                                        |
+|     - profilActif: Profil utilisateur actif                                                                  |
+|     - lectureAudioEnCours: État de la lecture audio                                                          |
+|     - isConnected: État de la connexion                                                                      |
+|     - offlineOperations: File d'attente des opérations hors ligne                                            |
+|                                                                                                              |
+|  2. MonHistoire.events                                                                                       |
+|     - listeners: Écouteurs d'événements                                                                      |
+|     - on(event, callback): Ajouter un écouteur                                                               |
+|     - emit(event, data): Déclencher un événement                                                             |
+|                                                                                                              |
+|  3. MonHistoire.logger                                                                                       |
+|     - log(level, prefix, message, data): Logger un message                                                   |
+|     - debug/info/warning/error: Raccourcis pour les niveaux de log                                           |
+|                                                                                                              |
++--------------------------------------------------------------------------------------------------------------+
+```
+
+### Explications Complémentaires
+
+#### Modèle d'Initialisation
+
+L'application suit un modèle d'initialisation séquentiel où chaque module est initialisé dans un ordre précis pour garantir que les dépendances sont satisfaites :
+
+1. **Firebase** est initialisé en premier pour fournir les services backend
+2. **L'application principale** est ensuite initialisée, créant les structures de données globales
+3. **Les modules core** sont initialisés pour fournir les fonctionnalités de base
+4. **Les modules features** sont initialisés pour ajouter les fonctionnalités spécifiques
+5. **L'UI** est initialisée en dernier pour lier les interactions utilisateur aux fonctionnalités
+
+#### Système d'Événements
+
+Le système d'événements (`MonHistoire.events`) est le mécanisme central de communication entre les modules :
+
+- Les modules s'abonnent aux événements via `MonHistoire.events.on(event, callback)`
+- Les modules déclenchent des événements via `MonHistoire.events.emit(event, data)`
+- Ce système permet un couplage faible entre les modules
+
+#### État Global
+
+L'état global (`MonHistoire.state`) maintient les données partagées entre les modules :
+
+- État de navigation (`currentScreen`, `previousScreen`)
+- État utilisateur (`profilActif`)
+- État des fonctionnalités (`lectureAudioEnCours`, `isConnected`)
+
+#### Gestion Hors Ligne
+
+L'application implémente une stratégie de résilience pour le mode hors ligne :
+
+- Détection de l'état de connexion via `navigator.onLine` et Firebase Realtime Database
+- File d'attente des opérations hors ligne dans `MonHistoire.state.offlineOperations`
+- Synchronisation automatique lors de la reconnexion
+
 ## Communication entre Modules
 
 Les modules communiquent entre eux via un système d'événements centralisé. Ce système permet de découpler les modules tout en permettant une communication efficace.
