@@ -100,8 +100,13 @@
 }
 
 #liste-histoires li {
-  position: relative; 
+  position: relative;
   margin-bottom: 0.5rem;
+}
+
+/* Animation pour signaler une nouvelle histoire */
+#liste-histoires li.nouvelle-histoire {
+  animation: shake 0.6s ease-in-out 2;
 }
 
 #liste-histoires li .button,
