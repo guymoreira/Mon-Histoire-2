@@ -92,7 +92,8 @@ MonHistoire.core.storage = {
             images: data.images || [],
             partageParPrenom: data.partageParPrenom || null,
             partageParProfil: data.partageParProfil || null,
-            note: typeof data.note === 'number' ? data.note : null
+            note: typeof data.note === 'number' ? data.note : null,
+            nouvelleHistoire: !!data.nouvelleHistoire
           };
           
           // Vérifier si les données sont au format tableau numéroté [0, 1, 2, 3]
@@ -237,7 +238,8 @@ MonHistoire.core.storage = {
           images: data.images || [],
           partageParPrenom: data.partageParPrenom || null,
           partageParProfil: data.partageParProfil || null,
-          note: typeof data.note === 'number' ? data.note : null
+          note: typeof data.note === 'number' ? data.note : null,
+          nouvelleHistoire: !!data.nouvelleHistoire
         };
         
         // Vérifier si les données sont au format tableau numéroté [0, 1, 2, 3]
@@ -371,7 +373,8 @@ MonHistoire.core.storage = {
           images: data.images || [],
           partageParPrenom: data.partageParPrenom || null,
           partageParProfil: data.partageParProfil || null,
-          note: typeof data.note === 'number' ? data.note : null
+          note: typeof data.note === 'number' ? data.note : null,
+          nouvelleHistoire: !!data.nouvelleHistoire
         };
         
         // Vérifier si les données sont au format tableau numéroté [0, 1, 2, 3]

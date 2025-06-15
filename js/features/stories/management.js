@@ -250,6 +250,9 @@ MonHistoire.features.stories.management = {
     // Crée l'élément li qui contiendra le bouton
     const li = document.createElement("li");
     li.dataset.id = histoire.id;
+    if (histoire.nouvelleHistoire) {
+      li.classList.add("nouvelle-histoire");
+    }
     
     // Crée la carte (bouton stylisé)
     const card = document.createElement("button");
