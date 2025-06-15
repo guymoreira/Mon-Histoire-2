@@ -46,6 +46,14 @@ MonHistoire.features.stories.generator = {
     // Indique qu'on vient du formulaire (pour le bouton Sauvegarder)
     MonHistoire.state.resultatSource = "formulaire";
     
+    // Réinitialise la notation si disponible
+    if (MonHistoire.features &&
+        MonHistoire.features.stories &&
+        MonHistoire.features.stories.notation &&
+        typeof MonHistoire.features.stories.notation.reset === 'function') {
+      MonHistoire.features.stories.notation.reset();
+    }
+
     // Affiche l'écran de résultat
     MonHistoire.core.navigation.showScreen("resultat");
     

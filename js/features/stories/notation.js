@@ -147,6 +147,21 @@ MonHistoire.features.stories.notation = {
       });
     });
     console.log("[DEBUG NOTATION] Fin bindNotation");
+  },
+
+  // Réinitialise l'affichage de la notation
+  reset() {
+    console.log("[DEBUG NOTATION] Réinitialisation de la notation");
+    const blocNotation = document.getElementById('bloc-notation');
+    if (blocNotation) {
+      blocNotation.classList.add('hidden');
+    }
+
+    const etoiles = document.querySelectorAll('#bloc-notation .etoile');
+    etoiles.forEach(el => {
+      el.textContent = '☆';
+      el.classList.remove('selected');
+    });
   }
 };
 

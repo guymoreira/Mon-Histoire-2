@@ -196,6 +196,8 @@ Le composant de notation permet aux utilisateurs d'évaluer une histoire en sél
 
 La classe `selected` est appliquée à l'étoile correspondant à la note enregistrée et déclenche une animation d'agrandissement.
 
+Lorsqu'une nouvelle histoire est générée, `generator.js` appelle `notation.reset()` pour masquer ce bloc et revenir à des étoiles non sélectionnées.
+
 ## Utilisation
 
 Pour utiliser le système UI, importez le fichier CSS principal :
