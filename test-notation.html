@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Système de Notation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .notation-container { text-align: center; margin-top: 30px; }
+    .notation .etoile { font-size: 2rem; cursor: pointer; margin: 0 6px; user-select: none; }
+    .notation .etoile:hover { transform: scale(1.2); }
+    .hidden { display: none !important; }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+    .debug-info {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 20px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test du Système de Notation</h1>
+  
+  <p>Cette page permet de tester le système de notation des histoires.</p>
+  
+  <button id="toggle-notation">Afficher/Masquer le bloc de notation</button>
+  
+  <div id="bloc-notation" class="notation-container hidden">
+    <p>Tu as aimé cette histoire ?</p>
+    <div class="notation">
+      <span class="etoile" data-note="1">☆</span>
+      <span class="etoile" data-note="2">☆</span>
+      <span class="etoile" data-note="3">☆</span>
+      <span class="etoile" data-note="4">☆</span>
+      <span class="etoile" data-note="5">☆</span>
+    </div>
+  </div>
+  
+  <div class="debug-info" id="debug-info">
+    [Informations de débogage apparaîtront ici]
+  </div>
+  
+  <script>
+    // Fonction pour ajouter des informations de débogage
+    function log(message) {
+      const debugInfo = document.getElementById('debug-info');
+      const timestamp = new Date().toLocaleTimeString();
+      debugInfo.textContent += `[${timestamp}] ${message}\n`;
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      log('Page chargée');
+      
+      // Vérifier si l'élément bloc-notation existe
+      const blocNotation = document.getElementById('bloc-notation');
+      log(`Élément bloc-notation trouvé: ${!!blocNotation}`);
+      if (blocNotation) {
+        log(`Classes du bloc-notation: ${blocNotation.className}`);
+        log(`Style display du bloc-notation: ${window.getComputedStyle(blocNotation).display}`);
+      }
+      
+      // Vérifier les étoiles
+      const etoiles = document.querySelectorAll('#bloc-notation .etoile');
+      log(`Nombre d'étoiles trouvées: ${etoiles.length}`);
+      
+      // Ajouter des gestionnaires d'événements aux étoiles
+      etoiles.forEach((etoile, index) => {
+        log(`Configuration de l'étoile ${index + 1} avec data-note: ${etoile.dataset.note}`);
+        
+        etoile.addEventListener('click', function() {
+          const note = parseInt(this.dataset.note, 10);
+          log(`Clic sur l'étoile avec note: ${note}`);
+          
+          // Mettre à jour l'affichage des étoiles
+          etoiles.forEach(e => {
+            e.textContent = parseInt(e.dataset.note, 10) <= note ? '★' : '☆';
+          });
+          
+          log(`Note mise à jour: ${note}`);
+        });
+      });
+      
+      // Bouton pour afficher/masquer le bloc de notation
+      const toggleButton = document.getElementById('toggle-notation');
+      toggleButton.addEventListener('click', function() {
+        log('Bouton toggle-notation cliqué');
+        
+        if (blocNotation.classList.contains('hidden')) {
+          blocNotation.classList.remove('hidden');
+          log('Classe hidden retirée du bloc-notation');
+        } else {
+          blocNotation.classList.add('hidden');
+          log('Classe hidden ajoutée au bloc-notation');
+        }
+        
+        log(`Nouvelles classes du bloc-notation: ${blocNotation.className}`);
+        log(`Nouveau style display du bloc-notation: ${window.getComputedStyle(blocNotation).display}`);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -8,9 +8,13 @@ MonHistoire.features.stories = MonHistoire.features.stories || {};
 MonHistoire.features.stories.notation = {
   // Lit la note depuis Firestore et met à jour l'affichage des étoiles
   async afficherNote(storyId) {
+    console.log("[DEBUG NOTATION] Début afficherNote pour storyId:", storyId);
     try {
       const user = firebase.auth().currentUser;
-      if (!user) return;
+      if (!user) {
+        console.log("[DEBUG NOTATION] Aucun utilisateur connecté, impossible d'afficher la note");
+        return;
+      }
 
       // Déterminer le profil actif
       let profilActif = MonHistoire.state && MonHistoire.state.profilActif;
@@ -19,6 +23,7 @@ MonHistoire.features.stories.notation = {
           ? JSON.parse(localStorage.getItem('profilActif'))
           : { type: 'parent' };
       }
+      console.log("[DEBUG NOTATION] Profil actif:", profilActif);
 
       // Référence du document de l'histoire
       let docRef;
@@ -38,24 +43,52 @@ MonHistoire.features.stories.notation = {
           .doc(storyId);
       }
 
+      console.log("[DEBUG NOTATION] Récupération du document depuis Firestore:", docRef.path);
       const doc = await docRef.get();
-      if (!doc.exists) return;
+      if (!doc.exists) {
+        console.log("[DEBUG NOTATION] Document non trouvé dans Firestore");
+        return;
+      }
 
       const note = doc.data().note || 0;
+      console.log("[DEBUG NOTATION] Note récupérée:", note);
+      
+      const blocNotation = document.getElementById('bloc-notation');
+      console.log("[DEBUG NOTATION] Élément bloc-notation trouvé:", !!blocNotation);
+      if (blocNotation) {
+        console.log("[DEBUG NOTATION] Classes du bloc-notation:", blocNotation.className);
+      }
+      
       const etoiles = document.querySelectorAll('#bloc-notation .etoile');
+      console.log("[DEBUG NOTATION] Nombre d'étoiles trouvées:", etoiles.length);
+      
       etoiles.forEach(el => {
         el.textContent = parseInt(el.dataset.note, 10) <= note ? '★' : '☆';
       });
+      
+      console.log("[DEBUG NOTATION] Affichage des étoiles terminé");
     } catch (err) {
-      console.error('Erreur afficherNote:', err);
+      console.error('[DEBUG NOTATION] Erreur afficherNote:', err);
     }
+    console.log("[DEBUG NOTATION] Fin afficherNote");
   },
 
   // Gère le clic sur les étoiles pour enregistrer la note
   bindNotation(storyId) {
+    console.log("[DEBUG NOTATION] Début bindNotation pour storyId:", storyId);
+    const blocNotation = document.getElementById('bloc-notation');
+    console.log("[DEBUG NOTATION] Élément bloc-notation trouvé:", !!blocNotation);
+    if (blocNotation) {
+      console.log("[DEBUG NOTATION] Classes du bloc-notation:", blocNotation.className);
+      console.log("[DEBUG NOTATION] Visibilité du bloc-notation:", blocNotation.style.display, "/ Classe hidden:", blocNotation.classList.contains('hidden'));
+    }
+    
     const etoiles = document.querySelectorAll('#bloc-notation .etoile');
-    etoiles.forEach(el => {
+    console.log("[DEBUG NOTATION] Nombre d'étoiles trouvées pour les événements:", etoiles.length);
+    etoiles.forEach((el, index) => {
+      console.log("[DEBUG NOTATION] Configuration de l'étoile", index + 1, "avec data-note:", el.dataset.note);
       el.addEventListener('click', async () => {
+        console.log("[DEBUG NOTATION] Clic sur l'étoile avec note:", el.dataset.note);
         const note = parseInt(el.dataset.note, 10);
         try {
           const user = firebase.auth().currentUser;
@@ -85,7 +118,9 @@ MonHistoire.features.stories.notation = {
               .doc(storyId);
           }
 
+          console.log("[DEBUG NOTATION] Mise à jour de la note dans Firestore:", note);
           await docRef.update({ note });
+          console.log("[DEBUG NOTATION] Note mise à jour avec succès");
 
           etoiles.forEach(e2 => {
             e2.textContent = parseInt(e2.dataset.note, 10) <= note ? '★' : '☆';
@@ -95,12 +130,12 @@ MonHistoire.features.stories.notation = {
             MonHistoire.core.auth.logActivite('notation_histoire', { story_id: storyId, note });
           }
         } catch (err) {
-          console.error('Erreur lors de la mise à jour de la note:', err);
+          console.error('[DEBUG NOTATION] Erreur lors de la mise à jour de la note:', err);
         }
       });
     });
+    console.log("[DEBUG NOTATION] Fin bindNotation");
   }
 };
 
 window.MonHistoire = MonHistoire;
-

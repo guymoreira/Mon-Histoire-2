@@ -15,18 +15,43 @@ MonHistoire.features.stories.display = {
   
   // Affiche une histoire sauvegardée dans l'écran de résultat
   afficherHistoireSauvegardee(id) {
+    console.log("[DEBUG DISPLAY] Début afficherHistoireSauvegardee pour id:", id);
     // Indique qu'on vient de "mes-histoires" (pour le bouton Sauvegarder)
     MonHistoire.state.resultatSource = "mes-histoires";
     
     // Récupère l'histoire depuis Firestore
     if (MonHistoire.core && MonHistoire.core.storage) {
+      console.log("[DEBUG DISPLAY] Appel à getHistoireById pour id:", id);
       MonHistoire.core.storage.getHistoireById(id)
         .then(histoire => {
+          console.log("[DEBUG DISPLAY] Histoire récupérée:", histoire ? "OK" : "NULL");
+          
           // Affiche l'histoire
           this.afficherHistoire(histoire);
-          MonHistoire.features.stories.notation.afficherNote(histoire.id);
-          MonHistoire.features.stories.notation.bindNotation(histoire.id);
-          document.getElementById("bloc-notation").classList.remove("hidden");
+          
+          console.log("[DEBUG DISPLAY] Vérification du module de notation:", 
+            MonHistoire.features && MonHistoire.features.stories && MonHistoire.features.stories.notation ? "OK" : "NON DISPONIBLE");
+          
+          if (MonHistoire.features && MonHistoire.features.stories && MonHistoire.features.stories.notation) {
+            console.log("[DEBUG DISPLAY] Appel à afficherNote pour histoire.id:", histoire.id);
+            MonHistoire.features.stories.notation.afficherNote(histoire.id);
+            
+            console.log("[DEBUG DISPLAY] Appel à bindNotation pour histoire.id:", histoire.id);
+            MonHistoire.features.stories.notation.bindNotation(histoire.id);
+            
+            const blocNotation = document.getElementById("bloc-notation");
+            console.log("[DEBUG DISPLAY] Élément bloc-notation trouvé:", !!blocNotation);
+            
+            if (blocNotation) {
+              console.log("[DEBUG DISPLAY] Classes du bloc-notation avant:", blocNotation.className);
+              blocNotation.classList.remove("hidden");
+              console.log("[DEBUG DISPLAY] Classes du bloc-notation après:", blocNotation.className);
+            } else {
+              console.error("[DEBUG DISPLAY] Élément bloc-notation non trouvé dans le DOM");
+            }
+          } else {
+            console.error("[DEBUG DISPLAY] Module de notation non disponible");
+          }
           
           // Affiche l'écran de résultat
           MonHistoire.core.navigation.showScreen("resultat");
@@ -45,18 +70,43 @@ MonHistoire.features.stories.display = {
   
   // Affiche une histoire partagée dans l'écran de résultat
   afficherHistoirePartagee(id) {
+    console.log("[DEBUG DISPLAY] Début afficherHistoirePartagee pour id:", id);
     // Indique qu'on vient de "mes-histoires" (pour le bouton Sauvegarder)
     MonHistoire.state.resultatSource = "partage";
     
     // Récupère l'histoire depuis Firestore
     if (MonHistoire.core && MonHistoire.core.storage) {
+      console.log("[DEBUG DISPLAY] Appel à getHistoirePartagee pour id:", id);
       MonHistoire.core.storage.getHistoirePartagee(id)
         .then(histoire => {
+          console.log("[DEBUG DISPLAY] Histoire partagée récupérée:", histoire ? "OK" : "NULL");
+          
           // Affiche l'histoire
           this.afficherHistoire(histoire);
-          MonHistoire.features.stories.notation.afficherNote(histoire.id);
-          MonHistoire.features.stories.notation.bindNotation(histoire.id);
-          document.getElementById("bloc-notation").classList.remove("hidden");
+          
+          console.log("[DEBUG DISPLAY] Vérification du module de notation:", 
+            MonHistoire.features && MonHistoire.features.stories && MonHistoire.features.stories.notation ? "OK" : "NON DISPONIBLE");
+          
+          if (MonHistoire.features && MonHistoire.features.stories && MonHistoire.features.stories.notation) {
+            console.log("[DEBUG DISPLAY] Appel à afficherNote pour histoire.id:", histoire.id);
+            MonHistoire.features.stories.notation.afficherNote(histoire.id);
+            
+            console.log("[DEBUG DISPLAY] Appel à bindNotation pour histoire.id:", histoire.id);
+            MonHistoire.features.stories.notation.bindNotation(histoire.id);
+            
+            const blocNotation = document.getElementById("bloc-notation");
+            console.log("[DEBUG DISPLAY] Élément bloc-notation trouvé:", !!blocNotation);
+            
+            if (blocNotation) {
+              console.log("[DEBUG DISPLAY] Classes du bloc-notation avant:", blocNotation.className);
+              blocNotation.classList.remove("hidden");
+              console.log("[DEBUG DISPLAY] Classes du bloc-notation après:", blocNotation.className);
+            } else {
+              console.error("[DEBUG DISPLAY] Élément bloc-notation non trouvé dans le DOM");
+            }
+          } else {
+            console.error("[DEBUG DISPLAY] Module de notation non disponible");
+          }
 
           // Affiche l'écran de résultat
           MonHistoire.core.navigation.showScreen("resultat");
@@ -81,7 +131,7 @@ MonHistoire.features.stories.display = {
   
   // Affiche une histoire dans l'écran de résultat
   afficherHistoire(histoire) {
-    console.log("[DEBUG] Affichage histoire:", histoire);
+    console.log("[DEBUG DISPLAY] Début afficherHistoire:", histoire ? histoire.id : "NULL");
     
     // Récupère les éléments pour afficher le résultat
     const titreHistoireElement = document.getElementById("titre-histoire-resultat");
