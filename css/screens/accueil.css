@@ -92,6 +92,11 @@ body > div#confirm-modal:not(.show) {
   font-size: 1.3em; /* Maintenu pour une bonne lisibilité */
 }
 
+/* Permet d'attacher l'indicateur de notification au bouton "Mes Histoires" */
+#my-stories-button {
+  position: relative;
+}
+
 /* Exception pour les boutons cachés dans #accueil-content */
 #accueil-content .button.hidden {
   visibility: hidden !important;
