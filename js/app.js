@@ -336,6 +336,13 @@ MonHistoire.processOfflineQueue = function() {
           MonHistoire.features.sharing.processOfflinePartage(item.data);
         }
         break;
+      case 'sendMessage':
+        if (MonHistoire.features && MonHistoire.features.messaging &&
+            MonHistoire.features.messaging.storage &&
+            typeof MonHistoire.features.messaging.storage.processOfflineMessage === 'function') {
+          MonHistoire.features.messaging.storage.processOfflineMessage(item.data);
+        }
+        break;
       // Autres types d'opérations...
     }
     
@@ -475,6 +482,10 @@ MonHistoire.init = function() {
   if (this.features && this.features.sharing) {
     console.log("[DEBUG] Initialisation du module sharing");
     this.features.sharing.init();
+  }
+  if (this.features && this.features.messaging) {
+    console.log("[DEBUG] Initialisation du module messaging");
+    this.features.messaging.init();
   }
   if (this.features && this.features.export) {
     console.log("[DEBUG] Initialisation du module export");
