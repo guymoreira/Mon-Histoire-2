@@ -616,6 +616,7 @@ MonHistoire.features.stories.management = {
     if (element.classList.contains("selected")) {
       // Ajoute une coche à droite
       const coche = document.createElement("span");
+      coche.className = "coche-selection";
       coche.textContent = "✓";
       coche.style.color = "red";
       coche.style.position = "absolute";
@@ -628,7 +629,7 @@ MonHistoire.features.stories.management = {
       element.appendChild(coche);
     } else {
       // Supprime la coche
-      const coche = element.querySelector("span");
+      const coche = element.querySelector(':scope > span.coche-selection');
       if (coche) {
         element.removeChild(coche);
       }
@@ -649,7 +650,7 @@ MonHistoire.features.stories.management = {
       histoire.classList.remove("selected");
       
       // Supprime la coche
-      const coche = histoire.querySelector("span");
+      const coche = histoire.querySelector(':scope > span.coche-selection');
       if (coche) {
         histoire.removeChild(coche);
       }
