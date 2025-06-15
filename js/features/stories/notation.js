@@ -103,3 +103,4 @@ MonHistoire.features.stories.notation = {
 };
 
 window.MonHistoire = MonHistoire;
+
