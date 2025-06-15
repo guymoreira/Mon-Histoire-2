@@ -79,13 +79,21 @@ css/
 ### Modules de Fonctionnalités (features)
 
 - **audio.js** : Lecture audio des histoires (synthèse vocale)
- - **notation.js** : Gestion de la notation des histoires (étoiles et stockage Firebase). Le module fournit une méthode `reset()` pour masquer le bloc de notation et désélectionner les étoiles lorsqu'une nouvelle histoire est générée.
+- **notation.js** : Gestion de la notation des histoires. Ce module affiche la note stockée dans Firebase, gère la sélection des étoiles et expose la méthode `reset()` pour masquer le bloc de notation lors de la génération d'une nouvelle histoire.
 
 ### Modules de Partage (sharing)
 
 - **index.js** : Point d'entrée du module de partage
 - **notifications.js** : Gestion des notifications de partage
 - **storage.js** : Stockage des données de partage
+
+### Système de notation des histoires
+
+La fonctionnalité de notation permet aux utilisateurs d'évaluer une histoire en sélectionnant de 1 à 5 étoiles. Le bloc de notation est affiché dans l'écran de résultat et la note est enregistrée dans Firestore. Le module `notation.js` fournit les méthodes :
+
+- `afficherNote(id)` : lit la note depuis Firestore et met à jour l'affichage.
+- `bindNotation(id)` : ajoute les événements de clic sur les étoiles pour sauvegarder la note.
+- `reset()` : réinitialise l'affichage (étoiles non sélectionnées et bloc masqué).
 
 ## Schéma d'Architecture Détaillé
 
@@ -176,6 +184,13 @@ css/
 |  | - sauvegarder()  |                                                                                        |
 |  +------------------+                                                                                        |
 |                                                                                                              |
+|  +-------------------+
+|  | features/notation |
+|  | - afficherNote    |
+|  | - bindNotation    |
+|  | - reset()         |
+|  +-------------------+
+|  
 +--------------------------------------------------------------------------------------------------------------+
                 |                                                   ^
                 |                                                   |
@@ -266,7 +281,8 @@ css/
 |     e. features/export.js - Export des histoires                                                             |
 |     f. features/audio.js - Lecture audio des histoires                                                       |
 |     g. features/cookies.js - Gestion des cookies                                                             |
-|                                                                                                              |
+|     h. features/stories/notation.js - Notation des histoires
+                               |
 |  8. ui.js - Interface utilisateur                                                                            |
 |     - Binding des événements UI                                                                              |
 |     - Gestion des interactions utilisateur                                                                   |
