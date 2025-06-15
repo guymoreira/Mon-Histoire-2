@@ -264,7 +264,7 @@ MonHistoire.features.stories.management = {
 
     if (typeof histoire.note === 'number') {
       const notationDiv = document.createElement('div');
-      notationDiv.className = 'notation';
+      notationDiv.className = 'notation notation--small';
       for (let i = 1; i <= 5; i++) {
         const span = document.createElement('span');
         span.className = 'etoile';
