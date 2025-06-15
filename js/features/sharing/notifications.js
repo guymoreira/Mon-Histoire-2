@@ -560,30 +560,30 @@ MonHistoire.features.sharing.notifications = {
       // Récupère le nombre de notifications non lues pour ce profil
       const nbNotifs = MonHistoire.features.sharing.notificationsNonLues[profilId] || 0;
       
-      // Récupère l'élément d'icône utilisateur (où on affichera l'indicateur)
-      const userIcon = document.getElementById("user-icon");
-      
-      // Si l'élément existe et qu'il y a des notifications non lues
-      if (userIcon && nbNotifs > 0) {
+      // Récupère le bouton "Mes Histoires" (où on affichera l'indicateur)
+      const storiesButton = document.getElementById("my-stories-button");
+
+      // Si le bouton existe et qu'il y a des notifications non lues
+      if (storiesButton && nbNotifs > 0) {
         // Vérifie si l'indicateur existe déjà (chercher les deux classes possibles)
-        let indicateur = userIcon.querySelector(".notification-indicator") || userIcon.querySelector(".ui-notification-badge");
-        
+        let indicateur = storiesButton.querySelector(".notification-indicator") || storiesButton.querySelector(".ui-notification-badge");
+
         // Si l'indicateur n'existe pas, on le crée
         if (!indicateur) {
           indicateur = document.createElement("span");
           // Utiliser les deux classes pour assurer la compatibilité
           indicateur.className = "notification-indicator ui-notification-badge";
-          userIcon.appendChild(indicateur);
+          storiesButton.appendChild(indicateur);
         }
-        
+
         // Met à jour le contenu de l'indicateur
         indicateur.textContent = nbNotifs > 9 ? "9+" : nbNotifs.toString();
         indicateur.style.display = "flex";
-      } 
-      // Si l'élément existe mais qu'il n'y a pas de notifications non lues
-      else if (userIcon) {
+      }
+      // Si le bouton existe mais qu'il n'y a pas de notifications non lues
+      else if (storiesButton) {
         // Récupère l'indicateur s'il existe (chercher les deux classes possibles)
-        const indicateur = userIcon.querySelector(".notification-indicator") || userIcon.querySelector(".ui-notification-badge");
+        const indicateur = storiesButton.querySelector(".notification-indicator") || storiesButton.querySelector(".ui-notification-badge");
         
         // Si l'indicateur existe, on le masque
         if (indicateur) {
