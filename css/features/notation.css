@@ -10,3 +10,10 @@
 }
 .notation .etoile:hover { transform: scale(1.2); }
 .notation .etoile.selected { transform: scale(1.4); }
+
+/* Taille réduite des étoiles dans la liste des histoires */
+.notation--small .etoile {
+  font-size: 1rem;
+  margin: 0 2px;
+  pointer-events: none;
+}
