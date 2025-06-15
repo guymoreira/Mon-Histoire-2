@@ -12,6 +12,7 @@ Ce document présente le système UI standardisé pour l'application "Mon Histoi
    - [Modales](#modales)
    - [Formulaires](#formulaires)
    - [Notifications](#notifications)
+   - [Notation](#notation)
 4. [Utilisation](#utilisation)
 5. [Migration](#migration)
 
@@ -173,6 +174,27 @@ Les notifications sont utilisées pour informer l'utilisateur d'événements ou 
   <button class="ui-notification-close">×</button>
 </div>
 ```
+
+### Notation
+
+Le composant de notation permet aux utilisateurs d'évaluer une histoire en sélectionnant une étoile.
+
+#### Structure HTML
+
+```html
+<div id="bloc-notation" class="notation-container">
+  <p><strong>Tu as aimé cette histoire ?</strong></p>
+  <div class="notation">
+    <span class="etoile" data-note="1">☆</span>
+    <span class="etoile" data-note="2">☆</span>
+    <span class="etoile" data-note="3">☆</span>
+    <span class="etoile" data-note="4">☆</span>
+    <span class="etoile" data-note="5">☆</span>
+  </div>
+</div>
+```
+
+La classe `selected` est appliquée à l'étoile correspondant à la note enregistrée et déclenche une animation d'agrandissement.
 
 ## Utilisation
 

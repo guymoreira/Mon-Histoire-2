@@ -1,3 +1,12 @@
 .notation-container { text-align: center; margin-top: 30px; }
-.notation .etoile { font-size: 2rem; cursor: pointer; margin: 0 6px; user-select: none; }
+.notation .etoile {
+  font-size: 3rem;
+  cursor: pointer;
+  margin: 0 6px;
+  user-select: none;
+  color: #FFD700;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  transition: transform 0.2s ease-in-out;
+}
 .notation .etoile:hover { transform: scale(1.2); }
+.notation .etoile.selected { transform: scale(1.4); }
