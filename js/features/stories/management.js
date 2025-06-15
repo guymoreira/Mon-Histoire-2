@@ -308,8 +308,16 @@ MonHistoire.features.stories.management = {
         // En mode normal, on affiche l'histoire
         console.log("[DEBUG] Clic sur histoire ID:", histoire.id);
         
-        // Utilise directement la méthode fallback pour garantir l'affichage
-        this.afficherHistoireById(histoire.id);
+        // Affiche l'histoire en utilisant le module display s'il est disponible
+        if (MonHistoire.features &&
+            MonHistoire.features.stories &&
+            MonHistoire.features.stories.display &&
+            typeof MonHistoire.features.stories.display.afficherHistoireSauvegardee === 'function') {
+          MonHistoire.features.stories.display.afficherHistoireSauvegardee(histoire.id);
+        } else {
+          // Fallback en cas d'indisponibilité du module display
+          this.afficherHistoireById(histoire.id);
+        }
       }
     };
     
@@ -423,9 +431,21 @@ MonHistoire.features.stories.management = {
               titreHistoireElement.textContent = data.titre || "Histoire sans titre";
               titreHistoireElement.dataset.histoireId = storyId;
             }
-            
+
             // Stocke l'ID de l'histoire pour le partage
             if (titreHistoireElement) titreHistoireElement.dataset.histoireId = storyId;
+
+            // Affiche la note et active la notation si disponible
+            if (MonHistoire.features &&
+                MonHistoire.features.stories &&
+                MonHistoire.features.stories.notation) {
+              MonHistoire.features.stories.notation.afficherNote(storyId);
+              MonHistoire.features.stories.notation.bindNotation(storyId);
+              const blocNotation = document.getElementById("bloc-notation");
+              if (blocNotation) {
+                blocNotation.classList.remove("hidden");
+              }
+            }
             
             // Indique qu'on vient de "mes-histoires" (pour le bouton Sauvegarder)
             MonHistoire.state.resultatSource = "mes-histoires";
