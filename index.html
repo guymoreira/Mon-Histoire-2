@@ -446,6 +446,8 @@
   
 <footer style="text-align:center; margin:2em 0; opacity:0.7;">
   <a href="#" id="link-rgpd" style="font-size:1rem; margin-right: 1em;">Vie privée &amp; RGPD</a>
+  <a href="#" id="link-conditions" style="font-size:1rem; margin-right: 1em;">Conditions d’utilisation</a>
+  <a href="#" id="link-legal" style="font-size:1rem; margin-right: 1em;">Mentions légales</a>
   <a href="#" id="cookie-settings-link" style="font-size:1rem;">Paramètres des cookies</a>
 </footer>
 <!-- Modale de renommage de profil enfant -->
@@ -607,6 +609,27 @@
   </div>
 </div>
 
+<div class="ui-modal" id="modal-conditions">
+  <div class="ui-modal-content ui-modal-content--large ui-card--cream" style="max-width:500px;">
+    <span class="ui-modal-close" onclick="document.getElementById('modal-conditions').classList.remove('show')">×</span>
+    <h3>Conditions d’utilisation</h3>
+    <p style="text-align:left; font-size:0.98em;">Le texte complet des conditions d’utilisation sera disponible prochainement.</p>
+    <div class="ui-button-group ui-button-group--center" style="margin-top: 20px;">
+      <button class="ui-button ui-button--secondary" onclick="document.getElementById('modal-conditions').classList.remove('show')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="ui-modal" id="modal-legal">
+  <div class="ui-modal-content ui-modal-content--large ui-card--cream" style="max-width:500px;">
+    <span class="ui-modal-close" onclick="document.getElementById('modal-legal').classList.remove('show')">×</span>
+    <h3>Mentions légales</h3>
+    <p style="text-align:left; font-size:0.98em;">Les mentions légales complètes seront ajoutées prochainement.</p>
+    <div class="ui-button-group ui-button-group--center" style="margin-top: 20px;">
+      <button class="ui-button ui-button--secondary" onclick="document.getElementById('modal-legal').classList.remove('show')">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <!-- Bannière de consentement aux cookies -->
 <div id="cookie-banner" class="cookie-banner">

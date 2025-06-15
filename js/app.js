@@ -625,6 +625,22 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('modal-rgpd').classList.add('show');
     };
   }
+
+  const conditionsLink = document.getElementById('link-conditions');
+  if (conditionsLink) {
+    conditionsLink.onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('modal-conditions').classList.add('show');
+    };
+  }
+
+  const legalLink = document.getElementById('link-legal');
+  if (legalLink) {
+    legalLink.onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('modal-legal').classList.add('show');
+    };
+  }
   
   // Nous ne définissons pas d'écouteur d'événement ici pour éviter les conflits
   // L'écouteur est défini dans js/ui.js ou js/modules/ui/common.js
