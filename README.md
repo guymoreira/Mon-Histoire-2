@@ -451,3 +451,8 @@ MonHistoire.debug("Message de débogage", data);
 ## Conclusion
 
 Cette nouvelle architecture modulaire offre une base solide pour le développement futur de l'application "Mon Histoire". Elle facilite la maintenance, l'évolution et la collaboration entre développeurs.
+
+## Déploiement
+
+Les règles de sécurité Firestore destinées à la messagerie se trouvent dans le fichier `firestore.messaging.rules` à la racine du projet. Veillez à inclure ce fichier lors du déploiement sur Firebase.
+
