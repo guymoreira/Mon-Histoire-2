@@ -79,6 +79,7 @@ css/
 ### Modules de Fonctionnalités (features)
 
 - **audio.js** : Lecture audio des histoires (synthèse vocale)
+- **notation.js** : Gestion de la notation des histoires (étoiles et stockage Firebase)
 
 ### Modules de Partage (sharing)
 

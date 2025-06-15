@@ -61,9 +61,15 @@ MonHistoire.features.stories.notation = {
       
       const etoiles = document.querySelectorAll('#bloc-notation .etoile');
       console.log("[DEBUG NOTATION] Nombre d'étoiles trouvées:", etoiles.length);
-      
+
       etoiles.forEach(el => {
-        el.textContent = parseInt(el.dataset.note, 10) <= note ? '★' : '☆';
+        const val = parseInt(el.dataset.note, 10);
+        el.textContent = val <= note ? '★' : '☆';
+        if (val === note) {
+          el.classList.add('selected');
+        } else {
+          el.classList.remove('selected');
+        }
       });
       
       console.log("[DEBUG NOTATION] Affichage des étoiles terminé");
@@ -123,7 +129,13 @@ MonHistoire.features.stories.notation = {
           console.log("[DEBUG NOTATION] Note mise à jour avec succès");
 
           etoiles.forEach(e2 => {
-            e2.textContent = parseInt(e2.dataset.note, 10) <= note ? '★' : '☆';
+            const val2 = parseInt(e2.dataset.note, 10);
+            e2.textContent = val2 <= note ? '★' : '☆';
+            if (val2 === note) {
+              e2.classList.add('selected');
+            } else {
+              e2.classList.remove('selected');
+            }
           });
 
           if (MonHistoire.core && MonHistoire.core.auth && firebase.auth().currentUser) {
