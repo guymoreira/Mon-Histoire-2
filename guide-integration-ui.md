@@ -225,6 +225,29 @@ Les notifications utilisent une structure standardisée :
 </div>
 ```
 
+### Notation
+
+Le système de notation permet à l'utilisateur d'attribuer une note de 1 à 5 étoiles à une histoire. Le bloc de notation est masqué par défaut et peut être ajouté comme suit :
+
+```html
+<div id="bloc-notation" class="notation-container hidden">
+  <p><strong>Tu as aimé cette histoire ?</strong></p>
+  <div class="notation">
+    <span class="etoile" data-note="1">☆</span>
+    <span class="etoile" data-note="2">☆</span>
+    <span class="etoile" data-note="3">☆</span>
+    <span class="etoile" data-note="4">☆</span>
+    <span class="etoile" data-note="5">☆</span>
+  </div>
+</div>
+```
+
+Le module JavaScript `features/stories/notation.js` expose les fonctions suivantes :
+
+- `afficherNote(id)` pour lire la note depuis Firestore et mettre à jour l'affichage.
+- `bindNotation(id)` pour enregistrer la note lors du clic sur une étoile.
+- `reset()` pour masquer le bloc et désélectionner les étoiles lors de la génération d'une nouvelle histoire.
+
 ## Manipulation via JavaScript
 
 Pour manipuler les composants UI via JavaScript, utilisez les classes standardisées :

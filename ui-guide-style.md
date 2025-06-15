@@ -198,6 +198,8 @@ La classe `selected` est appliquée à l'étoile correspondant à la note enregi
 
 Lorsqu'une nouvelle histoire est générée, `generator.js` appelle `notation.reset()` pour masquer ce bloc et revenir à des étoiles non sélectionnées.
 
+Le module `features/stories/notation.js` propose également `afficherNote(id)` pour charger la note existante et `bindNotation(id)` pour enregistrer les clics sur les étoiles.
+
 ## Utilisation
 
 Pour utiliser le système UI, importez le fichier CSS principal :
