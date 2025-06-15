@@ -152,14 +152,16 @@ MonHistoire.core.navigation = {
 
     // Cas particulier : si c'est Mes Histoires, on rafraîchit la liste et on marque les histoires comme vues
     if (screen === "mes-histoires") {
-      if (MonHistoire.features && 
-          MonHistoire.features.stories && 
+      if (MonHistoire.features &&
+          MonHistoire.features.stories &&
           MonHistoire.features.stories.management) {
-        MonHistoire.features.stories.management.afficherHistoiresSauvegardees();
+        MonHistoire.features.stories.management
+          .afficherHistoiresSauvegardees()
+          .then(() => this.marquerHistoiresCommeVues());
+      } else {
+        // Si le module n'est pas disponible, on marque directement
+        this.marquerHistoiresCommeVues();
       }
-      
-      // Marquer toutes les histoires comme vues
-      this.marquerHistoiresCommeVues();
       
       // Affiche le bouton Accueil seulement si tu viens de "resultat"
       const btnAccueil = document.getElementById("btn-accueil-mes-histoires");

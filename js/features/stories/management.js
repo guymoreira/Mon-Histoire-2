@@ -158,7 +158,7 @@ MonHistoire.features.stories.management = {
     
     if (!container) {
       console.error("[DEBUG] ERREUR: Conteneur liste-histoires non trouvé dans le DOM");
-      return;
+      return Promise.reject(new Error("Conteneur liste-histoires manquant"));
     }
     
     // Vide le conteneur
@@ -178,8 +178,8 @@ MonHistoire.features.stories.management = {
     // Récupère les histoires depuis Firestore
     if (MonHistoire.core && MonHistoire.core.storage) {
       console.log("[DEBUG] Appel à getHistoiresSauvegardees()");
-      
-      MonHistoire.core.storage.getHistoiresSauvegardees()
+
+      return MonHistoire.core.storage.getHistoiresSauvegardees()
         .then(histoires => {
           console.log("[DEBUG] Réponse de getHistoiresSauvegardees() reçue");
           console.log("[DEBUG] Nombre d'histoires reçues:", histoires ? histoires.length : "undefined");
@@ -221,8 +221,9 @@ MonHistoire.features.stories.management = {
             const card = this.creerCarteHistoire(histoire);
             container.appendChild(card);
           });
-          
+
           console.log("[DEBUG] Affichage des histoires terminé avec succès");
+          return histoires;
         })
         .catch(error => {
           console.error("[DEBUG] ERREUR lors de la récupération des histoires:", error);
@@ -233,15 +234,17 @@ MonHistoire.features.stories.management = {
           errorEl.textContent = "Erreur lors du chargement des histoires.";
           errorEl.className = "error-message";
           container.appendChild(errorEl);
+          throw error;
         });
     } else {
       console.error("[DEBUG] ERREUR: Module de stockage non disponible");
       container.innerHTML = "";
-      
+
       const errorEl = document.createElement("p");
       errorEl.textContent = "Erreur: module de stockage non disponible.";
       errorEl.className = "error-message";
       container.appendChild(errorEl);
+      return Promise.reject(new Error("Module de stockage non disponible"));
     }
   },
   
