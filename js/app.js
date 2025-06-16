@@ -252,7 +252,9 @@ MonHistoire.handleReconnection = function() {
   // Réinitialiser les écouteurs de notifications avec un délai pour s'assurer que Firebase est prêt
   if (this.features && this.features.sharing) {
     setTimeout(() => {
-      this.features.sharing.verifierHistoiresPartagees();
+      if (typeof this.features.sharing.verifierHistoiresPartagees === 'function') {
+        this.features.sharing.verifierHistoiresPartagees();
+      }
     }, 1000);
   }
   
@@ -332,7 +334,8 @@ MonHistoire.processOfflineQueue = function() {
     // Exécuter l'opération selon son type
     switch(item.operation) {
       case 'partageHistoire':
-        if (MonHistoire.features && MonHistoire.features.sharing) {
+        if (MonHistoire.features && MonHistoire.features.sharing &&
+            typeof MonHistoire.features.sharing.processOfflinePartage === 'function') {
           MonHistoire.features.sharing.processOfflinePartage(item.data);
         }
         break;
@@ -481,7 +484,9 @@ MonHistoire.init = function() {
   }
   if (this.features && this.features.sharing) {
     console.log("[DEBUG] Initialisation du module sharing");
-    this.features.sharing.init();
+    if (typeof this.features.sharing.init === 'function') {
+      this.features.sharing.init();
+    }
   }
   if (this.features && this.features.messaging) {
     console.log("[DEBUG] Initialisation du module messaging");
@@ -543,7 +548,9 @@ MonHistoire.init = function() {
         console.log("[DEBUG] Vérification des histoires partagées après connexion");
         // Utilise setTimeout pour s'assurer que la vérification se fait après l'initialisation complète
         setTimeout(() => {
-          MonHistoire.features.sharing.verifierHistoiresPartagees();
+          if (typeof MonHistoire.features.sharing.verifierHistoiresPartagees === 'function') {
+            MonHistoire.features.sharing.verifierHistoiresPartagees();
+          }
         }, 500);
       }
     } else {
