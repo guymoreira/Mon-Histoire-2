@@ -20,6 +20,12 @@
   flex-direction: column;
 }
 
+#modal-conversation .ui-modal-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5em;
+}
+
 #conversation-messages {
   flex: 1;
   overflow-y: auto;
@@ -51,9 +57,11 @@
   display: flex;
   gap: 0.5em;
   margin-top: 0.5em;
+  width: 100%;
 }
 
-#zone-saisie-message input {
+#input-message {
   flex: 1;
+  min-width: 0;
 }
 
