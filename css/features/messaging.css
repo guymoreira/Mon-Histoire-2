@@ -55,6 +55,7 @@
 
 #zone-saisie-message {
   display: flex;
+  flex-direction: column;
   gap: 0.5em;
   margin-top: 0.5em;
   width: 100%;
@@ -63,5 +64,10 @@
 #input-message {
   flex: 1;
   min-width: 0;
+  width: 100%;
+}
+
+#zone-saisie-message button {
+  width: 100%;
 }
 
