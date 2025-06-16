@@ -184,9 +184,6 @@ MonHistoire.ui = {
     document.getElementById("btn-fermer-conversation")?.addEventListener("click", () => {
       MonHistoire.features.messaging.ui.closeConversation();
     });
-    document.getElementById("btn-envoyer-message")?.addEventListener("click", () => {
-      MonHistoire.features.messaging.ui.sendCurrentMessage();
-    });
     
     
     // Bouton Connexion
