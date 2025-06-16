@@ -17,6 +17,7 @@ MonHistoire.features.messaging.ui = (function() {
     document.getElementById('btn-fermer-conversation')?.addEventListener('click', closeConversation);
     document.getElementById('btn-envoyer-message')?.addEventListener('click', sendCurrentMessage);
     document.getElementById('btn-nouveau-message')?.addEventListener('click', startNewConversation);
+    document.getElementById('btn-fermer-nouveau-message')?.addEventListener('click', closeNewMessageModal);
   }
 
   async function openConversationsModal() {
@@ -111,28 +112,76 @@ MonHistoire.features.messaging.ui = (function() {
 
     const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
       (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
-    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
 
-    let destinataire = prompt('Identifiant du destinataire :');
-    if (!destinataire) {
-      MonHistoire.showMessageModal && MonHistoire.showMessageModal('Destinataire manquant.');
-      return;
-    }
-
-    destinataire = destinataire.trim();
-    if (!destinataire) {
-      MonHistoire.showMessageModal && MonHistoire.showMessageModal('Destinataire manquant.');
-      return;
-    }
+    const list = document.getElementById('liste-profils-message');
+    if (!list) return;
+    list.innerHTML = '';
 
     try {
-      const ref = await messaging.getOrCreateConversation([selfKey, destinataire]);
+      const docParent = await firebase.firestore().collection('users').doc(user.uid).get();
+      const prenomParent = docParent.exists && docParent.data().prenom ? docParent.data().prenom : 'Parent';
+
+      const enfantsSnap = await firebase.firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('profils_enfant')
+        .get();
+
+      if (profil.type === 'enfant') {
+        const btnParent = document.createElement('button');
+        btnParent.className = 'ui-button ui-button--primary';
+        btnParent.textContent = prenomParent;
+        btnParent.style.marginBottom = '0.75em';
+        btnParent.addEventListener('click', () => chooseRecipient('parent', null, prenomParent));
+        list.appendChild(btnParent);
+      }
+
+      let hasRecipient = false;
+      enfantsSnap.forEach(doc => {
+        if (profil.type === 'enfant' && doc.id === profil.id) return;
+        const data = doc.data();
+        const btn = document.createElement('button');
+        btn.className = 'ui-button ui-button--primary';
+        btn.textContent = data.prenom;
+        btn.style.marginBottom = '0.75em';
+        btn.addEventListener('click', () => chooseRecipient('enfant', doc.id, data.prenom));
+        list.appendChild(btn);
+        hasRecipient = true;
+      });
+
+      if (!hasRecipient && profil.type === 'parent') {
+        list.innerHTML = "<p style='text-align:center;'>Aucun profil disponible.</p>";
+      }
+
+      document.getElementById('modal-nouveau-message').classList.add('show');
+    } catch (e) {
+      console.error('Erreur lors du chargement des profils', e);
+      MonHistoire.showMessageModal && MonHistoire.showMessageModal('Erreur lors du chargement des profils.');
+    }
+  }
+
+  async function chooseRecipient(type, id, prenom) {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
+    const otherKey = type === 'parent' ? `${user.uid}:parent` : `${user.uid}:${id}`;
+
+    try {
+      const ref = await messaging.getOrCreateConversation([selfKey, otherKey]);
+      closeNewMessageModal();
       closeConversationsModal();
-      openConversation(ref.id, destinataire.split(':')[1] || destinataire);
+      openConversation(ref.id, prenom);
     } catch (e) {
       console.error('Erreur lors de la création de la conversation', e);
       MonHistoire.showMessageModal && MonHistoire.showMessageModal("Erreur lors de la création de la conversation.");
     }
+  }
+
+  function closeNewMessageModal() {
+    document.getElementById('modal-nouveau-message')?.classList.remove('show');
   }
 
   async function sendCurrentMessage() {
