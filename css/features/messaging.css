@@ -71,3 +71,9 @@
   width: 100%;
 }
 
+#modal-nouveau-message .ui-modal-content {
+  background-color: #fff8e1 !important;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
