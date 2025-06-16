@@ -687,7 +687,8 @@ MonHistoire.ui = {
     ref.set({
       prenom: prenom,
       createdAt: new Date().toISOString(),
-      nb_histoires: 0
+      nb_histoires: 0,
+      acces_messagerie: false
     }).then(() => {
       // Masquer le formulaire
       this.annulerAjoutEnfant();
@@ -758,7 +759,8 @@ MonHistoire.ui = {
                   return {
                     id: doc.id,
                     prenom: data.prenom,
-                    nb_histoires: nbHistoires
+                    nb_histoires: nbHistoires,
+                    acces_messagerie: data.acces_messagerie === true
                   };
                 })
                 .catch(error => {
@@ -767,7 +769,8 @@ MonHistoire.ui = {
                   return {
                     id: doc.id,
                     prenom: data.prenom,
-                    nb_histoires: data.nb_histoires || 0
+                    nb_histoires: data.nb_histoires || 0,
+                    acces_messagerie: data.acces_messagerie === true
                   };
                 });
               }
@@ -776,7 +779,8 @@ MonHistoire.ui = {
               return {
                 id: doc.id,
                 prenom: data.prenom,
-                nb_histoires: data.nb_histoires || 0
+                nb_histoires: data.nb_histoires || 0,
+                acces_messagerie: data.acces_messagerie === true
               };
             })
             .catch(error => {
@@ -785,7 +789,8 @@ MonHistoire.ui = {
               return {
                 id: doc.id,
                 prenom: data.prenom,
-                nb_histoires: data.nb_histoires || 0
+                nb_histoires: data.nb_histoires || 0,
+                acces_messagerie: data.acces_messagerie === true
               };
             });
           
@@ -805,7 +810,7 @@ MonHistoire.ui = {
                 <span class="prenom">${result.prenom}</span>
                 <span class="quota">${result.nb_histoires}/${MonHistoire.config.MAX_HISTOIRES || 5}</span>
                 <label class="ui-checkbox-container">
-                  <input type="checkbox" class="ui-checkbox acces-messagerie-toggle" data-enfant-id="${result.id}" ${result.acces_messagerie !== false ? 'checked' : ''}>
+                  <input type="checkbox" class="ui-checkbox acces-messagerie-toggle" data-enfant-id="${result.id}" ${result.acces_messagerie === true ? 'checked' : ''}>
                   <span class="ui-checkbox-label">Accès à la messagerie</span>
                 </label>
                 <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="MonHistoire.ui.retirerProfil('${result.id}')">
