@@ -87,7 +87,16 @@ MonHistoire.core.profiles = {
     if (typeof MonHistoire.updateFooterVisibility === 'function') {
       MonHistoire.updateFooterVisibility();
     }
-    
+
+    // Mettre à jour l'affichage de l'utilisateur connecté pour
+    // que les boutons d'en-tête reflètent immédiatement
+    // les droits du nouveau profil (ex. accès à la messagerie)
+    if (MonHistoire.core &&
+        MonHistoire.core.auth &&
+        typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
+      MonHistoire.core.auth.afficherUtilisateurConnecté();
+    }
+
     // Émet un événement pour informer les autres modules
     MonHistoire.events.emit("profilChange", nouveauProfil);
     
