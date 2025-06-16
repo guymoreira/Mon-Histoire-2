@@ -456,3 +456,7 @@ Cette nouvelle architecture modulaire offre une base solide pour le développeme
 
 Les règles de sécurité Firestore destinées à la messagerie se trouvent dans le fichier `firestore.messaging.rules` à la racine du projet. Veillez à inclure ce fichier lors du déploiement sur Firebase.
 
+
+## Licence
+
+Ce projet est distribué sous la licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
