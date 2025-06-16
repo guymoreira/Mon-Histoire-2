@@ -469,6 +469,12 @@ Cette nouvelle architecture modulaire offre une base solide pour le développeme
 
 Les règles de sécurité Firestore destinées à la messagerie se trouvent dans le fichier `firestore.messaging.rules` à la racine du projet. Veillez à inclure ce fichier lors du déploiement sur Firebase.
 
+Le fichier `firestore.indexes.json` contient la définition des index composites nécessaires à l'application. Déployez-le à l'aide de la commande :
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
 
 ## Licence
 
