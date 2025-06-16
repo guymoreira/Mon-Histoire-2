@@ -341,6 +341,142 @@ MonHistoire.features.sharing = MonHistoire.features.sharing || {};
       console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
     }
   }
+
+  // ===== API publique du module sharing =====
+
+  /**
+   * Initialise les sous-modules de partage
+   */
+  function init() {
+    try {
+      if (sharingModule.storage && typeof sharingModule.storage.init === 'function') {
+        sharingModule.storage.init();
+      }
+      if (sharingModule.ui && typeof sharingModule.ui.init === 'function') {
+        sharingModule.ui.init();
+      }
+      if (sharingModule.notifications && typeof sharingModule.notifications.init === 'function') {
+        sharingModule.notifications.init();
+      }
+      if (sharingModule.realtime && typeof sharingModule.realtime.init === 'function') {
+        sharingModule.realtime.init();
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation du module sharing:", error);
+    }
+  }
+
+  /**
+   * Vérifie s'il existe des histoires partagées pour le profil actif
+   */
+  function verifierHistoiresPartagees() {
+    try {
+      if (!firebase || !firebase.auth) return;
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+
+      if (sharingModule.storage && typeof sharingModule.storage.verifierHistoiresPartageesProfilActif === 'function') {
+        sharingModule.storage.verifierHistoiresPartageesProfilActif(user)
+          .then(function() {
+            if (sharingModule.notifications) {
+              if (typeof sharingModule.notifications.mettreAJourIndicateurNotification === 'function') {
+                sharingModule.notifications.mettreAJourIndicateurNotification();
+              }
+              if (typeof sharingModule.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+                sharingModule.notifications.mettreAJourIndicateurNotificationProfilsListe();
+              }
+            }
+          })
+          .catch(function(error) {
+            console.error("Erreur lors de la vérification des histoires partagées:", error);
+          });
+      }
+
+      if (sharingModule.realtime && typeof sharingModule.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+        sharingModule.realtime.configurerEcouteurHistoiresPartagees();
+      }
+    } catch (error) {
+      console.error("Erreur dans verifierHistoiresPartagees:", error);
+    }
+  }
+
+  /**
+   * Ouvre la modale de partage
+   */
+  function ouvrirModalePartage() {
+    if (sharingModule.ui && typeof sharingModule.ui.ouvrirModalePartage === 'function') {
+      return sharingModule.ui.ouvrirModalePartage();
+    }
+  }
+
+  /**
+   * Ferme la modale de partage
+   */
+  function fermerModalePartage() {
+    if (sharingModule.ui && typeof sharingModule.ui.fermerModalePartage === 'function') {
+      return sharingModule.ui.fermerModalePartage();
+    }
+  }
+
+  /**
+   * Partage l'histoire avec le profil sélectionné
+   */
+  function partagerHistoire(type, id, prenom) {
+    if (sharingModule.storage && typeof sharingModule.storage.partagerHistoire === 'function') {
+      return sharingModule.storage.partagerHistoire(type, id, prenom, sharingModule.histoireAPartager);
+    }
+    return Promise.resolve(false);
+  }
+
+  /**
+   * Traite un partage hors ligne de la file d'attente
+   */
+  function processOfflinePartage(data) {
+    if (sharingModule.storage && typeof sharingModule.storage.processOfflinePartage === 'function') {
+      return sharingModule.storage.processOfflinePartage(data);
+    }
+    return Promise.resolve(false);
+  }
+
+  /**
+   * Indique si l'application est connectée
+   */
+  function isConnected() {
+    if (sharingModule.realtime && typeof sharingModule.realtime.isConnected === 'function') {
+      return sharingModule.realtime.isConnected();
+    }
+    return navigator.onLine && MonHistoire.state.isConnected !== false;
+  }
+
+  /**
+   * Initialise le compteur de notifications non lues
+   */
+  function initialiserCompteurNotifications(user) {
+    if (sharingModule.notifications && typeof sharingModule.notifications.initialiserCompteurNotifications === 'function') {
+      return sharingModule.notifications.initialiserCompteurNotifications(user);
+    }
+    return Promise.resolve();
+  }
+
+  /**
+   * Met à jour l'indicateur de notification principal
+   */
+  function mettreAJourIndicateurNotification() {
+    if (sharingModule.notifications && typeof sharingModule.notifications.mettreAJourIndicateurNotification === 'function') {
+      return sharingModule.notifications.mettreAJourIndicateurNotification();
+    }
+  }
+
+  // Exposer l'API
+  sharingModule.init = init;
+  sharingModule.verifierHistoiresPartagees = verifierHistoiresPartagees;
+  sharingModule.ouvrirModalePartage = ouvrirModalePartage;
+  sharingModule.fermerModalePartage = fermerModalePartage;
+  sharingModule.partagerHistoire = partagerHistoire;
+  sharingModule.processOfflinePartage = processOfflinePartage;
+  sharingModule.isConnected = isConnected;
+  sharingModule.initialiserCompteurNotifications = initialiserCompteurNotifications;
+  sharingModule.mettreAJourIndicateurNotification = mettreAJourIndicateurNotification;
   
   try {
     // Initialiser les écouteurs d'événements
