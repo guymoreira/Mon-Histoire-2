@@ -4,6 +4,26 @@
 
 "Mon Histoire" est une application web permettant aux utilisateurs de créer et partager des histoires personnalisées. Cette documentation présente la nouvelle architecture modulaire mise en place pour améliorer la maintenabilité et l'évolutivité du code.
 
+## Getting Started
+
+Pour exécuter l'application en local, vous aurez besoin de Node.js. Le projet inclut un petit serveur HTTP dans `server.js` qui sert les fichiers statiques depuis la racine du dépôt.
+
+### Installation des dépendances
+
+```bash
+npm install
+```
+
+Cette commande installe les dépendances répertoriées dans `package.json`. Le projet n'utilise pour l'instant aucune librairie externe, mais cette étape prépare l'environnement pour exécuter les scripts npm.
+
+### Démarrage du serveur de développement
+
+```bash
+npm start
+```
+
+La commande `npm start` lance `server.js` et démarre un serveur sur [http://localhost:3000](http://localhost:3000). Rendez-vous sur cette adresse dans votre navigateur pour accéder à l'application. Utilisez `Ctrl+C` dans le terminal pour arrêter le serveur.
+
 ## Architecture Modulaire
 
 L'application a été restructurée selon une architecture modulaire où chaque module est responsable d'une fonctionnalité spécifique. Cette approche offre plusieurs avantages :

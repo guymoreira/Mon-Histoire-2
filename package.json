@@ -1,0 +1,12 @@
+{
+  "name": "mon-histoire",
+  "version": "1.0.0",
+  "description": "Serveur de développement pour Mon Histoire",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
