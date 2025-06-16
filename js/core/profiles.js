@@ -139,7 +139,7 @@ MonHistoire.core.profiles = {
         type: "enfant",
         id: id,
         prenom: prenom,
-        acces_messagerie: data.acces_messagerie !== false
+        acces_messagerie: data.acces_messagerie === true
       });
     } catch (error) {
       console.error("Erreur lors du changement de profil:", error);
