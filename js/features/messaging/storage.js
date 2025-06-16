@@ -16,16 +16,40 @@ MonHistoire.features.messaging.storage = {
    * @returns {Promise<firebase.firestore.DocumentReference>}
    */
   async getOrCreateConversation(participants) {
-    const hash = participants.slice().sort().join("_");
-    const convRef = firebase.firestore().collection("conversations");
-    const existing = await convRef.where("participantsHash", "==", hash).limit(1).get();
+    const user = firebase.auth().currentUser;
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+
+    const selfKey = user ? `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}` : null;
+
+    const normalized = participants.map(p => {
+      if (p.includes(':')) return p;
+      if (user && p === user.uid && selfKey) return selfKey;
+      return `${p}:parent`;
+    });
+
+    const hash = normalized.slice().sort().join('_');
+    const convRef = firebase.firestore().collection('conversations');
+    let existing = await convRef.where('participantsHash', '==', hash).limit(1).get();
+
+    if (existing.empty) {
+      const oldHash = participants.map(p => p.split(':')[0]).sort().join('_');
+      const oldExisting = await convRef.where('participantsHash', '==', oldHash).limit(1).get();
+      if (!oldExisting.empty) {
+        await oldExisting.docs[0].ref.update({
+          participants: normalized,
+          participantsHash: hash
+        });
+        existing = oldExisting;
+      }
+    }
 
     if (!existing.empty) {
       return existing.docs[0].ref;
     }
 
     const docRef = await convRef.add({
-      participants: participants,
+      participants: normalized,
       participantsHash: hash,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -45,11 +69,16 @@ MonHistoire.features.messaging.storage = {
       return false;
     }
 
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+
+    const senderKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
+
     const messageData = {
-      senderId: user.uid,
+      senderId: senderKey,
       content: contenu,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      readBy: [user.uid],
+      readBy: [senderKey, user.uid],
       deviceId: MonHistoire.generateDeviceId(),
       version: 1
     };
@@ -94,7 +123,7 @@ MonHistoire.features.messaging.storage = {
     const ref = firebase.firestore().collection('conversations')
       .doc(conversationId).collection('messages').doc(messageId);
     await ref.update({
-      readBy: firebase.firestore.FieldValue.arrayUnion(userId)
+      readBy: firebase.firestore.FieldValue.arrayUnion(userId, userId.split(':')[0])
     });
   },
 
@@ -102,6 +131,9 @@ MonHistoire.features.messaging.storage = {
     const snap = await firebase.firestore()
       .collection('conversations').doc(conversationId)
       .collection('messages').get();
-    return snap.docs.some(d => !(d.data().readBy || []).includes(userId));
+    return snap.docs.some(d => {
+      const readBy = d.data().readBy || [];
+      return !(readBy.includes(userId) || readBy.includes(userId.split(':')[0]));
+    });
   }
 };

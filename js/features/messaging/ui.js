@@ -22,27 +22,38 @@ MonHistoire.features.messaging.ui = (function() {
   async function openConversationsModal() {
     const user = firebase.auth().currentUser;
     if (!user) return;
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
 
     const list = document.getElementById('liste-conversations');
     if (!list) return;
     list.innerHTML = '';
 
-    const snap = await firebase.firestore()
-      .collection('conversations')
-      .where('participants', 'array-contains', user.uid)
-      .orderBy('updatedAt', 'desc')
-      .get();
+    const convRef = firebase.firestore().collection('conversations');
+    const docsMap = {};
+    const snapNew = await convRef.where('participants', 'array-contains', selfKey)
+      .orderBy('updatedAt', 'desc').get();
+    snapNew.forEach(d => docsMap[d.id] = d);
+    const snapOld = await convRef.where('participants', 'array-contains', user.uid)
+      .orderBy('updatedAt', 'desc').get();
+    snapOld.forEach(d => { if (!docsMap[d.id]) docsMap[d.id] = d; });
+    const docs = Object.values(docsMap).sort((a,b) => {
+      const at = a.data().updatedAt ? a.data().updatedAt.toMillis() : 0;
+      const bt = b.data().updatedAt ? b.data().updatedAt.toMillis() : 0;
+      return bt - at;
+    });
 
-    snap.forEach(doc => {
+    docs.forEach(doc => {
       const data = doc.data();
-      const other = (data.participants || []).find(p => p !== user.uid) || '';
+      const other = (data.participants || []).find(p => p !== selfKey && p !== user.uid) || '';
       const prenom = other.split(':')[1] || other;
 
       const item = document.createElement('div');
       item.className = 'conversation-item';
       item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
 
-      messaging.storage.hasUnreadMessages(doc.id, user.uid).then(unread => {
+      messaging.storage.hasUnreadMessages(doc.id, selfKey).then(unread => {
         if (unread) item.classList.add('unread');
       });
 
@@ -72,17 +83,22 @@ MonHistoire.features.messaging.ui = (function() {
     document.getElementById('conversation-contact').textContent = prenom;
     document.getElementById('modal-conversation').classList.add('show');
 
+    const user = firebase.auth().currentUser;
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
+
     currentConversationId = id;
     unsubscribe && unsubscribe();
     unsubscribe = messaging.listenToMessages(id, msgs => {
       container.innerHTML = '';
       msgs.forEach(m => {
         const div = document.createElement('div');
-        div.className = 'message-bubble ' + (m.senderId === firebase.auth().currentUser.uid ? 'sent' : 'received');
+        div.className = 'message-bubble ' + (m.senderId.split(':')[0] === user.uid ? 'sent' : 'received');
         div.textContent = m.content;
         container.appendChild(div);
-        if (!(m.readBy || []).includes(firebase.auth().currentUser.uid)) {
-          messaging.markAsRead(id, m.id, firebase.auth().currentUser.uid);
+        if (!(m.readBy || []).includes(selfKey) && !(m.readBy || []).includes(user.uid)) {
+          messaging.markAsRead(id, m.id, selfKey);
         }
       });
       container.scrollTop = container.scrollHeight;
@@ -92,6 +108,10 @@ MonHistoire.features.messaging.ui = (function() {
   async function startNewConversation() {
     const user = firebase.auth().currentUser;
     if (!user) return;
+
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
 
     let destinataire = prompt('Identifiant du destinataire :');
     if (!destinataire) {
@@ -106,7 +126,7 @@ MonHistoire.features.messaging.ui = (function() {
     }
 
     try {
-      const ref = await messaging.getOrCreateConversation([user.uid, destinataire]);
+      const ref = await messaging.getOrCreateConversation([selfKey, destinataire]);
       closeConversationsModal();
       openConversation(ref.id, destinataire.split(':')[1] || destinataire);
     } catch (e) {
