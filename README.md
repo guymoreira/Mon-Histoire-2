@@ -4,6 +4,19 @@
 
 "Mon Histoire" est une application web permettant aux utilisateurs de créer et partager des histoires personnalisées. Cette documentation présente la nouvelle architecture modulaire mise en place pour améliorer la maintenabilité et l'évolutivité du code.
 
+## Prérequis
+
+- Node.js >= 14
+
+## Installation et démarrage
+
+```bash
+npm install
+npm start
+```
+
+Le serveur démarre sur http://localhost:3000.
+
 ## Architecture Modulaire
 
 L'application a été restructurée selon une architecture modulaire où chaque module est responsable d'une fonctionnalité spécifique. Cette approche offre plusieurs avantages :
