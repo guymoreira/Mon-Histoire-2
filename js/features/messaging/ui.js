@@ -16,6 +16,7 @@ MonHistoire.features.messaging.ui = (function() {
     document.getElementById('btn-fermer-messages')?.addEventListener('click', closeConversationsModal);
     document.getElementById('btn-fermer-conversation')?.addEventListener('click', closeConversation);
     document.getElementById('btn-envoyer-message')?.addEventListener('click', sendCurrentMessage);
+    document.getElementById('btn-nouveau-message')?.addEventListener('click', startNewConversation);
   }
 
   async function openConversationsModal() {
@@ -88,6 +89,32 @@ MonHistoire.features.messaging.ui = (function() {
     });
   }
 
+  async function startNewConversation() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    let destinataire = prompt('Identifiant du destinataire :');
+    if (!destinataire) {
+      MonHistoire.showMessageModal && MonHistoire.showMessageModal('Destinataire manquant.');
+      return;
+    }
+
+    destinataire = destinataire.trim();
+    if (!destinataire) {
+      MonHistoire.showMessageModal && MonHistoire.showMessageModal('Destinataire manquant.');
+      return;
+    }
+
+    try {
+      const ref = await messaging.getOrCreateConversation([user.uid, destinataire]);
+      closeConversationsModal();
+      openConversation(ref.id, destinataire.split(':')[1] || destinataire);
+    } catch (e) {
+      console.error('Erreur lors de la création de la conversation', e);
+      MonHistoire.showMessageModal && MonHistoire.showMessageModal("Erreur lors de la création de la conversation.");
+    }
+  }
+
   async function sendCurrentMessage() {
     const input = document.getElementById('input-message');
     if (!input || !currentConversationId) return;
@@ -103,6 +130,7 @@ MonHistoire.features.messaging.ui = (function() {
     init,
     openConversationsModal,
     closeConversationsModal,
+    startNewConversation,
     openConversation,
     closeConversation,
     sendCurrentMessage
