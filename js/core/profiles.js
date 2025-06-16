@@ -134,10 +134,12 @@ MonHistoire.core.profiles = {
       }
       
       // Le profil existe, on peut continuer
+      const data = profilDoc.data() || {};
       return this.changerProfil({
         type: "enfant",
         id: id,
-        prenom: prenom
+        prenom: prenom,
+        acces_messagerie: data.acces_messagerie !== false
       });
     } catch (error) {
       console.error("Erreur lors du changement de profil:", error);

@@ -169,6 +169,24 @@ MonHistoire.ui = {
         MonHistoire.features.sharing.fermerModalePartage();
       }
     });
+
+    // Bouton Mes messages
+    document.getElementById("my-messages-button")?.addEventListener("click", () => {
+      if (MonHistoire.features && MonHistoire.features.messaging && MonHistoire.features.messaging.ui) {
+        MonHistoire.features.messaging.ui.openConversationsModal();
+      }
+    });
+
+    // Boutons de fermeture des modales de messagerie
+    document.getElementById("btn-fermer-messages")?.addEventListener("click", () => {
+      MonHistoire.features.messaging.ui.closeConversationsModal();
+    });
+    document.getElementById("btn-fermer-conversation")?.addEventListener("click", () => {
+      MonHistoire.features.messaging.ui.closeConversation();
+    });
+    document.getElementById("btn-envoyer-message")?.addEventListener("click", () => {
+      MonHistoire.features.messaging.ui.sendCurrentMessage();
+    });
     
     
     // Bouton Connexion
@@ -786,11 +804,26 @@ MonHistoire.ui = {
               li.innerHTML = `
                 <span class="prenom">${result.prenom}</span>
                 <span class="quota">${result.nb_histoires}/${MonHistoire.config.MAX_HISTOIRES || 5}</span>
+                <label class="ui-checkbox-container">
+                  <input type="checkbox" class="ui-checkbox acces-messagerie-toggle" data-enfant-id="${result.id}" ${result.acces_messagerie !== false ? 'checked' : ''}>
+                  <span class="ui-checkbox-label">Accès à la messagerie</span>
+                </label>
                 <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="MonHistoire.ui.retirerProfil('${result.id}')">
                 <button type="button" class="btn-edit" onclick="MonHistoire.ui.modifierProfil('${result.id}', '${result.prenom}')">✏️</button>
               `;
-              
+
               liste.appendChild(li);
+
+              li.querySelector('.acces-messagerie-toggle')?.addEventListener('change', (e) => {
+                if (!MonHistoire.state.profilsEnfantModifies) {
+                  MonHistoire.state.profilsEnfantModifies = [];
+                }
+                MonHistoire.state.profilsEnfantModifies.push({
+                  action: 'messagerie',
+                  id: result.id,
+                  value: e.target.checked
+                });
+              });
             });
             
             // Masquer bouton d'ajout si 2 profils ou plus
@@ -923,11 +956,14 @@ MonHistoire.ui = {
       
       if (modif.action === "modifier") {
         batch.update(ref.doc(modif.id), { prenom: modif.nouveauPrenom });
-        
+
         // Log de l'activité
         if (MonHistoire.core && MonHistoire.core.auth) {
           MonHistoire.core.auth.logActivite("modification_prenom_profil", { id_enfant: modif.id });
         }
+      }
+      if (modif.action === "messagerie") {
+        batch.update(ref.doc(modif.id), { acces_messagerie: modif.value });
       }
     });
     
