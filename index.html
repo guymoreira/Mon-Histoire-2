@@ -77,6 +77,7 @@
         <button class="ui-button ui-button--primary ui-button--medium" id="create-button" data-screen="formulaire">Créer une histoire</button>
         <button class="ui-button ui-button--secondary ui-button--medium" id="login-button" data-screen="connexion">Me connecter</button>
         <button class="ui-button ui-button--secondary ui-button--medium ui-hidden" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
+        <button class="ui-button ui-button--secondary ui-button--medium ui-hidden" id="my-messages-button">Mes messages</button>
       </div>
     </div>
     <div id="user-icon" class="ui-hidden"></div>
@@ -460,6 +461,27 @@
       <button class="ui-button ui-button--secondary" id="btn-annuler-renommer-profil">Annuler</button>
       <button class="ui-button ui-button--primary" id="btn-confirmer-renommer-profil">Valider</button>
     </div>
+</div>
+</div>
+
+<div class="ui-modal" id="modal-messages">
+  <div class="ui-modal-content ui-modal-content--medium ui-card--cream">
+    <h3 class="ui-text-center">Mes messages</h3>
+    <div id="liste-conversations"></div>
+    <button id="btn-nouveau-message" class="ui-button ui-button--primary ui-mt-3">+ Nouveau message</button>
+    <button id="btn-fermer-messages" class="ui-button ui-button--secondary ui-mt-3">Fermer</button>
+  </div>
+</div>
+
+<div class="ui-modal" id="modal-conversation">
+  <div class="ui-modal-content ui-modal-content--medium ui-card--cream" style="display:flex; flex-direction:column;">
+    <h3 id="conversation-contact" class="ui-text-center"></h3>
+    <div id="conversation-messages"></div>
+    <div id="zone-saisie-message">
+      <input id="input-message" class="ui-input" type="text" placeholder="Ton message..." />
+      <button id="btn-envoyer-message" class="ui-button ui-button--primary">Envoyer</button>
+    </div>
+    <button id="btn-fermer-conversation" class="ui-button ui-button--secondary ui-mt-3">Fermer</button>
   </div>
 </div>
 

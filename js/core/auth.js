@@ -170,6 +170,11 @@ MonHistoire.core.auth = {
     document.getElementById("user-icon").classList.remove("ui-hidden");
     document.getElementById("login-button").classList.add("ui-hidden");
     document.getElementById("my-stories-button").classList.remove("ui-hidden");
+    if (MonHistoire.state.profilActif.type === "enfant" && MonHistoire.state.profilActif.acces_messagerie === false) {
+      document.getElementById("my-messages-button").classList.add("ui-hidden");
+    } else {
+      document.getElementById("my-messages-button").classList.remove("ui-hidden");
+    }
 
     // → Si un profil enfant est actif, on court-circuite tout :
     if (MonHistoire.state.profilActif.type === "enfant") {
@@ -209,6 +214,7 @@ MonHistoire.core.auth = {
     document.getElementById("user-icon").classList.add("ui-hidden");
     document.getElementById("login-button").classList.remove("ui-hidden");
     document.getElementById("my-stories-button").classList.add("ui-hidden");
+    document.getElementById("my-messages-button").classList.add("ui-hidden");
   },
   
   // Ouvre la modale de déconnexion

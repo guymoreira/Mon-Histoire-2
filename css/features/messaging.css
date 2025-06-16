@@ -1,0 +1,59 @@
+/* css/features/messaging.css */
+
+#modal-messages .conversation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff7eb;
+  border-radius: 12px;
+  padding: 0.6em 1em;
+  margin-bottom: 0.5em;
+  cursor: pointer;
+}
+
+#modal-messages .conversation-item.unread {
+  font-weight: bold;
+}
+
+#modal-conversation {
+  display: flex;
+  flex-direction: column;
+}
+
+#conversation-messages {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding: 1em 0;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 0.5em 0.8em;
+  margin: 0.4em;
+  border-radius: 16px;
+  line-height: 1.4;
+}
+
+.message-bubble.sent {
+  background: #79d4e7;
+  color: #395872;
+  margin-left: auto;
+}
+
+.message-bubble.received {
+  background: #d5b8f6;
+  color: #5c4683;
+  margin-right: auto;
+}
+
+#zone-saisie-message {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+
+#zone-saisie-message input {
+  flex: 1;
+}
+
