@@ -11,6 +11,7 @@ Ce guide explique comment utiliser le système UI standardisé de l'application 
    - [Modales](#modales)
    - [Formulaires](#formulaires)
    - [Notifications](#notifications)
+   - [Messagerie](#messagerie)
 3. [Manipulation via JavaScript](#manipulation-via-javascript)
 4. [Extension du système](#extension-du-système)
 5. [Bonnes pratiques](#bonnes-pratiques)
@@ -247,6 +248,33 @@ Le module JavaScript `features/stories/notation.js` expose les fonctions suivant
 - `afficherNote(id)` pour lire la note depuis Firestore et mettre à jour l'affichage.
 - `bindNotation(id)` pour enregistrer la note lors du clic sur une étoile.
 - `reset()` pour masquer le bloc et désélectionner les étoiles lors de la génération d'une nouvelle histoire.
+
+### Messagerie
+
+La messagerie fournit des classes pour l'affichage des conversations et des messages.
+
+- `conversation-item` : élément d'une liste de conversations.
+- `conversation-item.unread` : conversation avec messages non lus.
+- `message-bubble.sent` et `message-bubble.received` : bulles de messages envoyés ou reçus.
+
+Exemple minimal pour déclencher l'ouverture des conversations :
+
+```html
+<button id="my-messages-button" class="ui-button ui-button--primary">Mes messages</button>
+<script>
+  // Après chargement des modules messaging
+  MonHistoire.features.messaging.ui.init();
+</script>
+```
+
+Bloc de saisie pour envoyer un message :
+
+```html
+<div id="zone-saisie-message">
+  <input id="input-message" class="ui-input" type="text" placeholder="Ton message...">
+  <button id="btn-envoyer-message" class="ui-button ui-button--primary">Envoyer</button>
+</div>
+```
 
 ## Manipulation via JavaScript
 
