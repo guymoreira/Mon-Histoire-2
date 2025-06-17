@@ -941,6 +941,16 @@ MonHistoire.ui = {
       return;
     }
     
+    // Demander confirmation si des suppressions sont prévues
+    const hasDeletion = MonHistoire.state.profilsEnfantModifies.some(m => m.action === "supprimer");
+    if (hasDeletion) {
+      const confirmMessage =
+        "Supprimer ce profil effacera définitivement toutes les discussions associées. Continuer ?";
+      if (!confirm(confirmMessage)) {
+        return; // Annuler si l'utilisateur ne confirme pas
+      }
+    }
+
     // Créer un batch pour les opérations Firestore
     const batch = firebase.firestore().batch();
     const ref = firebase.firestore().collection("users").doc(user.uid).collection("profils_enfant");
