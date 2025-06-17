@@ -458,7 +458,12 @@
       btnLogout.addEventListener('click', function() {
         MonHistoire.fermerLogoutModal();
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-          MonHistoire.modules.user.auth.logout();
+          const result = MonHistoire.modules.user.auth.logoutUser();
+          if (result && typeof result.catch === 'function') {
+            result.catch((error) => {
+              console.error('Erreur lors de la déconnexion:', error);
+            });
+          }
         }
       });
     }
