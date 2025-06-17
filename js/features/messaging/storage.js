@@ -64,6 +64,7 @@ MonHistoire.features.messaging.storage = {
    */
   async sendMessage(conversationId, contenu) {
     const user = firebase.auth().currentUser;
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Envoi message', { conversationId });
     if (!user) {
       MonHistoire.showMessageModal && MonHistoire.showMessageModal("Tu dois être connecté pour envoyer un message.");
       return false;
@@ -104,6 +105,7 @@ MonHistoire.features.messaging.storage = {
     if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
       MonHistoire.events.emit('messageCreated', { conversationId });
     }
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Message envoyé', { conversationId });
     return true;
   },
 
@@ -111,6 +113,7 @@ MonHistoire.features.messaging.storage = {
   async processOfflineMessage(data) {
     try {
       const { conversationId, messageData } = data;
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Traitement message hors ligne', { conversationId });
       await firebase.firestore()
         .collection('conversations').doc(conversationId)
         .collection('messages').add({ ...messageData, processedOffline: true });
@@ -121,9 +124,14 @@ MonHistoire.features.messaging.storage = {
       if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
         MonHistoire.events.emit('messageCreated', { conversationId });
       }
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Message hors ligne traité', { conversationId });
       return true;
     } catch (e) {
-      console.error("Erreur lors du traitement du message hors ligne", e);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.error('MESSAGING', 'Erreur lors du traitement du message hors ligne', e);
+      } else {
+        console.error("Erreur lors du traitement du message hors ligne", e);
+      }
       return false;
     }
   },

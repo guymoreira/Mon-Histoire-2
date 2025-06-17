@@ -49,9 +49,17 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
           messaging.notifications.markConversationRead(...args);
       }
 
-      console.log('Module de messagerie initialisé');
+      if (MonHistoire.logger) {
+        MonHistoire.logger.info('MESSAGING', 'Module de messagerie initialisé');
+      } else {
+        console.log('Module de messagerie initialisé');
+      }
     } catch (e) {
-      console.error('Erreur lors de l\'initialisation de la messagerie', e);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.error('MESSAGING', "Erreur lors de l'initialisation de la messagerie", e);
+      } else {
+        console.error('Erreur lors de l\'initialisation de la messagerie', e);
+      }
     }
   };
 })();
