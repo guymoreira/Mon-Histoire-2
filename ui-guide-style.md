@@ -13,6 +13,7 @@ Ce document présente le système UI standardisé pour l'application "Mon Histoi
    - [Formulaires](#formulaires)
    - [Notifications](#notifications)
    - [Notation](#notation)
+   - [Messagerie](#messagerie)
 4. [Utilisation](#utilisation)
 5. [Migration](#migration)
 
@@ -199,6 +200,49 @@ La classe `selected` est appliquée à l'étoile correspondant à la note enregi
 Lorsqu'une nouvelle histoire est générée, `generator.js` appelle `notation.reset()` pour masquer ce bloc et revenir à des étoiles non sélectionnées.
 
 Le module `features/stories/notation.js` propose également `afficherNote(id)` pour charger la note existante et `bindNotation(id)` pour enregistrer les clics sur les étoiles.
+
+### Messagerie
+
+L'interface de messagerie repose sur plusieurs classes dédiées :
+
+- `conversation-item` : élément représentant une conversation dans la liste.
+- `conversation-item.unread` : conversation contenant des messages non lus.
+- `conversation-name` : nom affiché dans chaque élément de conversation.
+- `message-bubble` : bulle de message dans une conversation, avec les modificateurs `sent` ou `received`.
+
+Les conversations et les messages sont affichés dans des modales classiques (`ui-modal`).
+
+#### Exemple
+
+```html
+<!-- Bouton pour ouvrir la liste des conversations -->
+<button id="my-messages-button" class="ui-button ui-button--primary">Mes messages</button>
+
+<!-- Liste des conversations -->
+<div id="modal-messages" class="ui-modal">
+  <div class="ui-modal-content ui-modal-content--medium ui-card--cream">
+    <div id="liste-conversations">
+      <div class="conversation-item unread">
+        <strong class="conversation-name">Alice</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fenêtre de conversation -->
+<div id="modal-conversation" class="ui-modal">
+  <div class="ui-modal-content ui-modal-content--medium ui-card--cream">
+    <div id="conversation-messages">
+      <div class="message-bubble received">Bonjour&nbsp;!</div>
+      <div class="message-bubble sent">Salut&nbsp;!</div>
+    </div>
+    <div id="zone-saisie-message">
+      <input id="input-message" class="ui-input" type="text" placeholder="Ton message..." />
+      <button id="btn-envoyer-message" class="ui-button ui-button--primary">Envoyer</button>
+    </div>
+  </div>
+</div>
+```
 
 ## Utilisation
 
