@@ -123,9 +123,9 @@ function logoutUser() {
 }
 
 function afficherUtilisateurConnecté() {
-  document.getElementById("user-icon").classList.remove("hidden");
-  document.getElementById("login-button").classList.add("hidden");
-  document.getElementById("my-stories-button").classList.remove("hidden");
+  document.getElementById("user-icon").classList.remove("ui-hidden");
+  document.getElementById("login-button").classList.add("ui-hidden");
+  document.getElementById("my-stories-button").classList.remove("ui-hidden");
 
   // → Si un profil enfant était actif, on court-circuite tout :
   if (profilActif.type === "enfant") {
@@ -161,9 +161,9 @@ function afficherUtilisateurConnecté() {
 }
 
 function afficherUtilisateurDéconnecté() {
-  document.getElementById("user-icon").classList.add("hidden");
-  document.getElementById("login-button").classList.remove("hidden");
-  document.getElementById("my-stories-button").classList.add("hidden");
+  document.getElementById("user-icon").classList.add("ui-hidden");
+  document.getElementById("login-button").classList.remove("ui-hidden");
+  document.getElementById("my-stories-button").classList.add("ui-hidden");
 }
 
 // ────── Nouvelle fonction ouvrirLogoutModal() ──────
