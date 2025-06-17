@@ -226,19 +226,19 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |                                         MODULES FEATURES (7)                                                  |
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
-|  +------------------+     +-------------------+     +------------------+     +------------------+            |
-|  | features/stories |<--->| features/sharing  |<--->| features/export  |<--->| features/audio   |            |
-|  | - generator      |     | - init()          |     | - init()         |     | - init()         |            |
-|  |   - init()       |     | - notifications   |     | - exporterPDF()  |     | - lireHistoire() |            |
-|  |   - genererHist()|     |   - init()        |     | - preparerPDF()  |     | - pauserLecture()|            |
-|  | - display        |     |   - verifierNotif |     |                  |     |                  |            |
-|  |   - init()       |     | - storage         |     |                  |     |                  |            |
-|  |   - afficherHist |     |   - init()        |     |                  |     |                  |            |
-|  | - management     |     |   - sauvegarder   |     |                  |     |                  |            |
-|  |   - init()       |     | - ui              |     |                  |     |                  |            |
-|  |   - sauvegarder()|     |   - init()        |     |                  |     |                  |            |
-|  |   - supprimer()  |     |   - afficherUI    |     |                  |     |                  |            |
-|  +------------------+     +-------------------+     +------------------+     +------------------+            |
+|  +------------------+     +-------------------+     +------------------+     +------------------+     +-------------------+            |
+|  | features/stories |<--->| features/sharing  |<--->| features/export  |<--->| features/audio   |<--->| features/messaging |            |
+|  | - generator      |     | - init()          |     | - init()         |     | - init()         |     | - storage         |            |
+|  |   - init()       |     | - notifications   |     | - exporterPDF()  |     | - lireHistoire() |     |   - init()        |            |
+|  |   - genererHist()|     |   - init()        |     | - preparerPDF()  |     | - pauserLecture()|     | - realtime        |            |
+|  | - display        |     |   - verifierNotif |     |                  |     |                  |     |   - init()        |            |
+|  |   - init()       |     | - storage         |     |                  |     |                  |     | - ui              |            |
+|  |   - afficherHist |     |   - init()        |     |                  |     |                  |     |   - init()        |            |
+|  | - management     |     |   - sauvegarder   |     |                  |     |                  |     | - notifications   |            |
+|  |   - init()       |     | - ui              |     |                  |     |                  |     |   - init()        |            |
+|  |   - sauvegarder()|     |   - init()        |     |                  |     |                  |     |                  |            |
+|  |   - supprimer()  |     |   - afficherUI    |     |                  |     |                  |     |                  |            |
+|  +------------------+     +-------------------+     +------------------+     +------------------+     +-------------------+            |
 |                                                                                                              |
 |  +------------------+                                                                                        |
 |  | features/cookies |                                                                                        |
