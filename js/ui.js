@@ -170,22 +170,6 @@ MonHistoire.ui = {
       }
     });
 
-    // Bouton Mes messages
-    document.getElementById("my-messages-button")?.addEventListener("click", () => {
-      if (MonHistoire.features && MonHistoire.features.messaging && MonHistoire.features.messaging.ui) {
-        MonHistoire.features.messaging.ui.openConversationsModal();
-      }
-    });
-
-    // Boutons de fermeture des modales de messagerie
-    document.getElementById("btn-fermer-messages")?.addEventListener("click", () => {
-      MonHistoire.features.messaging.ui.closeConversationsModal();
-    });
-    document.getElementById("btn-fermer-conversation")?.addEventListener("click", () => {
-      MonHistoire.features.messaging.ui.closeConversation();
-    });
-    
-    
     // Bouton Connexion
     document.getElementById("login-button")?.addEventListener("click", () => {
       if (MonHistoire.core && MonHistoire.core.navigation) {
