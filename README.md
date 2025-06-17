@@ -17,6 +17,14 @@ npm start
 
 Le serveur démarre sur http://localhost:3000.
 
+## Tests
+
+```bash
+npm test
+```
+
+Les tests utilisent [Jest](https://jestjs.io/). Aucune configuration particulière n'est nécessaire.
+
 ## Architecture Modulaire
 
 L'application a été restructurée selon une architecture modulaire où chaque module est responsable d'une fonctionnalité spécifique. Cette approche offre plusieurs avantages :

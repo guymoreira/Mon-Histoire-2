@@ -34,8 +34,8 @@ MonHistoire.features.messaging.ui = (function() {
       return prenom;
     } catch (e) {
       console.error('Erreur lors de la récupération du prénom', e);
-      prenomCache.set(key, part);
-      return part;
+      prenomCache.set(key, 'Inconnu');
+      return 'Inconnu';
     }
   }
 
@@ -240,6 +240,10 @@ MonHistoire.features.messaging.ui = (function() {
   }
 
   const messaging = MonHistoire.features.messaging;
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { fetchPrenom };
+  }
 
   return {
     init,
