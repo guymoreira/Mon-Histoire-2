@@ -64,9 +64,12 @@ MonHistoire.features.messaging.notifications = (function() {
 
       const convRef = firebase.firestore().collection('conversations');
       const docsMap = {};
-      const snapNew = await convRef.where('participants', 'array-contains', selfKey).get();
+      // Lancement concurrent des deux requêtes Firestore pour optimiser le temps d'attente
+      const [snapNew, snapOld] = await Promise.all([
+        convRef.where('participants', 'array-contains', selfKey).get(),
+        convRef.where('participants', 'array-contains', user.uid).get()
+      ]);
       snapNew.forEach(d => docsMap[d.id] = d);
-      const snapOld = await convRef.where('participants', 'array-contains', user.uid).get();
       snapOld.forEach(d => { if (!docsMap[d.id]) docsMap[d.id] = d; });
       const convDocs = Object.values(docsMap);
 
