@@ -107,3 +107,8 @@
   font-size: 11px;
 }
 
+/* Permet au badge de notification de se positionner correctement */
+#my-messages-button {
+  position: relative;
+}
+
