@@ -77,3 +77,13 @@
   overflow-y: auto;
 }
 
+#modal-messages .ui-modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#liste-conversations {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
