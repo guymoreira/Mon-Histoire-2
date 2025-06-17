@@ -9,6 +9,27 @@ MonHistoire.features.messaging.ui = (function() {
   let currentConversationId = null;
   let unsubscribe = null;
 
+  async function fetchPrenom(key) {
+    const [uid, part] = key.split(':');
+    if (!uid || !part) return key;
+    try {
+      if (part === 'parent') {
+        const snap = await firebase.firestore().collection('users').doc(uid).get();
+        return snap.exists && snap.data().prenom ? snap.data().prenom : 'Parent';
+      }
+      const snap = await firebase.firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('profils_enfant')
+        .doc(part)
+        .get();
+      return snap.exists && snap.data().prenom ? snap.data().prenom : part;
+    } catch (e) {
+      console.error('Erreur lors de la récupération du prénom', e);
+      return part;
+    }
+  }
+
   function init() {
     console.log('Module UI messaging initialisé');
 
@@ -48,18 +69,24 @@ MonHistoire.features.messaging.ui = (function() {
     docs.forEach(doc => {
       const data = doc.data();
       const other = (data.participants || []).find(p => p !== selfKey && p !== user.uid) || '';
-      const prenom = other.split(':')[1] || other;
 
       const item = document.createElement('div');
       item.className = 'conversation-item';
-      item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
+      item.textContent = '... \u2013 ' + (data.lastMessage || '');
+      list.appendChild(item);
 
       messaging.storage.hasUnreadMessages(doc.id, selfKey).then(unread => {
         if (unread) item.classList.add('unread');
       });
 
-      item.onclick = () => openConversation(doc.id, prenom);
-      list.appendChild(item);
+      fetchPrenom(other).then(prenom => {
+        item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
+        item.onclick = () => openConversation(doc.id, prenom);
+      }).catch(() => {
+        const prenom = other.split(':')[1] || other;
+        item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
+        item.onclick = () => openConversation(doc.id, prenom);
+      });
     });
 
     document.getElementById('modal-messages').classList.add('show');
