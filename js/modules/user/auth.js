@@ -367,9 +367,9 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
    * Affiche l'utilisateur connecté
    */
   function afficherUtilisateurConnecté() {
-    document.getElementById("user-icon").classList.remove("hidden");
-    document.getElementById("login-button").classList.add("hidden");
-    document.getElementById("my-stories-button").classList.remove("hidden");
+    document.getElementById("user-icon").classList.remove("ui-hidden");
+    document.getElementById("login-button").classList.add("ui-hidden");
+    document.getElementById("my-stories-button").classList.remove("ui-hidden");
 
     // → Si un profil enfant est actif, on court-circuite tout :
     if (MonHistoire.modules && MonHistoire.modules.user && 
@@ -414,9 +414,9 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       const loginButton = document.getElementById("login-button");
       const myStoriesButton = document.getElementById("my-stories-button");
       
-      if (userIcon) userIcon.classList.add("hidden");
-      if (loginButton) loginButton.classList.remove("hidden");
-      if (myStoriesButton) myStoriesButton.classList.add("hidden");
+      if (userIcon) userIcon.classList.add("ui-hidden");
+      if (loginButton) loginButton.classList.remove("ui-hidden");
+      if (myStoriesButton) myStoriesButton.classList.add("ui-hidden");
       
       console.log("Interface utilisateur mise à jour pour l'utilisateur déconnecté");
     } catch (error) {
