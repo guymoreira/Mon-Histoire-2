@@ -534,6 +534,11 @@ Le fichier `firestore.indexes.json` contient la définition des index composites
 firebase deploy --only firestore:indexes
 ```
 
+## Vie privée & RGPD
+
+Les messages que vous échangez et les métadonnées associées (participants, dates et identifiants de profil) sont stockés dans Firebase Firestore avec votre consentement afin de conserver l'historique des conversations. Vous pouvez en demander la suppression à tout moment ou effacer ces données en supprimant un profil.
+
+Les préférences de cookies sont gérées par le module `features/cookies.js`. Vous trouverez le texte complet de la politique de confidentialité et des cookies dans le fichier `index.html`.
 
 ## Licence
 
