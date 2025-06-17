@@ -34,8 +34,9 @@ MonHistoire.features.messaging.ui = (function() {
       return prenom;
     } catch (e) {
       console.error('Erreur lors de la récupération du prénom', e);
-      prenomCache.set(key, part);
-      return part;
+      // Use a placeholder when fetching the name fails
+      prenomCache.set(key, 'Inconnu');
+      return 'Inconnu';
     }
   }
 
