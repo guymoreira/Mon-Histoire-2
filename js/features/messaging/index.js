@@ -19,6 +19,9 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
       if (messaging.ui && typeof messaging.ui.init === 'function') {
         messaging.ui.init();
       }
+      if (messaging.notifications && typeof messaging.notifications.init === 'function') {
+        messaging.notifications.init();
+      }
 
       // Exposer les fonctions principales si non présentes
       if (!messaging.getOrCreateConversation) {
@@ -40,6 +43,10 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
       if (!messaging.hasUnreadMessages) {
         messaging.hasUnreadMessages = (...args) =>
           messaging.storage.hasUnreadMessages(...args);
+      }
+      if (!messaging.markConversationRead) {
+        messaging.markConversationRead = (...args) =>
+          messaging.notifications.markConversationRead(...args);
       }
 
       console.log('Module de messagerie initialisé');
