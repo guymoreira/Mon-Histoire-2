@@ -97,7 +97,7 @@ MonHistoire.features.messaging.ui = (function() {
         item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
         item.onclick = () => openConversation(doc.id, prenom);
       }).catch(() => {
-        const prenom = other.split(':')[1] || other;
+        const prenom = 'Inconnu';
         item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
         item.onclick = () => openConversation(doc.id, prenom);
       });
