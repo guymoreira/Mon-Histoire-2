@@ -26,6 +26,7 @@ MonHistoire.features.messaging.notifications = (function() {
         }
       });
       MonHistoire.events.on('messageCreated', recalculerMessagesNonLus);
+      MonHistoire.events.on('messageReceived', recalculerMessagesNonLus);
     }
 
     // Recalcul initial si l'utilisateur est déjà authentifié
