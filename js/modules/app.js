@@ -620,29 +620,37 @@ MonHistoire.modules = MonHistoire.modules || {};
       MonHistoire.showConfirmModal("Êtes-vous sûr de vouloir vous déconnecter ?")
         .then(confirmed => {
           if (confirmed && MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-            MonHistoire.modules.user.auth.logout()
-              .then(() => {
-                console.log("Déconnexion réussie");
-              })
-              .catch(error => {
-                console.error("Erreur lors de la déconnexion:", error);
-                
-                if (MonHistoire.showError) {
-                  MonHistoire.showError("Une erreur est survenue lors de la déconnexion.");
-                }
-              });
+            const result = MonHistoire.modules.user.auth.logoutUser();
+
+            if (result && typeof result.then === 'function') {
+              result
+                .then(() => {
+                  console.log("Déconnexion réussie");
+                })
+                .catch(error => {
+                  console.error("Erreur lors de la déconnexion:", error);
+
+                  if (MonHistoire.showError) {
+                    MonHistoire.showError("Une erreur est survenue lors de la déconnexion.");
+                  }
+                });
+            }
           }
         });
     } else if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
       if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-        MonHistoire.modules.user.auth.logout()
-          .then(() => {
-            console.log("Déconnexion réussie");
-          })
-          .catch(error => {
-            console.error("Erreur lors de la déconnexion:", error);
-            alert("Une erreur est survenue lors de la déconnexion.");
-          });
+        const result = MonHistoire.modules.user.auth.logoutUser();
+
+        if (result && typeof result.then === 'function') {
+          result
+            .then(() => {
+              console.log("Déconnexion réussie");
+            })
+            .catch(error => {
+              console.error("Erreur lors de la déconnexion:", error);
+              alert("Une erreur est survenue lors de la déconnexion.");
+            });
+        }
       }
     }
   }
