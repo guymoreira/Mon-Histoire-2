@@ -922,7 +922,7 @@ MonHistoire.ui = {
   },
   
   // Enregistre les modifications des profils enfants
-  enregistrerModificationsProfils(continueWithParentProfile = false) {
+  async enregistrerModificationsProfils(continueWithParentProfile = false) {
     const user = firebase.auth().currentUser;
     if (!user) return;
     
@@ -944,12 +944,42 @@ MonHistoire.ui = {
     // Créer un batch pour les opérations Firestore
     const batch = firebase.firestore().batch();
     const ref = firebase.firestore().collection("users").doc(user.uid).collection("profils_enfant");
-    
+
+    const convRef = firebase.firestore().collection("conversations");
+    const convDeletionPromises = [];
+
     // Appliquer les modifications
     MonHistoire.state.profilsEnfantModifies.forEach(modif => {
       if (modif.action === "supprimer") {
         batch.delete(ref.doc(modif.id));
-        
+
+        // Rechercher les conversations liées au profil supprimé
+        // (nouveau format "uid:id" ou ancien format ne contenant que l'uid)
+        const participantKey = `${user.uid}:${modif.id}`;
+        convDeletionPromises.push(
+          Promise.all([
+            convRef.where("participants", "array-contains", participantKey).get(),
+            convRef.where("participants", "array-contains", user.uid).get()
+          ]).then(([snapNew, snapOld]) => {
+            const docs = {};
+            snapNew.forEach(d => docs[d.id] = d.ref);
+            snapOld.forEach(d => docs[d.id] = d.ref);
+
+            const deletes = Object.values(docs).map(async dref => {
+              // Supprimer tous les messages de la conversation
+              const messagesSnap = await dref.collection("messages").get();
+              if (!messagesSnap.empty) {
+                const delBatch = firebase.firestore().batch();
+                messagesSnap.forEach(m => delBatch.delete(m.ref));
+                await delBatch.commit();
+              }
+              // Supprimer la conversation elle-même
+              await dref.delete();
+            });
+            return Promise.all(deletes);
+          })
+        );
+
         // Log de l'activité
         if (MonHistoire.core && MonHistoire.core.auth) {
           MonHistoire.core.auth.logActivite("suppression_profil_enfant", { id_enfant: modif.id });
@@ -968,7 +998,11 @@ MonHistoire.ui = {
         batch.update(ref.doc(modif.id), { acces_messagerie: modif.value });
       }
     });
-    
+
+    // Supprimer les conversations associées (messages et document)
+    // avant de valider le batch
+    await Promise.all(convDeletionPromises);
+
     // Exécuter le batch
     batch.commit().then(() => {
       // Réinitialiser les modifications
