@@ -6,7 +6,7 @@
   align-items: center;
   background: #fff7eb;
   border-radius: 12px;
-  padding: 0.6em 1em;
+  padding: 0.6em 2.5em 0.6em 1em;
   margin-bottom: 0.5em;
   cursor: pointer;
   position: relative;
@@ -100,8 +100,9 @@
 }
 
 .conversation-item .notification-indicator {
-  top: -4px;
-  right: -4px;
+  top: 50%;
+  right: 0.5em;
+  transform: translateY(-50%);
   width: 16px;
   height: 16px;
   font-size: 11px;
