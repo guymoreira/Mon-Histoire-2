@@ -100,6 +100,12 @@ css/
 - **notifications.js** : Gestion des notifications de partage
 - **storage.js** : Stockage des données de partage
 
+### Modules de Messagerie (messaging)
+
+- **storage.js** : Gestion des conversations et envoi des messages via Firestore
+- **realtime.js** : Écoute en temps réel des nouveaux messages
+- **ui.js** : Affichage de la liste des conversations et de la fenêtre de discussion
+
 ### Système de notation des histoires
 
 La fonctionnalité de notation permet aux utilisateurs d'évaluer une histoire en sélectionnant de 1 à 5 étoiles. Le bloc de notation est affiché dans l'écran de résultat et la note est enregistrée dans Firestore. Le module `notation.js` fournit les méthodes :
@@ -107,6 +113,44 @@ La fonctionnalité de notation permet aux utilisateurs d'évaluer une histoire e
 - `afficherNote(id)` : lit la note depuis Firestore et met à jour l'affichage.
 - `bindNotation(id)` : ajoute les événements de clic sur les étoiles pour sauvegarder la note.
 - `reset()` : réinitialise l'affichage (étoiles non sélectionnées et bloc masqué).
+
+## Messagerie
+
+La messagerie permet aux utilisateurs parent et enfant de discuter en toute sécurité.
+Elle s'appuie sur trois modules :
+
+- **storage.js** : accès à Firestore pour créer ou récupérer une conversation et enregistrer les messages.
+- **realtime.js** : mise en place des écouteurs en temps réel sur les messages.
+- **ui.js** : affichage des conversations et des bulles de messages dans l'interface.
+
+### API principale
+
+```javascript
+messaging.getOrCreateConversation(participants);
+messaging.sendMessage(conversationId, contenu);
+messaging.listenToMessages(conversationId, cb);
+messaging.markAsRead(conversationId, messageId, userKey);
+messaging.hasUnreadMessages(conversationId, userKey);
+```
+
+### Schéma Firestore
+
+```
+conversations
+  └─ {conversationId}
+       ├─ participants: [uid:type]
+       ├─ participantsHash: string
+       ├─ lastMessage: string
+       ├─ createdAt / updatedAt
+       └─ messages
+            └─ {messageId}
+                 ├─ senderId: uid:type
+                 ├─ content: string
+                 ├─ createdAt: timestamp
+                 └─ readBy: [uid:type]
+```
+
+Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les index nécessaires dans `firestore.indexes.json`.
 
 ## Schéma d'Architecture Détaillé
 
