@@ -31,6 +31,7 @@ L'application a été restructurée selon une architecture modulaire où chaque 
 ```
 js/
 ├── index.js                  # Point d'entrée principal
+├── app.js                   # Noyau de l'application (objet global)
 ├── modules/                  # Modules de l'application
 │   ├── core/                 # Modules de base
 │   │   ├── config.js         # Configuration de l'application
@@ -204,7 +205,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  +----------------------------------------------------------+                                                |
-|  |                         app.js (5)                        |                                                |
+|  |                         js/app.js (5)                        |                                                |
 |  |                                                          |                                                |
 |  |  +----------------+    +-------------------+             |                                                |
 |  |  | MonHistoire.   |<-->| MonHistoire.      |             |                                                |
@@ -305,10 +306,10 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  1. Événements DOM                                                                                           |
-|     DOMContentLoaded → index.js → app.js:init() → initialisation séquentielle                                |
+|     DOMContentLoaded → index.js → js/app.js:init() → initialisation séquentielle                                |
 |                                                                                                              |
 |  2. Événements d'authentification                                                                            |
-|     firebase.auth().onAuthStateChanged → app.js → core/auth.js → features/stories/management.js              |
+|     firebase.auth().onAuthStateChanged → js/app.js → core/auth.js → features/stories/management.js              |
 |                                                                                                              |
 |  3. Événements de navigation                                                                                 |
 |     UI (click) → ui.js → core/navigation.js:showScreen() → MonHistoire.state.currentScreen                   |
@@ -323,7 +324,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |     UI (click) → ui.js → core/profiles.js → MonHistoire.events.emit("profilChange") → features/sharing       |
 |                                                                                                              |
 |  7. Événements de connexion/déconnexion                                                                      |
-|     Network → app.js:checkConnectionState() → MonHistoire.events.emit("connectionStateChanged")              |
+|     Network → js/app.js:checkConnectionState() → MonHistoire.events.emit("connectionStateChanged")              |
 |                                                                                                              |
 +--------------------------------------------------------------------------------------------------------------+
 
@@ -347,7 +348,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |  4. common.js - Utilitaires communs                                                                          |
 |     - Fonctions helper                                                                                       |
 |                                                                                                              |
-|  5. app.js - Noyau de l'application                                                                          |
+|  5. js/app.js - Noyau de l'application                                                                          |
 |     - Création de l'objet global MonHistoire                                                                 |
 |     - Initialisation du state                                                                                |
 |     - Initialisation du système d'événements                                                                 |
@@ -451,7 +452,7 @@ MonHistoire.events.on('eventName', function(data) {
 
 ## Initialisation de l'Application
 
-L'initialisation de l'application est gérée par le fichier `js/index.js`. Les modules sont initialisés dans un ordre spécifique pour garantir que les dépendances sont respectées.
+L'initialisation de l'application est gérée par le fichier `js/index.js`. Ce fichier charge ensuite `js/app.js`, qui définit l'objet global `MonHistoire` et coordonne les modules. Les modules sont initialisés dans un ordre spécifique pour garantir que les dépendances sont respectées.
 
 ```javascript
 // Ordre d'initialisation des modules
