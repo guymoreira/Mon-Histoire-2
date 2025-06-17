@@ -11,6 +11,10 @@
   cursor: pointer;
 }
 
+#modal-messages .conversation-item strong {
+  font-weight: bold;
+}
+
 #modal-messages .conversation-item.unread {
   font-weight: bold;
 }
@@ -24,6 +28,8 @@
   display: flex;
   flex-direction: column;
   padding: 1.5em;
+  max-height: 80vh;
+  overflow-y: hidden;
 }
 
 #conversation-messages {
@@ -45,12 +51,14 @@
   background: #79d4e7;
   color: #395872;
   margin-left: auto;
+  text-align: right;
 }
 
 .message-bubble.received {
   background: #d5b8f6;
   color: #5c4683;
   margin-right: auto;
+  text-align: left;
 }
 
 #zone-saisie-message {
@@ -79,10 +87,13 @@
 
 #modal-messages .ui-modal-content {
   max-height: 80vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
 }
 
 #liste-conversations {
+  flex: 1;
   max-height: 60vh;
   overflow-y: auto;
 }

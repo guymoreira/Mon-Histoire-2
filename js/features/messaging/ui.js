@@ -72,7 +72,7 @@ MonHistoire.features.messaging.ui = (function() {
 
       const item = document.createElement('div');
       item.className = 'conversation-item';
-      item.textContent = '... \u2013 ' + (data.lastMessage || '');
+      item.innerHTML = '<strong>...</strong> \u2013 ' + (data.lastMessage || '');
       list.appendChild(item);
 
       messaging.storage.hasUnreadMessages(doc.id, selfKey).then(unread => {
@@ -80,11 +80,11 @@ MonHistoire.features.messaging.ui = (function() {
       });
 
       fetchPrenom(other).then(prenom => {
-        item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
+        item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
         item.onclick = () => openConversation(doc.id, prenom);
       }).catch(() => {
         const prenom = other.split(':')[1] || other;
-        item.textContent = prenom + ' \u2013 ' + (data.lastMessage || '');
+        item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
         item.onclick = () => openConversation(doc.id, prenom);
       });
     });
