@@ -559,6 +559,9 @@ MonHistoire.init = function() {
     } else {
       if (MonHistoire.core && MonHistoire.core.auth) {
         MonHistoire.core.auth.afficherUtilisateurDéconnecté();
+        if (MonHistoire.core && MonHistoire.core.navigation) {
+          MonHistoire.core.navigation.showScreen('accueil');
+        }
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après déconnexion");
