@@ -513,6 +513,9 @@ MonHistoire.init = function() {
   console.log("[DEBUG] Configuration de l'écouteur d'authentification Firebase");
   firebase.auth().onAuthStateChanged(function(user) {
     console.log("[DEBUG] Changement d'état d'authentification:", user ? "Connecté" : "Non connecté");
+    if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+      MonHistoire.events.emit('authStateChange', user);
+    }
     if (user) {
       // Vérifier si une vérification d'email est en cours
       const emailVerificationPending = localStorage.getItem("emailVerificationPending");
