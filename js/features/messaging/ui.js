@@ -39,6 +39,14 @@ MonHistoire.features.messaging.ui = (function() {
     document.getElementById('btn-envoyer-message')?.addEventListener('click', sendCurrentMessage);
     document.getElementById('btn-nouveau-message')?.addEventListener('click', startNewConversation);
     document.getElementById('btn-fermer-nouveau-message')?.addEventListener('click', closeNewMessageModal);
+
+    // Met à jour les badges lorsqu'un événement de notification est émis
+    if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
+      MonHistoire.events.on('messageNotificationUpdate', () => {
+        messaging.notifications.mettreAJourBadgeMessages();
+        messaging.notifications.mettreAJourBadgeConversations();
+      });
+    }
   }
 
   async function openConversationsModal() {
