@@ -122,7 +122,8 @@ MonHistoire.features.messaging.ui = (function() {
       container.innerHTML = '';
       msgs.forEach(m => {
         const div = document.createElement('div');
-        div.className = 'message-bubble ' + (m.senderId.split(':')[0] === user.uid ? 'sent' : 'received');
+        const isSent = m.senderId === selfKey || m.senderId === user.uid;
+        div.className = 'message-bubble ' + (isSent ? 'sent' : 'received');
         div.textContent = m.content;
         container.appendChild(div);
         if (!(m.readBy || []).includes(selfKey) && !(m.readBy || []).includes(user.uid)) {
