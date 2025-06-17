@@ -1,4 +1,14 @@
-const { fetchPrenom } = require('../js/features/messaging/ui');
+let fetchPrenom;
+
+beforeAll(() => {
+  global.window = { MonHistoire: { features: { messaging: {} } } };
+  ({ fetchPrenom } = require('../js/features/messaging/ui'));
+});
+
+afterAll(() => {
+  delete global.window;
+  jest.resetModules();
+});
 
 describe('fetchPrenom', () => {
   test('returns "Inconnu" when the Firestore call throws', async () => {
