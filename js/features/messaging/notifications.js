@@ -39,7 +39,24 @@ MonHistoire.features.messaging.notifications = (function() {
       });
       MonHistoire.events.on('messageReceived', data => {
         MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement messageReceived', data);
-        recalculerMessagesNonLus();
+        if (data && data.conversationId && data.message && data.message.senderId) {
+          // Incrémenter localement le nombre de messages non lus
+          const convId = data.conversationId;
+          const senderKey = data.message.senderId;
+          unreadByConversation[convId] = (unreadByConversation[convId] || 0) + 1;
+          unreadByProfile[senderKey] = (unreadByProfile[senderKey] || 0) + 1;
+          mettreAJourBadgeMessages();
+          mettreAJourBadgeConversations();
+          if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+            MonHistoire.events.emit('messageNotificationUpdate', {
+              byConversation: unreadByConversation,
+              byProfile: unreadByProfile
+            });
+          }
+        } else {
+          // Données insuffisantes, on retombe sur le recalcul complet
+          recalculerMessagesNonLus();
+        }
       });
     }
 
