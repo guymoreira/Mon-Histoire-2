@@ -8,24 +8,33 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
 MonHistoire.features.messaging.ui = (function() {
   let currentConversationId = null;
   let unsubscribe = null;
+  const prenomCache = new Map();
 
   async function fetchPrenom(key) {
+    if (prenomCache.has(key)) {
+      return prenomCache.get(key);
+    }
     const [uid, part] = key.split(':');
     if (!uid || !part) return key;
     try {
+      let prenom;
       if (part === 'parent') {
         const snap = await firebase.firestore().collection('users').doc(uid).get();
-        return snap.exists && snap.data().prenom ? snap.data().prenom : 'Parent';
+        prenom = snap.exists && snap.data().prenom ? snap.data().prenom : 'Parent';
+      } else {
+        const snap = await firebase.firestore()
+          .collection('users')
+          .doc(uid)
+          .collection('profils_enfant')
+          .doc(part)
+          .get();
+        prenom = snap.exists && snap.data().prenom ? snap.data().prenom : part;
       }
-      const snap = await firebase.firestore()
-        .collection('users')
-        .doc(uid)
-        .collection('profils_enfant')
-        .doc(part)
-        .get();
-      return snap.exists && snap.data().prenom ? snap.data().prenom : part;
+      prenomCache.set(key, prenom);
+      return prenom;
     } catch (e) {
       console.error('Erreur lors de la récupération du prénom', e);
+      prenomCache.set(key, part);
       return part;
     }
   }
