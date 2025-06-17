@@ -91,15 +91,17 @@ MonHistoire.features.messaging.ui = (function() {
       const item = document.createElement('div');
       item.className = 'conversation-item';
       item.dataset.conversationId = doc.id;
-      item.innerHTML = '<strong>...</strong> \u2013 ' + (data.lastMessage || '');
+      item.innerHTML = '<strong class="conversation-name">...</strong>';
       list.appendChild(item);
 
       fetchPrenom(other).then(prenom => {
-        item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
+        const nameEl = item.querySelector('strong.conversation-name');
+        if (nameEl) nameEl.textContent = prenom;
         item.onclick = () => openConversation(doc.id, prenom);
       }).catch(() => {
         const prenom = 'Inconnu';
-        item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
+        const nameEl = item.querySelector('strong.conversation-name');
+        if (nameEl) nameEl.textContent = prenom;
         item.onclick = () => openConversation(doc.id, prenom);
       });
     });
