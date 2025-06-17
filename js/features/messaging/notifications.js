@@ -75,7 +75,9 @@ MonHistoire.features.messaging.notifications = (function() {
         const messagesSnap = await doc.ref.collection('messages').get();
         messagesSnap.forEach(m => {
           const readBy = m.data().readBy || [];
-          if (!(readBy.includes(selfKey) || readBy.includes(user.uid))) count++;
+          const hasProfileKeys = readBy.some(v => v.includes(':'));
+          const isRead = readBy.includes(selfKey) || (!hasProfileKeys && readBy.includes(user.uid));
+          if (!isRead) count++;
         });
         if (count > 0) {
           unreadByConversation[doc.id] = count;

@@ -117,7 +117,9 @@ MonHistoire.features.messaging.realtime = {
         if (change.type === 'added') {
           const data = change.doc.data();
           const readBy = data.readBy || [];
-          if (!(readBy.includes(selfKey) || readBy.includes(selfKey.split(':')[0]))) {
+          const hasProfileKeys = readBy.some(v => v.includes(':'));
+          const isRead = readBy.includes(selfKey) || (!hasProfileKeys && readBy.includes(selfKey.split(':')[0]));
+          if (!isRead) {
             MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Nouveau message reçu', { conversationId, id: change.doc.id });
             if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
               MonHistoire.events.emit('messageReceived', {

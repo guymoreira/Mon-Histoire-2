@@ -79,7 +79,8 @@ MonHistoire.features.messaging.storage = {
       senderId: senderKey,
       content: contenu,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      readBy: [senderKey, user.uid],
+      // `readBy` ne stocke que la clé de profil de l'expéditeur
+      readBy: [senderKey],
       deviceId: MonHistoire.generateDeviceId(),
       version: 1
     };
@@ -139,8 +140,9 @@ MonHistoire.features.messaging.storage = {
   async markAsRead(conversationId, messageId, userId) {
     const ref = firebase.firestore().collection('conversations')
       .doc(conversationId).collection('messages').doc(messageId);
+    // On enregistre uniquement la clé de profil dans readBy
     await ref.update({
-      readBy: firebase.firestore.FieldValue.arrayUnion(userId, userId.split(':')[0])
+      readBy: firebase.firestore.FieldValue.arrayUnion(userId)
     });
   },
 

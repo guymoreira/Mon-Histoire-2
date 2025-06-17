@@ -149,8 +149,13 @@ conversations
                  ├─ senderId: uid:type
                  ├─ content: string
                  ├─ createdAt: timestamp
-                 └─ readBy: [uid:type]
+                 └─ readBy: [profilKey]
 ```
+
+`readBy` stocke la clé de profil (`uid:profilId` ou `uid:parent`) pour chaque
+utilisateur ayant lu le message. Pour les anciens messages ne contenant que
+l'UID simple, celui-ci n'est pris en compte que si aucune clé de profil n'est
+présente dans le tableau.
 
 Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les index nécessaires dans `firestore.indexes.json`.
 
