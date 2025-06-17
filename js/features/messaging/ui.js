@@ -8,6 +8,7 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
 MonHistoire.features.messaging.ui = (function() {
   let currentConversationId = null;
   let unsubscribe = null;
+  const UNKNOWN_PRENOM = 'Inconnu';
 
   async function fetchPrenom(key) {
     const [uid, part] = key.split(':');
@@ -26,7 +27,7 @@ MonHistoire.features.messaging.ui = (function() {
       return snap.exists && snap.data().prenom ? snap.data().prenom : part;
     } catch (e) {
       console.error('Erreur lors de la récupération du prénom', e);
-      return part;
+      return UNKNOWN_PRENOM;
     }
   }
 
