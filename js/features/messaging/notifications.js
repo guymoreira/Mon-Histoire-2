@@ -10,12 +10,20 @@ MonHistoire.features.messaging.notifications = (function() {
   let unreadByProfile = {};
 
   function init() {
-    console.log('Module notifications messaging initialisé');
+    if (MonHistoire.logger) {
+      MonHistoire.logger.info('MESSAGING', 'Module notifications messaging initialisé');
+    } else {
+      console.log('Module notifications messaging initialisé');
+    }
 
     // Écouteurs d'événements
     if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
-      MonHistoire.events.on('profilChange', recalculerMessagesNonLus);
+      MonHistoire.events.on('profilChange', () => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement profilChange reçu');
+        recalculerMessagesNonLus();
+      });
       MonHistoire.events.on('authStateChange', user => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement authStateChange', { user: !!user });
         if (user) {
           recalculerMessagesNonLus();
         } else {
@@ -25,8 +33,14 @@ MonHistoire.features.messaging.notifications = (function() {
           mettreAJourBadgeConversations();
         }
       });
-      MonHistoire.events.on('messageCreated', recalculerMessagesNonLus);
-      MonHistoire.events.on('messageReceived', recalculerMessagesNonLus);
+      MonHistoire.events.on('messageCreated', data => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement messageCreated', data);
+        recalculerMessagesNonLus();
+      });
+      MonHistoire.events.on('messageReceived', data => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement messageReceived', data);
+        recalculerMessagesNonLus();
+      });
     }
 
     // Recalcul initial si l'utilisateur est déjà authentifié
@@ -42,6 +56,8 @@ MonHistoire.features.messaging.notifications = (function() {
       const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
         (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
       const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
+
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Recalcul des messages non lus', { profil: profil.type, selfKey });
 
       unreadByConversation = {};
       unreadByProfile = {};
@@ -67,6 +83,11 @@ MonHistoire.features.messaging.notifications = (function() {
           unreadByProfile[other] = (unreadByProfile[other] || 0) + count;
         }
       }
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Comptage terminé', {
+        conversations: unreadByConversation,
+        profiles: unreadByProfile
+      });
+
       mettreAJourBadgeMessages();
       mettreAJourBadgeConversations();
       if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
@@ -76,7 +97,11 @@ MonHistoire.features.messaging.notifications = (function() {
         });
       }
     } catch (e) {
-      console.error('Erreur lors du recalcul des messages non lus', e);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.error('MESSAGING', 'Erreur lors du recalcul des messages non lus', e);
+      } else {
+        console.error('Erreur lors du recalcul des messages non lus', e);
+      }
     }
   }
 
@@ -85,6 +110,8 @@ MonHistoire.features.messaging.notifications = (function() {
     const btn = document.getElementById('my-messages-button');
     if (!btn) return;
     let badge = btn.querySelector('.notification-indicator') || btn.querySelector('.ui-notification-badge');
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Mise à jour badge messages', { total });
+
     if (total > 0) {
       if (!badge) {
         badge = document.createElement('span');
@@ -100,6 +127,7 @@ MonHistoire.features.messaging.notifications = (function() {
 
   function mettreAJourBadgeConversations() {
     const items = document.querySelectorAll('.conversation-item');
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Mise à jour badges conversations', { conversations: unreadByConversation });
     items.forEach(item => {
       const convId = item.dataset.conversationId;
       const count = convId && unreadByConversation[convId] ? unreadByConversation[convId] : 0;
@@ -121,6 +149,7 @@ MonHistoire.features.messaging.notifications = (function() {
   function markConversationRead(conversationId) {
     if (unreadByConversation[conversationId]) {
       const count = unreadByConversation[conversationId];
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Conversation marquée comme lue', { conversationId, count });
       delete unreadByConversation[conversationId];
       // retirer du total par profil
       Object.keys(unreadByProfile).forEach(k => {

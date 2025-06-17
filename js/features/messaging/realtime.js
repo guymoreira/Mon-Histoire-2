@@ -10,10 +10,18 @@ MonHistoire.features.messaging.realtime = {
   _messageUnsubs: {},
 
   init() {
-    console.log('Module realtime messaging initialisé');
+    if (MonHistoire.logger) {
+      MonHistoire.logger.info('MESSAGING', 'Module realtime messaging initialisé');
+    } else {
+      console.log('Module realtime messaging initialisé');
+    }
     if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
-      MonHistoire.events.on('profilChange', () => this.listenToUnreadMessages());
+      MonHistoire.events.on('profilChange', () => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement profilChange reçu (realtime)');
+        this.listenToUnreadMessages();
+      });
       MonHistoire.events.on('authStateChange', user => {
+        MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Événement authStateChange (realtime)', { user: !!user });
         if (user) {
           this.listenToUnreadMessages();
         } else {
@@ -69,12 +77,14 @@ MonHistoire.features.messaging.realtime = {
     const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
 
     const convRef = firebase.firestore().collection('conversations');
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Écoute des messages non lus', { selfKey });
     const queries = [
       convRef.where('participants', 'array-contains', selfKey),
       convRef.where('participants', 'array-contains', user.uid)
     ];
 
     const handleConv = snap => {
+      MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Changements de conversations détectés', { size: snap.docChanges().length });
       snap.docChanges().forEach(change => {
         const id = change.doc.id;
         if (change.type === 'removed' && this._messageUnsubs[id]) {
@@ -108,6 +118,7 @@ MonHistoire.features.messaging.realtime = {
           const data = change.doc.data();
           const readBy = data.readBy || [];
           if (!(readBy.includes(selfKey) || readBy.includes(selfKey.split(':')[0]))) {
+            MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Nouveau message reçu', { conversationId, id: change.doc.id });
             if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
               MonHistoire.events.emit('messageReceived', {
                 conversationId,
@@ -121,5 +132,6 @@ MonHistoire.features.messaging.realtime = {
 
     this._messageUnsubs[conversationId] = unsub;
     this._unsubs.push(unsub);
+    MonHistoire.logger && MonHistoire.logger.debug('MESSAGING', 'Listener messages attaché', { conversationId });
   }
 };
