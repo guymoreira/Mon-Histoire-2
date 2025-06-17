@@ -132,6 +132,8 @@ messaging.listenToMessages(conversationId, cb);
 messaging.markAsRead(conversationId, messageId, userKey);
 messaging.hasUnreadMessages(conversationId, userKey);
 ```
+- `messaging.listenToUnreadMessages()` : écoute les conversations de l'utilisateur pour détecter les nouveaux messages non lus.
+- `messaging.detachUnreadListeners()` : retire tous les écouteurs créés par `listenToUnreadMessages()`.
 
 ### Schéma Firestore
 
