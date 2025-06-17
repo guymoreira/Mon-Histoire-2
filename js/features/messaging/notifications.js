@@ -46,12 +46,15 @@ MonHistoire.features.messaging.notifications = (function() {
       unreadByConversation = {};
       unreadByProfile = {};
 
-      const convSnap = await firebase.firestore()
-        .collection('conversations')
-        .where('participants', 'array-contains', selfKey)
-        .get();
+      const convRef = firebase.firestore().collection('conversations');
+      const docsMap = {};
+      const snapNew = await convRef.where('participants', 'array-contains', selfKey).get();
+      snapNew.forEach(d => docsMap[d.id] = d);
+      const snapOld = await convRef.where('participants', 'array-contains', user.uid).get();
+      snapOld.forEach(d => { if (!docsMap[d.id]) docsMap[d.id] = d; });
+      const convDocs = Object.values(docsMap);
 
-      for (const doc of convSnap.docs) {
+      for (const doc of convDocs) {
         let count = 0;
         const messagesSnap = await doc.ref.collection('messages').get();
         messagesSnap.forEach(m => {
