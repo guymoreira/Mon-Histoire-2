@@ -512,12 +512,12 @@
         <div style="text-align:left; font-size:0.98em;">
           <p>
             Notre application enregistre les messages que vous rédigez ainsi que les métadonnées de vos conversations
-            (dates, heures, identifiant de profil, etc.). Ces informations sont stockées dans Firebase afin de vous
+            (dates, heures, identifiant de profil, etc.). Ces informations sont stockées dans Firebase Firestore afin de vous
             permettre de retrouver votre historique et d'améliorer le service.
           </p>
           <p>
-            Les messages et leurs métadonnées sont conservés tant que votre compte reste actif ou jusqu'à ce que vous
-            demandiez leur suppression.
+            Les messages et leurs métadonnées sont conservés tant que votre compte reste actif. La suppression d'un profil enfant
+            entraîne également l'effacement de tous les messages associés. Vous pouvez aussi demander leur suppression à tout moment.
           </p>
           <p>
             Vous pouvez accéder à vos messages ou demander leur effacement à tout moment en nous contactant&nbsp;:
@@ -550,6 +550,7 @@
         <p>Ces cookies permettent d'améliorer les fonctionnalités et la personnalisation de notre application.</p>
         <ul>
           <li><strong>Firebase Firestore Cache</strong> : Stocke temporairement vos données pour améliorer les performances et permettre l'utilisation hors ligne.</li>
+          <li><strong>Firebase Firestore (conversations)</strong> : Conserve les métadonnées de vos conversations (participants, dernier message) pour afficher l'historique.</li>
           <li><strong>Stockage local (localStorage)</strong> : Bien que techniquement différent des cookies, nous stockons certaines préférences comme votre profil actif et le prénom du héros de vos histoires.</li>
           <li><strong>Durée de conservation</strong> : Jusqu'à effacement manuel ou désinstallation de l'application</li>
         </ul>
