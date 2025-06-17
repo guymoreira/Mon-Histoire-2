@@ -72,12 +72,9 @@ MonHistoire.features.messaging.ui = (function() {
 
       const item = document.createElement('div');
       item.className = 'conversation-item';
+      item.dataset.conversationId = doc.id;
       item.innerHTML = '<strong>...</strong> \u2013 ' + (data.lastMessage || '');
       list.appendChild(item);
-
-      messaging.storage.hasUnreadMessages(doc.id, selfKey).then(unread => {
-        if (unread) item.classList.add('unread');
-      });
 
       fetchPrenom(other).then(prenom => {
         item.innerHTML = '<strong>' + prenom + '</strong> \u2013 ' + (data.lastMessage || '');
@@ -88,6 +85,8 @@ MonHistoire.features.messaging.ui = (function() {
         item.onclick = () => openConversation(doc.id, prenom);
       });
     });
+
+    messaging.notifications.mettreAJourBadgeConversations();
 
     document.getElementById('modal-messages').classList.add('show');
   }
@@ -132,6 +131,7 @@ MonHistoire.features.messaging.ui = (function() {
       });
       container.scrollTop = container.scrollHeight;
     });
+    messaging.notifications.markConversationRead(id);
   }
 
   async function startNewConversation() {
@@ -218,6 +218,7 @@ MonHistoire.features.messaging.ui = (function() {
     const text = input.value.trim();
     if (!text) return;
     await messaging.sendMessage(currentConversationId, text);
+    messaging.notifications.markConversationRead(currentConversationId);
     input.value = '';
   }
 

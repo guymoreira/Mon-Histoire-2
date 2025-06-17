@@ -86,6 +86,9 @@ MonHistoire.features.messaging.storage = {
     if (!MonHistoire.state.isConnected) {
       if (typeof MonHistoire.addToOfflineQueue === 'function') {
         MonHistoire.addToOfflineQueue('sendMessage', { conversationId, messageData });
+        if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+          MonHistoire.events.emit('messageCreated', { conversationId });
+        }
         return true;
       }
     }
@@ -98,6 +101,9 @@ MonHistoire.features.messaging.storage = {
       lastMessage: contenu,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+    if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+      MonHistoire.events.emit('messageCreated', { conversationId });
+    }
     return true;
   },
 
@@ -112,6 +118,9 @@ MonHistoire.features.messaging.storage = {
         lastMessage: messageData.content,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
+        MonHistoire.events.emit('messageCreated', { conversationId });
+      }
       return true;
     } catch (e) {
       console.error("Erreur lors du traitement du message hors ligne", e);

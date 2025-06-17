@@ -9,6 +9,7 @@
   padding: 0.6em 1em;
   margin-bottom: 0.5em;
   cursor: pointer;
+  position: relative;
 }
 
 #modal-messages .conversation-item strong {
@@ -96,5 +97,13 @@
   flex: 1;
   max-height: 60vh;
   overflow-y: auto;
+}
+
+.conversation-item .notification-indicator {
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
 }
 
