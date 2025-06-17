@@ -512,6 +512,14 @@ MonHistoire.setDebug(true);
 MonHistoire.debug("Message de débogage", data);
 ```
 
+## Tests
+
+Avant d'exécuter `npm test`, pensez à lancer `npm install` afin d'installer Jest et les autres dépendances de développement.
+
+```bash
+npm test
+```
+
 ## Conclusion
 
 Cette nouvelle architecture modulaire offre une base solide pour le développement futur de l'application "Mon Histoire". Elle facilite la maintenance, l'évolution et la collaboration entre développeurs.
