@@ -142,12 +142,8 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       }
     } else {
       // Utilisateur déconnecté
-      // Ne pas rediriger automatiquement vers l'écran de connexion
-      // sauf si l'utilisateur est sur un écran qui nécessite une authentification
-      if (requiresAuth(currentScreen)) {
-        navigateTo(SCREENS.HOME);
-      }
-      
+      navigateTo(SCREENS.HOME);
+
       // Vider l'historique
       screenHistory = [];
     }
