@@ -40,9 +40,12 @@ js/
 │   ├── user/                 # Modules liés aux utilisateurs
 │   │   ├── auth.js           # Authentification
 │   │   ├── profiles.js       # Gestion des profils
-│   │   └── account.js        # Gestion du compte
+│   │   ├── account.js        # Gestion du compte
+│   │   └── activity.js       # Historique d'activités
 │   ├── ui/                   # Modules d'interface utilisateur
-│   │   └── common.js         # Composants UI communs
+│   │   ├── common.js         # Composants UI communs
+│   │   ├── debug.js          # Outils de débogage
+│   │   └── whitebar-fix.js   # Correctif d'affichage mobile
 │   ├── stories/              # Modules liés aux histoires
 │   │   ├── generator.js      # Génération d'histoires
 │   │   ├── management.js     # Gestion des histoires
@@ -52,8 +55,14 @@ js/
 │   │   └── audio.js          # Lecture audio des histoires
 │   └── sharing/              # Modules de partage
 │       ├── index.js          # Point d'entrée du module de partage
-│       ├── notifications.js  # Notifications de partage
-│       └── storage.js        # Stockage des partages
+│       └── notifications.js  # Notifications de partage
+├── features/                 # Fonctionnalités avancées
+│   ├── audio.js
+│   ├── cookies.js
+│   ├── export.js
+│   ├── messaging/
+│   ├── sharing/
+│   └── stories/
 css/
 ├── main.css                  # Point d'entrée CSS
 ├── base/                     # Styles de base
@@ -92,18 +101,26 @@ css/
 ### Modules de Fonctionnalités (features)
 
 - **audio.js** : Lecture audio des histoires (synthèse vocale)
-- **notation.js** : Gestion de la notation des histoires. Ce module affiche la note stockée dans Firebase, gère la sélection des étoiles et expose la méthode `reset()` pour masquer le bloc de notation lors de la génération d'une nouvelle histoire.
+- **cookies.js** : Gestion des préférences de cookies
+- **export.js** : Exportation des histoires (PDF, image)
+- **messaging/** : Fonctionnalités de messagerie
+- **sharing/** : Fonctionnalités de partage d'histoires
+- **stories/** : Génération, affichage et gestion des histoires (dont `notation.js`)
 
 ### Modules de Partage (sharing)
 
 - **index.js** : Point d'entrée du module de partage
 - **notifications.js** : Gestion des notifications de partage
 - **storage.js** : Stockage des données de partage
+- **ui.js** : Composants d'interface pour le partage
+- **realtime/** : Gestion des notifications en temps réel
 
 ### Modules de Messagerie (messaging)
 
+- **index.js** : Point d'entrée de la messagerie
 - **storage.js** : Gestion des conversations et envoi des messages via Firestore
 - **realtime.js** : Écoute en temps réel des nouveaux messages
+- **notifications.js** : Notifications de nouveaux messages
 - **ui.js** : Affichage de la liste des conversations et de la fenêtre de discussion
 
 ### Système de notation des histoires
