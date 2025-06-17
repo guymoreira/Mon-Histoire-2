@@ -36,6 +36,14 @@ MonHistoire.features.messaging = MonHistoire.features.messaging || {};
         messaging.listenToMessages = (...args) =>
           messaging.realtime.listenToMessages(...args);
       }
+      if (!messaging.listenToUnreadMessages) {
+        messaging.listenToUnreadMessages = (...args) =>
+          messaging.realtime.listenToUnreadMessages(...args);
+      }
+      if (!messaging.detachUnreadListeners) {
+        messaging.detachUnreadListeners = (...args) =>
+          messaging.realtime.detachUnreadListeners(...args);
+      }
       if (!messaging.markAsRead) {
         messaging.markAsRead = (...args) =>
           messaging.storage.markAsRead(...args);

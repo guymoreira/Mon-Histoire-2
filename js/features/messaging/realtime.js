@@ -6,8 +6,31 @@ MonHistoire.features = MonHistoire.features || {};
 MonHistoire.features.messaging = MonHistoire.features.messaging || {};
 
 MonHistoire.features.messaging.realtime = {
+  unreadListeners: [],
+
   init() {
     console.log('Module realtime messaging initialisé');
+
+    if (MonHistoire.events && typeof MonHistoire.events.on === 'function') {
+      MonHistoire.events.on('authStateChange', user => {
+        if (user) {
+          this.listenToUnreadMessages();
+        } else {
+          this.detachUnreadListeners();
+        }
+      });
+
+      MonHistoire.events.on('profilChange', () => {
+        this.detachUnreadListeners();
+        if (firebase.auth().currentUser) {
+          this.listenToUnreadMessages();
+        }
+      });
+    }
+
+    if (firebase.auth().currentUser) {
+      this.listenToUnreadMessages();
+    }
   },
 
   /**
@@ -27,5 +50,46 @@ MonHistoire.features.messaging.realtime = {
       callback(messages);
     });
     return unsub;
+  },
+
+  listenToUnreadMessages() {
+    this.detachUnreadListeners();
+
+    const user = firebase.auth().currentUser;
+    if (!user) return [];
+
+    const profil = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+    const selfKey = `${user.uid}:${profil.type === 'parent' ? 'parent' : profil.id}`;
+
+    const callback = () => {
+      if (MonHistoire.features && MonHistoire.features.messaging &&
+          MonHistoire.features.messaging.notifications &&
+          typeof MonHistoire.features.messaging.notifications.recalculerMessagesNonLus === 'function') {
+        MonHistoire.features.messaging.notifications.recalculerMessagesNonLus();
+      }
+    };
+
+    const convRef1 = firebase.firestore().collection('conversations')
+      .where('participants', 'array-contains', selfKey);
+    const convRef2 = firebase.firestore().collection('conversations')
+      .where('participants', 'array-contains', user.uid);
+
+    const unsub1 = convRef1.onSnapshot(callback);
+    const unsub2 = convRef2.onSnapshot(callback);
+
+    this.unreadListeners = [unsub1, unsub2];
+    return this.unreadListeners;
+  },
+
+  detachUnreadListeners() {
+    if (Array.isArray(this.unreadListeners)) {
+      this.unreadListeners.forEach(unsub => {
+        if (typeof unsub === 'function') {
+          try { unsub(); } catch (e) { console.warn('Erreur lors du détachement d\'un écouteur de messages', e); }
+        }
+      });
+    }
+    this.unreadListeners = [];
   }
 };
