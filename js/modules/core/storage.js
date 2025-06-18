@@ -834,6 +834,112 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
         .catch(reject);
     });
   }
+
+  /**
+   * Vérifie si l'utilisateur a atteint son quota d'histoires
+   * @returns {Promise<boolean>} True si l'utilisateur peut encore sauvegarder
+   */
+  function verifierQuotaHistoires() {
+    const user = firebase.auth && firebase.auth().currentUser;
+    if (!user || !db) {
+      return Promise.resolve(false);
+    }
+
+    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
+                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+
+    if (MonHistoire.state) {
+      MonHistoire.state.profilActif = profilActif;
+    }
+
+    let storiesRef;
+    if (profilActif.type === 'parent') {
+      storiesRef = db.collection(COLLECTIONS.STORIES)
+        .where('userId', '==', user.uid);
+    } else {
+      storiesRef = db.collection(COLLECTIONS.STORIES)
+        .where('userId', '==', user.uid)
+        .where('profileId', '==', profilActif.id);
+    }
+
+    return storiesRef.get().then(snap => {
+      const count = snap.size;
+      const maxHistoires = MonHistoire.config.MAX_HISTOIRES || 5;
+      return count < maxHistoires;
+    });
+  }
+
+  /**
+   * Vérifie si l'utilisateur approche de son quota d'histoires
+   * @returns {Promise<boolean>} True si le seuil est atteint
+   */
+  function verifierSeuilAlerteHistoires() {
+    const user = firebase.auth && firebase.auth().currentUser;
+    if (!user || !db) {
+      return Promise.resolve(false);
+    }
+
+    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
+                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+
+    if (MonHistoire.state) {
+      MonHistoire.state.profilActif = profilActif;
+    }
+
+    let storiesRef;
+    if (profilActif.type === 'parent') {
+      storiesRef = db.collection(COLLECTIONS.STORIES)
+        .where('userId', '==', user.uid);
+    } else {
+      storiesRef = db.collection(COLLECTIONS.STORIES)
+        .where('userId', '==', user.uid)
+        .where('profileId', '==', profilActif.id);
+    }
+
+    return storiesRef.get().then(snap => {
+      const count = snap.size;
+      const maxHistoires = MonHistoire.config.MAX_HISTOIRES || 5;
+      const seuilAlerte = MonHistoire.config.SEUIL_ALERTE_HISTOIRES || 4;
+      return count >= seuilAlerte && count < maxHistoires;
+    });
+  }
+
+  /**
+   * Recalcule et met à jour le nombre d'histoires pour un profil enfant
+   * @returns {Promise<void>} Promise résolue une fois la mise à jour terminée
+   */
+  function recalculerNbHistoires() {
+    const user = firebase.auth && firebase.auth().currentUser;
+    if (!user || !db) {
+      return Promise.reject(new Error('Utilisateur non connecté'));
+    }
+
+    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
+                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
+
+    if (MonHistoire.state) {
+      MonHistoire.state.profilActif = profilActif;
+    }
+
+    if (profilActif.type !== 'enfant') {
+      return Promise.resolve();
+    }
+
+    const storiesRef = db.collection('users')
+      .doc(user.uid)
+      .collection('profils_enfant')
+      .doc(profilActif.id)
+      .collection('stories');
+
+    return storiesRef.get().then(snapshot => {
+      const count = snapshot.size;
+      const profilEnfantRef = db.collection('users')
+        .doc(user.uid)
+        .collection('profils_enfant')
+        .doc(profilActif.id);
+      return profilEnfantRef.update({ nb_histoires: count });
+    });
+  }
   
   // API publique
   MonHistoire.modules.core.storage = {
@@ -861,6 +967,11 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     createShareLink: createShareLink,
     deleteShareLink: deleteShareLink,
     getShareLinks: getShareLinks,
-    accessSharedStory: accessSharedStory
+    accessSharedStory: accessSharedStory,
+
+    // Quotas
+    verifierQuotaHistoires: verifierQuotaHistoires,
+    verifierSeuilAlerteHistoires: verifierSeuilAlerteHistoires,
+    recalculerNbHistoires: recalculerNbHistoires
   };
 })();
