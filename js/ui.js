@@ -199,9 +199,13 @@ MonHistoire.ui = {
     });
     
     // Bouton Déconnecter dans la modale de déconnexion
-    document.getElementById("btn-logout")?.addEventListener("click", () => {
+    document.getElementById("btn-logout")?.addEventListener("click", async () => {
       if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.logoutUser();
+        try {
+          await MonHistoire.core.auth.logoutUser();
+        } catch (error) {
+          console.error("Erreur lors de la déconnexion:", error);
+        }
       }
     });
     

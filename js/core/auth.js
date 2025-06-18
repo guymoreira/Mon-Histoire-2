@@ -88,8 +88,8 @@ MonHistoire.core.auth = {
       MonHistoire.state.histoiresPartageesListener();
       MonHistoire.state.histoiresPartageesListener = null;
     }
-    
-    firebase.auth().signOut().then(() => {
+
+    return firebase.auth().signOut().then(() => {
       this.logActivite("deconnexion"); // LOG : Déconnexion
       this.afficherUtilisateurDéconnecté();
       this.fermerLogoutModal();
@@ -111,6 +111,12 @@ MonHistoire.core.auth = {
       }
       
       MonHistoire.core.navigation.showScreen("accueil");
+    }).catch(error => {
+      console.error("Erreur lors de la déconnexion:", error);
+      if (MonHistoire.showMessageModal) {
+        MonHistoire.showMessageModal("Erreur lors de la déconnexion. Veuillez réessayer.");
+      }
+      throw error;
     });
   },
   
