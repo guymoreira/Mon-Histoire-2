@@ -543,8 +543,8 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.ui) {
-        MonHistoire.ui.bindLongPress();
+      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
+        MonHistoire.modules.ui.events.bindLongPress();
       }
       // Vérifie s'il y a des histoires partagées
       if (MonHistoire.features && MonHistoire.features.sharing) {
@@ -569,8 +569,8 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.ui) {
-        MonHistoire.ui.bindLongPress();
+      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
+        MonHistoire.modules.ui.events.bindLongPress();
       }
     }
   });
