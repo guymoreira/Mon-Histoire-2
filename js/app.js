@@ -374,12 +374,17 @@ MonHistoire.init = function() {
   console.log("[DEBUG] Initialisation de l'application MonHistoire");
   
   // Initialiser Firebase
-  // console.log("[DEBUG] Initialisation de Firebase");
-  // if (this.config && typeof this.config.initFirebase === 'function') {
-  //   this.config.initFirebase();
-  // } else {
-  //   console.warn("initFirebase() non disponible - Firebase déjà initialisé ?");
-  // }
+  console.log("[DEBUG] Initialisation de Firebase");
+  if (
+    MonHistoire.config &&
+    typeof MonHistoire.config.initFirebase === "function"
+  ) {
+    MonHistoire.config.initFirebase();
+  } else {
+    console.warn(
+      "initFirebase() non disponible - Firebase déjà initialisé ?"
+    );
+  }
   
   // Configurer les écouteurs d'état de connexion
   window.addEventListener('online', () => {
