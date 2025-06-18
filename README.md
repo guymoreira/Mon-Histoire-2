@@ -537,7 +537,9 @@ MonHistoire.debug("Message de débogage", data);
 
 ## Tests
 
-Avant d'exécuter `npm test`, pensez à lancer `npm install` afin d'installer Jest et les autres dépendances de développement.
+Avant d'exécuter `npm test`, lancez d'abord `npm install` pour installer Jest et les autres dépendances de développement.
+
+Si vous travaillez sans connexion Internet, préparez un cache npm ou un dossier `node_modules` sur une machine connectée, puis exécutez le script `offline-setup.sh` pour installer ces dépendances en mode hors ligne.
 
 ```bash
 npm test
