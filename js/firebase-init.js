@@ -3,7 +3,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBZdLStt6vpHY1pI5lHnPhwGQxFY4LPEQk",
   authDomain: "monhistoire-3.firebaseapp.com",
   projectId: "monhistoire-3",
-  storageBucket: "monhistoire-3.firebasestorage.app",
+  storageBucket: "monhistoire-3.appspot.com",
   messagingSenderId: "936891025632",
   appId: "1:936891025632:web:3672fd54638abfedf5e885",
   measurementId: "G-TQ8F3CBX74",
