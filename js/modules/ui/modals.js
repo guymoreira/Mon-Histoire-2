@@ -43,8 +43,8 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
       .then(() => {
         annulerAjoutEnfant();
         afficherProfilsEnfants();
-        if (MonHistoire.core && MonHistoire.core.auth) {
-          MonHistoire.core.auth.logActivite('creation_profil_enfant', { prenom });
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          MonHistoire.modules.user.auth.logActivity('creation_profil_enfant', { prenom });
         }
       })
       .catch(error => {
@@ -146,11 +146,16 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     const user = firebase.auth().currentUser;
     if (!user) return;
     if (!MonHistoire.state.profilsEnfantModifies || MonHistoire.state.profilsEnfantModifies.length === 0) {
-      if (continueWithParentProfile && MonHistoire.core && MonHistoire.core.auth) {
+      if (continueWithParentProfile &&
+          MonHistoire.modules.user &&
+          MonHistoire.modules.user.account &&
+          typeof MonHistoire.modules.user.account.fermerMonCompte === 'function') {
         return;
       }
-      if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.fermerMonCompte();
+      if (MonHistoire.modules.user &&
+          MonHistoire.modules.user.account &&
+          typeof MonHistoire.modules.user.account.fermerMonCompte === 'function') {
+        MonHistoire.modules.user.account.fermerMonCompte();
       }
       return;
     }
@@ -188,14 +193,14 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
             return Promise.all(deletes);
           })
         );
-        if (MonHistoire.core && MonHistoire.core.auth) {
-          MonHistoire.core.auth.logActivite('suppression_profil_enfant', { id_enfant: modif.id });
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          MonHistoire.modules.user.auth.logActivity('suppression_profil_enfant', { id_enfant: modif.id });
         }
       }
       if (modif.action === 'modifier') {
         batch.update(ref.doc(modif.id), { prenom: modif.nouveauPrenom });
-        if (MonHistoire.core && MonHistoire.core.auth) {
-          MonHistoire.core.auth.logActivite('modification_prenom_profil', { id_enfant: modif.id });
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          MonHistoire.modules.user.auth.logActivity('modification_prenom_profil', { id_enfant: modif.id });
         }
       }
       if (modif.action === 'messagerie') {
@@ -218,14 +223,18 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         setTimeout(() => {
           form.style.display = 'none';
           form.classList.remove('fade-out');
-          if (MonHistoire.core && MonHistoire.core.auth) {
-            MonHistoire.core.auth.fermerMonCompte();
+          if (MonHistoire.modules.user &&
+              MonHistoire.modules.user.account &&
+              typeof MonHistoire.modules.user.account.fermerMonCompte === 'function') {
+            MonHistoire.modules.user.account.fermerMonCompte();
           }
           setTimeout(() => { MonHistoire.showMessageModal('Modifications enregistrées !'); }, 100);
         }, 250);
       } else {
-        if (MonHistoire.core && MonHistoire.core.auth) {
-          MonHistoire.core.auth.fermerMonCompte();
+        if (MonHistoire.modules.user &&
+            MonHistoire.modules.user.account &&
+            typeof MonHistoire.modules.user.account.fermerMonCompte === 'function') {
+          MonHistoire.modules.user.account.fermerMonCompte();
         }
         setTimeout(() => { MonHistoire.showMessageModal('Modifications enregistrées !'); }, 100);
       }

@@ -252,8 +252,10 @@ MonHistoire.modules.features.export = {
     doc.save(nomFichier);
     
     // Log l'activité
-    if (MonHistoire.core && MonHistoire.core.auth && firebase.auth().currentUser) {
-      MonHistoire.core.auth.logActivite("export_pdf", { 
+    if (MonHistoire.modules.user &&
+        MonHistoire.modules.user.auth &&
+        firebase.auth().currentUser) {
+      MonHistoire.modules.user.auth.logActivity("export_pdf", {
         histoire_id: histoire.id,
         titre: histoire.titre
       });

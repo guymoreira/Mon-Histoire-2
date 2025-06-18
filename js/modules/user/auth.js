@@ -506,6 +506,16 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
   }
 
   /**
+   * Ferme la modale de déconnexion/changement de profil
+   */
+  function fermerLogoutModal() {
+    const modal = document.getElementById('logout-modal');
+    if (modal) {
+      modal.classList.remove('show');
+    }
+  }
+
+  /**
    * Fonction de connexion utilisateur qui récupère les valeurs du formulaire
    * et gère toutes les actions post-connexion
    */
@@ -680,8 +690,10 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
         afficherUtilisateurDéconnecté();
         
         // Fermer la modale de déconnexion
-        if (MonHistoire.core && MonHistoire.core.auth) {
-          MonHistoire.core.auth.fermerLogoutModal();
+        if (MonHistoire.modules.user &&
+            MonHistoire.modules.user.auth &&
+            typeof MonHistoire.modules.user.auth.fermerLogoutModal === 'function') {
+          MonHistoire.modules.user.auth.fermerLogoutModal();
         }
         
         // Réinitialiser le profil actif
@@ -762,6 +774,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     loginUser: loginUser,
     registerUser: registerUser,
     logoutUser: logoutUser,
-    logActivity: logActivity
+    logActivity: logActivity,
+    fermerLogoutModal: fermerLogoutModal
   };
 })();

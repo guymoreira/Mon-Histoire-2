@@ -533,8 +533,8 @@ MonHistoire.modules.sharing.notifications = {
     this.fermerNotificationPartage();
     
     // Redirige vers "Mes histoires"
-    if (MonHistoire.core && MonHistoire.core.navigation) {
-      MonHistoire.core.navigation.showScreen("mes-histoires");
+    if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+      MonHistoire.modules.core.navigation.showScreen("mes-histoires");
     }
   },
   
