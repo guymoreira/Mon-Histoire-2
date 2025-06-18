@@ -1,28 +1,82 @@
-// js/modules/sharing/realtime/index.js
-// Wrapper delegating to js/features/sharing/realtime/index.js
+// js/features/sharing/realtime/index.js
+// Point d'entrée pour le module de gestion des écouteurs en temps réel
 
+// S'assurer que les objets nécessaires existent
 window.MonHistoire = window.MonHistoire || {};
 MonHistoire.modules = MonHistoire.modules || {};
 MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
-MonHistoire.modules.sharing.realtime = MonHistoire.modules.sharing.realtime || {};
 
-(function() {
-  const feature = () => MonHistoire.features && MonHistoire.features.sharing && MonHistoire.features.sharing.realtime;
-  const apiMethods = [
-    'init',
-    'configurerEcouteurHistoiresPartagees',
-    'configurerEcouteurNotificationsRealtime',
-    'detacherEcouteursRealtime',
-    'isConnected'
-  ];
-  const api = {};
-  apiMethods.forEach(fn => {
-    api[fn] = function(...args) {
-      const f = feature();
-      if (f && typeof f[fn] === 'function') {
-        return f[fn](...args);
-      }
-    };
-  });
-  MonHistoire.modules.sharing.realtime = api;
-})();
+// Importer les sous-modules (ils seront chargés après ce fichier)
+// Les références seront disponibles via MonHistoire.modules.sharing.realtime.*
+
+/**
+ * Module de gestion des écouteurs en temps réel
+ * Responsable de la configuration et de la gestion des écouteurs Firebase
+ */
+MonHistoire.modules.sharing.realtime = {
+  /**
+   * Initialisation du module
+   */
+  init() {
+    console.log("Module d'écouteurs en temps réel pour le partage initialisé");
+    
+    // Initialiser les sous-modules
+    if (this.listeners) {
+      this.listeners.init();
+    }
+    
+    if (this.notifications) {
+      this.notifications.init();
+    }
+    
+    // Configurer l'écouteur de notifications en temps réel via Firebase Realtime Database
+    this.configurerEcouteurNotificationsRealtime();
+  },
+  
+  /**
+   * Configure un écouteur en temps réel pour les nouvelles histoires partagées
+   * Cette fonction est appelée au démarrage et après un changement de profil
+   */
+  configurerEcouteurHistoiresPartagees() {
+    if (this.listeners) {
+      this.listeners.configurerEcouteurHistoiresPartagees();
+    }
+  },
+  
+  /**
+   * Détache tous les écouteurs d'histoires partagées
+   */
+  detacherEcouteursHistoiresPartagees() {
+    if (this.listeners) {
+      this.listeners.detacherEcouteursHistoiresPartagees();
+    }
+  },
+  
+  /**
+   * Configure l'écouteur de notifications en temps réel via Firebase Realtime Database
+   */
+  configurerEcouteurNotificationsRealtime() {
+    if (this.notifications) {
+      this.notifications.configurerEcouteurNotificationsRealtime();
+    }
+  },
+  
+  /**
+   * Détache tous les écouteurs Realtime
+   */
+  detacherEcouteursRealtime() {
+    if (this.notifications) {
+      this.notifications.detacherEcouteursRealtime();
+    }
+  },
+  
+  /**
+   * Vérifie l'état de la connexion
+   * @returns {boolean} - true si l'appareil est connecté
+   */
+  isConnected() {
+    const isNetworkConnected = navigator.onLine;
+    const isFirebaseConnected = MonHistoire.state.realtimeDbConnected !== false;
+    return isNetworkConnected && isFirebaseConnected && MonHistoire.state.isConnected;
+  }
+};
