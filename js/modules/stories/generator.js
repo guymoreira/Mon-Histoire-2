@@ -672,6 +672,166 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       }
     });
   }
+
+  /**
+   * Génère une histoire via l'ancien stock Firestore et personnalise son contenu
+   * @param {Object} data - Données du formulaire
+   * @returns {Promise<Object>} Histoire complète avec contenu HTML
+   */
+  function legacyGenerateStory(data) {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      return Promise.reject(new Error('Utilisateur non connecté'));
+    }
+
+    let prenom = '';
+    const prenomInput = document.getElementById('hero-prenom');
+    if (prenomInput && prenomInput.value.trim()) {
+      prenom = prenomInput.value.trim();
+      localStorage.setItem('prenom_heros', prenom);
+    } else {
+      prenom = localStorage.getItem('prenom_heros') || '';
+    }
+
+    const filtresKey = `${data.personnage}|${data.lieu}|${data.objet}|${data.compagnon}|${data.objectif}`;
+    const histoiresLuesRef = firebase.firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('histoires_lues')
+      .doc(filtresKey);
+
+    return histoiresLuesRef.get().then(luesDoc => {
+      let lues = [];
+      if (luesDoc.exists && Array.isArray(luesDoc.data().ids)) {
+        lues = luesDoc.data().ids;
+      }
+
+      let query = firebase.firestore().collection('stock_histoires')
+        .where('personnage', '==', data.personnage)
+        .where('lieu', '==', data.lieu)
+        .where('objet', '==', data.objet)
+        .where('objectif', '==', data.objectif);
+
+      if (data.compagnon) {
+        query = query.where('compagnon', '==', data.compagnon);
+      }
+
+      return query.get().then(snap => {
+        if (snap.empty) {
+          throw new Error("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
+        }
+
+        const stories = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let histoire = stories.find(st => !lues.includes(st.id));
+        if (!histoire) {
+          lues = [];
+          histoire = stories[0];
+        }
+
+        if (!lues.includes(histoire.id)) {
+          lues.push(histoire.id);
+          histoiresLuesRef.set({ ids: lues }, { merge: true });
+        }
+
+        let titre = histoire.titre || 'Mon Histoire';
+        if (prenom) {
+          titre = titre.replace(/^fille/i, prenom);
+        }
+
+        let displayHtml = '';
+        let storageHtml = '';
+        let chapitresArray = [];
+
+        if (histoire.chapitres && Array.isArray(histoire.chapitres)) {
+          histoire.chapitres.forEach((chap, idx) => {
+            if (idx < 5) {
+              let texte = chap.texte || '';
+              if (prenom) {
+                texte = personnaliserTexteChapitre(texte, prenom, data.personnage);
+              }
+              const chapTitre = chap.titre || `Chapitre ${idx + 1}`;
+              displayHtml += `<h3>${chapTitre}</h3><p>${texte}</p>`;
+              storageHtml += `<h3>${chapTitre}</h3><p>${texte}</p>`;
+              if (chap.image) {
+                const imgTag = `<div class="illustration-chapitre"><img src="${chap.image}" alt="Illustration du chapitre ${idx + 1}"></div>`;
+                displayHtml += imgTag;
+                storageHtml += imgTag;
+              }
+              chapitresArray.push({ ...chap, texte });
+            }
+          });
+        } else {
+          const chapitres = [
+            histoire.chapitre1 || '',
+            histoire.chapitre2 || '',
+            histoire.chapitre3 || '',
+            histoire.chapitre4 || '',
+            histoire.chapitre5 || ''
+          ];
+
+          chapitres.forEach((texte, idx) => {
+            if (texte) {
+              if (prenom) {
+                texte = personnaliserTexteChapitre(texte, prenom, data.personnage);
+              }
+              const chapTitre = `Chapitre ${idx + 1}`;
+              displayHtml += `<h3>${chapTitre}</h3><p>${texte}</p>`;
+              storageHtml += `<h3>${chapTitre}</h3><p>${texte}</p>`;
+              chapitresArray.push({ titre: chapTitre, texte });
+            }
+          });
+
+          if (histoire.images && Array.isArray(histoire.images)) {
+            histoire.images.forEach((imageUrl, idx) => {
+              if (imageUrl && idx < 5) {
+                const imgTag = `<div class="illustration-chapitre"><img src="${imageUrl}" alt="Illustration du chapitre ${idx + 1}"></div>`;
+                displayHtml += imgTag;
+                storageHtml += imgTag;
+                if (chapitresArray[idx]) {
+                  chapitresArray[idx].image = imageUrl;
+                } else {
+                  chapitresArray[idx] = { titre: `Chapitre ${idx + 1}`, texte: '', image: imageUrl };
+                }
+              }
+            });
+          }
+        }
+
+        return {
+          id: histoire.id,
+          titre: titre,
+          personnage: data.personnage,
+          lieu: data.lieu,
+          chapitre1: histoire.chapitre1 || '',
+          chapitre2: histoire.chapitre2 || '',
+          chapitre3: histoire.chapitre3 || '',
+          chapitre4: histoire.chapitre4 || '',
+          chapitre5: histoire.chapitre5 || '',
+          chapitres: histoire.chapitres || chapitresArray,
+          contenu: storageHtml,
+          displayHtml: displayHtml
+        };
+      });
+    });
+  }
+
+  // Personnalise le texte d'un chapitre en remplaçant les références génériques par le prénom
+  function personnaliserTexteChapitre(texte, prenom, personnage) {
+    if (!prenom) return texte;
+
+    if (personnage.toLowerCase().includes('fille') ||
+        personnage.toLowerCase().includes('princesse') ||
+        personnage.toLowerCase().includes('sorcière')) {
+      return texte.replace(
+        /\b(la fillette|la petite fille|l'héroïne|la jeune fille|la heroine|la fillette héroïne|la fillette heroïne|la jeune héroïne)\b/gi,
+        prenom
+      );
+    }
+    return texte.replace(
+      /\b(le garçon|le petit garçon|le héros|le jeune garçon|l'héros|le garçon héros)\b/gi,
+      prenom
+    );
+  }
   
   /**
    * Génère le contenu d'une histoire à partir d'un template et des données du formulaire
@@ -790,23 +950,31 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
         heroPrenom: heroPrenom
       };
       
-      // Appelle l'API pour générer l'histoire via l'ancien module
-      if (MonHistoire.features && MonHistoire.features.stories && MonHistoire.features.stories.generator) {
-        MonHistoire.features.stories.generator.appellerAPIHistoire(data)
-          .then(histoire => {
-            console.log("Histoire générée avec succès via l'ancien module");
-          })
-          .catch(error => {
-            console.error("Erreur lors de la génération de l'histoire:", error);
-            if (titreHistoireElement) {
-              titreHistoireElement.textContent = "Erreur";
+      // Génère l'histoire via l'ancienne logique interne
+      legacyGenerateStory(data)
+        .then(histoire => {
+          generatedStory = {
+            id: histoire.id,
+            title: histoire.titre,
+            content: histoire.contenu
+          };
+
+          if (titreHistoireElement) {
+            titreHistoireElement.textContent = histoire.titre;
+            if (histoire.id) {
+              titreHistoireElement.dataset.histoireId = histoire.id;
             }
-            histoireElement.innerHTML = "<p>Désolé, une erreur est survenue lors de la génération de l'histoire. Merci de réessayer.</p>";
-          });
-      } else {
-        console.error("Module de génération d'histoires (ancien namespace) non disponible");
-        histoireElement.innerHTML = "<p>Désolé, une erreur est survenue lors de la génération de l'histoire. Merci de réessayer.</p>";
-      }
+          }
+
+          histoireElement.innerHTML = histoire.displayHtml;
+        })
+        .catch(error => {
+          console.error("Erreur lors de la génération de l'histoire:", error);
+          if (titreHistoireElement) {
+            titreHistoireElement.textContent = "Erreur";
+          }
+          histoireElement.innerHTML = "<p>Désolé, une erreur est survenue lors de la génération de l'histoire. Merci de réessayer.</p>";
+        });
     }
   };
 })();
