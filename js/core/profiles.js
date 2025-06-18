@@ -91,10 +91,15 @@ MonHistoire.core.profiles = {
     // Mettre à jour l'affichage de l'utilisateur connecté pour
     // que les boutons d'en-tête reflètent immédiatement
     // les droits du nouveau profil (ex. accès à la messagerie)
-    if (MonHistoire.core &&
-        MonHistoire.core.auth &&
-        typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
-      MonHistoire.core.auth.afficherUtilisateurConnecté();
+    const currentUser = firebase.auth().currentUser;
+    if (MonHistoire.core && MonHistoire.core.auth) {
+      if (currentUser &&
+          typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
+        MonHistoire.core.auth.afficherUtilisateurConnecté();
+      } else if (!currentUser &&
+                 typeof MonHistoire.core.auth.afficherUtilisateurDéconnecté === 'function') {
+        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
+      }
     }
 
     // Émet un événement pour informer les autres modules
@@ -314,9 +319,16 @@ MonHistoire.core.profiles = {
       });
     }
     
-    // Mettre à jour l'interface
+    // Mettre à jour l'interface en fonction de la connexion
+    const currentUser = firebase.auth().currentUser;
     if (MonHistoire.core && MonHistoire.core.auth) {
-      MonHistoire.core.auth.afficherUtilisateurConnecté();
+      if (currentUser &&
+          typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
+        MonHistoire.core.auth.afficherUtilisateurConnecté();
+      } else if (!currentUser &&
+                 typeof MonHistoire.core.auth.afficherUtilisateurDéconnecté === 'function') {
+        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
+      }
     }
     
     // Mettre à jour la visibilité du footer
