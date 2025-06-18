@@ -103,8 +103,19 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
   };
 
   // Fusionner avec une configuration globale existante si nécessaire
+  let existingInitFirebase;
   if (window.MonHistoire.config) {
+    // Conserver la référence à initFirebase si elle existe
+    if (typeof window.MonHistoire.config.initFirebase === 'function') {
+      existingInitFirebase = window.MonHistoire.config.initFirebase;
+    }
+
     config = deepMerge(window.MonHistoire.config, config);
+  }
+
+  // Réattacher initFirebase après la fusion si nécessaire
+  if (existingInitFirebase) {
+    config.initFirebase = existingInitFirebase;
   }
 
   // Exposer la configuration globalement pour compatibilité avec l'ancien code
