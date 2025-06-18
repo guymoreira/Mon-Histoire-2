@@ -37,6 +37,8 @@
     };
     
     console.log("[Adapter] Adaptateur audio initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module audio manquant dans MonHistoire.modules.features");
   }
   
   // Adapter pour le module cookies
@@ -84,6 +86,8 @@
     };
     
     console.log("[Adapter] Adaptateur cookies initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module cookies manquant dans MonHistoire.modules.core");
   }
   
   // Adapter pour le module export
@@ -121,6 +125,8 @@
     };
     
     console.log("[Adapter] Adaptateur export initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module export manquant dans MonHistoire.modules.stories");
   }
   
   // Adapter pour le module sharing
@@ -154,6 +160,8 @@
     MonHistoire.features.sharing.realtime = MonHistoire.modules.sharing.realtime || {};
     
     console.log("[Adapter] Adaptateur sharing initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module sharing manquant dans MonHistoire.modules");
   }
   
   console.log("[Adapter] Adaptateur de fonctionnalités initialisé avec succès");
