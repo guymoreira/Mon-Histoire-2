@@ -120,6 +120,12 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
 
   // Exposer la configuration globalement pour compatibilité avec l'ancien code
   MonHistoire.config = config;
+
+  // Vérifier que la méthode initFirebase existe après la fusion
+  console.log(
+    '[DEBUG][config.js] typeof MonHistoire.config.initFirebase:',
+    typeof MonHistoire.config.initFirebase
+  );
   
   /**
    * Initialise le module de configuration
