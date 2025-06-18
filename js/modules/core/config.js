@@ -9,6 +9,27 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
 
 // Module de configuration
 (function() {
+  // Fonction utilitaire pour fusionner en profondeur deux objets
+  function deepMerge(target = {}, source = {}) {
+    for (const key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        if (
+          source[key] &&
+          typeof source[key] === 'object' &&
+          !Array.isArray(source[key])
+        ) {
+          if (!target[key] || typeof target[key] !== 'object') {
+            target[key] = {};
+          }
+          deepMerge(target[key], source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  }
+
   // Variables privées
   let isInitialized = false;
   let config = {
@@ -80,6 +101,11 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       analyticsEnabled: true
     }
   };
+
+  // Fusionner avec une configuration globale existante si nécessaire
+  if (window.MonHistoire.config) {
+    config = deepMerge(window.MonHistoire.config, config);
+  }
 
   // Exposer la configuration globalement pour compatibilité avec l'ancien code
   MonHistoire.config = config;
