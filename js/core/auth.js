@@ -481,8 +481,8 @@ MonHistoire.core.auth = {
         }
         
         // Afficher les profils enfants
-        if (MonHistoire.ui && MonHistoire.ui.afficherProfilsEnfants) {
-          MonHistoire.ui.afficherProfilsEnfants();
+        if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.modals && MonHistoire.modules.ui.modals.afficherProfilsEnfants) {
+          MonHistoire.modules.ui.modals.afficherProfilsEnfants();
         }
       });
   },
@@ -520,14 +520,14 @@ MonHistoire.core.auth = {
     
     // Si nous avons des modifications de profils enfants, les enregistrer d'abord
     // puis continuer avec les modifications du profil parent
-    if (hasChildProfileChanges && MonHistoire.ui && MonHistoire.ui.enregistrerModificationsProfils) {
+    if (hasChildProfileChanges && MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.modals && MonHistoire.modules.ui.modals.enregistrerModificationsProfils) {
       // Nous allons gérer les modifications du profil parent après avoir enregistré les profils enfants
       // Cette fonction sera appelée par enregistrerModificationsProfils une fois terminée
       this.continuerModificationCompte(prenom, email, modal);
-      
+
       // Enregistrer les modifications des profils enfants
       // Note: cette fonction va appeler continuerModificationCompte après avoir terminé
-      MonHistoire.ui.enregistrerModificationsProfils(true);
+      MonHistoire.modules.ui.modals.enregistrerModificationsProfils(true);
       return;
     }
     

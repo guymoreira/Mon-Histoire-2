@@ -1,0 +1,240 @@
+// js/modules/ui/events.js
+// Gestion des événements de l'interface utilisateur
+
+window.MonHistoire = window.MonHistoire || {};
+MonHistoire.modules = MonHistoire.modules || {};
+MonHistoire.modules.ui = MonHistoire.modules.ui || {};
+
+(function() {
+  function init() {
+    bindEvents();
+    bindLongPress();
+    initNotificationListeners();
+  }
+
+  function initNotificationListeners() {
+    if (!MonHistoire.events) return;
+
+    MonHistoire.events.on("profilChange", () => {
+      if (MonHistoire.modules.sharing && MonHistoire.modules.sharing.mettreAJourIndicateurNotification) {
+        setTimeout(() => MonHistoire.modules.sharing.mettreAJourIndicateurNotification(), 500);
+      }
+    });
+
+    MonHistoire.events.on("nouvelleNotification", () => {
+      if (MonHistoire.modules.sharing && MonHistoire.modules.sharing.mettreAJourIndicateurNotification) {
+        MonHistoire.modules.sharing.mettreAJourIndicateurNotification();
+      }
+    });
+  }
+
+  function protegerBouton(id, callback) {
+    const bouton = document.getElementById(id);
+    if (!bouton) return;
+
+    bouton.removeEventListener("click", bouton._clickHandler);
+    bouton._clickHandler = async (event) => {
+      if (bouton.dataset.processing === "true") return;
+      bouton.dataset.processing = "true";
+      try {
+        await callback(event);
+      } finally {
+        setTimeout(() => { bouton.dataset.processing = "false"; }, 500);
+      }
+    };
+    bouton.addEventListener("click", bouton._clickHandler);
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('[data-screen]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const screen = btn.getAttribute('data-screen');
+        if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+          MonHistoire.modules.core.navigation.showScreen(screen);
+        }
+      });
+    });
+
+    bindProfilsEnfantsEvents();
+
+    document.getElementById('form-generer-histoire')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (MonHistoire.modules.stories && MonHistoire.modules.stories.generator) {
+        MonHistoire.modules.stories.generator.genererHistoire();
+      }
+    });
+
+    document.querySelectorAll('.btn-back').forEach(button => {
+      button.addEventListener('click', () => {
+        if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+          MonHistoire.modules.core.navigation.goBack();
+        }
+      });
+    });
+
+    document.getElementById('btn-retour-resultat')?.addEventListener('click', () => {
+      if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+        MonHistoire.modules.core.navigation.retourDepuisResultat();
+      }
+    });
+
+    protegerBouton('btn-sauvegarde', () => {
+      if (MonHistoire.modules.stories && MonHistoire.modules.stories.management) {
+        MonHistoire.modules.stories.management.sauvegarderHistoire();
+      }
+    });
+
+    protegerBouton('btn-audio', () => {
+      if (MonHistoire.modules.features && MonHistoire.modules.features.audio) {
+        MonHistoire.modules.features.audio.gererClicBoutonAudio();
+      }
+    });
+
+    protegerBouton('btn-export-pdf', () => {
+      if (MonHistoire.modules.stories && MonHistoire.modules.stories.export) {
+        MonHistoire.modules.stories.export.exporterHistoirePDF();
+      }
+    });
+
+    protegerBouton('btn-partage', () => {
+      if (MonHistoire.modules.sharing && MonHistoire.modules.sharing.ouvrirModalePartage) {
+        MonHistoire.modules.sharing.ouvrirModalePartage();
+      }
+    });
+  }
+
+  function bindProfilsEnfantsEvents() {
+    const modals = MonHistoire.modules.ui.modals;
+    if (!modals) return;
+
+    document.getElementById('btn-ajouter-enfant')?.addEventListener('click', modals.ouvrirFormAjoutEnfant);
+    document.getElementById('btn-valider-ajout-enfant')?.addEventListener('click', modals.validerAjoutEnfant);
+    document.getElementById('btn-annuler-ajout-enfant')?.addEventListener('click', modals.annulerAjoutEnfant);
+    document.getElementById('btn-annuler-renommer-profil')?.addEventListener('click', modals.fermerModaleRenommerProfil);
+    document.getElementById('btn-confirmer-renommer-profil')?.addEventListener('click', modals.confirmerRenommerProfil);
+  }
+
+  function bindLongPress() {
+    const elements = document.querySelectorAll('.histoire-card, .ui-button--primary');
+    elements.forEach(element => {
+      let pressTimer;
+      let startX, startY;
+      const longPressDuration = 500;
+      const moveThreshold = 10;
+
+      const startTouch = (e) => {
+        if (e.touches && e.touches[0]) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        } else if (e.type === 'mousedown') {
+          startX = e.clientX;
+          startY = e.clientY;
+        }
+        pressTimer = setTimeout(() => {
+          if (element.closest('li') && element.closest('li').dataset.id) {
+            handleLongPress(element);
+          }
+        }, longPressDuration);
+      };
+      const endTouch = () => clearTimeout(pressTimer);
+      const cancelTouch = () => clearTimeout(pressTimer);
+      const moveTouch = (e) => {
+        let moveX = 0, moveY = 0;
+        if (e.touches && e.touches[0]) {
+          moveX = Math.abs(e.touches[0].clientX - startX);
+          moveY = Math.abs(e.touches[0].clientY - startY);
+        } else if (e.type === 'mousemove') {
+          moveX = Math.abs(e.clientX - startX);
+          moveY = Math.abs(e.clientY - startY);
+        }
+        if (moveX > moveThreshold || moveY > moveThreshold) cancelTouch();
+      };
+
+      element.addEventListener('touchstart', startTouch, { passive: true });
+      element.addEventListener('touchend', endTouch);
+      element.addEventListener('touchcancel', cancelTouch);
+      element.addEventListener('touchmove', moveTouch, { passive: true });
+
+      element.addEventListener('mousedown', startTouch);
+      element.addEventListener('mouseup', endTouch);
+      element.addEventListener('mouseleave', cancelTouch);
+      element.addEventListener('mousemove', moveTouch);
+    });
+  }
+
+  function handleLongPress(element) {
+    const histoireId = element.dataset.id;
+    if (!histoireId) return;
+    afficherMenuContextuelHistoire(element, histoireId);
+  }
+
+  function afficherMenuContextuelHistoire(element, histoireId) {
+    let menu = document.getElementById('menu-contextuel-histoire');
+    if (!menu) {
+      menu = document.createElement('div');
+      menu.id = 'menu-contextuel-histoire';
+      menu.className = 'menu-contextuel';
+
+      const options = [
+        { text: 'Lire', icon: '📖', action: 'lire' },
+        { text: 'Supprimer', icon: '🗑️', action: 'supprimer' }
+      ];
+      options.forEach(option => {
+        const item = document.createElement('div');
+        item.className = 'menu-item';
+        item.dataset.action = option.action;
+        const icon = document.createElement('span');
+        icon.className = 'menu-icon';
+        icon.textContent = option.icon;
+        const text = document.createElement('span');
+        text.className = 'menu-text';
+        text.textContent = option.text;
+        item.appendChild(icon);
+        item.appendChild(text);
+        menu.appendChild(item);
+        item.addEventListener('click', () => {
+          handleMenuAction(option.action, histoireId);
+          fermerMenuContextuel();
+        });
+      });
+      document.body.appendChild(menu);
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && e.target !== element) {
+          fermerMenuContextuel();
+        }
+      });
+    }
+    menu.dataset.histoireId = histoireId;
+    const rect = element.getBoundingClientRect();
+    menu.style.top = `${rect.bottom + window.scrollY}px`;
+    menu.style.left = `${rect.left + window.scrollX}px`;
+    menu.classList.add('show');
+  }
+
+  function fermerMenuContextuel() {
+    const menu = document.getElementById('menu-contextuel-histoire');
+    if (menu) menu.classList.remove('show');
+  }
+
+  function handleMenuAction(action, histoireId) {
+    switch (action) {
+      case 'lire':
+        if (MonHistoire.modules.stories && MonHistoire.modules.stories.display) {
+          MonHistoire.modules.stories.display.afficherHistoireSauvegardee(histoireId);
+        }
+        break;
+      case 'supprimer':
+        if (MonHistoire.modules.stories && MonHistoire.modules.stories.management) {
+          MonHistoire.modules.stories.management.supprimerHistoire(histoireId);
+        }
+        break;
+    }
+  }
+
+  MonHistoire.modules.ui.events = {
+    init,
+    bindLongPress,
+    protegerBouton,
+    bindEvents
+  };
+})();
