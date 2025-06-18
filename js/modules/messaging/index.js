@@ -1,78 +1,65 @@
 // js/modules/messaging/index.js
-// Entry point wrapper delegating to js/features/messaging
+// Point d'entrée du module de messagerie (version modulaire)
 
 window.MonHistoire = window.MonHistoire || {};
 MonHistoire.modules = MonHistoire.modules || {};
 MonHistoire.modules.messaging = MonHistoire.modules.messaging || {};
 
 (function() {
-  const getFeature = () => MonHistoire.features && MonHistoire.features.messaging;
-  const mod = MonHistoire.modules.messaging;
+  const messaging = MonHistoire.modules.messaging;
 
-  mod.init = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.init === 'function') {
-      return f.init(...args);
-    }
-  };
+  messaging.init = function() {
+    try {
+      if (messaging.storage && typeof messaging.storage.init === 'function') {
+        messaging.storage.init();
+      }
+      if (messaging.realtime && typeof messaging.realtime.init === 'function') {
+        messaging.realtime.init();
+      }
+      if (messaging.ui && typeof messaging.ui.init === 'function') {
+        messaging.ui.init();
+      }
+      if (messaging.notifications && typeof messaging.notifications.init === 'function') {
+        messaging.notifications.init();
+      }
 
-  mod.getOrCreateConversation = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.getOrCreateConversation === 'function') {
-      return f.getOrCreateConversation(...args);
-    }
-    if (mod.storage && mod.storage.getOrCreateConversation) {
-      return mod.storage.getOrCreateConversation(...args);
-    }
-  };
+      // Exposer les fonctions principales si non présentes
+      if (!messaging.getOrCreateConversation) {
+        messaging.getOrCreateConversation = (...args) =>
+          messaging.storage.getOrCreateConversation(...args);
+      }
+      if (!messaging.sendMessage) {
+        messaging.sendMessage = (...args) =>
+          messaging.storage.sendMessage(...args);
+      }
+      if (!messaging.listenToMessages) {
+        messaging.listenToMessages = (...args) =>
+          messaging.realtime.listenToMessages(...args);
+      }
+      if (!messaging.markAsRead) {
+        messaging.markAsRead = (...args) =>
+          messaging.storage.markAsRead(...args);
+      }
+      if (!messaging.hasUnreadMessages) {
+        messaging.hasUnreadMessages = (...args) =>
+          messaging.storage.hasUnreadMessages(...args);
+      }
+      if (!messaging.markConversationRead) {
+        messaging.markConversationRead = (...args) =>
+          messaging.notifications.markConversationRead(...args);
+      }
 
-  mod.sendMessage = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.sendMessage === 'function') {
-      return f.sendMessage(...args);
-    }
-    if (mod.storage && mod.storage.sendMessage) {
-      return mod.storage.sendMessage(...args);
-    }
-  };
-
-  mod.listenToMessages = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.listenToMessages === 'function') {
-      return f.listenToMessages(...args);
-    }
-    if (mod.realtime && mod.realtime.listenToMessages) {
-      return mod.realtime.listenToMessages(...args);
-    }
-  };
-
-  mod.markAsRead = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.markAsRead === 'function') {
-      return f.markAsRead(...args);
-    }
-    if (mod.storage && mod.storage.markAsRead) {
-      return mod.storage.markAsRead(...args);
-    }
-  };
-
-  mod.hasUnreadMessages = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.hasUnreadMessages === 'function') {
-      return f.hasUnreadMessages(...args);
-    }
-    if (mod.storage && mod.storage.hasUnreadMessages) {
-      return mod.storage.hasUnreadMessages(...args);
-    }
-  };
-
-  mod.markConversationRead = function(...args) {
-    const f = getFeature();
-    if (f && typeof f.markConversationRead === 'function') {
-      return f.markConversationRead(...args);
-    }
-    if (mod.notifications && mod.notifications.markConversationRead) {
-      return mod.notifications.markConversationRead(...args);
+      if (MonHistoire.logger) {
+        MonHistoire.logger.info('MESSAGING', 'Module de messagerie initialisé');
+      } else {
+        console.log('Module de messagerie initialisé');
+      }
+    } catch (e) {
+      if (MonHistoire.logger) {
+        MonHistoire.logger.error('MESSAGING', "Erreur lors de l'initialisation de la messagerie", e);
+      } else {
+        console.error("Erreur lors de l'initialisation de la messagerie", e);
+      }
     }
   };
 })();
