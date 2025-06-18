@@ -443,7 +443,11 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
         return;
       }
     }
-    
+
+    // Indiquer la provenance du résultat
+    MonHistoire.state = MonHistoire.state || {};
+    MonHistoire.state.resultatSource = 'formulaire';
+
     // Éviter les générations multiples
     if (isGenerating) {
       return;
@@ -480,7 +484,22 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
         if (MonHistoire.events) {
           MonHistoire.events.emit('storyGenerated', story);
         }
-        
+
+        // Vérifier si l'utilisateur approche de son quota d'histoires
+        if (firebase.auth && firebase.auth().currentUser &&
+            MonHistoire.modules.core &&
+            MonHistoire.modules.core.storage &&
+            typeof MonHistoire.modules.core.storage.verifierSeuilAlerteHistoires === 'function') {
+          MonHistoire.modules.core.storage.verifierSeuilAlerteHistoires()
+            .then(seuilAtteint => {
+              if (seuilAtteint) {
+                setTimeout(() => {
+                  MonHistoire.showMessageModal(`Attention : tu approches de la limite de ${MonHistoire.config.MAX_HISTOIRES} histoires sauvegardées.`);
+                }, 1000);
+              }
+            });
+        }
+
         isGenerating = false;
         console.log("Histoire générée");
       })
