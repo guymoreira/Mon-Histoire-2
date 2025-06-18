@@ -375,7 +375,11 @@ MonHistoire.init = function() {
   
   // Initialiser Firebase
   console.log("[DEBUG] Initialisation de Firebase");
-  this.config.initFirebase();
+  if (this.config && typeof this.config.initFirebase === 'function') {
+    this.config.initFirebase();
+  } else {
+    console.warn("initFirebase() non disponible - Firebase déjà initialisé ?");
+  }
   
   // Configurer les écouteurs d'état de connexion
   window.addEventListener('online', () => {
