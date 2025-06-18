@@ -80,6 +80,9 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       analyticsEnabled: true
     }
   };
+
+  // Exposer la configuration globalement pour compatibilité avec l'ancien code
+  MonHistoire.config = config;
   
   /**
    * Initialise le module de configuration
