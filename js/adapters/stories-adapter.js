@@ -126,6 +126,8 @@
     };
     
     console.log("[Adapter] Adaptateur d'affichage d'histoires initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module stories.display manquant dans MonHistoire.modules.stories");
   }
   
   // Adapter pour le module de gestion
@@ -178,6 +180,8 @@
     };
     
     console.log("[Adapter] Adaptateur de gestion d'histoires initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module stories.management manquant dans MonHistoire.modules.stories");
   }
   
   // Adapter pour le module de génération
@@ -200,6 +204,8 @@
     };
     
     console.log("[Adapter] Adaptateur de génération d'histoires initialisé avec succès");
+  } else {
+    console.warn("[Adapter] Module stories.generator manquant dans MonHistoire.modules.stories");
   }
   
   console.log("[Adapter] Adaptateur d'histoires initialisé avec succès");
