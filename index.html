@@ -21,53 +21,54 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
   
   <!-- Initialisation Firebase -->
-  <!-- <script src="js/firebase-init.js"></script> -->
-
-  <!-- Point d'entrée principal -->
-  <!-- <script src="js/index.js" defer></script> -->
-
-  <!-- Fichiers de configuration -->
-  <!-- <script src="js/config.js" defer></script> -->
-
-  <!-- Utilitaires communs -->
-  <!-- <script src="js/common.js" defer></script> -->
+  <script src="js/firebase-init.js"></script>
 
   <!-- Modules core -->
-  <!-- <script src="js/core/navigation.js" defer></script> -->
-  <!-- <script src="js/core/auth.js" defer></script> -->
-  <!-- <script src="js/core/profiles.js" defer></script> -->
-  <!-- <script src="js/core/storage.js" defer></script> -->
+  <script src="js/modules/core/config.js" defer></script>
+  <script src="js/modules/core/cookies.js" defer></script>
+  <script src="js/modules/core/navigation.js" defer></script>
+  <script src="js/modules/core/storage.js" defer></script>
 
-  <!-- Modules features -->
-  <!-- <script src="js/features/stories/generator.js" defer></script> -->
-  <!-- <script src="js/features/stories/display.js" defer></script> -->
-  <!-- <script src="js/features/stories/management.js" defer></script> -->
-  <!-- <script src="js/features/stories/notation.js" defer></script> -->
-  <!-- Module de partage modulaire -->
-  <!-- <script src="js/features/sharing/notifications.js" defer></script> -->
-  <!-- <script src="js/features/sharing/storage.js" defer></script> -->
-  <!-- <script src="js/features/sharing/ui.js" defer></script> -->
-  <!-- Modules de partage en temps réel -->
-  <!-- <script src="js/features/sharing/realtime/index.js" defer></script> -->
-  <!-- <script src="js/features/sharing/realtime/listeners.js" defer></script> -->
-  <!-- <script src="js/features/sharing/realtime/notifications.js" defer></script> -->
-  <!-- Point d'entrée du module de partage -->
-  <!-- <script src="js/features/sharing/index.js" defer></script> -->
-  <!-- Module de messagerie -->
-  <!-- <script src="js/features/messaging/storage.js" defer></script> -->
-  <!-- <script src="js/features/messaging/realtime.js" defer></script> -->
-  <!-- <script src="js/features/messaging/ui.js" defer></script> -->
-  <!-- <script src="js/features/messaging/notifications.js" defer></script> -->
-  <!-- <script src="js/features/messaging/index.js" defer></script> -->
-  <!-- <script src="js/features/export.js" defer></script> -->
-  <!-- <script src="js/features/audio.js" defer></script> -->
-  <!-- <script src="js/features/cookies.js" defer></script> -->
+  <!-- Modules utilisateur -->
+  <script src="js/modules/user/account.js" defer></script>
+  <script src="js/modules/user/activity.js" defer></script>
+  <script src="js/modules/user/auth.js" defer></script>
+  <script src="js/modules/user/profiles.js" defer></script>
 
-  <!-- Interface utilisateur -->
-  <!-- <script src="js/ui.js" defer></script> -->
+  <!-- Modules histoires -->
+  <script src="js/modules/stories/generator.js" defer></script>
+  <script src="js/modules/stories/display.js" defer></script>
+  <script src="js/modules/stories/management.js" defer></script>
+  <script src="js/modules/stories/export.js" defer></script>
 
-  <!-- Point d'entrée principal -->
-  <!-- <script src="js/app.js" defer></script> -->
+  <!-- Modules fonctionnalités -->
+  <script src="js/modules/features/audio.js" defer></script>
+  <script src="js/modules/features/cookies.js" defer></script>
+  <script src="js/modules/features/export.js" defer></script>
+
+  <!-- Modules de partage -->
+  <script src="js/modules/sharing/ui.js" defer></script>
+  <script src="js/modules/sharing/notifications.js" defer></script>
+  <script src="js/modules/sharing/storage.js" defer></script>
+  <script src="js/modules/sharing/realtime/index.js" defer></script>
+  <script src="js/modules/sharing/realtime/listeners.js" defer></script>
+  <script src="js/modules/sharing/realtime/notifications.js" defer></script>
+  <script src="js/modules/sharing/index.js" defer></script>
+
+  <!-- Modules de messagerie -->
+  <script src="js/modules/messaging/storage.js" defer></script>
+  <script src="js/modules/messaging/realtime.js" defer></script>
+  <script src="js/modules/messaging/ui.js" defer></script>
+  <script src="js/modules/messaging/notifications.js" defer></script>
+  <script src="js/modules/messaging/index.js" defer></script>
+
+  <!-- Modules d'interface utilisateur -->
+  <script src="js/modules/ui/common.js" defer></script>
+  <script src="js/modules/ui/whitebar-fix.js" defer></script>
+  <script src="js/modules/ui/debug.js" defer></script>
+
+  <!-- Module principal de l'application -->
+  <script src="js/modules/app.js" defer></script>
 
   <!-- Nouvelle entrée pour la migration -->
   <script src="js/adapters/index.js" defer></script>
