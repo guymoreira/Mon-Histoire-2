@@ -146,8 +146,8 @@ MonHistoire.modules.sharing.storage = {
       }
 
       // Log de l'activité
-      if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.logActivite("partage_histoire", { 
+      if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+        MonHistoire.modules.user.auth.logActivity("partage_histoire", {
           destinataire_type: type,
           destinataire_id: id,
           destinataire_prenom: prenom
@@ -327,8 +327,8 @@ MonHistoire.modules.sharing.storage = {
       }
 
       // Log de l'activité
-      if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.logActivite("partage_histoire_offline", { 
+      if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+        MonHistoire.modules.user.auth.logActivity("partage_histoire_offline", {
           destinataire_type: type,
           destinataire_id: id,
           destinataire_prenom: prenom

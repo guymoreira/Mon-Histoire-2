@@ -265,9 +265,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
       console.log("[DEBUG] Clic sur le bouton d'inscription (Créer un compte)");
       if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
         MonHistoire.modules.user.auth.toggleSignup(true);
-      } else if (MonHistoire.core && MonHistoire.core.auth) {
-        // Fallback vers l'ancien namespace
-        MonHistoire.core.auth.toggleSignup(true);
       } else {
         console.error("[ERROR] Module auth non disponible pour l'inscription");
       }
@@ -282,10 +279,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
           console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleSignup");
           MonHistoire.modules.user.auth.toggleSignup(false);
-        } else if (MonHistoire.core && MonHistoire.core.auth) {
-          // Fallback vers l'ancien namespace
-          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleSignup (fallback)");
-          MonHistoire.core.auth.toggleSignup(false);
         } else {
           console.error("[ERROR] Aucun module auth disponible pour toggleSignup");
         }
@@ -304,10 +297,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
           console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleReset");
           MonHistoire.modules.user.auth.toggleReset(true);
-        } else if (MonHistoire.core && MonHistoire.core.auth) {
-          // Fallback vers l'ancien namespace
-          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleReset (fallback)");
-          MonHistoire.core.auth.toggleReset(true);
         } else {
           console.error("[ERROR] Aucun module auth disponible pour toggleReset");
         }
@@ -325,10 +314,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
           console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleReset");
           MonHistoire.modules.user.auth.toggleReset(false);
-        } else if (MonHistoire.core && MonHistoire.core.auth) {
-          // Fallback vers l'ancien namespace
-          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleReset (fallback)");
-          MonHistoire.core.auth.toggleReset(false);
         } else {
           console.error("[ERROR] Aucun module auth disponible pour toggleReset");
         }
@@ -347,10 +332,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
           console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.sendReset");
           MonHistoire.modules.user.auth.sendReset();
-        } else if (MonHistoire.core && MonHistoire.core.auth) {
-          // Fallback vers l'ancien namespace
-          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.sendReset (fallback)");
-          MonHistoire.core.auth.sendReset();
         } else {
           console.error("[ERROR] Aucun module auth disponible pour sendReset");
         }

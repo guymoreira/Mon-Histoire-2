@@ -936,8 +936,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       // Affiche l'écran de résultat
       if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
         MonHistoire.modules.core.navigation.showScreen("resultat");
-      } else if (MonHistoire.core && MonHistoire.core.navigation) {
-        MonHistoire.core.navigation.showScreen("resultat");
       }
       
       // Prépare les données pour l'API
