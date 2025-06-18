@@ -667,7 +667,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     
     console.log("[Module] Tentative de déconnexion");
     
-    logout()
+    return logout()
       .then(() => {
         console.log("[Module] Déconnexion réussie");
         
