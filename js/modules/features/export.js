@@ -80,9 +80,19 @@ MonHistoire.modules.features.export = {
   // Génère le PDF avec l'histoire
   async genererPDF() {
     // Récupère l'histoire affichée
-    const histoire =
+    let histoire =
       MonHistoire.modules.stories.display.getCurrentStory &&
       MonHistoire.modules.stories.display.getCurrentStory();
+
+    // Fallback vers l'ancien namespace si aucune histoire n'est trouvée
+    if (histoire === null &&
+        MonHistoire.features &&
+        MonHistoire.features.stories &&
+        MonHistoire.features.stories.display &&
+        typeof MonHistoire.features.stories.display.getHistoireAffichee === "function") {
+      console.warn("[Export] Utilisation du fallback getHistoireAffichee depuis MonHistoire.features");
+      histoire = MonHistoire.features.stories.display.getHistoireAffichee();
+    }
     
     // Crée un nouveau document PDF
     const { jsPDF } = window.jspdf;

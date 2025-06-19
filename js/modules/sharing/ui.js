@@ -34,7 +34,17 @@ MonHistoire.modules.sharing.ui = {
     if (MonHistoire.modules && 
         MonHistoire.modules.stories && 
         MonHistoire.modules.stories.display) {
-      const histoire = MonHistoire.modules.stories.display.getHistoireAffichee();
+      let histoire = MonHistoire.modules.stories.display.getHistoireAffichee();
+
+      // Fallback vers l'ancien namespace si aucune histoire n'est trouvée
+      if (histoire === null &&
+          MonHistoire.features &&
+          MonHistoire.features.stories &&
+          MonHistoire.features.stories.display &&
+          typeof MonHistoire.features.stories.display.getHistoireAffichee === "function") {
+        console.warn("[Partage] Utilisation du fallback getHistoireAffichee depuis MonHistoire.features");
+        histoire = MonHistoire.features.stories.display.getHistoireAffichee();
+      }
       
       // Si aucune histoire n'est affichée, on ne fait rien
       if (!histoire || (!histoire.chapitre1 && !histoire.contenu)) {
