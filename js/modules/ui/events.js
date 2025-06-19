@@ -135,6 +135,63 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         MonHistoire.modules.sharing.ouvrirModalePartage();
       }
     });
+
+    // --- Partage et limites ---
+    document.getElementById('btn-fermer-partage')?.addEventListener('click', () => {
+      MonHistoire.modules.sharing?.fermerModalePartage?.();
+    });
+
+    document.getElementById('btn-fermer-limite')?.addEventListener('click', () => {
+      document.getElementById('modal-limite')?.classList.remove('show');
+    });
+
+    document.getElementById('btn-valider-limite')?.addEventListener('click', () => {
+      if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+        MonHistoire.modules.core.navigation.showScreen('mes-histoires');
+      }
+      document.getElementById('modal-limite')?.classList.remove('show');
+    });
+
+    // --- Renommage d'histoire ---
+    document.getElementById('btn-renommer-histoire')?.addEventListener('click', () => {
+      const selected = document.querySelector('.histoire-card.selected');
+      if (!selected) return;
+      MonHistoire.state = MonHistoire.state || {};
+      MonHistoire.state.histoireARenommer = selected.dataset.id;
+      const input = document.getElementById('input-nouveau-titre');
+      const titreEl = selected.querySelector('div');
+      if (input && titreEl) input.value = titreEl.textContent.trim();
+      document.getElementById('modal-renommer')?.classList.add('show');
+    });
+
+    document.getElementById('btn-annuler-renommer')?.addEventListener('click', () => {
+      document.getElementById('modal-renommer')?.classList.remove('show');
+      if (MonHistoire.state) MonHistoire.state.histoireARenommer = null;
+    });
+
+    document.getElementById('btn-confirmer-renommer')?.addEventListener('click', async () => {
+      const id = MonHistoire.state?.histoireARenommer;
+      const input = document.getElementById('input-nouveau-titre');
+      if (!id || !input || !input.value.trim()) {
+        document.getElementById('modal-renommer')?.classList.remove('show');
+        return;
+      }
+      document.getElementById('modal-renommer')?.classList.remove('show');
+      const newTitle = input.value.trim();
+      try {
+        await MonHistoire.modules.core?.storage?.updateStoryTitle(id, newTitle);
+        if (MonHistoire.modules.stories?.management?.loadStories) {
+          MonHistoire.modules.stories.management.loadStories();
+        } else if (MonHistoire.features?.stories?.management?.afficherHistoiresSauvegardees) {
+          MonHistoire.features.stories.management.afficherHistoiresSauvegardees();
+        }
+      } catch (error) {
+        console.error('Erreur lors du renommage:', error);
+        MonHistoire.showMessageModal?.("Erreur lors du renommage de l'histoire.");
+      } finally {
+        if (MonHistoire.state) MonHistoire.state.histoireARenommer = null;
+      }
+    });
   }
 
   function bindProfilsEnfantsEvents() {
