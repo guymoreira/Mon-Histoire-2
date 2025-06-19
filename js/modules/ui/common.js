@@ -339,6 +339,60 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     } else {
       console.error("[ERROR] Bouton envoyer réinitialisation non trouvé (btn-send-reset)");
     }
+
+    // Soumission du formulaire de connexion
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+      console.log("[DEBUG] Formulaire de connexion trouvé");
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("[DEBUG] Soumission du formulaire de connexion");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.loginUser");
+          MonHistoire.modules.user.auth.loginUser();
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour loginUser");
+        }
+      });
+    } else {
+      console.error("[ERROR] Formulaire de connexion non trouvé (login-form)");
+    }
+
+    // Soumission du formulaire d'inscription
+    const signupFormEl = document.getElementById("signup-form");
+    if (signupFormEl) {
+      console.log("[DEBUG] Formulaire d'inscription trouvé");
+      signupFormEl.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("[DEBUG] Soumission du formulaire d'inscription");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.registerUser");
+          MonHistoire.modules.user.auth.registerUser();
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour registerUser");
+        }
+      });
+    } else {
+      console.error("[ERROR] Formulaire d'inscription non trouvé (signup-form)");
+    }
+
+    // Soumission du formulaire de réinitialisation
+    const resetFormEl = document.getElementById("reset-form");
+    if (resetFormEl) {
+      console.log("[DEBUG] Formulaire de réinitialisation trouvé");
+      resetFormEl.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("[DEBUG] Soumission du formulaire de réinitialisation");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.sendReset");
+          MonHistoire.modules.user.auth.sendReset();
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour sendReset");
+        }
+      });
+    } else {
+      console.error("[ERROR] Formulaire de réinitialisation non trouvé (reset-form)");
+    }
     
     // Formulaire de création d'histoire
     document.getElementById("form-generer-histoire")?.addEventListener("submit", (e) => {
