@@ -468,12 +468,17 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     };
     
     // Générer l'histoire
-    generateStory(generationData)
-      .then(story => {
-        generatedStory = story;
-        
-        // Mettre à jour l'interface utilisateur
-        updateResultUI();
+      generateStory(generationData)
+        .then(story => {
+          generatedStory = story;
+
+          // Assure la disponibilité de l'histoire pour l'export ou le partage
+          if (MonHistoire.modules.stories && MonHistoire.modules.stories.display) {
+            MonHistoire.modules.stories.display.showStory(generatedStory);
+          }
+
+          // Mettre à jour l'interface utilisateur
+          updateResultUI();
         
         // Masquer le chargement
         if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
@@ -965,6 +970,11 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
           }
 
           histoireElement.innerHTML = histoire.displayHtml;
+
+          // Mettre à disposition l'histoire pour les autres modules
+          if (MonHistoire.modules.stories && MonHistoire.modules.stories.display) {
+            MonHistoire.modules.stories.display.showStory(generatedStory);
+          }
         })
         .catch(error => {
           console.error("Erreur lors de la génération de l'histoire:", error);

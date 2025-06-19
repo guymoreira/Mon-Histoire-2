@@ -194,12 +194,15 @@
       
       genererHistoire: function(params) {
         console.log("[Adapter] Redirection de genererHistoire vers modules.stories.generator.generateStory");
-        // Si des paramètres sont fournis, les utiliser, sinon laisser le module récupérer les valeurs du formulaire
-        if (params) {
-          return MonHistoire.modules.stories.generator.generateStory(params);
-        } else {
-          return MonHistoire.modules.stories.generator.generateStory();
-        }
+        const promise = params ?
+          MonHistoire.modules.stories.generator.generateStory(params) :
+          MonHistoire.modules.stories.generator.generateStory();
+        return promise.then(story => {
+          if (story && MonHistoire.modules.stories && MonHistoire.modules.stories.display) {
+            MonHistoire.modules.stories.display.showStory(story);
+          }
+          return story;
+        });
       }
     };
     
