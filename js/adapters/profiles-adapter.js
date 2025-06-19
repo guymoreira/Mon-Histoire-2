@@ -63,7 +63,7 @@
             enfantsSnap.forEach(docEnfant => {
               const data = docEnfant.data();
               const btn = document.createElement("button");
-              btn.className = "button button-blue";
+              btn.className = "ui-button ui-button--primary";
               btn.textContent = data.prenom;
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
@@ -98,7 +98,7 @@
           if (listEl) {
             // Bouton pour revenir au profil parent
             const btnParent = document.createElement("button");
-            btnParent.className = "button button-blue";
+            btnParent.className = "ui-button ui-button--primary";
             btnParent.textContent = prenomParent;
             btnParent.style.marginBottom = "0.75em";
             btnParent.onclick = () => {
@@ -119,7 +119,7 @@
               
               const data = docEnfant.data();
               const btn = document.createElement("button");
-              btn.className = "button button-blue";
+              btn.className = "ui-button ui-button--primary";
               btn.textContent = data.prenom;
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
