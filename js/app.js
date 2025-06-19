@@ -543,8 +543,13 @@ MonHistoire.init = function() {
         );
       }
       
-      if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.afficherUtilisateurConnecté();
+      const authCore = MonHistoire.core && MonHistoire.core.auth;
+      const authModule = MonHistoire.modules?.user?.auth;
+
+      if (authCore?.afficherUtilisateurConnecté) {
+        authCore.afficherUtilisateurConnecté();
+      } else if (authModule?.afficherUtilisateurConnecté) {
+        authModule.afficherUtilisateurConnecté();
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après connexion");
@@ -566,11 +571,17 @@ MonHistoire.init = function() {
         }, 500);
       }
     } else {
-      if (MonHistoire.core && MonHistoire.core.auth) {
-        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
-        if (MonHistoire.core && MonHistoire.core.navigation) {
-          MonHistoire.core.navigation.showScreen('accueil');
-        }
+      const authCore = MonHistoire.core && MonHistoire.core.auth;
+      const authModule = MonHistoire.modules?.user?.auth;
+
+      if (authCore?.afficherUtilisateurDéconnecté) {
+        authCore.afficherUtilisateurDéconnecté();
+      } else if (authModule?.afficherUtilisateurDéconnecté) {
+        authModule.afficherUtilisateurDéconnecté();
+      }
+
+      if (MonHistoire.core && MonHistoire.core.navigation) {
+        MonHistoire.core.navigation.showScreen('accueil');
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après déconnexion");
