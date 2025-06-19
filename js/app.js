@@ -669,7 +669,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Vérifier l'état de connexion initial
   MonHistoire.state.isConnected = navigator.onLine;
-  
+
+  // Initialiser la configuration si disponible
+  if (
+    MonHistoire.modules &&
+    MonHistoire.modules.core &&
+    MonHistoire.modules.core.config &&
+    typeof MonHistoire.modules.core.config.init === 'function'
+  ) {
+    MonHistoire.modules.core.config.init();
+  }
+
   // Initialiser l'application
   MonHistoire.init();
   
