@@ -669,8 +669,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Vérifier l'état de connexion initial
   MonHistoire.state.isConnected = navigator.onLine;
-  
+
   // Initialiser l'application
+  if (
+    MonHistoire.modules &&
+    MonHistoire.modules.core &&
+    MonHistoire.modules.core.config &&
+    typeof MonHistoire.modules.core.config.init === 'function'
+  ) {
+    MonHistoire.modules.core.config.init();
+  }
+
   MonHistoire.init();
   
   // Gérer la visibilité du footer en fonction du profil actif
