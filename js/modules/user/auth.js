@@ -133,7 +133,19 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
         reject(new Error("E-mail et mot de passe requis"));
         return;
       }
-      
+
+      // S'assurer que Firebase Auth est disponible
+      if (!auth) {
+        init();
+      }
+
+      // Après tentative d'initialisation, si "auth" est toujours indisponible
+      // on signale explicitement l'erreur à l'appelant
+      if (!auth) {
+        reject(new Error("Service d’authentification non disponible"));
+        return;
+      }
+
       // Connecter l'utilisateur
       auth.signInWithEmailAndPassword(email, password)
         .then(userCredential => {
