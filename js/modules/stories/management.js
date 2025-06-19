@@ -545,7 +545,12 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     return new Promise((resolve, reject) => {
       const user = currentUser || (firebase.auth && firebase.auth().currentUser);
       if (!user || !MonHistoire.state.profilActif) {
-        reject(new Error("Utilisateur ou profil non défini"));
+        if (MonHistoire.showMessageModal) {
+          MonHistoire.showMessageModal(
+            "Vous devez être connecté et avoir un profil sélectionné."
+          );
+        }
+        resolve();
         return;
       }
       
