@@ -238,10 +238,13 @@ MonHistoire.modules.sharing.storage = {
   async processOfflinePartage(data) {
     try {
       const user = firebase.auth().currentUser;
-      if (!user) {
-        MonHistoire.logger.error("Impossible de traiter le partage hors ligne: utilisateur non connecté");
-        return false;
-      }
+        if (!user) {
+          MonHistoire.logger.error(
+            MonHistoire.logger.PREFIXES.SHARING,
+            "Impossible de traiter le partage hors ligne: utilisateur non connecté"
+          );
+          return false;
+        }
       
       const { type, id, prenom, histoire, profilActif } = data;
       
