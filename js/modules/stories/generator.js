@@ -10,7 +10,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
 // Module de génération d'histoires
 (function() {
   // Variables privées
-  let currentProfile = null;
   let currentTemplate = null;
   let templates = [];
   let formData = {};
@@ -95,7 +94,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * @param {Object} profile - Profil sélectionné
    */
   function handleProfileChange(profile) {
-    currentProfile = profile;
+    MonHistoire.state.profilActif = profile;
     
     // Mettre à jour l'interface utilisateur
     updateFormUI();
@@ -233,8 +232,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
                 input.value = field.defaultValue;
               }
               // Si le champ est lié au profil, pré-remplir avec les informations du profil
-              if (field.profileField && currentProfile) {
-                input.value = currentProfile[field.profileField] || '';
+              if (field.profileField && MonHistoire.state.profilActif) {
+                input.value = MonHistoire.state.profilActif[field.profileField] || '';
               }
               break;
               
@@ -266,8 +265,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
               }
               
               // Si le champ est lié au profil, pré-sélectionner l'option correspondante
-              if (field.profileField && currentProfile) {
-                const profileValue = currentProfile[field.profileField];
+              if (field.profileField && MonHistoire.state.profilActif) {
+                const profileValue = MonHistoire.state.profilActif[field.profileField];
                 if (profileValue) {
                   input.value = profileValue;
                 }
@@ -295,8 +294,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
                   radioLabel.textContent = option.label;
                   
                   // Si le champ est lié au profil, pré-sélectionner l'option correspondante
-                  if (field.profileField && currentProfile) {
-                    const profileValue = currentProfile[field.profileField];
+                  if (field.profileField && MonHistoire.state.profilActif) {
+                    const profileValue = MonHistoire.state.profilActif[field.profileField];
                     if (profileValue === option.value) {
                       radioInput.checked = true;
                     }
@@ -426,7 +425,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * Gère la génération d'une histoire
    */
   function handleGenerateStory() {
-    if (!currentTemplate || !currentProfile) {
+    if (!currentTemplate || !MonHistoire.state.profilActif) {
       if (MonHistoire.showMessageModal) {
         MonHistoire.showMessageModal("Veuillez sélectionner un template et un profil.");
       }
@@ -463,7 +462,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     // Préparer les données pour la génération
     const generationData = {
       templateId: currentTemplate.id,
-      profileId: currentProfile.id,
+      profileId: MonHistoire.state.profilActif.id,
       formData: formData
     };
     
@@ -659,10 +658,10 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
           // Créer une histoire de test
           const story = {
             id: `story-${Date.now()}`,
-            title: `Histoire de ${data.formData.heroName || currentProfile.prenom}`,
+            title: `Histoire de ${data.formData.heroName || MonHistoire.state.profilActif.prenom}`,
             content: generateStoryContent(template, data.formData),
             templateId: template.id,
-            profileId: currentProfile.id,
+            profileId: MonHistoire.state.profilActif.id,
             createdAt: new Date().toISOString(),
             formData: data.formData
           };
@@ -853,8 +852,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     }
     
     // Remplacer les variables du profil
-    if (currentProfile) {
-      for (const [key, value] of Object.entries(currentProfile)) {
+    if (MonHistoire.state.profilActif) {
+      for (const [key, value] of Object.entries(MonHistoire.state.profilActif)) {
         if (typeof value === 'string') {
           content = content.replace(new RegExp(`\\{profile\\.${key}\\}`, 'g'), value);
         }
