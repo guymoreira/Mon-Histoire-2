@@ -188,6 +188,11 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       
       // Vérifier si Firebase Auth est initialisé
       if (!auth) {
+        // Tenter une initialisation si ce n'est pas déjà fait
+        init();
+      }
+
+      if (!auth) {
         console.error("Firebase Auth n'est pas initialisé");
         reject(new Error("Service d'authentification non disponible"));
         return;
@@ -499,6 +504,11 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     }
     
     // Vérifier si Firebase Auth est initialisé
+    if (!auth) {
+      // Tenter une initialisation si ce n'est pas déjà fait
+      init();
+    }
+
     if (!auth) {
       console.error("Firebase Auth n'est pas initialisé");
       if (MonHistoire.showMessageModal) {
