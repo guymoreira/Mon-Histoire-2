@@ -80,6 +80,13 @@ MonHistoire.features.export = {
   async genererPDF() {
     // Récupère l'histoire affichée
     const histoire = MonHistoire.features.stories.display.getHistoireAffichee();
+
+    if (!histoire) {
+      if (MonHistoire.showMessageModal) {
+        MonHistoire.showMessageModal("Aucune histoire à exporter.");
+      }
+      return;
+    }
     
     // Crée un nouveau document PDF
     const { jsPDF } = window.jspdf;
