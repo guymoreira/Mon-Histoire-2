@@ -517,11 +517,36 @@ MonHistoire.modules.features = MonHistoire.modules.features || {};
   function setVolume(vol) {
     volume = Math.max(0, Math.min(1, vol));
   }
+
+  /**
+   * Gère le clic sur le bouton audio
+   */
+  function gererClicBoutonAudio() {
+    if (isPlaying) {
+      if (isPaused) {
+        togglePlayPause();
+      } else {
+        stopPlayback();
+      }
+    } else {
+      const storyGetter =
+        MonHistoire.modules &&
+        MonHistoire.modules.stories &&
+        MonHistoire.modules.stories.display &&
+        MonHistoire.modules.stories.display.getCurrentStory;
+
+      const story = typeof storyGetter === 'function' ? storyGetter() : null;
+      if (story) {
+        playStory(story);
+      }
+    }
+  }
   
   // API publique
   MonHistoire.modules.features.audio = {
     init: init,
     playStory: playStory,
+    gererClicBoutonAudio: gererClicBoutonAudio,
     togglePlayPause: togglePlayPause,
     stopPlayback: stopPlayback,
     isSpeechSynthesisAvailable: isSpeechSynthesisAvailable,
