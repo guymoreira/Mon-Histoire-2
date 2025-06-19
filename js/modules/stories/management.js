@@ -11,7 +11,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
 (function() {
   // Variables privées
   let currentUser = null;
-  let currentProfile = null;
   let stories = [];
   let isInitialized = false;
   
@@ -47,7 +46,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     
     if (user) {
       // Utilisateur connecté, charger les histoires si un profil est sélectionné
-      if (currentProfile) {
+      if (MonHistoire.state.profilActif) {
         loadStories();
       }
     } else {
@@ -64,8 +63,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * @param {Object} profile - Profil sélectionné
    */
   function handleProfileChange(profile) {
-    currentProfile = profile;
-    
+    MonHistoire.state.profilActif = profile;
+
     if (currentUser && profile) {
       // Charger les histoires du profil
       loadStories();
@@ -146,7 +145,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * Charge les histoires du profil actuel
    */
   function loadStories() {
-    if (!currentUser || !currentProfile) {
+    if (!currentUser || !MonHistoire.state.profilActif) {
       return;
     }
     
@@ -157,7 +156,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     
     // Utiliser le module de stockage pour récupérer les histoires
     if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
-      MonHistoire.modules.core.storage.getStories(currentProfile.id)
+      MonHistoire.modules.core.storage.getStories(MonHistoire.state.profilActif.id)
         .then(loadedStories => {
           stories = loadedStories;
           
@@ -539,7 +538,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    */
   function saveStory(story) {
     return new Promise((resolve, reject) => {
-      if (!currentUser || !currentProfile) {
+      if (!currentUser || !MonHistoire.state.profilActif) {
         reject(new Error("Utilisateur ou profil non défini"));
         return;
       }
@@ -548,7 +547,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       const storyData = {
         ...story,
         userId: currentUser.uid,
-        profileId: currentProfile.id,
+        profileId: MonHistoire.state.profilActif.id,
         createdAt: story.createdAt || new Date().toISOString()
       };
       

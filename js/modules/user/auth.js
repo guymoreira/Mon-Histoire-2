@@ -384,12 +384,11 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     document.getElementById("my-stories-button").classList.remove("ui-hidden");
 
     // → Si un profil enfant est actif, on court-circuite tout :
-    if (MonHistoire.modules && MonHistoire.modules.user && 
-        MonHistoire.modules.user.profiles && 
-        MonHistoire.modules.user.profiles.getCurrentProfile) {
-      
-      const currentProfile = MonHistoire.modules.user.profiles.getCurrentProfile();
-      if (currentProfile && currentProfile.prenom) {
+    if (MonHistoire.state && MonHistoire.state.profilActif &&
+        MonHistoire.state.profilActif.type === 'enfant') {
+
+      const currentProfile = MonHistoire.state.profilActif;
+      if (currentProfile.prenom) {
         // On met directement l'initiale de l'enfant
         document.getElementById("user-icon").textContent = currentProfile.prenom
           .trim()

@@ -217,7 +217,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     
     // Mettre à jour l'état global
     if (MonHistoire.state) {
-      MonHistoire.state.currentProfile = currentProfile;
+      MonHistoire.state.profilActif = currentProfile;
     }
   }
   
@@ -227,15 +227,26 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
    */
   function selectProfile(profile) {
     currentProfile = profile;
-    
+
+    // Mettre à jour l'état global et le stockage local
+    if (MonHistoire.state) {
+      MonHistoire.state.profilActif = profile;
+    }
+    localStorage.setItem('profilActif', JSON.stringify(profile));
+
     // Mettre à jour l'interface utilisateur
     updateUI();
-    
+
+    // Mettre à jour la visibilité du footer si disponible
+    if (typeof MonHistoire.updateFooterVisibility === 'function') {
+      MonHistoire.updateFooterVisibility();
+    }
+
     // Émettre un événement pour informer les autres modules
     if (MonHistoire.events) {
       MonHistoire.events.emit('profileSelected', profile);
     }
-    
+
     console.log(`Profil sélectionné: ${profile.prenom}`);
   }
   

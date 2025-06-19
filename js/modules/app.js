@@ -11,7 +11,6 @@ MonHistoire.modules = MonHistoire.modules || {};
   // Variables privées
   let isInitialized = false;
   let currentScreen = null;
-  let currentProfile = null;
   
   /**
    * Initialise le module principal
@@ -324,7 +323,7 @@ MonHistoire.modules = MonHistoire.modules || {};
     }
     
     if (createStoryButton) {
-      createStoryButton.classList.toggle('hidden', !isLoggedIn || !currentProfile);
+      createStoryButton.classList.toggle('hidden', !isLoggedIn || !MonHistoire.state.profilActif);
     }
     
     if (settingsButton) {
@@ -377,7 +376,7 @@ MonHistoire.modules = MonHistoire.modules || {};
           option.value = profile.id;
           option.textContent = profile.name;
           
-          if (currentProfile && profile.id === currentProfile.id) {
+          if (MonHistoire.state.profilActif && profile.id === MonHistoire.state.profilActif.id) {
             option.selected = true;
           }
           
@@ -408,7 +407,7 @@ MonHistoire.modules = MonHistoire.modules || {};
         MonHistoire.modules.user.profiles.getCurrentProfile()
           .then(profile => {
             if (profile) {
-              currentProfile = profile;
+              MonHistoire.state.profilActif = profile;
               
               // Émettre un événement pour informer que le profil est sélectionné
               if (MonHistoire.events) {
@@ -430,7 +429,7 @@ MonHistoire.modules = MonHistoire.modules || {};
       console.log("Utilisateur déconnecté");
       
       // Réinitialiser le profil courant
-      currentProfile = null;
+      MonHistoire.state.profilActif = null;
       
       // Naviguer vers l'écran de connexion
       if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
@@ -445,7 +444,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    * @param {Object} profile - Profil sélectionné
    */
   function handleProfileSelected(profile) {
-    currentProfile = profile;
+    MonHistoire.state.profilActif = profile;
     
     // Mettre à jour l'interface utilisateur
     updateHeaderState();
@@ -470,8 +469,8 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleProfileUpdated(profile) {
     // Mettre à jour le profil courant si nécessaire
-    if (currentProfile && profile.id === currentProfile.id) {
-      currentProfile = profile;
+    if (MonHistoire.state.profilActif && profile.id === MonHistoire.state.profilActif.id) {
+      MonHistoire.state.profilActif = profile;
     }
     
     // Mettre à jour le sélecteur de profil
@@ -486,8 +485,8 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleProfileDeleted(profileId) {
     // Réinitialiser le profil courant si nécessaire
-    if (currentProfile && profileId === currentProfile.id) {
-      currentProfile = null;
+    if (MonHistoire.state.profilActif && profileId === MonHistoire.state.profilActif.id) {
+      MonHistoire.state.profilActif = null;
     }
     
     // Mettre à jour le sélecteur de profil
@@ -514,7 +513,7 @@ MonHistoire.modules = MonHistoire.modules || {};
       if (MonHistoire.modules.user && MonHistoire.modules.user.profiles) {
         MonHistoire.modules.user.profiles.selectProfile(profileId)
           .then(profile => {
-            currentProfile = profile;
+            MonHistoire.state.profilActif = profile;
             
             // Émettre un événement pour informer que le profil est sélectionné
             if (MonHistoire.events) {
@@ -660,7 +659,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleCreateStory() {
     // Vérifier si un profil est sélectionné
-    if (!currentProfile) {
+    if (!MonHistoire.state.profilActif) {
       if (MonHistoire.showWarning) {
         MonHistoire.showWarning("Veuillez sélectionner un profil pour créer une histoire.");
       }
@@ -709,7 +708,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    * @returns {Object} Profil sélectionné ou null
    */
   function getCurrentProfile() {
-    return currentProfile;
+    return MonHistoire.state.profilActif;
   }
   
   /**
