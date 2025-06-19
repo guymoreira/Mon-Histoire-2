@@ -301,8 +301,8 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     
     // Bouton Export PDF (protégé contre les clics multiples)
     protegerBouton("btn-export-pdf", () => {
-      if (MonHistoire.modules.stories && MonHistoire.modules.stories.export) {
-        MonHistoire.modules.stories.export.exporterHistoirePDF();
+      if (MonHistoire.modules.features && MonHistoire.modules.features.export) {
+        MonHistoire.modules.features.export.exporterHistoirePDF();
       }
     });
     
