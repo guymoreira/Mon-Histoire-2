@@ -226,6 +226,43 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       }
     }
   }
+
+  /**
+   * Charge et affiche une histoire sauvegardée
+   * @param {string} id - ID de l'histoire
+   */
+  function afficherHistoireSauvegardee(id) {
+    if (!id) {
+      return;
+    }
+
+    MonHistoire.state = MonHistoire.state || {};
+    MonHistoire.state.resultatSource = 'mes-histoires';
+
+    if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
+      MonHistoire.modules.core.storage.getStory(id)
+        .then(story => {
+          if (!story) {
+            if (MonHistoire.showMessageModal) {
+              MonHistoire.showMessageModal("Histoire non trouvée.");
+            }
+            return;
+          }
+
+          showStory(story);
+
+          if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
+            MonHistoire.modules.core.navigation.showScreen('resultat');
+          }
+        })
+        .catch(error => {
+          console.error("Erreur lors de la récupération de l'histoire:", error);
+          if (MonHistoire.showMessageModal) {
+            MonHistoire.showMessageModal("Erreur lors de la récupération de l'histoire.");
+          }
+        });
+    }
+  }
   
   /**
    * Obtient l'histoire actuellement affichée
@@ -256,6 +293,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
   MonHistoire.modules.stories.display = {
     init: init,
     showStory: showStory,
+    afficherHistoireSauvegardee: afficherHistoireSauvegardee,
     getCurrentStory: getCurrentStory,
     formatStory: formatStory
   };

@@ -601,6 +601,20 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
   function getStoryById(storyId) {
     return stories.find(s => s.id === storyId) || null;
   }
+
+  /**
+   * Wrapper public pour supprimer une histoire avec confirmation
+   * @param {string} id - ID de l'histoire à supprimer
+   */
+  function supprimerHistoire(id) {
+    if (!id) {
+      return;
+    }
+
+    // Réutilise la logique existante de confirmation/suppression
+    showDeleteConfirmation(id);
+    // L'utilisateur devra confirmer via le modal qui déclenchera handleDeleteStory
+  }
   
   // API publique
   MonHistoire.modules.stories.management = {
@@ -608,6 +622,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     loadStories: loadStories,
     saveStory: saveStory,
     getStories: getStories,
-    getStoryById: getStoryById
+    getStoryById: getStoryById,
+    supprimerHistoire: supprimerHistoire
   };
 })();
