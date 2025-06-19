@@ -176,6 +176,20 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
   }
 
   /**
+   * Retourne l'ID du profil actif s'il existe
+   * @returns {string|null} ID du profil actif ou null
+   * @private
+   */
+  function _getActiveProfileId() {
+    const profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
+      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : null);
+    if (profilActif && profilActif.type === 'enfant') {
+      return profilActif.id;
+    }
+    return null;
+  }
+
+  /**
    * Retourne la référence de collection des histoires pour l'utilisateur courant
    * @param {string} [profileId] - ID du profil enfant le cas échéant
    * @returns {Object} Référence de collection Firestore
