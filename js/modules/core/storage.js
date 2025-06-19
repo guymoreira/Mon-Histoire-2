@@ -504,6 +504,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
           userId: currentUser.uid,
           updatedAt: new Date().toISOString()
         };
+
+        Object.keys(story).forEach(key => {
+          if (story[key] === undefined) delete story[key];
+        });
         
         // Sauvegarder l'histoire dans Firestore
         db.collection(COLLECTIONS.STORIES)
