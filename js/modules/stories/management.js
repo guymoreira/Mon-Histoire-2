@@ -48,18 +48,20 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    */
   function handleAuthStateChange(user) {
     currentUser = user;
-    
+
     if (user) {
       // Utilisateur connecté, charger les histoires si un profil est sélectionné
       if (MonHistoire.state.profilActif) {
         loadStories();
       }
+      initQuota();
     } else {
       // Utilisateur déconnecté, réinitialiser les histoires
       stories = [];
-      
+
       // Mettre à jour l'interface utilisateur
       updateUI();
+      initQuota();
     }
   }
   
@@ -90,9 +92,55 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     // Ajouter l'histoire à la liste temporaire (non sauvegardée)
     const tempStory = { ...story, temporary: true };
     stories.unshift(tempStory);
-    
+
     // Mettre à jour l'interface utilisateur
     updateUI();
+    initQuota();
+  }
+
+  /**
+   * Initialise le quota d'histoires et met à jour l'affichage
+   */
+  function initQuota() {
+    const compteurEl = document.getElementById('compteur-histoires');
+    if (!compteurEl) {
+      return;
+    }
+
+    if (!currentUser || !MonHistoire.state.profilActif) {
+      compteurEl.textContent = '';
+      compteurEl.classList.remove('quota-alerte');
+      return;
+    }
+
+    compteurEl.textContent = 'Chargement...';
+    compteurEl.classList.remove('quota-alerte');
+
+    if (MonHistoire.modules.core && MonHistoire.modules.core.storage &&
+        typeof MonHistoire.modules.core.storage.getStories === 'function') {
+      MonHistoire.modules.core.storage
+        .getStories(MonHistoire.state.profilActif.id)
+        .then(storiesList => {
+          const maxHistoires = (MonHistoire.config &&
+            MonHistoire.config.MAX_HISTOIRES) ?
+            MonHistoire.config.MAX_HISTOIRES : 5;
+          const seuilAlerte = (MonHistoire.config &&
+            MonHistoire.config.SEUIL_ALERTE_HISTOIRES) ?
+            MonHistoire.config.SEUIL_ALERTE_HISTOIRES : Math.floor(maxHistoires * 0.8);
+
+          compteurEl.textContent = `${storiesList.length} / ${maxHistoires}`;
+
+          if (storiesList.length >= seuilAlerte) {
+            compteurEl.classList.add('quota-alerte');
+          } else {
+            compteurEl.classList.remove('quota-alerte');
+          }
+        })
+        .catch(error => {
+          console.error("Erreur lors de l'initialisation du quota:", error);
+          compteurEl.textContent = 'Erreur';
+        });
+    }
   }
   
   /**
@@ -164,9 +212,10 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       MonHistoire.modules.core.storage.getStories(MonHistoire.state.profilActif.id)
         .then(loadedStories => {
           stories = loadedStories;
-          
+
           // Mettre à jour l'interface utilisateur
           updateUI();
+          initQuota();
           
           // Masquer le chargement
           if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
@@ -182,11 +231,12 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
           if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
             MonHistoire.modules.app.showLoading(false);
           }
-          
+
           // Afficher un message d'erreur
           if (MonHistoire.showMessageModal) {
             MonHistoire.showMessageModal("Erreur lors du chargement des histoires. Veuillez réessayer.");
           }
+          initQuota();
         });
     } else {
       console.error("Module de stockage non disponible");
@@ -195,6 +245,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
         MonHistoire.modules.app.showLoading(false);
       }
+      initQuota();
     }
   }
   
@@ -629,6 +680,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
   // API publique
   MonHistoire.modules.stories.management = {
     init: init,
+    initQuota: initQuota,
     loadStories: loadStories,
     saveStory: saveStory,
     getStories: getStories,
