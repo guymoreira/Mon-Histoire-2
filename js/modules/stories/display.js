@@ -280,31 +280,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     return getCurrentStory();
   }
 
-  /**
-   * Affiche une histoire sauvegardée par son ID
-   * @param {string} storyId - ID de l'histoire
-   * @returns {Promise} Promesse résolue avec l'histoire affichée
-   */
-  function afficherHistoireSauvegardee(storyId) {
-    if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
-      return MonHistoire.modules.core.storage.getStory(storyId)
-        .then(story => {
-          showStory(story);
-          return story;
-        })
-        .catch(error => {
-          console.error("Erreur lors de la récupération de l'histoire:", error);
-          if (MonHistoire.showMessageModal) {
-            MonHistoire.showMessageModal("Erreur lors de la récupération de l'histoire.");
-          }
-          throw error;
-        });
-    }
-
-    const error = new Error("Module de stockage non disponible");
-    console.error(error);
-    return Promise.reject(error);
-  }
   
   /**
    * Formate une histoire pour l'affichage
@@ -330,7 +305,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     afficherHistoireSauvegardee: afficherHistoireSauvegardee,
     getCurrentStory: getCurrentStory,
     getHistoireAffichee: getHistoireAffichee,
-    afficherHistoireSauvegardee: afficherHistoireSauvegardee,
     formatStory: formatStory
   };
 })();
