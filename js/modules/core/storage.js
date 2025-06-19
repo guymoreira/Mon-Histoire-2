@@ -174,6 +174,51 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     
     return content;
   }
+
+  /**
+   * Récupère l'identifiant du profil actif
+   * @returns {string|null} ID du profil actif ou null pour le parent
+   * @private
+   */
+  function _getActiveProfileId() {
+    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
+                      (localStorage.getItem('profilActif')
+                        ? JSON.parse(localStorage.getItem('profilActif'))
+                        : { type: 'parent' });
+
+    if (MonHistoire.state) {
+      MonHistoire.state.profilActif = profilActif;
+    }
+
+    return profilActif.type === 'parent' ? null : profilActif.id;
+  }
+
+  /**
+   * Retourne la référence de collection des histoires pour un profil
+   * @param {string|null} profileId - ID du profil ou null pour le parent
+   * @param {string} [uid=currentUser.uid] - UID de l'utilisateur
+   * @returns {Object} Référence de collection Firestore
+   * @private
+   */
+  function _getStoriesCollectionRef(profileId = null, uid = currentUser && currentUser.uid) {
+    if (!db) {
+      throw new Error('Service de stockage non disponible');
+    }
+
+    if (!uid) {
+      throw new Error('Utilisateur non authentifié');
+    }
+
+    const userRef = db.collection(COLLECTIONS.USERS).doc(uid);
+
+    if (profileId) {
+      return userRef.collection('profils_enfant')
+        .doc(profileId)
+        .collection(COLLECTIONS.STORIES);
+    }
+
+    return userRef.collection(COLLECTIONS.STORIES);
+  }
   
   // ===== PROFILS =====
   
@@ -509,9 +554,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
           if (story[key] === undefined) delete story[key];
         });
         
+        const ref = _getStoriesCollectionRef(story.profileId || _getActiveProfileId());
+
         // Sauvegarder l'histoire dans Firestore
-        db.collection(COLLECTIONS.STORIES)
-          .doc(storyId)
+        ref.doc(storyId)
           .set(story)
           .then(() => {
             resolve(storyId);
@@ -534,9 +580,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
+        const ref = _getStoriesCollectionRef(_getActiveProfileId());
+
         // Mettre à jour le titre dans Firestore
-        db.collection(COLLECTIONS.STORIES)
-          .doc(storyId)
+        ref.doc(storyId)
           .update({
             title: title,
             updatedAt: new Date().toISOString()
@@ -559,9 +606,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
+        const ref = _getStoriesCollectionRef(_getActiveProfileId());
+
         // Supprimer l'histoire de Firestore
-        db.collection(COLLECTIONS.STORIES)
-          .doc(storyId)
+        ref.doc(storyId)
           .delete()
           .then(resolve)
           .catch(reject);
@@ -581,9 +629,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
+        const ref = _getStoriesCollectionRef(_getActiveProfileId());
+
         // Récupérer l'histoire de Firestore
-        db.collection(COLLECTIONS.STORIES)
-          .doc(storyId)
+        ref.doc(storyId)
           .get()
           .then(doc => {
             resolve(_convertDoc(doc));
@@ -605,10 +654,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
+        const ref = _getStoriesCollectionRef(profileId);
+
         // Récupérer les histoires de Firestore
-        db.collection(COLLECTIONS.STORIES)
-          .where('userId', '==', currentUser.uid)
-          .where('profileId', '==', profileId)
+        ref
           .orderBy('createdAt', 'desc')
           .get()
           .then(snapshot => {
@@ -649,8 +698,9 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
             return snapshot.ref.getDownloadURL();
           })
           .then(url => {
+            const ref = _getStoriesCollectionRef(_getActiveProfileId());
             // Mettre à jour l'histoire avec l'URL de l'image
-            return db.collection(COLLECTIONS.STORIES)
+            return ref
               .doc(storyId)
               .update({
                 imageUrl: url,
@@ -700,6 +750,7 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
               id: shareId,
               storyId: storyId,
               userId: currentUser.uid,
+              profileId: story.profileId || null,
               createdAt: new Date().toISOString(),
               expiresAt: expirationDate.toISOString(),
               accessCount: 0,
@@ -838,8 +889,15 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
             });
           
           // Récupérer l'histoire
-          return db.collection(COLLECTIONS.STORIES)
-            .doc(share.storyId)
+          let storyRef;
+          try {
+            storyRef = _getStoriesCollectionRef(share.profileId || null, share.userId)
+              .doc(share.storyId);
+          } catch (e) {
+            return Promise.reject(e);
+          }
+
+          return storyRef
             .get()
             .then(storyDoc => {
               const story = _convertDoc(storyDoc);
@@ -877,15 +935,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       MonHistoire.state.profilActif = profilActif;
     }
 
-    let storiesRef;
-    if (profilActif.type === 'parent') {
-      storiesRef = db.collection(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid);
-    } else {
-      storiesRef = db.collection(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid)
-        .where('profileId', '==', profilActif.id);
-    }
+    const storiesRef = _getStoriesCollectionRef(
+      profilActif.type === 'parent' ? null : profilActif.id,
+      user.uid
+    );
 
     return storiesRef.get().then(snap => {
       const count = snap.size;
@@ -911,15 +964,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       MonHistoire.state.profilActif = profilActif;
     }
 
-    let storiesRef;
-    if (profilActif.type === 'parent') {
-      storiesRef = db.collection(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid);
-    } else {
-      storiesRef = db.collection(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid)
-        .where('profileId', '==', profilActif.id);
-    }
+    const storiesRef = _getStoriesCollectionRef(
+      profilActif.type === 'parent' ? null : profilActif.id,
+      user.uid
+    );
 
     return storiesRef.get().then(snap => {
       const count = snap.size;
@@ -950,11 +998,7 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       return Promise.resolve();
     }
 
-    const storiesRef = db.collection('users')
-      .doc(user.uid)
-      .collection('profils_enfant')
-      .doc(profilActif.id)
-      .collection('stories');
+    const storiesRef = _getStoriesCollectionRef(profilActif.id, user.uid);
 
     return storiesRef.get().then(snapshot => {
       const count = snapshot.size;
