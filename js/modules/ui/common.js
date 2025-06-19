@@ -288,7 +288,11 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     // Bouton Sauvegarder Histoire (protégé contre les clics multiples)
     protegerBouton("btn-sauvegarde", () => {
       if (MonHistoire.modules.stories && MonHistoire.modules.stories.management) {
-        MonHistoire.modules.stories.management.sauvegarderHistoire();
+        const storyGetter =
+          MonHistoire.modules.stories.display &&
+          MonHistoire.modules.stories.display.getCurrentStory;
+        const story = typeof storyGetter === "function" ? storyGetter() : null;
+        MonHistoire.modules.stories.management.saveStory(story);
       }
     });
     
