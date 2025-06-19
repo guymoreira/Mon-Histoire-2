@@ -239,7 +239,7 @@ MonHistoire.logger = {
 
 // Gestion de la reconnexion
 MonHistoire.handleReconnection = function() {
-  MonHistoire.logger.info("Connexion rétablie");
+  MonHistoire.logger.info(MonHistoire.logger.PREFIXES.CONNECTION, "Connexion rétablie");
   
   // Mettre à jour l'état de connexion
   MonHistoire.state.isConnected = true;
@@ -269,7 +269,7 @@ MonHistoire.handleReconnection = function() {
 
 // Gestion de la déconnexion
 MonHistoire.handleDisconnection = function() {
-  MonHistoire.logger.warning("Connexion perdue");
+  MonHistoire.logger.warning(MonHistoire.logger.PREFIXES.CONNECTION, "Connexion perdue");
   MonHistoire.state.isConnected = false;
   
   // Émettre un événement pour informer les autres modules
