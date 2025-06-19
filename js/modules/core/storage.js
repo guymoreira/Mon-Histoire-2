@@ -60,6 +60,11 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       if (MonHistoire.events) {
         MonHistoire.events.on('authStateChange', handleAuthStateChange);
       }
+
+      // Récupérer l'utilisateur actuellement authentifié si disponible
+      if (firebase.auth) {
+        currentUser = firebase.auth().currentUser;
+      }
       
       isInitialized = true;
       console.log("Module Storage initialisé");
@@ -85,9 +90,17 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
    */
   function _checkAuth() {
     if (!currentUser) {
+      if (firebase.auth) {
+        const user = firebase.auth().currentUser;
+        if (user) {
+          currentUser = user;
+        }
+      }
+    }
+    if (!currentUser) {
       throw new Error("Utilisateur non authentifié");
     }
-    
+
     return true;
   }
   
