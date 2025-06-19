@@ -85,13 +85,21 @@ MonHistoire.modules.features.export = {
       MonHistoire.modules.stories.display.getCurrentStory();
 
     // Fallback vers l'ancien namespace si aucune histoire n'est trouvée
-    if (histoire === null &&
+    if (!histoire &&
         MonHistoire.features &&
         MonHistoire.features.stories &&
         MonHistoire.features.stories.display &&
         typeof MonHistoire.features.stories.display.getHistoireAffichee === "function") {
       console.warn("[Export] Utilisation du fallback getHistoireAffichee depuis MonHistoire.features");
       histoire = MonHistoire.features.stories.display.getHistoireAffichee();
+    }
+
+    // Vérifie qu'une histoire a été récupérée
+    if (!histoire) {
+      if (MonHistoire.showMessageModal) {
+        MonHistoire.showMessageModal("Aucune histoire à exporter.");
+      }
+      return;
     }
     
     // Crée un nouveau document PDF
