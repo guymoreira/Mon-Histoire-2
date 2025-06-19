@@ -51,7 +51,7 @@ MonHistoire.modules.sharing.ui = {
         histoire.chapitre3 || histoire.chapitre4 || histoire.chapitre5;
       const hasChapitresArray = Array.isArray(histoire.chapitres) &&
         histoire.chapitres.length > 0;
-      const hasContenu = histoire.contenu;
+      const hasContenu = histoire.contenu || histoire.content;
       if (!histoire || !(hasChapitresFields || hasChapitresArray || hasContenu)) {
         MonHistoire.showMessageModal("Aucun contenu dans l'histoire à partager.");
         return;
