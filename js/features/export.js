@@ -107,7 +107,8 @@ MonHistoire.features.export = {
     doc.setFontSize(24);
     
     // Ajoute le titre
-    const titre = histoire.titre || "Histoire sans titre";
+    const titre = histoire.titre || histoire.title || "Histoire sans titre";
+    const contenu = histoire.contenu || histoire.content;
     doc.text(titre, pageWidth / 2, margin, { align: "center" });
     
     // Ajoute une ligne de séparation
@@ -122,10 +123,10 @@ MonHistoire.features.export = {
     let yPos = margin + 20;
     
     // Si l'histoire a un contenu HTML, on l'utilise pour extraire le texte
-    if (histoire.contenu) {
+    if (contenu) {
       // Crée un élément temporaire pour parser le contenu HTML
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = histoire.contenu;
+      tempDiv.innerHTML = contenu;
       
       // Récupère tous les titres, paragraphes et illustrations
       const elements = tempDiv.querySelectorAll('h3, p, div.illustration-chapitre');
@@ -257,9 +258,9 @@ MonHistoire.features.export = {
     
     // Log l'activité
     if (MonHistoire.core && MonHistoire.core.auth && firebase.auth().currentUser) {
-      MonHistoire.core.auth.logActivite("export_pdf", { 
+      MonHistoire.core.auth.logActivite("export_pdf", {
         histoire_id: histoire.id,
-        titre: histoire.titre
+        titre
       });
     }
   },
