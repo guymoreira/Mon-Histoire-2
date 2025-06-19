@@ -483,6 +483,14 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
    */
   function saveStory(storyData) {
     return new Promise((resolve, reject) => {
+      if (!isInitialized) {
+        init();
+      }
+      if (!db) {
+        console.error("Firestore n'est pas initialisé");
+        reject(new Error("Service de stockage non disponible"));
+        return;
+      }
       try {
         _checkAuth();
         
