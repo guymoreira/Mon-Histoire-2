@@ -29,6 +29,11 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       MonHistoire.events.on('profileSelected', handleProfileChange);
       MonHistoire.events.on('storyGenerated', handleStoryGenerated);
     }
+
+    // Récupère l'utilisateur courant si disponible
+    if (!currentUser && firebase.auth && firebase.auth().currentUser) {
+      currentUser = firebase.auth().currentUser;
+    }
     
     // Configurer les écouteurs d'événements pour les boutons
     setupListeners();
@@ -538,7 +543,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    */
   function saveStory(story) {
     return new Promise((resolve, reject) => {
-      if (!currentUser || !MonHistoire.state.profilActif) {
+      const user = currentUser || (firebase.auth && firebase.auth().currentUser);
+      if (!user || !MonHistoire.state.profilActif) {
         reject(new Error("Utilisateur ou profil non défini"));
         return;
       }
@@ -546,7 +552,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       // Préparer les données de l'histoire
       const storyData = {
         ...story,
-        userId: currentUser.uid,
+        userId: user.uid,
         profileId: MonHistoire.state.profilActif.id,
         createdAt: story.createdAt || new Date().toISOString()
       };
