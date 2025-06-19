@@ -97,13 +97,13 @@ MonHistoire.modules.sharing.storage = {
 
       // Ajoute l'histoire partagée
       await targetRef.add({
-        titre: histoire.titre,
+        titre: histoire.titre || histoire.title || "Histoire sans titre",
         chapitre1: histoire.chapitre1 || "",
         chapitre2: histoire.chapitre2 || "",
         chapitre3: histoire.chapitre3 || "",
         chapitre4: histoire.chapitre4 || "",
         chapitre5: histoire.chapitre5 || "",
-        contenu: histoire.contenu || "",
+        contenu: histoire.contenu || histoire.content || "",
         images: histoire.images || [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         partageParProfil: partageParProfil,
@@ -293,13 +293,13 @@ MonHistoire.modules.sharing.storage = {
 
       // Ajoute l'histoire partagée
       await targetRef.add({
-        titre: histoire.titre,
+        titre: histoire.titre || histoire.title || "Histoire sans titre",
         chapitre1: histoire.chapitre1 || "",
         chapitre2: histoire.chapitre2 || "",
         chapitre3: histoire.chapitre3 || "",
         chapitre4: histoire.chapitre4 || "",
         chapitre5: histoire.chapitre5 || "",
-        contenu: histoire.contenu || "",
+        contenu: histoire.contenu || histoire.content || "",
         images: histoire.images || [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         partageParProfil: partageParProfil,
