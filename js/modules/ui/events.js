@@ -332,4 +332,10 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     protegerBouton,
     bindEvents
   };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => MonHistoire.modules.ui.events.init());
+  } else {
+    MonHistoire.modules.ui.events.init();
+  }
 })();
