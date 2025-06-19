@@ -186,8 +186,6 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
         await MonHistoire.modules.core?.storage?.updateStoryTitle(id, newTitle);
         if (MonHistoire.modules.stories?.management?.loadStories) {
           MonHistoire.modules.stories.management.loadStories();
-        } else if (MonHistoire.features?.stories?.management?.afficherHistoiresSauvegardees) {
-          MonHistoire.features.stories.management.afficherHistoiresSauvegardees();
         }
       } catch (error) {
         console.error('Erreur lors du renommage:', error);
