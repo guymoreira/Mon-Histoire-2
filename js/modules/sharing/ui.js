@@ -46,9 +46,14 @@ MonHistoire.modules.sharing.ui = {
         histoire = MonHistoire.features.stories.display.getHistoireAffichee();
       }
       
-      // Si aucune histoire n'est affichée, on ne fait rien
-      if (!histoire || (!histoire.chapitre1 && !histoire.contenu)) {
-        MonHistoire.showMessageModal("Aucune histoire à partager.");
+      // Vérifier qu'il existe du contenu dans l'histoire avant de poursuivre
+      const hasChapitresFields = histoire.chapitre1 || histoire.chapitre2 ||
+        histoire.chapitre3 || histoire.chapitre4 || histoire.chapitre5;
+      const hasChapitresArray = Array.isArray(histoire.chapitres) &&
+        histoire.chapitres.length > 0;
+      const hasContenu = histoire.contenu;
+      if (!histoire || !(hasChapitresFields || hasChapitresArray || hasContenu)) {
+        MonHistoire.showMessageModal("Aucun contenu dans l'histoire à partager.");
         return;
       }
 
