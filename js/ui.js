@@ -57,3 +57,16 @@ MonHistoire.ui = {
 };
 
 window.MonHistoire = MonHistoire;
+
+// S'assurer que le bouton de fermeture du message modal fonctionne
+// même si les adaptateurs ne sont pas encore initialisés.
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('close-message-modal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      if (typeof MonHistoire.closeMessageModal === 'function') {
+        MonHistoire.closeMessageModal();
+      }
+    });
+  }
+});
