@@ -326,34 +326,70 @@
   <img src="croix-cartoon.png" alt="Annuler" title="Annuler" style="height: 48px; cursor: pointer;" id="btn-annuler-renommer" />
   <img src="coche-verte-cartoon.png" alt="Valider" title="Valider" style="height: 48px; cursor: pointer;" id="btn-confirmer-renommer" />
 </div>
+</div>
+</div>
+<div class="ui-modal" id="delete-story-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <p class="ui-text-center">Supprimer cette histoire ?</p>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3">
+      <button class="ui-button ui-button--primary" id="confirm-delete-story">Oui</button>
+      <button class="ui-button ui-button--secondary" id="cancel-delete-story">Non</button>
+    </div>
+  </div>
+</div>
+<div class="ui-modal" id="rename-story-modal">
+  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
+    <h3 class="ui-text-center">Renommer l'histoire</h3>
+    <div class="ui-form-group">
+      <input id="story-new-title" type="text" class="ui-input" />
+    </div>
+    <div class="ui-button-group ui-button-group--center ui-mt-3">
+      <button class="ui-button ui-button--primary" id="confirm-rename-story">Valider</button>
+    </div>
   </div>
 </div>
 <!-- Mes Histoires -->
 <section class="screen" id="mes-histoires">
   <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md">
-    <div class="ui-flex ui-justify-between ui-align-center">
-      <h2>Mes Histoires</h2>
-      <span id="compteur-histoires" style="font-size:1.1rem;"></span>
+    <div id="stories-list-section">
+      <div class="ui-flex ui-justify-between ui-align-center">
+        <h2>Mes Histoires</h2>
+        <span id="compteur-histoires" style="font-size:1.1rem;"></span>
+      </div>
+      <div id="stories-container"></div>
+      <ul id="liste-histoires" class="ui-hidden"></ul>
+      <div class="actions-footer" id="barre-suppression" style="display:none;">
+        <img
+          src="corbeille-cartoon.png"
+          alt="Corbeille"
+          id="btn-corbeille"
+          class="ui-ml-2"
+        >
+        <button class="ui-button-icon" id="btn-renommer-histoire" style="display:none;">✏️</button>
+        <img
+          src="croix-cartoon.png"
+          alt="Annuler sélection"
+          id="btn-annuler-selection"
+          class="ui-ml-2"
+        >
+      </div>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3" id="mes-histoires-actions">
+        <button class="ui-button ui-button--secondary" id="btn-retour-mes-histoires">Retour</button>
+        <button class="ui-button ui-button--secondary ui-hidden" id="btn-accueil-mes-histoires" data-screen="accueil">Accueil</button>
+        <button class="ui-button ui-button--secondary" id="refresh-stories-button">Rafraîchir</button>
+      </div>
     </div>
-    <ul id="liste-histoires"></ul>
-    <div class="actions-footer" id="barre-suppression" style="display:none;">
-      <img
-        src="corbeille-cartoon.png"
-        alt="Corbeille"
-        id="btn-corbeille"
-        class="ui-ml-2"
-      >
-      <button class="ui-button-icon" id="btn-renommer-histoire" style="display:none;">✏️</button>
-      <img
-        src="croix-cartoon.png"
-        alt="Annuler sélection"
-        id="btn-annuler-selection"
-        class="ui-ml-2"
-      >
-    </div>
-    <div class="ui-button-group ui-button-group--equal ui-mt-3" id="mes-histoires-actions">
-      <button class="ui-button ui-button--secondary" id="btn-retour-mes-histoires">Retour</button>
-      <button class="ui-button ui-button--secondary ui-hidden" id="btn-accueil-mes-histoires" data-screen="accueil">Accueil</button>
+    <div id="story-display-section" class="hidden">
+      <button class="ui-button ui-button--secondary ui-mb-3" id="back-to-stories-button">Retour à la liste</button>
+      <h3 id="display-story-title"></h3>
+      <div id="display-story-image" class="hidden" style="margin-bottom:1em;"></div>
+      <div id="display-story-content"></div>
+      <div id="display-story-date" class="ui-mt-2"></div>
+      <div class="ui-button-group ui-button-group--equal ui-mt-3">
+        <button class="ui-button ui-button--secondary" id="export-story-button">Exporter</button>
+        <button class="ui-button ui-button--secondary" id="audio-story-button">Audio</button>
+        <button class="ui-button ui-button--secondary" id="share-story-button">Partager</button>
+      </div>
     </div>
   </div>
 </section>
