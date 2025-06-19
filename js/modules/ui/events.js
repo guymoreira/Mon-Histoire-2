@@ -88,12 +88,12 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
       MonHistoire.modules.user?.auth?.loginUser();
     });
 
-    document.getElementById('signup-form')?.addEventListener('submit', (e) => {
+    document.getElementById('btn-register')?.addEventListener('click', (e) => {
       e.preventDefault();
       MonHistoire.modules.user?.auth?.registerUser();
     });
 
-    document.getElementById('reset-form')?.addEventListener('submit', (e) => {
+    document.getElementById('btn-send-reset')?.addEventListener('click', (e) => {
       e.preventDefault();
       MonHistoire.modules.user?.auth?.sendReset();
     });
