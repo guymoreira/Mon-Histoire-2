@@ -568,5 +568,9 @@
   }
   
   // Exécuter l'initialisation au chargement de la page
-  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
