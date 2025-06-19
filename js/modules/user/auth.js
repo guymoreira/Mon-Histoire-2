@@ -404,7 +404,23 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       if (window.firebase && firebase.auth) {
         const user = firebase.auth().currentUser;
         if (user) {
-          document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
+          firebase.firestore().collection("users").doc(user.uid).get()
+            .then((doc) => {
+              let initiale = "U"; // Valeur par défaut
+              if (doc.exists && doc.data().prenom) {
+                initiale = doc.data().prenom.trim().charAt(0).toUpperCase();
+              } else if (user.email) {
+                initiale = user.email.charAt(0).toUpperCase();
+              }
+              document.getElementById("user-icon").textContent = initiale;
+            })
+            .catch(() => {
+              if (user.email) {
+                document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
+              } else {
+                document.getElementById("user-icon").textContent = "U";
+              }
+            });
         } else {
           document.getElementById("user-icon").textContent = "U";
         }
