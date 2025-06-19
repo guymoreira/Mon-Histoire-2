@@ -491,6 +491,40 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     
     console.log("Préférences de cookies réinitialisées");
   }
+
+  /**
+   * Change d'onglet dans la modale RGPD
+   * Repris depuis js/features/cookies.js
+   * @param {Event} event - Événement de clic
+   * @param {string} tabId - ID de l'onglet à afficher
+   */
+  function switchRgpdTab(event, tabId) {
+    // Masque tous les onglets
+    const tabPanes = document.getElementsByClassName('rgpd-tab-pane');
+    for (let i = 0; i < tabPanes.length; i++) {
+      tabPanes[i].classList.remove('active');
+    }
+
+    // Désactive tous les boutons d'onglet
+    const tabButtons = document.getElementsByClassName('rgpd-tab-button');
+    for (let i = 0; i < tabButtons.length; i++) {
+      tabButtons[i].classList.remove('active');
+    }
+
+    // Affiche l'onglet sélectionné
+    const pane = document.getElementById(tabId);
+    if (pane) {
+      pane.classList.add('active');
+    }
+
+    // Active le bouton d'onglet sélectionné
+    if (event && event.currentTarget) {
+      event.currentTarget.classList.add('active');
+    }
+  }
+
+  // Expose la fonction globalement pour l'utilisation dans l'attribut onclick
+  window.switchRgpdTab = switchRgpdTab;
   
   // API publique
   MonHistoire.modules.core.cookies = {
