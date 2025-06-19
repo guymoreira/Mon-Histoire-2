@@ -64,6 +64,40 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
       }
     });
 
+    // --- Authentification ---
+    document.getElementById('btn-signup')?.addEventListener('click', () => {
+      MonHistoire.modules.user?.auth?.toggleSignup(true);
+    });
+
+    document.getElementById('btn-back-to-login')?.addEventListener('click', () => {
+      MonHistoire.modules.user?.auth?.toggleSignup(false);
+    });
+
+    const btnForgot = document.getElementById('btn-forgot');
+    btnForgot?.addEventListener('click', (e) => {
+      e.preventDefault();
+      MonHistoire.modules.user?.auth?.toggleReset(true);
+    });
+
+    document.getElementById('btn-back-to-login-reset')?.addEventListener('click', () => {
+      MonHistoire.modules.user?.auth?.toggleReset(false);
+    });
+
+    document.getElementById('login-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      MonHistoire.modules.user?.auth?.loginUser();
+    });
+
+    document.getElementById('signup-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      MonHistoire.modules.user?.auth?.registerUser();
+    });
+
+    document.getElementById('reset-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      MonHistoire.modules.user?.auth?.sendReset();
+    });
+
     document.querySelectorAll('.btn-back').forEach(button => {
       button.addEventListener('click', () => {
         if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
