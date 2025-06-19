@@ -68,17 +68,32 @@
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
                 // Changer de profil
-                localStorage.setItem("profilActif", JSON.stringify({
+                const nouveauProfil = {
                   type: "enfant",
                   id: docEnfant.id,
                   prenom: data.prenom
-                }));
-                
-                MonHistoire.fermerLogoutModal();
-                
+                };
+                localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
+
+                // Mettre à jour l'état global
+                MonHistoire.state = MonHistoire.state || {};
+                MonHistoire.state.profilActif = nouveauProfil;
+
                 // Mettre à jour l'UI
                 const userIcon = document.getElementById("user-icon");
                 if (userIcon) userIcon.textContent = data.prenom.charAt(0).toUpperCase();
+
+                // Mettre à jour la visibilité du footer
+                if (typeof MonHistoire.updateFooterVisibility === 'function') {
+                  MonHistoire.updateFooterVisibility();
+                }
+
+                // Émettre l'événement de changement de profil
+                if (MonHistoire.events) {
+                  MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
+                }
+
+                MonHistoire.fermerLogoutModal();
               };
               listEl.appendChild(btn);
             });
@@ -124,17 +139,32 @@
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
                 // Changer de profil
-                localStorage.setItem("profilActif", JSON.stringify({
+                const nouveauProfil = {
                   type: "enfant",
                   id: docEnfant.id,
                   prenom: data.prenom
-                }));
-                
-                MonHistoire.fermerLogoutModal();
-                
+                };
+                localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
+
+                // Mettre à jour l'état global
+                MonHistoire.state = MonHistoire.state || {};
+                MonHistoire.state.profilActif = nouveauProfil;
+
                 // Mettre à jour l'UI
                 const userIcon = document.getElementById("user-icon");
                 if (userIcon) userIcon.textContent = data.prenom.charAt(0).toUpperCase();
+
+                // Mettre à jour la visibilité du footer
+                if (typeof MonHistoire.updateFooterVisibility === 'function') {
+                  MonHistoire.updateFooterVisibility();
+                }
+
+                // Émettre l'événement de changement de profil
+                if (MonHistoire.events) {
+                  MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
+                }
+
+                MonHistoire.fermerLogoutModal();
               };
               listEl.appendChild(btn);
             });
@@ -215,8 +245,13 @@
         await user.reauthenticateWithCredential(credential);
         
         // Succès : passer au profil parent
-        localStorage.setItem("profilActif", JSON.stringify({ type: "parent" }));
-        
+        const nouveauProfil = { type: "parent" };
+        localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
+
+        // Mettre à jour l'état global
+        MonHistoire.state = MonHistoire.state || {};
+        MonHistoire.state.profilActif = nouveauProfil;
+
         // Mettre à jour l'UI
         const userIcon = document.getElementById("user-icon");
         if (userIcon) {
@@ -224,10 +259,20 @@
           const prenomParent = docParent.exists && docParent.data().prenom
             ? docParent.data().prenom
             : user.email.charAt(0).toUpperCase();
-          
+
           userIcon.textContent = prenomParent.charAt(0).toUpperCase();
         }
-        
+
+        // Mettre à jour la visibilité du footer
+        if (typeof MonHistoire.updateFooterVisibility === 'function') {
+          MonHistoire.updateFooterVisibility();
+        }
+
+        // Émettre l'événement de changement de profil
+        if (MonHistoire.events) {
+          MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
+        }
+
         MonHistoire.fermerModalPasswordParent();
       } catch (error) {
         // Mot de passe incorrect
