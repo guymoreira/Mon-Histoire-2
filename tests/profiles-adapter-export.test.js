@@ -1,13 +1,13 @@
 const { JSDOM } = require('jsdom');
 
-describe('profiles adapter export', () => {
+describe('auth module export', () => {
   beforeEach(() => {
     jest.resetModules();
     const dom = new JSDOM('<!DOCTYPE html><div id="logout-modal"></div><div id="logout-profiles-list"></div><div id="logout-profile-name"></div>', { url: 'http://localhost' });
     global.window = dom.window;
     global.document = dom.window.document;
     global.firebase = { auth: () => ({ currentUser: null }) };
-    global.MonHistoire = {};
+    global.MonHistoire = { core: {} };
   });
 
   afterEach(() => {
@@ -18,7 +18,7 @@ describe('profiles adapter export', () => {
   });
 
   test('defines ouvrirLogoutModal', () => {
-    require('../js/adapters/profiles-adapter.js');
-    expect(typeof window.MonHistoire.ouvrirLogoutModal).toBe('function');
+    require('../js/core/auth.js');
+    expect(typeof window.MonHistoire.core.auth.ouvrirLogoutModal).toBe('function');
   });
 });

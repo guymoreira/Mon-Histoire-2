@@ -150,24 +150,6 @@
     window.dispatchEvent(event);
   }
   
-  // Attendre que les adaptateurs soient chargés avant d'initialiser les modules
-  if (window.adaptersLoaded) {
-    console.log("Les adaptateurs sont déjà chargés, initialisation des modules...");
-    initModules();
-  } else {
-    console.log("En attente du chargement des adaptateurs...");
-    window.addEventListener('adapters-loaded', function() {
-      console.log("Les adaptateurs sont chargés, initialisation des modules...");
-      initModules();
-    });
-    
-    // Timeout de sécurité au cas où l'événement 'adapters-loaded' ne serait pas déclenché
-    setTimeout(function() {
-      if (!window.adaptersLoaded) {
-        console.warn("Les adaptateurs n'ont pas été chargés après 5 secondes, initialisation des modules quand même...");
-        window.adaptersLoaded = true;
-        initModules();
-      }
-    }, 5000);
-  }
+  // Initialiser directement les modules maintenant que la couche d'adaptation a été supprimée
+  initModules();
 })();

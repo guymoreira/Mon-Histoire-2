@@ -41,7 +41,6 @@ js/
 │   ├── features/            # Modules complémentaires
 │   ├── sharing/             # Partage d'histoires
 │   └── messaging/           # Messagerie
-├── adapters/                # Couche d'adaptation vers l'ancien code
 ├── core/ (legacy)           # Ancien emplacement des modules de base
 └── features/ (legacy)       # Anciennes fonctionnalités
 css/
@@ -457,7 +456,7 @@ MonHistoire.events.on('eventName', function(data) {
 
 ## Initialisation de l'Application
 
-L'initialisation de l'application est gérée par le fichier `js/index.js`. Ce fichier charge ensuite `js/modules/app.js`, qui définit l'objet global `MonHistoire` et coordonne les modules. Un fichier `js/adapters/index.js` charge une couche d'adaptation pour exposer l'ancien namespace (`MonHistoire.features`, `MonHistoire.core`, etc.) vers les nouveaux modules. Ces fichiers d'adaptation assurent la transition mais les anciens fichiers sont désormais dépréciés. Les modules sont initialisés dans un ordre spécifique pour garantir que les dépendances sont respectées.
+L'initialisation de l'application est gérée par le fichier `js/index.js`. Ce fichier charge ensuite `js/modules/app.js`, qui définit l'objet global `MonHistoire` et coordonne les modules. Les modules sont initialisés dans un ordre spécifique pour garantir que les dépendances sont respectées.
 
 ```javascript
 // Ordre d'initialisation des modules
