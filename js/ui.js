@@ -15,14 +15,14 @@ window.MonHistoire = window.MonHistoire || {};
     if (!MonHistoire.events) return;
 
     MonHistoire.events.on('profilChange', () => {
-      if (MonHistoire.modules?.sharing?.mettreAJourIndicateurNotification) {
-        setTimeout(() => MonHistoire.modules.sharing.mettreAJourIndicateurNotification(), 500);
+      if (MonHistoire.features?.sharing?.mettreAJourIndicateurNotification) {
+        setTimeout(() => MonHistoire.features.sharing.mettreAJourIndicateurNotification(), 500);
       }
     });
 
     MonHistoire.events.on('nouvelleNotification', () => {
-      if (MonHistoire.modules?.sharing?.mettreAJourIndicateurNotification) {
-        MonHistoire.modules.sharing.mettreAJourIndicateurNotification();
+      if (MonHistoire.features?.sharing?.mettreAJourIndicateurNotification) {
+        MonHistoire.features.sharing.mettreAJourIndicateurNotification();
       }
     });
   }
@@ -48,7 +48,7 @@ window.MonHistoire = window.MonHistoire || {};
     document.querySelectorAll('[data-screen]').forEach(btn => {
       btn.addEventListener('click', () => {
         const screen = btn.getAttribute('data-screen');
-        MonHistoire.modules?.core?.navigation?.showScreen?.(screen);
+        MonHistoire.core?.navigation?.showScreen?.(screen);
       });
     });
 
@@ -56,74 +56,74 @@ window.MonHistoire = window.MonHistoire || {};
 
     document.getElementById('form-generer-histoire')?.addEventListener('submit', (e) => {
       e.preventDefault();
-      MonHistoire.modules?.stories?.generator?.genererHistoire?.();
+        MonHistoire.features?.stories?.generator?.genererHistoire?.();
     });
 
     // --- Authentification ---
     document.getElementById('btn-signup')?.addEventListener('click', () => {
-      MonHistoire.modules?.user?.auth?.toggleSignup(true);
+        MonHistoire.core?.auth?.toggleSignup?.(true);
     });
 
     document.getElementById('btn-back-to-login')?.addEventListener('click', () => {
-      MonHistoire.modules?.user?.auth?.toggleSignup(false);
+        MonHistoire.core?.auth?.toggleSignup?.(false);
     });
 
     const btnForgot = document.getElementById('btn-forgot');
     btnForgot?.addEventListener('click', (e) => {
       e.preventDefault();
-      MonHistoire.modules?.user?.auth?.toggleReset(true);
+        MonHistoire.core?.auth?.toggleReset?.(true);
     });
 
     document.getElementById('btn-back-to-login-reset')?.addEventListener('click', () => {
-      MonHistoire.modules?.user?.auth?.toggleReset(false);
+        MonHistoire.core?.auth?.toggleReset?.(false);
     });
 
     document.getElementById('login-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
-      MonHistoire.modules?.user?.auth?.loginUser?.();
+        MonHistoire.core?.auth?.loginUser?.();
     });
 
     document.getElementById('btn-register')?.addEventListener('click', (e) => {
       e.preventDefault();
-      MonHistoire.modules?.user?.auth?.registerUser?.();
+        MonHistoire.core?.auth?.registerUser?.();
     });
 
     document.getElementById('btn-send-reset')?.addEventListener('click', (e) => {
       e.preventDefault();
-      MonHistoire.modules?.user?.auth?.sendReset?.();
+        MonHistoire.core?.auth?.sendReset?.();
     });
 
     document.querySelectorAll('.btn-back').forEach(button => {
       button.addEventListener('click', () => {
-        MonHistoire.modules?.core?.navigation?.goBack?.();
+          MonHistoire.core?.navigation?.goBack?.();
       });
     });
 
     document.getElementById('btn-retour-resultat')?.addEventListener('click', () => {
-      MonHistoire.modules?.core?.navigation?.retourDepuisResultat?.();
+        MonHistoire.core?.navigation?.retourDepuisResultat?.();
     });
 
     protegerBouton('btn-sauvegarde', () => {
-      const storyGetter = MonHistoire.modules?.stories?.display?.getCurrentStory;
+      const storyGetter = MonHistoire.features?.stories?.display?.getCurrentStory;
       const story = typeof storyGetter === 'function' ? storyGetter() : null;
-      MonHistoire.modules?.stories?.management?.saveStory?.(story);
+      MonHistoire.features?.stories?.management?.saveStory?.(story);
     });
 
     protegerBouton('btn-audio', () => {
-      MonHistoire.modules?.features?.audio?.gererClicBoutonAudio?.();
+      MonHistoire.features?.audio?.gererClicBoutonAudio?.();
     });
 
     protegerBouton('btn-export-pdf', () => {
-      MonHistoire.modules?.features?.export?.exporterHistoirePDF?.();
+      MonHistoire.features?.export?.exporterHistoirePDF?.();
     });
 
     protegerBouton('btn-partage', () => {
-      MonHistoire.modules?.sharing?.ouvrirModalePartage?.();
+      MonHistoire.features?.sharing?.ouvrirModalePartage?.();
     });
 
     // --- Partage et limites ---
     document.getElementById('btn-fermer-partage')?.addEventListener('click', () => {
-      MonHistoire.modules?.sharing?.fermerModalePartage?.();
+      MonHistoire.features?.sharing?.fermerModalePartage?.();
     });
 
     document.getElementById('btn-fermer-limite')?.addEventListener('click', () => {
@@ -131,7 +131,7 @@ window.MonHistoire = window.MonHistoire || {};
     });
 
     document.getElementById('btn-valider-limite')?.addEventListener('click', () => {
-      MonHistoire.modules?.core?.navigation?.showScreen?.('mes-histoires');
+      MonHistoire.core?.navigation?.showScreen?.('mes-histoires');
       document.getElementById('modal-limite')?.classList.remove('show');
     });
 
@@ -162,8 +162,8 @@ window.MonHistoire = window.MonHistoire || {};
       document.getElementById('modal-renommer')?.classList.remove('show');
       const newTitle = input.value.trim();
       try {
-        await MonHistoire.modules?.core?.storage?.updateStoryTitle?.(id, newTitle);
-        MonHistoire.modules?.stories?.management?.loadStories?.();
+        await MonHistoire.core?.storage?.updateStoryTitle?.(id, newTitle);
+        MonHistoire.features?.stories?.management?.loadStories?.();
       } catch (error) {
         console.error('Erreur lors du renommage:', error);
         MonHistoire.showMessageModal?.("Erreur lors du renommage de l'histoire.");
@@ -286,10 +286,10 @@ window.MonHistoire = window.MonHistoire || {};
   function handleMenuAction(action, histoireId) {
     switch (action) {
       case 'lire':
-        MonHistoire.modules?.stories?.display?.afficherHistoireSauvegardee?.(histoireId);
+        MonHistoire.features?.stories?.display?.afficherHistoireSauvegardee?.(histoireId);
         break;
       case 'supprimer':
-        MonHistoire.modules?.stories?.management?.supprimerHistoire?.(histoireId);
+        MonHistoire.features?.stories?.management?.supprimerHistoire?.(histoireId);
         break;
     }
   }
@@ -332,7 +332,7 @@ window.MonHistoire = window.MonHistoire || {};
       .then(() => {
         annulerAjoutEnfant();
         afficherProfilsEnfants();
-        MonHistoire.modules?.user?.auth?.logActivity?.('creation_profil_enfant', { prenom });
+        MonHistoire.core?.auth?.logActivite?.('creation_profil_enfant', { prenom });
       })
       .catch(error => {
         console.error('Erreur lors de la création du profil enfant:', error);
@@ -434,11 +434,11 @@ window.MonHistoire = window.MonHistoire || {};
     if (!user) return;
     if (!MonHistoire.state.profilsEnfantModifies || MonHistoire.state.profilsEnfantModifies.length === 0) {
       if (continueWithParentProfile &&
-          MonHistoire.modules?.user?.account?.fermerMonCompte) {
+          MonHistoire.core?.auth?.fermerMonCompte) {
         return;
       }
-      if (MonHistoire.modules?.user?.account?.fermerMonCompte) {
-        MonHistoire.modules.user.account.fermerMonCompte();
+      if (MonHistoire.core?.auth?.fermerMonCompte) {
+        MonHistoire.core.auth.fermerMonCompte();
       }
       return;
     }
@@ -476,11 +476,11 @@ window.MonHistoire = window.MonHistoire || {};
             return Promise.all(deletes);
           })
         );
-        MonHistoire.modules?.user?.auth?.logActivity?.('suppression_profil_enfant', { id_enfant: modif.id });
+        MonHistoire.core?.auth?.logActivite?.('suppression_profil_enfant', { id_enfant: modif.id });
       }
       if (modif.action === 'modifier') {
         batch.update(ref.doc(modif.id), { prenom: modif.nouveauPrenom });
-        MonHistoire.modules?.user?.auth?.logActivity?.('modification_prenom_profil', { id_enfant: modif.id });
+        MonHistoire.core?.auth?.logActivite?.('modification_prenom_profil', { id_enfant: modif.id });
       }
       if (modif.action === 'messagerie') {
         batch.update(ref.doc(modif.id), { acces_messagerie: modif.value });
@@ -502,14 +502,14 @@ window.MonHistoire = window.MonHistoire || {};
         setTimeout(() => {
           form.style.display = 'none';
           form.classList.remove('fade-out');
-          if (MonHistoire.modules?.user?.account?.fermerMonCompte) {
-            MonHistoire.modules.user.account.fermerMonCompte();
+          if (MonHistoire.core?.auth?.fermerMonCompte) {
+            MonHistoire.core.auth.fermerMonCompte();
           }
           setTimeout(() => { MonHistoire.showMessageModal('Modifications enregistrées !'); }, 100);
         }, 250);
       } else {
-        if (MonHistoire.modules?.user?.account?.fermerMonCompte) {
-          MonHistoire.modules.user.account.fermerMonCompte();
+        if (MonHistoire.core?.auth?.fermerMonCompte) {
+          MonHistoire.core.auth.fermerMonCompte();
         }
         setTimeout(() => { MonHistoire.showMessageModal('Modifications enregistrées !'); }, 100);
       }
