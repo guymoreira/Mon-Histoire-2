@@ -137,7 +137,7 @@ La refactorisation des composants UI de l'application "Mon Histoire" est mainten
 ### Fichiers mis à jour
 
 1. **Fichiers HTML** : `index.html`, `404.html`, `.vscode/Mon-Histoire-2/connexion.html`
-2. **Fichiers JavaScript** : `js/ui.js`, `js/modules/ui/common.js`
+2. **Fichiers JavaScript** : `js/ui.js` 
 3. **Fichiers CSS** : `css/components/buttons.css`, `css/components/cards.css`, `css/components/modals.css`
 
 Cette refactorisation permettra une maintenance plus facile et une évolution plus cohérente de l'interface utilisateur à l'avenir. La prochaine étape consistera à former l'équipe à l'utilisation du nouveau système UI et à s'assurer que tous les nouveaux développements suivent ces conventions.
