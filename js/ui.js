@@ -188,6 +188,11 @@ window.MonHistoire = window.MonHistoire || {};
       document.getElementById('btn-mon-compte')?.addEventListener('click', () => {
         MonHistoire.core?.auth?.ouvrirMonCompte?.();
       });
+
+      document.getElementById('form-mon-compte')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        MonHistoire.core?.auth?.modifierMonCompte?.();
+      });
     }
 
   function bindProfilsEnfantsEvents() {
