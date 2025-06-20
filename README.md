@@ -36,35 +36,37 @@ L'application a été restructurée selon une architecture modulaire où chaque 
 
 ## Structure des Dossiers
 
+
 ```
 js/
-├── index.js                  # Point d'entrée principal
-├── firebase-init.js          # Initialisation Firebase
-├── modules/                  # Nouveau système modulaire
-│   ├── app.js               # Noyau de l'application
-│   ├── core/                # Fonctionnalités de base
-│   ├── user/                # Gestion des utilisateurs
-│   ├── ui/                  # Interface utilisateur
-│   ├── stories/             # Histoires
-│   ├── features/            # Modules complémentaires
-│   ├── sharing/             # Partage d'histoires
-│   └── messaging/           # Messagerie
-├── adapters/                # Couche d'adaptation vers l'ancien code
-├── core/ (legacy)           # Ancien emplacement des modules de base
-└── features/ (legacy)       # Anciennes fonctionnalités
-css/
-├── main.css                  # Point d'entrée CSS
-├── base/                     # Styles de base
-├── components/               # Styles des composants
-├── layout/                   # Styles de mise en page
-├── screens/                  # Styles des écrans
-└── features/                 # Styles des fonctionnalités
+├── index.js
+├── firebase-init.js
+├── app.js
+├── config.js
+├── common.js
+├── core/
+│   ├── auth.js
+│   ├── navigation.js
+│   ├── profiles.js
+│   └── storage.js
+├── features/
+│   ├── audio.js
+│   ├── cookies.js
+│   ├── export.js
+│   ├── messaging/
+│   │   ├── index.js
+│   │   ├── notifications.js
+│   │   ├── realtime.js
+│   │   ├── storage.js
+│   │   └── ui.js
+│   └── stories/
+│       ├── generator.js
+│       ├── management.js
+│       ├── display.js
+│       └── notation.js
+└── ui.js
 ```
-
-Les dossiers `js/core` et `js/features` sont conservés uniquement pour assurer
-la compatibilité avec l'ancienne architecture. Ils sont désormais dépréciés et
-seront retirés lors d'une future mise à jour.
-
+Les dossiers `js/core` et `js/features` contiennent désormais tous les modules actifs. L'ancien répertoire `js/modules/` est obsolète.
 ## Ancienne structure (legacy)
 
 Avant la refactorisation modulaire, la logique de l'application était répartie
@@ -90,52 +92,22 @@ Ces fichiers restent présents pour compatibilité mais ne sont plus enrichis.
 
 ### Modules de Base (core)
 
-- **modules/core/config.js** : Gestion de la configuration de l'application
-- **modules/core/cookies.js** : Consentement aux cookies et préférences utilisateur
-- **modules/core/navigation.js** : Navigation entre les différentes sections de l'application
-- **modules/core/storage.js** : Accès à Firebase Firestore et Storage
+- **js/core/auth.js** : Authentification des utilisateurs
+- **js/core/navigation.js** : Navigation entre les écrans
+- **js/core/profiles.js** : Gestion des profils utilisateur
+- **js/core/storage.js** : Accès à Firebase Firestore et Storage
 
-### Modules Utilisateur (user)
+### Modules Fonctionnels (features)
 
-- **modules/user/auth.js** : Authentification des utilisateurs
-- **modules/user/profiles.js** : Gestion des profils utilisateur
-- **modules/user/account.js** : Paramètres et suppression de compte
+- **js/features/audio.js** : Lecture audio
+- **js/features/cookies.js** : Préférences de cookies
+- **js/features/export.js** : Export d'histoires
+- **js/features/messaging/** : Messagerie (index, storage, realtime, notifications, ui)
+- **js/features/stories/** : Génération, affichage et notation des histoires
 
-### Modules d'Interface Utilisateur (ui)
+### Interface Utilisateur
 
-- **modules/ui/common.js** : Composants communs (modales, notifications)
-
-### Modules d'Histoires (stories)
-
-- **modules/stories/generator.js** : Création d'histoires à partir des données utilisateur
-- **modules/stories/management.js** : Sauvegarde et suppression d'histoires
-- **modules/stories/display.js** : Affichage des histoires
-- **modules/stories/export.js** : Exportation (PDF ou image)
-
-### Modules de Fonctionnalités (features)
-
-- **modules/features/audio.js** : Lecture audio des histoires
-- **modules/features/cookies.js** : Préférences de cookies
-- **modules/features/export.js** : Export supplémentaire (PDF, image)
-- **modules/features/messaging/** : Fonctions de messagerie
-- **modules/features/sharing/** : Partage d'histoires
-- **modules/features/stories/** : Génération et notation d'histoires
-
-### Modules de Partage (sharing)
-
-- **modules/sharing/index.js** : Point d'entrée du partage
-- **modules/sharing/notifications.js** : Notifications liées au partage
-- **modules/sharing/storage.js** : Stockage des données de partage
-- **modules/sharing/ui.js** : Composants pour partager une histoire
-- **modules/sharing/realtime/** : Notifications en temps réel
-
-### Modules de Messagerie (messaging)
-
-- **modules/messaging/index.js** : Point d'entrée de la messagerie
-- **modules/messaging/storage.js** : Sauvegarde et lecture des messages
-- **modules/messaging/realtime.js** : Écoute en temps réel des conversations
-- **modules/messaging/notifications.js** : Notifications de nouveaux messages
-- **modules/messaging/ui.js** : Interface des conversations
+- **js/ui.js** : Composants communs et logique d'interface
 
 ### Système de notation des histoires
 
@@ -218,7 +190,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  +----------------------------------------------------------+                                                |
-|  |                         js/modules/app.js (5)                        |                                                |
+|  |                         js/app.js (5)                        |                                                |
 |  |                                                          |                                                |
 |  |  +----------------+    +-------------------+             |                                                |
 |  |  | MonHistoire.   |<-->| MonHistoire.      |             |                                                |
@@ -247,7 +219,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  +------------------+     +-------------------+     +------------------+     +------------------+            |
-|  | modules/core/auth.js     |<--->| modules/core/navigation.js|<--->| modules/core/profiles.js |<--->| modules/core/storage.js  |            |
+|  | js/core/auth.js     |<--->| js/core/navigation.js|<--->| js/core/profiles.js |<--->| js/core/storage.js  |            |
 |  | - init()         |     | - init()          |     | - init()         |     | - init()         |            |
 |  | - loginUser()    |     | - showScreen()    |     | - profilActif    |     | - saveData()     |            |
 |  | - logoutUser()   |     | - goBack()        |     | - passerAuProfil |     | - loadData()     |            |
@@ -263,7 +235,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  +------------------+     +-------------------+     +------------------+     +------------------+     +-------------------+            |
-|  | modules/stories |<--->| modules/sharing  |<--->| modules/features  |<--->| modules/features   |<--->| modules/messaging |            |
+|  | js/features/stories |<--->| js/features/messaging  |<--->| js/features  |<--->| js/features   |<--->| js/features/messaging |            |
 |  | - generator      |     | - init()          |     | - init()         |     | - init()         |     | - storage         |            |
 |  |   - init()       |     | - notifications   |     | - exporterPDF()  |     | - lireHistoire() |     |   - init()        |            |
 |  |   - genererHist()|     |   - init()        |     | - preparerPDF()  |     | - pauserLecture()|     | - realtime        |            |
@@ -277,7 +249,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |  +------------------+     +-------------------+     +------------------+     +------------------+     +-------------------+            |
 |                                                                                                              |
 |  +------------------+                                                                                        |
-|  | modules/features/cookies |                                                                                        |
+|  | js/features/cookies |                                                                                        |
 |  | - init()         |                                                                                        |
 |  | - accepter()     |                                                                                        |
 |  | - refuser()      |                                                                                        |
@@ -285,7 +257,7 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |  +------------------+                                                                                        |
 |                                                                                                              |
 |  +-------------------+
-|  | modules/stories/notation |
+|  | js/features/stories/notation |
 |  | - afficherNote    |
 |  | - bindNotation    |
 |  | - reset()         |
@@ -319,25 +291,25 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 +--------------------------------------------------------------------------------------------------------------+
 |                                                                                                              |
 |  1. Événements DOM                                                                                           |
-|     DOMContentLoaded → index.js → js/modules/app.js:init() → initialisation séquentielle                                |
+|     DOMContentLoaded → index.js → js/app.js:init() → initialisation séquentielle                                |
 |                                                                                                              |
 |  2. Événements d'authentification                                                                            |
-|     firebase.auth().onAuthStateChanged → js/modules/app.js → modules/core/auth.js → modules/stories/management.js              |
+|     firebase.auth().onAuthStateChanged → js/app.js → js/core/auth.js → js/features/stories/management.js              |
 |                                                                                                              |
 |  3. Événements de navigation                                                                                 |
-|     UI (click) → ui.js → modules/core/navigation.js:showScreen() → MonHistoire.state.currentScreen                   |
+|     UI (click) → ui.js → js/core/navigation.js:showScreen() → MonHistoire.state.currentScreen                   |
 |                                                                                                              |
 |  4. Événements de génération d'histoire                                                                      |
-|     UI (submit) → ui.js → modules/stories/generator.js → modules/stories/display.js                        |
+|     UI (submit) → ui.js → js/features/stories/generator.js → js/features/stories/display.js                        |
 |                                                                                                              |
 |  5. Événements de partage                                                                                    |
-|     UI (click) → ui.js → modules/sharing/ui.js → modules/sharing/storage.js → modules/sharing/notif.js    |
+|     UI (click) → ui.js → js/features/messaging/ui.js → js/features/messaging/storage.js → js/features/messaging/notif.js    |
 |                                                                                                              |
 |  6. Événements de changement de profil                                                                       |
-|     UI (click) → ui.js → modules/core/profiles.js → MonHistoire.events.emit("profilChange") → modules/sharing       |
+|     UI (click) → ui.js → js/core/profiles.js → MonHistoire.events.emit("profilChange") → js/features/messaging       |
 |                                                                                                              |
 |  7. Événements de connexion/déconnexion                                                                      |
-|     Network → js/modules/app.js:checkConnectionState() → MonHistoire.events.emit("connectionStateChanged")              |
+|     Network → js/app.js:checkConnectionState() → MonHistoire.events.emit("connectionStateChanged")              |
 |                                                                                                              |
 +--------------------------------------------------------------------------------------------------------------+
 
@@ -361,27 +333,27 @@ Les règles de sécurité se trouvent dans `firestore.messaging.rules` et les in
 |  4. common.js - Utilitaires communs                                                                          |
 |     - Fonctions helper                                                                                       |
 |                                                                                                              |
-|  5. js/modules/app.js - Noyau de l'application                                                                          |
+|  5. js/app.js - Noyau de l'application                                                                          |
 |     - Création de l'objet global MonHistoire                                                                 |
 |     - Initialisation du state                                                                                |
 |     - Initialisation du système d'événements                                                                 |
 |     - Initialisation du logger                                                                               |
 |                                                                                                              |
 |  6. Modules Core - Fonctionnalités de base                                                                   |
-|     a. modules/core/auth.js - Authentification                                                                       |
-|     b. modules/core/navigation.js - Navigation entre écrans                                                          |
-|     c. modules/core/profiles.js - Gestion des profils                                                                |
-|     d. modules/core/storage.js - Stockage des données                                                                |
+|     a. js/core/auth.js - Authentification                                                                       |
+|     b. js/core/navigation.js - Navigation entre écrans                                                          |
+|     c. js/core/profiles.js - Gestion des profils                                                                |
+|     d. js/core/storage.js - Stockage des données                                                                |
 |                                                                                                              |
 |  7. Modules Features - Fonctionnalités spécifiques                                                           |
-|     a. modules/stories/generator.js - Génération d'histoires                                                |
-|     b. modules/stories/display.js - Affichage des histoires                                                 |
-|     c. modules/stories/management.js - Gestion des histoires                                                |
-|     d. modules/sharing/* - Partage d'histoires                                                              |
-|     e. modules/features/export.js - Export des histoires                                                             |
-|     f. modules/features/audio.js - Lecture audio des histoires                                                       |
-|     g. modules/features/cookies.js - Gestion des cookies                                                             |
-|     h. modules/stories/notation.js - Notation des histoires
+|     a. js/features/stories/generator.js - Génération d'histoires                                                |
+|     b. js/features/stories/display.js - Affichage des histoires                                                 |
+|     c. js/features/stories/management.js - Gestion des histoires                                                |
+|     d. js/features/messaging/* - Partage d'histoires                                                              |
+|     e. js/features/export.js - Export des histoires                                                             |
+|     f. js/features/audio.js - Lecture audio des histoires                                                       |
+|     g. js/features/cookies.js - Gestion des cookies                                                             |
+|     h. js/features/stories/notation.js - Notation des histoires
                                |
 |  8. ui.js - Interface utilisateur                                                                            |
 |     - Binding des événements UI                                                                              |
@@ -530,7 +502,7 @@ firebase deploy --only firestore:indexes
 
 Les messages que vous échangez et les métadonnées associées (participants, dates et identifiants de profil) sont stockés dans Firebase Firestore avec votre consentement afin de conserver l'historique des conversations. Vous pouvez en demander la suppression à tout moment ou effacer ces données en supprimant un profil.
 
-Les préférences de cookies sont gérées par le module `modules/features/cookies.js`. Vous trouverez le texte complet de la politique de confidentialité et des cookies dans le fichier `index.html`.
+Les préférences de cookies sont gérées par le module `js/features/cookies.js`. Vous trouverez le texte complet de la politique de confidentialité et des cookies dans le fichier `index.html`.
 
 ## Licence
 
