@@ -544,12 +544,9 @@ MonHistoire.init = function() {
       }
       
       const authCore = MonHistoire.core && MonHistoire.core.auth;
-      const authModule = MonHistoire.modules?.user?.auth;
 
       if (authCore?.afficherUtilisateurConnecté) {
         authCore.afficherUtilisateurConnecté();
-      } else if (authModule?.afficherUtilisateurConnecté) {
-        authModule.afficherUtilisateurConnecté();
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après connexion");
@@ -557,8 +554,8 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
-        MonHistoire.modules.ui.events.bindLongPress();
+      if (MonHistoire.ui && typeof MonHistoire.ui.bindLongPress === 'function') {
+        MonHistoire.ui.bindLongPress();
       }
       // Vérifie s'il y a des histoires partagées
       if (MonHistoire.features && MonHistoire.features.sharing) {
@@ -572,12 +569,9 @@ MonHistoire.init = function() {
       }
     } else {
       const authCore = MonHistoire.core && MonHistoire.core.auth;
-      const authModule = MonHistoire.modules?.user?.auth;
 
       if (authCore?.afficherUtilisateurDéconnecté) {
         authCore.afficherUtilisateurDéconnecté();
-      } else if (authModule?.afficherUtilisateurDéconnecté) {
-        authModule.afficherUtilisateurDéconnecté();
       }
 
       if (MonHistoire.core && MonHistoire.core.navigation) {
@@ -589,8 +583,8 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
-        MonHistoire.modules.ui.events.bindLongPress();
+      if (MonHistoire.ui && typeof MonHistoire.ui.bindLongPress === 'function') {
+        MonHistoire.ui.bindLongPress();
       }
     }
   });
@@ -682,15 +676,6 @@ document.addEventListener('DOMContentLoaded', function() {
   MonHistoire.state.isConnected = navigator.onLine;
 
   // Initialiser l'application
-  if (
-    MonHistoire.modules &&
-    MonHistoire.modules.core &&
-    MonHistoire.modules.core.config &&
-    typeof MonHistoire.modules.core.config.init === 'function'
-  ) {
-    MonHistoire.modules.core.config.init();
-  }
-
   MonHistoire.init();
   
   // Gérer la visibilité du footer en fonction du profil actif
