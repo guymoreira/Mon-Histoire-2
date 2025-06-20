@@ -355,6 +355,7 @@ window.MonHistoire = window.MonHistoire || {};
         annulerAjoutEnfant();
         afficherProfilsEnfants();
         MonHistoire.core?.auth?.logActivite?.('creation_profil_enfant', { prenom });
+        MonHistoire.showMessageModal('Profil enfant créé !');
       })
       .catch(error => {
         console.error('Erreur lors de la création du profil enfant:', error);
