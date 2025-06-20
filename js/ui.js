@@ -152,26 +152,43 @@ window.MonHistoire = window.MonHistoire || {};
       if (MonHistoire.state) MonHistoire.state.histoireARenommer = null;
     });
 
-    document.getElementById('btn-confirmer-renommer')?.addEventListener('click', async () => {
-      const id = MonHistoire.state?.histoireARenommer;
-      const input = document.getElementById('input-nouveau-titre');
-      if (!id || !input || !input.value.trim()) {
+      document.getElementById('btn-confirmer-renommer')?.addEventListener('click', async () => {
+        const id = MonHistoire.state?.histoireARenommer;
+        const input = document.getElementById('input-nouveau-titre');
+        if (!id || !input || !input.value.trim()) {
+          document.getElementById('modal-renommer')?.classList.remove('show');
+          return;
+        }
         document.getElementById('modal-renommer')?.classList.remove('show');
-        return;
-      }
-      document.getElementById('modal-renommer')?.classList.remove('show');
-      const newTitle = input.value.trim();
-      try {
-        await MonHistoire.core?.storage?.updateStoryTitle?.(id, newTitle);
-        MonHistoire.features?.stories?.management?.loadStories?.();
-      } catch (error) {
-        console.error('Erreur lors du renommage:', error);
-        MonHistoire.showMessageModal?.("Erreur lors du renommage de l'histoire.");
-      } finally {
-        if (MonHistoire.state) MonHistoire.state.histoireARenommer = null;
-      }
-    });
-  }
+        const newTitle = input.value.trim();
+        try {
+          await MonHistoire.core?.storage?.updateStoryTitle?.(id, newTitle);
+          MonHistoire.features?.stories?.management?.loadStories?.();
+        } catch (error) {
+          console.error('Erreur lors du renommage:', error);
+          MonHistoire.showMessageModal?.("Erreur lors du renommage de l'histoire.");
+        } finally {
+          if (MonHistoire.state) MonHistoire.state.histoireARenommer = null;
+        }
+      });
+
+      // --- Icône utilisateur et modale de logout ---
+      document.getElementById('user-icon')?.addEventListener('click', () => {
+        MonHistoire.core?.auth?.ouvrirLogoutModal?.();
+      });
+
+      document.getElementById('btn-fermer-logout')?.addEventListener('click', () => {
+        MonHistoire.core?.auth?.fermerLogoutModal?.();
+      });
+
+      document.getElementById('btn-logout')?.addEventListener('click', () => {
+        MonHistoire.core?.auth?.logoutUser?.();
+      });
+
+      document.getElementById('btn-mon-compte')?.addEventListener('click', () => {
+        MonHistoire.core?.auth?.ouvrirMonCompte?.();
+      });
+    }
 
   function bindProfilsEnfantsEvents() {
     document.getElementById('btn-ajouter-enfant')?.addEventListener('click', ouvrirFormAjoutEnfant);
