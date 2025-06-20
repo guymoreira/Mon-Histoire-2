@@ -670,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Nous ne définissons pas d'écouteur d'événement ici pour éviter les conflits
-  // L'écouteur est défini dans js/ui.js ou js/modules/ui/common.js
+  // L'écouteur est défini dans js/ui.js
   
   // Vérifier l'état de connexion initial
   MonHistoire.state.isConnected = navigator.onLine;
