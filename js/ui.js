@@ -391,15 +391,33 @@ window.MonHistoire = window.MonHistoire || {};
       })
       .then(data => {
         data.profils.forEach(result => {
-          const ligne = document.createElement('div');
-          ligne.className = 'ligne-profil';
+          const tpl = document.getElementById('tpl-profil-enfant');
+          let ligne;
+          if (tpl) {
+            ligne = tpl.content.firstElementChild.cloneNode(true);
+          } else {
+            ligne = document.createElement('div');
+            ligne.className = 'ligne-profil';
+            ligne.innerHTML = `
+              <span class="prenom"></span>
+              <span class="nb-histoires"></span>
+              <label class="switch-label">
+                <input type="checkbox" class="messagerie-toggle">
+                <span class="switch"></span>
+              </label>
+              <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille">
+              <button type="button" class="btn-edit">✏️</button>`;
+          }
           ligne.dataset.id = result.id;
-          ligne.innerHTML = `
-            <span class="prenom">${result.prenom}</span>
-            <span class="nb-histoires">${result.nb_histoires}</span>
-            <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille" onclick="MonHistoire.retirerProfil('${result.id}')">
-            <button type="button" class="btn-edit" onclick="MonHistoire.modifierProfil('${result.id}', '${result.prenom}')">✏️</button>
-          `;
+          ligne.querySelector('.prenom').textContent = result.prenom;
+          ligne.querySelector('.nb-histoires').textContent = result.nb_histoires;
+          const toggle = ligne.querySelector('.messagerie-toggle');
+          if (toggle) {
+            toggle.checked = result.acces_messagerie === true;
+            toggle.addEventListener('change', e => changerAccesMessagerie(result.id, e.target.checked));
+          }
+          ligne.querySelector('.btn-corbeille').setAttribute('onclick', `MonHistoire.retirerProfil('${result.id}')`);
+          ligne.querySelector('.btn-edit').setAttribute('onclick', `MonHistoire.modifierProfil('${result.id}', '${result.prenom}')`);
           liste.appendChild(ligne);
         });
         const btnAjouter = document.getElementById('btn-ajouter-enfant');
@@ -444,6 +462,12 @@ window.MonHistoire = window.MonHistoire || {};
     const element = document.querySelector(`#liste-profils-enfants .ligne-profil[data-id="${id}"] .prenom`);
     if (element) element.textContent = nouveauPrenom;
     fermerModaleRenommerProfil();
+  }
+
+  function changerAccesMessagerie(id, value) {
+    if (!id) return;
+    if (!MonHistoire.state.profilsEnfantModifies) MonHistoire.state.profilsEnfantModifies = [];
+    MonHistoire.state.profilsEnfantModifies.push({ action: 'messagerie', id, value });
   }
 
   async function enregistrerModificationsProfils(continueWithParentProfile = false) {
@@ -548,6 +572,7 @@ window.MonHistoire = window.MonHistoire || {};
   MonHistoire.modifierProfil = modifierProfil;
   MonHistoire.fermerModaleRenommerProfil = fermerModaleRenommerProfil;
   MonHistoire.confirmerRenommerProfil = confirmerRenommerProfil;
+  MonHistoire.changerAccesMessagerie = changerAccesMessagerie;
   MonHistoire.enregistrerModificationsProfils = enregistrerModificationsProfils;
 
   MonHistoire.ui = {
@@ -563,6 +588,7 @@ window.MonHistoire = window.MonHistoire || {};
     modifierProfil,
     fermerModaleRenommerProfil,
     confirmerRenommerProfil,
+    changerAccesMessagerie,
     enregistrerModificationsProfils
   };
 
