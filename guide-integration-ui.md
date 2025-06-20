@@ -262,7 +262,7 @@ Exemple minimal pour déclencher l'ouverture des conversations :
 ```html
 <button id="my-messages-button" class="ui-button ui-button--primary">Mes messages</button>
 <script>
-  // Après chargement des modules messaging
+  // Appel de la fonction héritée d'initialisation
   MonHistoire.features.messaging.ui.init();
 </script>
 ```
