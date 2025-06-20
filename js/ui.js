@@ -335,15 +335,41 @@ window.MonHistoire = window.MonHistoire || {};
   }
 
   function validerAjoutEnfant() {
+    const btn = document.getElementById('btn-valider-ajout-enfant');
+    if (btn) {
+      if (btn.dataset.processing === 'true') return;
+      btn.dataset.processing = 'true';
+      btn.disabled = true;
+    }
+
     const user = firebase.auth().currentUser;
-    if (!user) return;
+    if (!user) {
+      if (btn) {
+        btn.disabled = false;
+        btn.dataset.processing = 'false';
+      }
+      return;
+    }
+
     const input = document.getElementById('input-prenom-enfant');
-    if (!input) return;
+    if (!input) {
+      if (btn) {
+        btn.disabled = false;
+        btn.dataset.processing = 'false';
+      }
+      return;
+    }
+
     const prenom = input.value.trim();
     if (!prenom) {
+      if (btn) {
+        btn.disabled = false;
+        btn.dataset.processing = 'false';
+      }
       MonHistoire.showMessageModal('Le prénom ne peut pas être vide.', { forceTop: true });
       return;
     }
+
     const ref = firebase.firestore().collection('users').doc(user.uid).collection('profils_enfant').doc();
     ref.set({ prenom, createdAt: new Date().toISOString(), nb_histoires: 0, acces_messagerie: false })
       .then(() => {
@@ -354,6 +380,12 @@ window.MonHistoire = window.MonHistoire || {};
       .catch(error => {
         console.error('Erreur lors de la création du profil enfant:', error);
         MonHistoire.showMessageModal('Erreur lors de la création du profil enfant.');
+      })
+      .finally(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.dataset.processing = 'false';
+        }
       });
   }
 
