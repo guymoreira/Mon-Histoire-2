@@ -57,56 +57,77 @@ Les dossiers `js/core` et `js/features` sont conservés uniquement pour assurer
 la compatibilité avec l'ancienne architecture. Ils sont désormais dépréciés et
 seront retirés lors d'une future mise à jour.
 
+## Ancienne structure (legacy)
+
+Avant la refactorisation modulaire, la logique de l'application était répartie
+dans quelques fichiers globaux :
+
+- **js/app.js** : point d'entrée contenant l'état global et la logique
+  principale de l'application.
+- **js/index.js** : initialisation de l'application après le chargement de
+  Firebase.
+- **js/config.js** : paramètres et messages d'erreur communs.
+- **js/common.js** : fonctions utilitaires et aide au chargement d'événements.
+- **js/firebase-init.js** : configuration et connexion à Firebase.
+- **js/ui.js** : accès simplifié aux composants de l'interface.
+- **js/core/** : modules d'authentification, de navigation, de gestion des
+  profils et du stockage.
+- **js/features/** : fonctionnalités audio, export, cookies ainsi que les
+  sous‑dossiers **messaging/** et **stories/** pour la messagerie et les
+  histoires.
+
+Ces fichiers restent présents pour compatibilité mais ne sont plus enrichis.
+
 ## Organisation des Modules
 
 ### Modules de Base (core)
 
-- **config.js** : Gestion de la configuration de l'application
-- **cookies.js** : Gestion du consentement aux cookies et des préférences utilisateur
-- **navigation.js** : Navigation entre les différentes sections de l'application
-- **storage.js** : Interaction avec Firebase Firestore et Storage
+- **modules/core/config.js** : Gestion de la configuration de l'application
+- **modules/core/cookies.js** : Consentement aux cookies et préférences utilisateur
+- **modules/core/navigation.js** : Navigation entre les différentes sections de l'application
+- **modules/core/storage.js** : Accès à Firebase Firestore et Storage
 
 ### Modules Utilisateur (user)
 
-- **auth.js** : Authentification des utilisateurs (inscription, connexion, déconnexion)
-- **profiles.js** : Gestion des profils utilisateur
-- **account.js** : Gestion du compte utilisateur (paramètres, suppression)
+- **modules/user/auth.js** : Authentification des utilisateurs
+- **modules/user/profiles.js** : Gestion des profils utilisateur
+- **modules/user/account.js** : Paramètres et suppression de compte
 
 ### Modules d'Interface Utilisateur (ui)
 
-- **common.js** : Composants d'interface utilisateur communs (modals, notifications)
+- **modules/ui/common.js** : Composants communs (modales, notifications)
 
 ### Modules d'Histoires (stories)
 
-- **generator.js** : Génération d'histoires à partir de templates et de données utilisateur
-- **management.js** : Gestion des histoires (sauvegarde, suppression, liste)
-- **display.js** : Affichage des histoires
-- **export.js** : Exportation des histoires (PDF, image)
+- **modules/stories/generator.js** : Création d'histoires à partir des données utilisateur
+- **modules/stories/management.js** : Sauvegarde et suppression d'histoires
+- **modules/stories/display.js** : Affichage des histoires
+- **modules/stories/export.js** : Exportation (PDF ou image)
 
 ### Modules de Fonctionnalités (features)
 
-- **audio.js** : Lecture audio des histoires (synthèse vocale)
-- **cookies.js** : Gestion des préférences de cookies
-- **export.js** : Exportation des histoires (PDF, image)
-- **messaging/** : Fonctionnalités de messagerie
-- **sharing/** : Fonctionnalités de partage d'histoires
-- **stories/** : Génération, affichage et gestion des histoires (dont `notation.js`)
+- **modules/features/audio.js** : Lecture audio des histoires
+- **modules/features/cookies.js** : Préférences de cookies
+- **modules/features/export.js** : Export supplémentaire (PDF, image)
+- **modules/features/messaging/** : Fonctions de messagerie
+- **modules/features/sharing/** : Partage d'histoires
+- **modules/features/stories/** : Génération et notation d'histoires
 
 ### Modules de Partage (sharing)
 
-- **index.js** : Point d'entrée du module de partage
-- **notifications.js** : Gestion des notifications de partage
-- **storage.js** : Stockage des données de partage
-- **ui.js** : Composants d'interface pour le partage
-- **realtime/** : Gestion des notifications en temps réel
+- **modules/sharing/index.js** : Point d'entrée du partage
+- **modules/sharing/notifications.js** : Notifications liées au partage
+- **modules/sharing/storage.js** : Stockage des données de partage
+- **modules/sharing/ui.js** : Composants pour partager une histoire
+- **modules/sharing/realtime/** : Notifications en temps réel
 
 ### Modules de Messagerie (messaging)
 
-- **index.js** : Point d'entrée de la messagerie
-- **storage.js** : Gestion des conversations et envoi des messages via Firestore
-- **realtime.js** : Écoute en temps réel des nouveaux messages
-- **notifications.js** : Notifications de nouveaux messages
-- **ui.js** : Affichage de la liste des conversations et de la fenêtre de discussion
+- **modules/messaging/index.js** : Point d'entrée de la messagerie
+- **modules/messaging/storage.js** : Sauvegarde et lecture des messages
+- **modules/messaging/realtime.js** : Écoute en temps réel des conversations
+- **modules/messaging/notifications.js** : Notifications de nouveaux messages
+- **modules/messaging/ui.js** : Interface des conversations
 
 ### Système de notation des histoires
 
