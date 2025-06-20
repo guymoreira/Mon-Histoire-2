@@ -4,6 +4,8 @@
 window.MonHistoire = window.MonHistoire || {};
 
 (function() {
+  // Identifiant incrémental pour suivre les requêtes de profils
+  let profilsFetchId = 0;
   /* --- Événements généraux --- */
   function init() {
     bindEvents();
@@ -396,6 +398,7 @@ window.MonHistoire = window.MonHistoire || {};
   }
 
   function afficherProfilsEnfants() {
+    const currentFetchId = ++profilsFetchId;
     const user = firebase.auth().currentUser;
     if (!user) return;
     const liste = document.getElementById('liste-profils-enfants');
@@ -403,6 +406,7 @@ window.MonHistoire = window.MonHistoire || {};
     liste.innerHTML = '';
     firebase.firestore().collection('users').doc(user.uid).collection('profils_enfant').get()
       .then(snapshot => {
+        if (currentFetchId !== profilsFetchId) return null;
         let count = 0;
         const promises = [];
         snapshot.forEach(doc => {
@@ -428,6 +432,7 @@ window.MonHistoire = window.MonHistoire || {};
         return Promise.all(promises).then(results => ({ count, profils: results }));
       })
       .then(data => {
+        if (!data || currentFetchId !== profilsFetchId) return;
         data.profils.forEach(result => {
           const tpl = document.getElementById('tpl-profil-enfant');
           let ligne;
