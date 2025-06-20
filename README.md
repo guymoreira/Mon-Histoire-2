@@ -17,6 +17,14 @@ npm start
 
 Le serveur démarre sur http://localhost:3000.
 
+## Configuration Firebase
+
+Les informations de connexion à Firebase sont directement renseignées dans
+[js/firebase-init.js](js/firebase-init.js). Cette configuration publique ne
+contient aucune donnée sensible. Si des clés privées devaient être
+introduites à l'avenir, prévoyez d'utiliser des variables d'environnement pour
+les protéger.
+
 ## Architecture Modulaire
 
 L'application a été restructurée selon une architecture modulaire où chaque module est responsable d'une fonctionnalité spécifique. Cette approche offre plusieurs avantages :
