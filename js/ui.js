@@ -83,9 +83,9 @@ window.MonHistoire = window.MonHistoire || {};
         MonHistoire.core?.auth?.loginUser?.();
     });
 
-    document.getElementById('btn-register')?.addEventListener('click', (e) => {
+    protegerBouton('btn-register', (e) => {
       e.preventDefault();
-        MonHistoire.core?.auth?.registerUser?.();
+      MonHistoire.core?.auth?.registerUser?.();
     });
 
     document.getElementById('btn-send-reset')?.addEventListener('click', (e) => {
