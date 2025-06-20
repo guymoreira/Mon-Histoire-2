@@ -457,64 +457,18 @@ MonHistoire.events.on('eventName', function(data) {
 
 ## Initialisation de l'Application
 
-L'initialisation de l'application est gérée par le fichier `js/index.js`. Ce fichier charge ensuite `js/modules/app.js`, qui définit l'objet global `MonHistoire` et coordonne les modules. Un fichier `js/adapters/index.js` charge une couche d'adaptation pour exposer l'ancien namespace (`MonHistoire.features`, `MonHistoire.core`, etc.) vers les nouveaux modules. Ces fichiers d'adaptation assurent la transition mais les anciens fichiers sont désormais dépréciés. Les modules sont initialisés dans un ordre spécifique pour garantir que les dépendances sont respectées.
-
-```javascript
-// Ordre d'initialisation des modules
-const moduleInitOrder = [
-  // Modules de base
-  { namespace: 'MonHistoire.modules.core.config', name: 'Config' },
-  { namespace: 'MonHistoire.modules.core.cookies', name: 'Cookies' },
-  { namespace: 'MonHistoire.modules.core.storage', name: 'Storage' },
-  { namespace: 'MonHistoire.modules.user.auth', name: 'Auth' },
-  // ...
-];
-```
+L'initialisation est maintenant entièrement basée sur les fichiers historiques du projet. Le script `js/index.js` charge `js/app.js` qui configure Firebase et installe les modules présents dans `js/core` et `js/features`. La tentative d'architecture modulaire située dans `js/modules` a été abandonnée : aucune couche d'adaptation ou namespace `MonHistoire.modules.*` n'est nécessaire. Seuls les fichiers du dossier `js` (et notamment `js/core` et `js/features`) doivent être présents pour que l'application démarre correctement.
 
 ## Bonnes Pratiques
 
 ### Structure des Modules
 
-Chaque module suit une structure similaire :
+Les fonctionnalités sont réparties dans deux dossiers :
 
-1. **Namespace** : Déclaration du namespace pour éviter les conflits
-2. **Variables privées** : Variables accessibles uniquement à l'intérieur du module
-3. **Fonctions privées** : Fonctions utilisées en interne par le module
-4. **API publique** : Interface exposée aux autres modules
+- `js/core` : modules de base tels que l'authentification, la navigation, la gestion des profils ou le stockage.
+- `js/features` : fonctionnalités complémentaires (audio, export, cookies, messagerie et histoires).
 
-```javascript
-// Exemple de structure de module
-(function() {
-  // Variables privées
-  let isInitialized = false;
-  
-  // Fonction d'initialisation
-  function init() {
-    if (isInitialized) {
-      console.warn("Module déjà initialisé");
-      return;
-    }
-    
-    // Initialisation du module
-    
-    isInitialized = true;
-    console.log("Module initialisé");
-  }
-  
-  // Fonctions privées
-  function privateFunction() {
-    // ...
-  }
-  
-  // API publique
-  MonHistoire.modules.example = {
-    init: init,
-    publicFunction: function() {
-      // ...
-    }
-  };
-})();
-```
+Chaque fichier déclare une fonction d'initialisation exposée via `MonHistoire.core.*` ou `MonHistoire.features.*`. Les variables internes demeurent privées dans la portée du fichier. Ce mécanisme est issu de la première version de l'application et reste utilisé maintenant que le système modulaire a été abandonné.
 
 ### Gestion des Erreurs
 
