@@ -17,7 +17,7 @@ describe('core storage module', () => {
   beforeEach(() => {
     jest.resetModules();
     setupEnvironment();
-    require('../js/modules/core/storage.js');
+    require('../js/core/storage.js');
   });
 
   afterEach(() => {
@@ -28,14 +28,14 @@ describe('core storage module', () => {
   });
 
   test('init initializes in offline mode when firebase is absent', () => {
-    const storage = window.MonHistoire.modules.core.storage;
+    const storage = window.MonHistoire.core.storage;
     storage.init();
     expect(console.warn).toHaveBeenCalledWith("Firebase n'est pas disponible, initialisation du module Storage en mode déconnecté");
     expect(console.log).toHaveBeenCalledWith('Module Storage initialisé en mode déconnecté');
   });
 
   test('calling init twice warns about already initialized', () => {
-    const storage = window.MonHistoire.modules.core.storage;
+    const storage = window.MonHistoire.core.storage;
     storage.init();
     console.warn.mockClear();
     storage.init();

@@ -21,7 +21,7 @@ describe('core config module', () => {
   });
 
   test('initFirebase remains defined after loading core config', () => {
-    require('../js/modules/core/config.js');
+    require('../js/config.js');
     expect(typeof window.MonHistoire.config.initFirebase).toBe('function');
     expect(window.MonHistoire.config.initFirebase).toBe(initFirebaseMock);
   });
