@@ -440,6 +440,18 @@
       <div id="section-profils-enfants" style="margin-top: 2em; border-top: 1px solid #ddd; padding-top: 1em;">
         <h4 style="margin-bottom: 1em;">Profils enfants</h4>
         <ul id="liste-profils-enfants" style="list-style: none; padding: 0; margin: 0;"></ul>
+        <template id="tpl-profil-enfant">
+          <div class="ligne-profil" data-id="">
+            <span class="prenom"></span>
+            <span class="nb-histoires"></span>
+            <label class="switch-label">
+              <input type="checkbox" class="messagerie-toggle">
+              <span class="switch"></span>
+            </label>
+            <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille">
+            <button type="button" class="btn-edit">✏️</button>
+          </div>
+        </template>
         <button type="button" id="btn-ajouter-enfant" class="ui-button ui-button--primary ui-mt-3" style="background-color: #79d4e7 !important; color: #395872 !important;">Ajouter un profil</button>
         
         <!-- Formulaire d'ajout de profil enfant (masqué par défaut) -->
