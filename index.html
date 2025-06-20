@@ -24,66 +24,37 @@
 
   <script src="js/config.js" defer></script>
 
-  <!-- Modules core -->
-  <script src="js/modules/core/config.js" defer></script>
-
-  <!-- Initialisation de l'application -->
-  <script src="js/ui.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <!-- Application legacy -->
   <script src="js/common.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/ui.js" defer></script>
 
-  <script src="js/modules/core/cookies.js" defer></script>
-  <script src="js/modules/core/navigation.js" defer></script>
-  <script src="js/modules/core/storage.js" defer></script>
+  <!-- Core modules -->
+  <script src="js/core/auth.js" defer></script>
+  <script src="js/core/navigation.js" defer></script>
+  <script src="js/core/profiles.js" defer></script>
+  <script src="js/core/storage.js" defer></script>
 
-  <!-- Modules utilisateur -->
-  <script src="js/modules/user/account.js" defer></script>
-  <script src="js/modules/user/activity.js" defer></script>
-  <script src="js/modules/user/auth.js" defer></script>
-  <script src="js/modules/user/profiles.js" defer></script>
+  <!-- Feature modules -->
+  <script src="js/features/audio.js" defer></script>
+  <script src="js/features/cookies.js" defer></script>
+  <script src="js/features/export.js" defer></script>
 
-  <!-- Modules histoires -->
-  <script src="js/modules/stories/generator.js" defer></script>
-  <script src="js/modules/stories/display.js" defer></script>
-  <script src="js/modules/stories/management.js" defer></script>
-  <script src="js/modules/stories/export.js" defer></script>
+  <!-- Messaging feature -->
+  <script src="js/features/messaging/storage.js" defer></script>
+  <script src="js/features/messaging/realtime.js" defer></script>
+  <script src="js/features/messaging/ui.js" defer></script>
+  <script src="js/features/messaging/notifications.js" defer></script>
+  <script src="js/features/messaging/index.js" defer></script>
 
-  <!-- Modules fonctionnalités -->
-  <script src="js/modules/features/audio.js" defer></script>
-  <script src="js/modules/features/cookies.js" defer></script>
-  <script src="js/modules/features/export.js" defer></script>
+  <!-- Stories feature -->
+  <script src="js/features/stories/generator.js" defer></script>
+  <script src="js/features/stories/display.js" defer></script>
+  <script src="js/features/stories/management.js" defer></script>
+  <script src="js/features/stories/notation.js" defer></script>
 
-  <!-- Modules de partage -->
-  <script src="js/modules/sharing/ui.js" defer></script>
-  <script src="js/modules/sharing/notifications.js" defer></script>
-  <script src="js/modules/sharing/storage.js" defer></script>
-  <script src="js/modules/sharing/realtime/index.js" defer></script>
-  <script src="js/modules/sharing/realtime/listeners.js" defer></script>
-  <script src="js/modules/sharing/realtime/notifications.js" defer></script>
-  <script src="js/modules/sharing/index.js" defer></script>
-
-  <!-- Modules de messagerie -->
-  <script src="js/modules/messaging/storage.js" defer></script>
-  <script src="js/modules/messaging/realtime.js" defer></script>
-  <script src="js/modules/messaging/ui.js" defer></script>
-  <script src="js/modules/messaging/notifications.js" defer></script>
-  <script src="js/modules/messaging/index.js" defer></script>
-
-  <!-- Modules d'interface utilisateur -->
-  <script src="js/modules/ui/common.js" defer></script>
-  <script src="js/modules/ui/whitebar-fix.js" defer></script>
-  <script src="js/modules/ui/debug.js" defer></script>
-  <script src="js/modules/ui/modals.js" defer></script>
-  <script src="js/modules/ui/events.js" defer></script>
-
-  <!-- Module principal de l'application -->
-  <script src="js/modules/app.js" defer></script>
-
-  <!-- Nouvelle entrée pour la migration -->
-  <script src="js/adapters/index.js" defer></script>
-  
-  <!-- Script d'initialisation des modules -->
-  <script src="js/modules/init.js" defer></script>
+  <!-- Application entrypoint -->
+  <script src="js/index.js" defer></script>
 </head>
 <body>
   <!-- Accueil -->
