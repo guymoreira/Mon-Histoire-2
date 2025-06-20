@@ -71,10 +71,10 @@ describe('story schema consistency', () => {
       firestore: firestoreMock.firestoreFn,
       storage: () => ({ ref: () => ({}) })
     };
-    global.MonHistoire = { modules: { core: {}, sharing: {} }, state: {} };
+    global.MonHistoire = { core: {}, features: { sharing: {} }, state: {} };
     global.console = { log: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    require('../js/modules/core/storage.js');
-    require('../js/modules/sharing/storage.js');
+    require('../js/core/storage.js');
+    require('../js/features/sharing/storage.js');
   });
 
   afterEach(() => {
@@ -86,7 +86,7 @@ describe('story schema consistency', () => {
   });
 
   test('saved story is retrieved by core and sharing modules', async () => {
-    const storage = window.MonHistoire.modules.core.storage;
+    const storage = window.MonHistoire.core.storage;
     storage.init();
 
     const storyId = await storage.saveStory({ profileId: 'p1', title: 'Titre', nouvelleHistoire: true });
@@ -94,8 +94,8 @@ describe('story schema consistency', () => {
     expect(story.title).toBe('Titre');
 
     window.MonHistoire.state.profilActif = { type: 'enfant', id: 'p1' };
-    window.MonHistoire.modules.sharing.notificationsNonLues = {};
-    await window.MonHistoire.modules.sharing.storage.verifierHistoiresPartageesProfilActif({ uid: 'user1' });
-    expect(window.MonHistoire.modules.sharing.notificationsNonLues['p1']).toBe(1);
+    window.MonHistoire.features.sharing.notificationsNonLues = {};
+    await window.MonHistoire.features.sharing.storage.verifierHistoiresPartageesProfilActif({ uid: 'user1' });
+    expect(window.MonHistoire.features.sharing.notificationsNonLues['p1']).toBe(1);
   });
 });
