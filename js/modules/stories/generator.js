@@ -117,19 +117,19 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     }
     
     // Bouton de sauvegarde d'histoire
-    const saveStoryButton = document.getElementById('save-story-button');
+    const saveStoryButton = document.getElementById('btn-sauvegarde');
     if (saveStoryButton) {
       saveStoryButton.addEventListener('click', handleSaveStory);
     }
     
     // Bouton de retour au formulaire
-    const backToFormButton = document.getElementById('back-to-form-button');
+    const backToFormButton = document.getElementById('btn-retour-resultat');
     if (backToFormButton) {
       backToFormButton.addEventListener('click', handleBackToForm);
     }
     
     // Champs du formulaire
-    const formInputs = document.querySelectorAll('#story-form input, #story-form select, #story-form textarea');
+    const formInputs = document.querySelectorAll('#form-generer-histoire input, #form-generer-histoire select, #form-generer-histoire textarea');
     formInputs.forEach(input => {
       input.addEventListener('change', handleFormInputChange);
     });
@@ -348,8 +348,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     
     // Mettre à jour la visibilité des sections
     const templateSection = document.getElementById('template-selection-section');
-    const formSection = document.getElementById('story-form-section');
-    const resultSection = document.getElementById('story-result-section');
+    const formSection = document.getElementById('formulaire');
+    const resultSection = document.getElementById('resultat');
     
     if (templateSection && formSection && resultSection) {
       if (!currentTemplate) {
@@ -533,19 +533,19 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     }
     
     // Mettre à jour le titre
-    const storyTitle = document.getElementById('story-title');
+    const storyTitle = document.getElementById('titre-histoire-resultat');
     if (storyTitle) {
       storyTitle.textContent = generatedStory.title || 'Histoire sans titre';
     }
     
     // Mettre à jour le contenu
-    const storyContent = document.getElementById('story-content');
+    const storyContent = document.getElementById('histoire');
     if (storyContent) {
       storyContent.innerHTML = formatStoryContent(generatedStory.content);
     }
     
     // Mettre à jour l'image
-    const storyImage = document.getElementById('story-image');
+    const storyImage = document.getElementById('display-story-image');
     if (storyImage && generatedStory.imageUrl) {
       storyImage.style.backgroundImage = `url(${generatedStory.imageUrl})`;
       storyImage.classList.remove('hidden');
