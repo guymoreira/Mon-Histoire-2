@@ -375,24 +375,51 @@ window.MonHistoire = window.MonHistoire || {};
       return;
     }
 
-    const ref = firebase.firestore().collection('users').doc(user.uid).collection('profils_enfant').doc();
-    ref.set({ prenom, createdAt: new Date().toISOString(), nb_histoires: 0, acces_messagerie: false })
-      .then(() => {
-        annulerAjoutEnfant();
-        afficherProfilsEnfants();
-        MonHistoire.core?.auth?.logActivite?.('creation_profil_enfant', { prenom });
-        MonHistoire.showMessageModal('Profil enfant créé !');
-      })
-      .catch(error => {
-        console.error('Erreur lors de la création du profil enfant:', error);
-        MonHistoire.showMessageModal('Erreur lors de la création du profil enfant.');
-      })
-      .finally(() => {
-        if (btn) {
-          btn.disabled = false;
-          btn.dataset.processing = 'false';
-        }
-      });
+    const id = firebase.firestore()
+      .collection('users').doc(user.uid)
+      .collection('profils_enfant').doc().id;
+    if (!MonHistoire.state.profilsEnfantModifies) MonHistoire.state.profilsEnfantModifies = [];
+    MonHistoire.state.profilsEnfantModifies.push({ action: 'ajouter', id, prenom });
+
+    const liste = document.getElementById('liste-profils-enfants');
+    if (liste) {
+      const tpl = document.getElementById('tpl-profil-enfant');
+      let ligne;
+      if (tpl) {
+        ligne = tpl.content.firstElementChild.cloneNode(true);
+      } else {
+        ligne = document.createElement('div');
+        ligne.className = 'ligne-profil';
+        ligne.innerHTML = `
+          <span class="prenom"></span>
+          <span class="nb-histoires"></span>
+          <label class="switch-label">
+            <input type="checkbox" class="messagerie-toggle">
+            <span class="switch"></span>
+          </label>
+          <img src="corbeille-cartoon.png" alt="Supprimer" class="btn-corbeille">
+          <button type="button" class="btn-edit">✏️</button>`;
+      }
+      ligne.dataset.id = id;
+      ligne.querySelector('.prenom').textContent = prenom;
+      ligne.querySelector('.nb-histoires').textContent = '0';
+      const toggle = ligne.querySelector('.messagerie-toggle');
+      if (toggle) {
+        toggle.checked = false;
+        toggle.addEventListener('change', e => changerAccesMessagerie(id, e.target.checked));
+      }
+      ligne.querySelector('.btn-corbeille').setAttribute('onclick', `MonHistoire.retirerProfil('${id}')`);
+      ligne.querySelector('.btn-edit').setAttribute('onclick', `MonHistoire.modifierProfil('${id}', '${prenom}')`);
+      liste.appendChild(ligne);
+      const btnAjouter = document.getElementById('btn-ajouter-enfant');
+      if (btnAjouter) btnAjouter.style.display = (liste.childElementCount >= 2) ? 'none' : 'inline-block';
+    }
+
+    annulerAjoutEnfant();
+    if (btn) {
+      btn.disabled = false;
+      btn.dataset.processing = 'false';
+    }
   }
 
   function afficherProfilsEnfants() {
@@ -532,6 +559,15 @@ window.MonHistoire = window.MonHistoire || {};
     const convDeletionPromises = [];
 
     MonHistoire.state.profilsEnfantModifies.forEach(modif => {
+      if (modif.action === 'ajouter') {
+        batch.set(ref.doc(modif.id), {
+          prenom: modif.prenom,
+          createdAt: new Date().toISOString(),
+          nb_histoires: 0,
+          acces_messagerie: false
+        });
+        MonHistoire.core?.auth?.logActivite?.('creation_profil_enfant', { prenom: modif.prenom });
+      }
       if (modif.action === 'supprimer') {
         batch.delete(ref.doc(modif.id));
         const participantKey = `${user.uid}:${modif.id}`;

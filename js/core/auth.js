@@ -475,12 +475,8 @@ MonHistoire.core.auth = {
               `Stock d'histoires : <i>erreur de lecture</i>`;
           });
         
-        // Initialiser les variables pour les profils enfants
-        if (!MonHistoire.state.profilsEnfantModifies) {
-          MonHistoire.state.profilsEnfantModifies = [];
-        }
-        
-        // Afficher les profils enfants
+        // Réinitialiser les modifications et afficher les profils enfants
+        MonHistoire.state.profilsEnfantModifies = [];
         if (typeof MonHistoire.afficherProfilsEnfants === 'function') {
           MonHistoire.afficherProfilsEnfants();
         }
