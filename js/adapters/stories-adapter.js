@@ -99,6 +99,11 @@
         return MonHistoire.modules.stories.display.showStory(histoire);
       },
       
+      getCurrentStory: function() {
+        console.log("[Adapter] Redirection de getCurrentStory vers modules.stories.display.getCurrentStory");
+        return MonHistoire.modules.stories.display.getCurrentStory();
+      },
+      
       getHistoireAffichee: function() {
         console.log("[Adapter] Redirection de getHistoireAffichee vers modules.stories.display.getCurrentStory");
         return MonHistoire.modules.stories.display.getCurrentStory();
@@ -138,23 +143,94 @@
         return MonHistoire.modules.stories.management.init();
       },
       
-      sauvegarderHistoire: function(histoire) {
-        console.log("[Adapter] Redirection de sauvegarderHistoire vers modules.stories.management.saveStory");
-        return MonHistoire.modules.stories.management.saveStory(histoire)
-          .then((storyId) => {
-            // Affiche un message de confirmation
+      saveStory: function(histoire) {
+        console.log("[Adapter] Redirection de saveStory vers modules.stories.management.saveStory");
+        
+        // Vérifier si l'histoire est valide
+        if (!histoire) {
+          console.error("[Adapter] Tentative de sauvegarde d'une histoire invalide");
+          if (MonHistoire.showMessageModal) {
+            MonHistoire.showMessageModal("Erreur: Impossible de sauvegarder l'histoire.");
+          }
+          return Promise.reject(new Error("Histoire invalide"));
+        }
+        
+        // Vérifier si l'utilisateur est connecté
+        if (!firebase.auth().currentUser) {
+          console.error("[Adapter] Tentative de sauvegarde d'histoire sans être connecté");
+          if (MonHistoire.showMessageModal) {
+            MonHistoire.showMessageModal("Vous devez être connecté pour sauvegarder une histoire.");
+          }
+          return Promise.reject(new Error("Utilisateur non connecté"));
+        }
+        
+        // Vérifier le quota d'histoires
+        return MonHistoire.modules.core.storage.verifierQuotaHistoires()
+          .then(quotaOk => {
+            if (!quotaOk) {
+              console.warn("[Adapter] Quota d'histoires atteint");
+              // Afficher la modale de limite
+              const modalLimite = document.getElementById("modal-limite");
+              if (modalLimite) modalLimite.classList.add("show");
+              return Promise.reject(new Error("Quota d'histoires atteint"));
+            }
+            
+            // Vérifier si on approche du seuil d'alerte
+            return MonHistoire.modules.core.storage.verifierSeuilAlerteHistoires();
+          })
+          .then(seuilAtteint => {
+            if (seuilAtteint) {
+              console.warn("[Adapter] Seuil d'alerte d'histoires atteint");
+              // Afficher un message d'avertissement
+              setTimeout(() => {
+                if (MonHistoire.showMessageModal) {
+                  MonHistoire.showMessageModal("Attention: Tu approches de la limite d'histoires sauvegardées.");
+                }
+              }, 1500);
+            }
+            
+            // Sauvegarder l'histoire
+            return MonHistoire.modules.core.storage.saveStory(histoire);
+          })
+          .then(storyId => {
+            console.log("[Adapter] Histoire sauvegardée avec succès, ID:", storyId);
+            
+            // Afficher un message de confirmation
             if (MonHistoire.showMessageModal) {
               MonHistoire.showMessageModal("Histoire sauvegardée avec succès !");
             }
             
-            // Cache le bouton Sauvegarder
+            // Cacher le bouton de sauvegarde
             const btnSauvegarde = document.getElementById("btn-sauvegarde");
             if (btnSauvegarde) {
               btnSauvegarde.style.display = "none";
             }
             
+            // Mettre à jour le compteur d'histoires
+            if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
+              MonHistoire.modules.core.storage.recalculerNbHistoires && 
+                MonHistoire.modules.core.storage.recalculerNbHistoires();
+            }
+            
             return storyId;
+          })
+          .catch(error => {
+            if (error.message === "Quota d'histoires atteint") {
+              // Cette erreur est déjà gérée plus haut
+              return Promise.reject(error);
+            }
+            
+            console.error("[Adapter] Erreur lors de la sauvegarde de l'histoire:", error);
+            if (MonHistoire.showMessageModal) {
+              MonHistoire.showMessageModal("Erreur lors de la sauvegarde de l'histoire.");
+            }
+            return Promise.reject(error);
           });
+      },
+      
+      sauvegarderHistoire: function(histoire) {
+        console.log("[Adapter] Redirection de sauvegarderHistoire vers saveStory");
+        return this.saveStory(histoire);
       },
       
       supprimerHistoire: function(id) {
@@ -170,11 +246,27 @@
             if (MonHistoire.showMessageModal) {
               MonHistoire.showMessageModal("Histoire supprimée avec succès !");
             }
+            
+            // Mettre à jour le compteur d'histoires
+            if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
+              MonHistoire.modules.core.storage.recalculerNbHistoires && 
+                MonHistoire.modules.core.storage.recalculerNbHistoires();
+            }
           });
+      },
+      
+      deleteStory: function(id) {
+        console.log("[Adapter] Redirection de deleteStory vers modules.stories.management.deleteStory");
+        return MonHistoire.modules.stories.management.deleteStory(id);
       },
       
       afficherHistoiresSauvegardees: function() {
         console.log("[Adapter] Redirection de afficherHistoiresSauvegardees vers modules.stories.management.loadStories");
+        return MonHistoire.modules.stories.management.loadStories();
+      },
+      
+      loadStories: function() {
+        console.log("[Adapter] Redirection de loadStories vers modules.stories.management.loadStories");
         return MonHistoire.modules.stories.management.loadStories();
       }
     };
@@ -203,6 +295,11 @@
           }
           return story;
         });
+      },
+      
+      generateStory: function(params) {
+        console.log("[Adapter] Redirection de generateStory vers modules.stories.generator.generateStory");
+        return MonHistoire.modules.stories.generator.generateStory(params);
       }
     };
     

@@ -203,49 +203,45 @@
 
       console.log("[Adapter] Tentative d'inscription avec email:", email);
 
-      // Utiliser la fonction register du module modularisé
-      if (MonHistoire.modules.user.auth.register) {
-        MonHistoire.modules.user.auth.register(email, password)
-          .then((user) => {
-            console.log("[Adapter] Inscription réussie pour:", email);
-            
-            // Stocker le prénom et le consentement parental dans Firestore
-            if (window.firebase && firebase.firestore) {
-              return firebase.firestore().collection("users").doc(user.uid).set({
-                prenom: prenom,
-                email: email,
-                createdAt: new Date().toISOString(),
-                consentement_parental: true
-              });
-            }
-            return Promise.resolve();
-          })
-          .then(() => {
-            // Log de l'activité
-            if (MonHistoire.modules.user.auth.logActivity) {
-              MonHistoire.modules.user.auth.logActivity("creation_compte");
-            }
-            
-            // Fermer le formulaire d'inscription
-            if (MonHistoire.modules.user.auth.toggleSignup) {
-              MonHistoire.modules.user.auth.toggleSignup(false);
-            } else {
-              this.toggleSignup(false);
-            }
-            
-            // Afficher un message de confirmation
-            if (MonHistoire.showMessageModal) {
-              MonHistoire.showMessageModal("Ton compte a bien été créé ! Tu peux maintenant te connecter.");
-            }
-          })
-          .catch((error) => {
-            console.error("[Adapter] Erreur d'inscription:", error);
-            const msg = MonHistoire.config.firebaseErrorMessages && MonHistoire.config.firebaseErrorMessages[error.code] || error.message;
-            if (MonHistoire.showMessageModal) {
-              MonHistoire.showMessageModal(msg);
-            }
+      // Firebase Auth
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // Stocke le consentement parental dans Firestore
+          return firebase.firestore().collection("users").doc(user.uid).set({
+            prenom: prenom,
+            email: email,
+            createdAt: new Date().toISOString(),
+            consentement_parental: true
           });
-      }
+        })
+        .then(() => {
+          // Log de l'activité
+          if (MonHistoire.modules.user.auth.logActivity) {
+            MonHistoire.modules.user.auth.logActivity("creation_compte");
+          } else if (typeof this.logActivite === 'function') {
+            this.logActivite("creation_compte");
+          }
+          
+          // Fermer le formulaire d'inscription
+          if (MonHistoire.modules.user.auth.toggleSignup) {
+            MonHistoire.modules.user.auth.toggleSignup(false);
+          } else {
+            this.toggleSignup(false);
+          }
+          
+          // Afficher un message de confirmation
+          if (MonHistoire.showMessageModal) {
+            MonHistoire.showMessageModal("Ton compte a bien été créé ! Tu peux maintenant te connecter.");
+          }
+        })
+        .catch((error) => {
+          console.error("[Adapter] Erreur d'inscription:", error);
+          const msg = MonHistoire.config.firebaseErrorMessages && MonHistoire.config.firebaseErrorMessages[error.code] || error.message;
+          if (MonHistoire.showMessageModal) {
+            MonHistoire.showMessageModal(msg);
+          }
+        });
     },
     
     signup: function(email, password, userData) {
