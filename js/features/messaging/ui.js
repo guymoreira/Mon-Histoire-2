@@ -251,6 +251,8 @@ MonHistoire.features.messaging.ui = (function() {
     startNewConversation,
     openConversation,
     closeConversation,
-    sendCurrentMessage
+    sendCurrentMessage,
+    // Expose fetchPrenom for unit testing
+    fetchPrenom
   };
 })();
