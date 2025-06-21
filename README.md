@@ -451,3 +451,13 @@ MonHistoire.debug("Message de débogage", data);
 ## Conclusion
 
 Cette nouvelle architecture modulaire offre une base solide pour le développement futur de l'application "Mon Histoire". Elle facilite la maintenance, l'évolution et la collaboration entre développeurs.
+
+## Déploiement des Règles Firestore
+
+Un fichier `firestore.rules` est présent à la racine du projet. Il définit les règles de sécurité permettant aux utilisateurs authentifiés d'accéder à leurs propres données sous `users/{userId}` et dans toutes les sous-collections (par exemple `stories` ou `profils_enfant/{profilId}/stories`).
+
+Pour déployer ces règles vers votre projet Firebase, utilisez la commande suivante après avoir installé les Firebase Tools :
+
+```bash
+firebase deploy --only firestore:rules
+```
