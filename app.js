@@ -1407,6 +1407,23 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('modal-rgpd').classList.add('show');
     };
   }
+
+  // Bouton de renommage d'histoire
+  const btnRename = document.getElementById('btn-renommer-histoire');
+  if (btnRename) {
+    btnRename.addEventListener('click', afficherModaleRenommer);
+  }
+
+  // Boutons de la modale de renommage
+  const btnCancelRename = document.getElementById('btn-annuler-renommer');
+  if (btnCancelRename) {
+    btnCancelRename.addEventListener('click', fermerModaleRenommer);
+  }
+
+  const btnConfirmRename = document.getElementById('btn-confirmer-renommer');
+  if (btnConfirmRename) {
+    btnConfirmRename.addEventListener('click', confirmerRenommer);
+  }
 });
 // ========== LOG D'ACTIVITÉ UTILISATEUR ==========
 // Log anonyme d'une action utilisateur (stocké dans /users/{uid}/logs)
