@@ -80,6 +80,29 @@ MonHistoire.features.stories.management = {
         document.getElementById("delete-modal").classList.remove("show");
       });
     }
+
+    // Bouton de renommage d'histoire
+    const btnRename = document.getElementById("btn-renommer-histoire");
+    if (btnRename) {
+      btnRename.addEventListener("click", () => {
+        this.afficherModaleRenommer();
+      });
+    }
+
+    // Boutons de la modale de renommage
+    const btnCancelRename = document.getElementById("btn-annuler-renommer");
+    if (btnCancelRename) {
+      btnCancelRename.addEventListener("click", () => {
+        this.fermerModaleRenommer();
+      });
+    }
+
+    const btnConfirmRename = document.getElementById("btn-confirmer-renommer");
+    if (btnConfirmRename) {
+      btnConfirmRename.addEventListener("click", () => {
+        this.confirmerRenommer();
+      });
+    }
   },
   
   // Sauvegarde l'histoire actuellement affichée
@@ -641,11 +664,118 @@ MonHistoire.features.stories.management = {
       }
     }
     
-    // Cache la barre de suppression si aucune histoire n'est sélectionnée
-    const histoiresSelectionnees = document.querySelectorAll(".histoire-card.selected, .button.selected");
-    if (histoiresSelectionnees.length === 0 && barreSuppr) {
-      barreSuppr.style.display = "none";
+    // Met à jour l'état de la barre (affichage et bouton Renommer)
+    this.mettreAJourBar();
+  },
+
+  // Met à jour l'affichage de la barre d'actions selon la sélection
+  mettreAJourBar() {
+    const barre = document.getElementById("barre-suppression");
+    const sec   = document.getElementById("mes-histoires");
+
+    const nbSelected = document.querySelectorAll(
+      ".histoire-card.selected, .button.selected"
+    ).length;
+    const any = nbSelected > 0;
+
+    if (barre) {
+      barre.style.display = any ? "flex" : "none";
     }
+    if (sec) {
+      sec.classList.toggle("selection-mode", any);
+    }
+
+    const btnRenommer = document.getElementById("btn-renommer-histoire");
+    if (btnRenommer) {
+      btnRenommer.style.display = nbSelected === 1 ? "inline-block" : "none";
+    }
+    if (barre) {
+      barre.classList.toggle(
+        "with-rename",
+        btnRenommer && btnRenommer.style.display !== "none"
+      );
+    }
+  },
+
+  // Affiche la modale de renommage
+  afficherModaleRenommer() {
+    const selected = document.querySelector(
+      ".histoire-card.selected, .button.selected"
+    );
+    if (!selected) return;
+    const input = document.getElementById("input-nouveau-titre");
+    if (input) {
+      input.value = selected.textContent.trim();
+    }
+    const modal = document.getElementById("modal-renommer");
+    if (modal) modal.classList.add("show");
+  },
+
+  // Ferme la modale de renommage
+  fermerModaleRenommer() {
+    const modal = document.getElementById("modal-renommer");
+    if (modal) modal.classList.remove("show");
+  },
+
+  // Confirme le renommage de l'histoire sélectionnée
+  confirmerRenommer() {
+    const selected = document.querySelector(
+      ".histoire-card.selected, .button.selected"
+    );
+    if (!selected) return;
+
+    const storyId = selected.dataset.id;
+    const nouveauTitre = document
+      .getElementById("input-nouveau-titre")
+      .value.trim();
+    if (!nouveauTitre) {
+      MonHistoire.showMessageModal("Le titre ne peut pas être vide.");
+      return;
+    }
+
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    let updateRef;
+    if (MonHistoire.state.profilActif &&
+        MonHistoire.state.profilActif.type === "parent") {
+      updateRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .doc(storyId);
+    } else {
+      const profilId = MonHistoire.state.profilActif
+        ? MonHistoire.state.profilActif.id
+        : null;
+      updateRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilId)
+        .collection("stories")
+        .doc(storyId);
+    }
+
+    updateRef
+      .update({ titre: nouveauTitre })
+      .then(() => {
+        MonHistoire.core?.auth?.logActivite("renommage_histoire", {
+          story_id: storyId
+        });
+        this.fermerModaleRenommer();
+        this.afficherHistoiresSauvegardees();
+        this.annulerSelectionHistoires();
+        MonHistoire.showMessageModal("Titre modifié !");
+      })
+      .catch(error => {
+        console.error("Erreur lors du renommage:", error);
+        MonHistoire.showMessageModal(
+          "Erreur lors du renommage : " + error.message
+        );
+      });
   },
   
   // Annule la sélection de toutes les histoires
@@ -667,6 +797,8 @@ MonHistoire.features.stories.management = {
     if (barreSuppr) {
       barreSuppr.style.display = "none";
     }
+    // Met à jour la barre et le bouton Renommer
+    this.mettreAJourBar();
   },
   
   // Affiche la modale de confirmation pour supprimer les histoires sélectionnées
@@ -708,6 +840,9 @@ MonHistoire.features.stories.management = {
       if (barreSuppr) {
         barreSuppr.style.display = "none";
       }
+
+      // Met à jour la barre et le bouton Renommer
+      this.mettreAJourBar();
       
       // Forcer une mise à jour complète du quota
       this.initQuota();
