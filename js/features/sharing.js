@@ -1,25 +1,24 @@
-// js/modules/sharing/index.js
+// js/features/sharing.js
 // Module principal de gestion du partage d'histoires
 // Ce fichier délègue la plupart des fonctionnalités aux sous-modules spécialisés
 
-// S'assurer que les namespaces existent
+// S'assurer que les objets nécessaires existent
 window.MonHistoire = window.MonHistoire || {};
-MonHistoire.modules = MonHistoire.modules || {};
-MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
+MonHistoire.features = MonHistoire.features || {};
 
 // Module de partage d'histoires
-(function() {
-  // Variables privées pour la gestion des notifications et du partage
-  let notificationTimeout = null;
-  let histoireAPartager = null;
-  let histoireNotifieeActuelle = null;
-  let notificationsNonLues = {};
-  let notificationsTraitees = new Set();
+MonHistoire.features.sharing = {
+  // Variables pour la gestion des notifications et du partage
+  notificationTimeout: null,
+  histoireAPartager: null,
+  histoireNotifieeActuelle: null,
+  notificationsNonLues: {},
+  notificationsTraitees: new Set(),
   
   /**
    * Initialisation du module
    */
-  function init() {
+  init() {
     try {
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingInfo("Module de partage d'histoires initialisé");
@@ -28,26 +27,50 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       
       // Initialiser les variables
-      notificationsNonLues = notificationsNonLues || {};
-      notificationsTraitees = notificationsTraitees || new Set();
+      this.notificationsNonLues = this.notificationsNonLues || {};
+      this.notificationsTraitees = this.notificationsTraitees || new Set();
+      this.histoiresPartageesListener = this.histoiresPartageesListener || [];
+      
+      // S'assurer que les fonctions essentielles sont disponibles
+      this.mettreAJourIndicateurNotification = this.mettreAJourIndicateurNotification || function() {
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingWarning("Fonction mettreAJourIndicateurNotification non disponible");
+        } else {
+          console.warn("Fonction mettreAJourIndicateurNotification non disponible");
+        }
+        if (this.notifications && typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
+          return this.notifications.mettreAJourIndicateurNotification();
+        }
+      };
+      
+      this.mettreAJourIndicateurNotificationProfilsListe = this.mettreAJourIndicateurNotificationProfilsListe || function() {
+        if (MonHistoire.logger) {
+          MonHistoire.logger.sharingWarning("Fonction mettreAJourIndicateurNotificationProfilsListe non disponible");
+        } else {
+          console.warn("Fonction mettreAJourIndicateurNotificationProfilsListe non disponible");
+        }
+        if (this.notifications && typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+          return this.notifications.mettreAJourIndicateurNotificationProfilsListe();
+        }
+      };
       
       // Initialiser les écouteurs d'événements pour les notifications
-      initNotificationListeners();
+      this.initNotificationListeners();
       
       // Initialiser les sous-modules
-      initSubmodules();
+      this.initSubmodules();
       
       // Attendre un court instant pour s'assurer que Firebase est prêt
       setTimeout(() => {
         try {
           // Configurer l'écouteur de notifications en temps réel
-          if (MonHistoire.modules.sharing.realtime) {
-            if (typeof MonHistoire.modules.sharing.realtime.configurerEcouteurNotificationsRealtime === 'function') {
-              MonHistoire.modules.sharing.realtime.configurerEcouteurNotificationsRealtime();
+          if (this.realtime) {
+            if (typeof this.realtime.configurerEcouteurNotificationsRealtime === 'function') {
+              this.realtime.configurerEcouteurNotificationsRealtime();
             }
             
-            if (typeof MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees === 'function') {
-              MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees();
+            if (typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+              this.realtime.configurerEcouteurHistoiresPartagees();
             }
           }
         } catch (error) {
@@ -60,7 +83,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }, 1000);
       
       // Configurer l'écouteur d'événements pour les changements de profil
-      registerProfilChangeListener();
+      this.registerProfilChangeListener();
     } catch (error) {
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingError("Erreur lors de l'initialisation du module de partage", error);
@@ -68,13 +91,13 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de l'initialisation du module de partage:", error);
       }
     }
-  }
+  },
   
   /**
    * Enregistre l'écouteur de changement de profil.
    * Réessaie toutes les 200 ms jusqu'à 5 tentatives si MonHistoire.events n'est pas disponible.
    */
-  function registerProfilChangeListener(compteur = 0) {
+  registerProfilChangeListener(compteur = 0) {
     // Définir le gestionnaire d'événements
     const handler = (nouveauProfil) => {
       try {
@@ -92,24 +115,24 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         // Reconfigurer les écouteurs après un changement de profil
         setTimeout(() => {
           try {
-            if (MonHistoire.modules.sharing.realtime) {
-              if (typeof MonHistoire.modules.sharing.realtime.configurerEcouteurNotificationsRealtime === 'function') {
-                MonHistoire.modules.sharing.realtime.configurerEcouteurNotificationsRealtime();
+            if (this.realtime) {
+              if (typeof this.realtime.configurerEcouteurNotificationsRealtime === 'function') {
+                this.realtime.configurerEcouteurNotificationsRealtime();
               }
               
-              if (typeof MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees === 'function') {
-                MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees();
+              if (typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+                this.realtime.configurerEcouteurHistoiresPartagees();
               }
             }
             
             // Mettre à jour les indicateurs de notification
-            if (MonHistoire.modules.sharing.notifications) {
-              MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification();
-              MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe();
+            if (this.notifications) {
+              this.notifications.mettreAJourIndicateurNotification();
+              this.notifications.mettreAJourIndicateurNotificationProfilsListe();
             }
             
             // Vérifier s'il y a des histoires partagées pour ce profil
-            verifierHistoiresPartagees();
+            this.verifierHistoiresPartagees();
           } catch (error) {
             if (MonHistoire.logger) {
               MonHistoire.logger.sharingError("Erreur lors de la reconfiguration des écouteurs après changement de profil", error);
@@ -148,7 +171,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       } else {
         // Fallback si MonHistoire.common n'est pas disponible
         if (compteur < 5) {
-          setTimeout(() => registerProfilChangeListener(compteur + 1), 200);
+          setTimeout(() => this.registerProfilChangeListener(compteur + 1), 200);
           
           if (MonHistoire.logger) {
             MonHistoire.logger.sharingInfo("Système d'événements non disponible, nouvelle tentative programmée", {
@@ -181,53 +204,62 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
     if (MonHistoire.logger) {
       MonHistoire.logger.sharingInfo("Écouteur de changement de profil initialisé avec succès");
     }
-  }
+  },
   
   /**
    * Initialise les sous-modules
    */
-  function initSubmodules() {
+  initSubmodules() {
     try {
       // Initialiser les sous-modules dans un ordre spécifique pour respecter les dépendances
       
       // 1. Storage (pas de dépendances)
-      if (MonHistoire.modules.sharing.storage && typeof MonHistoire.modules.sharing.storage.init === 'function') {
+      if (this.storage && typeof this.storage.init === 'function') {
         if (MonHistoire.logger) {
           MonHistoire.logger.sharingInfo("Initialisation du sous-module storage");
         } else {
           console.log("Initialisation du sous-module storage");
         }
-        MonHistoire.modules.sharing.storage.init();
+        this.storage.init();
       }
       
       // 2. UI (dépend de storage)
-      if (MonHistoire.modules.sharing.ui && typeof MonHistoire.modules.sharing.ui.init === 'function') {
+      if (this.ui && typeof this.ui.init === 'function') {
         if (MonHistoire.logger) {
           MonHistoire.logger.sharingInfo("Initialisation du sous-module ui");
         } else {
           console.log("Initialisation du sous-module ui");
         }
-        MonHistoire.modules.sharing.ui.init();
+        this.ui.init();
       }
       
       // 3. Notifications (dépend de ui)
-      if (MonHistoire.modules.sharing.notifications && typeof MonHistoire.modules.sharing.notifications.init === 'function') {
+      if (this.notifications && typeof this.notifications.init === 'function') {
         if (MonHistoire.logger) {
           MonHistoire.logger.sharingInfo("Initialisation du sous-module notifications");
         } else {
           console.log("Initialisation du sous-module notifications");
         }
-        MonHistoire.modules.sharing.notifications.init();
+        this.notifications.init();
+        
+        // Exposer les fonctions importantes au module principal
+        if (typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
+          this.mettreAJourIndicateurNotification = this.notifications.mettreAJourIndicateurNotification.bind(this.notifications);
+        }
+        
+        if (typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+          this.mettreAJourIndicateurNotificationProfilsListe = this.notifications.mettreAJourIndicateurNotificationProfilsListe.bind(this.notifications);
+        }
       }
       
       // 4. Realtime (dépend de notifications)
-      if (MonHistoire.modules.sharing.realtime && typeof MonHistoire.modules.sharing.realtime.init === 'function') {
+      if (this.realtime && typeof this.realtime.init === 'function') {
         if (MonHistoire.logger) {
           MonHistoire.logger.sharingInfo("Initialisation du sous-module realtime");
         } else {
           console.log("Initialisation du sous-module realtime");
         }
-        MonHistoire.modules.sharing.realtime.init();
+        this.realtime.init();
       }
       
       if (MonHistoire.logger) {
@@ -242,20 +274,20 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de l'initialisation des sous-modules:", error);
       }
     }
-  }
+  },
   
   /**
    * Initialise les écouteurs d'événements pour les notifications
    */
-  function initNotificationListeners() {
+  initNotificationListeners() {
     try {
       // Écouteur pour le clic sur la notification
       const notification = document.getElementById("notification-partage");
       if (notification) {
         // Supprimer les anciens écouteurs pour éviter les doublons
-        notification.removeEventListener("click", clicNotificationPartage);
+        notification.removeEventListener("click", this.clicNotificationPartage);
         // Ajouter le nouvel écouteur
-        notification.addEventListener("click", clicNotificationPartage);
+        notification.addEventListener("click", this.clicNotificationPartage.bind(this));
       }
       
       // Écouteur pour les changements de connexion
@@ -269,7 +301,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         
         // Attendre un court instant pour s'assurer que Firebase est prêt
         setTimeout(() => {
-          verifierHistoiresPartagees();
+          this.verifierHistoiresPartagees();
         }, 2000);
       });
       
@@ -288,25 +320,25 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
       }
     }
-  }
+  },
   
   /**
    * Gestion du clic sur la notification
    */
-  function clicNotificationPartage(e) {
+  clicNotificationPartage(e) {
     try {
       // Empêche la propagation du clic
       e.preventDefault();
       e.stopPropagation();
       
       // Ferme la notification
-      if (MonHistoire.modules.sharing.notifications && typeof MonHistoire.modules.sharing.notifications.fermerNotificationPartage === 'function') {
-        MonHistoire.modules.sharing.notifications.fermerNotificationPartage();
+      if (this.notifications && typeof this.notifications.fermerNotificationPartage === 'function') {
+        this.notifications.fermerNotificationPartage();
       }
       
       // Redirige vers "Mes histoires"
-      if (MonHistoire.modules.core && MonHistoire.modules.core.navigation && typeof MonHistoire.modules.core.navigation.showScreen === 'function') {
-        MonHistoire.modules.core.navigation.showScreen("mes-histoires");
+      if (MonHistoire.core && MonHistoire.core.navigation && typeof MonHistoire.core.navigation.showScreen === 'function') {
+        MonHistoire.core.navigation.showScreen("mes-histoires");
       }
     } catch (error) {
       if (MonHistoire.logger) {
@@ -315,12 +347,12 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors du clic sur la notification:", error);
       }
     }
-  }
+  },
   
   /**
    * Vérifie s'il y a des histoires partagées pour l'utilisateur connecté
    */
-  function verifierHistoiresPartagees() {
+  verifierHistoiresPartagees() {
     try {
       // Vérifier si Firebase est disponible
       if (!firebase || !firebase.auth) {
@@ -331,7 +363,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         }
         
         // Planifier une nouvelle tentative après un délai
-        setTimeout(() => verifierHistoiresPartagees(), 5000);
+        setTimeout(() => this.verifierHistoiresPartagees(), 5000);
         return;
       }
       
@@ -354,7 +386,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
 
       // Vérifier l'état de connexion
-      if (!isConnected()) {
+      if (!this.isConnected()) {
         if (MonHistoire.logger) {
           MonHistoire.logger.sharingInfo("Vérification des histoires partagées: appareil non connecté");
         } else {
@@ -362,7 +394,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         }
         
         // Planifier une nouvelle tentative après un délai
-        setTimeout(() => verifierHistoiresPartagees(), 5000);
+        setTimeout(() => this.verifierHistoiresPartagees(), 5000);
         return;
       }
 
@@ -377,31 +409,29 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       
       // Initialise le compteur de notifications non lues pour le profil actif
-      if (MonHistoire.modules.sharing.notifications && typeof MonHistoire.modules.sharing.notifications.initialiserCompteurNotifications === 'function') {
-        MonHistoire.modules.sharing.notifications.initialiserCompteurNotifications(user)
+      if (this.notifications && typeof this.notifications.initialiserCompteurNotifications === 'function') {
+        this.notifications.initialiserCompteurNotifications(user)
           .then(() => {
             // Mettre à jour l'indicateur de notification
-            if (typeof MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification === 'function') {
-              MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification();
+            if (typeof this.notifications.mettreAJourIndicateurNotification === 'function') {
+              this.notifications.mettreAJourIndicateurNotification();
             }
-            if (typeof MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-              MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe();
+            if (typeof this.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+              this.notifications.mettreAJourIndicateurNotificationProfilsListe();
             }
           })
           .catch(error => {
             console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
           });
-      } else if (typeof initialiserCompteurNotifications === 'function') {
+      } else if (typeof this.initialiserCompteurNotifications === 'function') {
         // Utiliser la fonction exposée au module principal si disponible
-        initialiserCompteurNotifications(user)
+        this.initialiserCompteurNotifications(user)
           .then(() => {
-            if (MonHistoire.modules.sharing.notifications) {
-              if (typeof MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification === 'function') {
-                MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification();
-              }
-              if (typeof MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe === 'function') {
-                MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotificationProfilsListe();
-              }
+            if (typeof this.mettreAJourIndicateurNotification === 'function') {
+              this.mettreAJourIndicateurNotification();
+            }
+            if (typeof this.mettreAJourIndicateurNotificationProfilsListe === 'function') {
+              this.mettreAJourIndicateurNotificationProfilsListe();
             }
           })
           .catch(error => {
@@ -410,24 +440,24 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       
       // Configure l'écouteur en temps réel pour les futures histoires partagées
-      if (MonHistoire.modules.sharing.realtime && typeof MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees === 'function') {
-        MonHistoire.modules.sharing.realtime.configurerEcouteurHistoiresPartagees();
+      if (this.realtime && typeof this.realtime.configurerEcouteurHistoiresPartagees === 'function') {
+        this.realtime.configurerEcouteurHistoiresPartagees();
       }
     } catch (error) {
       console.error("Erreur lors de la vérification des histoires partagées:", error);
       
       // Planifier une nouvelle tentative après un délai
-      setTimeout(() => verifierHistoiresPartagees(), 10000);
+      setTimeout(() => this.verifierHistoiresPartagees(), 10000);
     }
-  }
+  },
   
   /**
    * Ouvre la modale de partage et affiche la liste des profils disponibles
    */
-  async function ouvrirModalePartage() {
+  async ouvrirModalePartage() {
     // Déléguer au sous-module UI si disponible
-    if (MonHistoire.modules.sharing.ui && MonHistoire.modules.sharing.ui.ouvrirModalePartage) {
-      return MonHistoire.modules.sharing.ui.ouvrirModalePartage();
+    if (this.ui && this.ui.ouvrirModalePartage) {
+      return this.ui.ouvrirModalePartage();
     }
     
     // Sinon, utiliser l'implémentation par défaut
@@ -438,8 +468,10 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
     }
 
     // Récupère l'histoire actuellement affichée
-    if (MonHistoire.modules.stories && MonHistoire.modules.stories.display) {
-      const histoire = MonHistoire.modules.stories.display.getHistoireAffichee();
+    if (MonHistoire.features && 
+        MonHistoire.features.stories && 
+        MonHistoire.features.stories.display) {
+      const histoire = MonHistoire.features.stories.display.getHistoireAffichee();
       
       // Si aucune histoire n'est affichée, on ne fait rien
       if (!histoire || (!histoire.chapitre1 && !histoire.contenu)) {
@@ -448,7 +480,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
 
       // Stocke temporairement l'histoire à partager
-      histoireAPartager = {
+      this.histoireAPartager = {
         ...histoire,
         partageParProfil: MonHistoire.state.profilActif.type === "parent" ? null : MonHistoire.state.profilActif.id,
         partageParPrenom: MonHistoire.state.profilActif.type === "parent" ? null : MonHistoire.state.profilActif.prenom
@@ -460,15 +492,15 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         modal.classList.add("show");
       }
     }
-  }
+  },
   
   /**
    * Ferme la modale de partage
    */
-  function fermerModalePartage() {
+  fermerModalePartage() {
     // Déléguer au sous-module UI si disponible
-    if (MonHistoire.modules.sharing.ui && MonHistoire.modules.sharing.ui.fermerModalePartage) {
-      return MonHistoire.modules.sharing.ui.fermerModalePartage();
+    if (this.ui && this.ui.fermerModalePartage) {
+      return this.ui.fermerModalePartage();
     }
     
     // Sinon, utiliser l'implémentation par défaut
@@ -476,30 +508,30 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
     if (modal) {
       modal.classList.remove("show");
     }
-    histoireAPartager = null;
-  }
+    this.histoireAPartager = null;
+  },
   
   /**
    * Partage l'histoire avec le profil sélectionné
    */
-  async function partagerHistoire(type, id, prenom) {
+  async partagerHistoire(type, id, prenom) {
     // Déléguer au sous-module Storage si disponible
-    if (MonHistoire.modules.sharing.storage && MonHistoire.modules.sharing.storage.partagerHistoire) {
-      return MonHistoire.modules.sharing.storage.partagerHistoire(type, id, prenom, histoireAPartager);
+    if (this.storage && this.storage.partagerHistoire) {
+      return this.storage.partagerHistoire(type, id, prenom, this.histoireAPartager);
     }
     
     // Sinon, afficher un message d'erreur
-    fermerModalePartage();
+    this.fermerModalePartage();
     MonHistoire.showMessageModal("Fonctionnalité de partage non disponible.");
-  }
+  },
   
   /**
    * Traite un partage d'histoire qui a été mis en file d'attente hors ligne
    */
-  async function processOfflinePartage(data) {
+  async processOfflinePartage(data) {
     // Déléguer au sous-module Storage si disponible
-    if (MonHistoire.modules.sharing.storage && MonHistoire.modules.sharing.storage.processOfflinePartage) {
-      return MonHistoire.modules.sharing.storage.processOfflinePartage(data);
+    if (this.storage && this.storage.processOfflinePartage) {
+      return this.storage.processOfflinePartage(data);
     }
     
     // Sinon, retourner false pour indiquer que le traitement a échoué
@@ -509,16 +541,16 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       console.error("Traitement du partage hors ligne non disponible");
     }
     return false;
-  }
+  },
   
   /**
    * Vérifie l'état de la connexion
    */
-  function isConnected() {
+  isConnected() {
     try {
       // Déléguer au sous-module Realtime si disponible
-      if (MonHistoire.modules.sharing.realtime && typeof MonHistoire.modules.sharing.realtime.isConnected === 'function') {
-        return MonHistoire.modules.sharing.realtime.isConnected();
+      if (this.realtime && typeof this.realtime.isConnected === 'function') {
+        return this.realtime.isConnected();
       }
       
       // Sinon, utiliser l'implémentation par défaut
@@ -548,14 +580,14 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       return false;
     }
-  }
+  },
   
   /**
    * Initialise le compteur de notifications non lues
    * @param {Object} user - L'utilisateur Firebase actuel
    * @returns {Promise} - Promise résolue quand l'initialisation est terminée
    */
-  async function initialiserCompteurNotifications(user) {
+  async initialiserCompteurNotifications(user) {
     try {
       // Si l'utilisateur n'est pas fourni, utiliser l'utilisateur actuel
       if (!user && firebase && firebase.auth) {
@@ -599,7 +631,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       // Compte le nombre de notifications non lues
       const snapshot = await storiesRef.get();
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
-      notificationsNonLues[profilId] = snapshot.size;
+      this.notificationsNonLues[profilId] = snapshot.size;
       
       // Si le profil actif est le parent, compte aussi les notifications non lues pour chaque profil enfant
       if (MonHistoire.state.profilActif.type === "parent") {
@@ -620,16 +652,16 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
             .where("nouvelleHistoire", "==", true);
             
           const storiesEnfantSnapshot = await storiesEnfantRef.get();
-          notificationsNonLues[profilId] = storiesEnfantSnapshot.size;
+          this.notificationsNonLues[profilId] = storiesEnfantSnapshot.size;
         }
       }
       
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingInfo("Compteur de notifications initialisé", {
-          notificationsCount: notificationsNonLues
+          notificationsCount: this.notificationsNonLues
         });
       } else {
-        console.log("Compteur de notifications initialisé:", notificationsNonLues);
+        console.log("Compteur de notifications initialisé:", this.notificationsNonLues);
       }
     } catch (error) {
       if (MonHistoire.logger) {
@@ -639,27 +671,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
     }
   }
+};
 
-  /**
-   * Met à jour l'indicateur de notification
-   * Cette fonction est exposée pour être utilisée par d'autres modules
-   */
-  function mettreAJourIndicateurNotification() {
-    if (MonHistoire.modules.sharing.notifications && typeof MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification === 'function') {
-      return MonHistoire.modules.sharing.notifications.mettreAJourIndicateurNotification();
-    }
-  }
-
-  // API publique
-  MonHistoire.modules.sharing = {
-    init: init,
-    ouvrirModalePartage: ouvrirModalePartage,
-    fermerModalePartage: fermerModalePartage,
-    partagerHistoire: partagerHistoire,
-    processOfflinePartage: processOfflinePartage,
-    isConnected: isConnected,
-    initialiserCompteurNotifications: initialiserCompteurNotifications,
-    mettreAJourIndicateurNotification: mettreAJourIndicateurNotification,
-    verifierHistoiresPartagees: verifierHistoiresPartagees
-  };
-})();
+// Exporter pour utilisation dans d'autres modules
+window.MonHistoire = MonHistoire;

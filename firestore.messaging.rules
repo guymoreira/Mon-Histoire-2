@@ -1,5 +1,0 @@
-match /conversations/{cid} {
-  allow read, write: if request.auth != null &&
-    request.auth.uid in resource.data.participants
-      .map(id => id.split(":")[0]);
-}

@@ -63,37 +63,22 @@
             enfantsSnap.forEach(docEnfant => {
               const data = docEnfant.data();
               const btn = document.createElement("button");
-              btn.className = "ui-button ui-button--primary";
+              btn.className = "button button-blue";
               btn.textContent = data.prenom;
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
                 // Changer de profil
-                const nouveauProfil = {
+                localStorage.setItem("profilActif", JSON.stringify({
                   type: "enfant",
                   id: docEnfant.id,
                   prenom: data.prenom
-                };
-                localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
-
-                // Mettre à jour l'état global
-                MonHistoire.state = MonHistoire.state || {};
-                MonHistoire.state.profilActif = nouveauProfil;
-
+                }));
+                
+                MonHistoire.fermerLogoutModal();
+                
                 // Mettre à jour l'UI
                 const userIcon = document.getElementById("user-icon");
                 if (userIcon) userIcon.textContent = data.prenom.charAt(0).toUpperCase();
-
-                // Mettre à jour la visibilité du footer
-                if (typeof MonHistoire.updateFooterVisibility === 'function') {
-                  MonHistoire.updateFooterVisibility();
-                }
-
-                // Émettre l'événement de changement de profil
-                if (MonHistoire.events) {
-                  MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
-                }
-
-                MonHistoire.fermerLogoutModal();
               };
               listEl.appendChild(btn);
             });
@@ -113,7 +98,7 @@
           if (listEl) {
             // Bouton pour revenir au profil parent
             const btnParent = document.createElement("button");
-            btnParent.className = "ui-button ui-button--primary";
+            btnParent.className = "button button-blue";
             btnParent.textContent = prenomParent;
             btnParent.style.marginBottom = "0.75em";
             btnParent.onclick = () => {
@@ -134,37 +119,22 @@
               
               const data = docEnfant.data();
               const btn = document.createElement("button");
-              btn.className = "ui-button ui-button--primary";
+              btn.className = "button button-blue";
               btn.textContent = data.prenom;
               btn.style.marginBottom = "0.75em";
               btn.onclick = () => {
                 // Changer de profil
-                const nouveauProfil = {
+                localStorage.setItem("profilActif", JSON.stringify({
                   type: "enfant",
                   id: docEnfant.id,
                   prenom: data.prenom
-                };
-                localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
-
-                // Mettre à jour l'état global
-                MonHistoire.state = MonHistoire.state || {};
-                MonHistoire.state.profilActif = nouveauProfil;
-
+                }));
+                
+                MonHistoire.fermerLogoutModal();
+                
                 // Mettre à jour l'UI
                 const userIcon = document.getElementById("user-icon");
                 if (userIcon) userIcon.textContent = data.prenom.charAt(0).toUpperCase();
-
-                // Mettre à jour la visibilité du footer
-                if (typeof MonHistoire.updateFooterVisibility === 'function') {
-                  MonHistoire.updateFooterVisibility();
-                }
-
-                // Émettre l'événement de changement de profil
-                if (MonHistoire.events) {
-                  MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
-                }
-
-                MonHistoire.fermerLogoutModal();
               };
               listEl.appendChild(btn);
             });
@@ -245,13 +215,8 @@
         await user.reauthenticateWithCredential(credential);
         
         // Succès : passer au profil parent
-        const nouveauProfil = { type: "parent" };
-        localStorage.setItem("profilActif", JSON.stringify(nouveauProfil));
-
-        // Mettre à jour l'état global
-        MonHistoire.state = MonHistoire.state || {};
-        MonHistoire.state.profilActif = nouveauProfil;
-
+        localStorage.setItem("profilActif", JSON.stringify({ type: "parent" }));
+        
         // Mettre à jour l'UI
         const userIcon = document.getElementById("user-icon");
         if (userIcon) {
@@ -259,20 +224,10 @@
           const prenomParent = docParent.exists && docParent.data().prenom
             ? docParent.data().prenom
             : user.email.charAt(0).toUpperCase();
-
+          
           userIcon.textContent = prenomParent.charAt(0).toUpperCase();
         }
-
-        // Mettre à jour la visibilité du footer
-        if (typeof MonHistoire.updateFooterVisibility === 'function') {
-          MonHistoire.updateFooterVisibility();
-        }
-
-        // Émettre l'événement de changement de profil
-        if (MonHistoire.events) {
-          MonHistoire.events.emit('profilChange', MonHistoire.state.profilActif);
-        }
-
+        
         MonHistoire.fermerModalPasswordParent();
       } catch (error) {
         // Mot de passe incorrect
@@ -503,12 +458,7 @@
       btnLogout.addEventListener('click', function() {
         MonHistoire.fermerLogoutModal();
         if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-          const result = MonHistoire.modules.user.auth.logoutUser();
-          if (result && typeof result.catch === 'function') {
-            result.catch((error) => {
-              console.error('Erreur lors de la déconnexion:', error);
-            });
-          }
+          MonHistoire.modules.user.auth.logout();
         }
       });
     }
@@ -613,9 +563,5 @@
   }
   
   // Exécuter l'initialisation au chargement de la page
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  document.addEventListener('DOMContentLoaded', init);
 })();

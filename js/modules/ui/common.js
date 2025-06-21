@@ -260,6 +260,104 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
       });
     });
     
+    // Bouton Inscription (Créer un compte)
+    document.getElementById("btn-signup")?.addEventListener("click", () => {
+      console.log("[DEBUG] Clic sur le bouton d'inscription (Créer un compte)");
+      if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+        MonHistoire.modules.user.auth.toggleSignup(true);
+      } else if (MonHistoire.core && MonHistoire.core.auth) {
+        // Fallback vers l'ancien namespace
+        MonHistoire.core.auth.toggleSignup(true);
+      } else {
+        console.error("[ERROR] Module auth non disponible pour l'inscription");
+      }
+    });
+    
+    // Bouton Retour vers connexion depuis inscription
+    const btnBackToLogin = document.getElementById("btn-back-to-login");
+    if (btnBackToLogin) {
+      console.log("[DEBUG] Bouton retour vers connexion trouvé");
+      btnBackToLogin.addEventListener("click", () => {
+        console.log("[DEBUG] Clic sur le bouton retour depuis inscription");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleSignup");
+          MonHistoire.modules.user.auth.toggleSignup(false);
+        } else if (MonHistoire.core && MonHistoire.core.auth) {
+          // Fallback vers l'ancien namespace
+          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleSignup (fallback)");
+          MonHistoire.core.auth.toggleSignup(false);
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour toggleSignup");
+        }
+      });
+    } else {
+      console.error("[ERROR] Bouton retour vers connexion non trouvé (btn-back-to-login)");
+    }
+    
+    // Bouton Mot de passe oublié
+    const btnForgot = document.getElementById("btn-forgot");
+    if (btnForgot) {
+      console.log("[DEBUG] Bouton mot de passe oublié trouvé");
+      btnForgot.addEventListener("click", (e) => {
+        e.preventDefault(); // Empêcher le comportement par défaut du lien
+        console.log("[DEBUG] Clic sur le bouton mot de passe oublié");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleReset");
+          MonHistoire.modules.user.auth.toggleReset(true);
+        } else if (MonHistoire.core && MonHistoire.core.auth) {
+          // Fallback vers l'ancien namespace
+          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleReset (fallback)");
+          MonHistoire.core.auth.toggleReset(true);
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour toggleReset");
+        }
+      });
+    } else {
+      console.error("[ERROR] Bouton mot de passe oublié non trouvé (btn-forgot)");
+    }
+    
+    // Bouton Retour vers connexion depuis réinitialisation
+    const btnBackToLoginFromReset = document.getElementById("btn-back-to-login-reset");
+    if (btnBackToLoginFromReset) {
+      console.log("[DEBUG] Bouton retour vers connexion depuis réinitialisation trouvé");
+      btnBackToLoginFromReset.addEventListener("click", () => {
+        console.log("[DEBUG] Clic sur le bouton retour depuis réinitialisation");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.toggleReset");
+          MonHistoire.modules.user.auth.toggleReset(false);
+        } else if (MonHistoire.core && MonHistoire.core.auth) {
+          // Fallback vers l'ancien namespace
+          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.toggleReset (fallback)");
+          MonHistoire.core.auth.toggleReset(false);
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour toggleReset");
+        }
+      });
+    } else {
+      console.error("[ERROR] Bouton retour vers connexion depuis réinitialisation non trouvé (btn-back-to-login-reset)");
+    }
+    
+    // Bouton Envoyer pour la réinitialisation du mot de passe
+    const btnSendReset = document.getElementById("btn-send-reset");
+    if (btnSendReset) {
+      console.log("[DEBUG] Bouton envoyer réinitialisation trouvé");
+      btnSendReset.addEventListener("click", (e) => {
+        e.preventDefault(); // Empêcher le comportement par défaut du bouton
+        console.log("[DEBUG] Clic sur le bouton envoyer réinitialisation");
+        if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
+          console.log("[DEBUG] Utilisation de MonHistoire.modules.user.auth.sendReset");
+          MonHistoire.modules.user.auth.sendReset();
+        } else if (MonHistoire.core && MonHistoire.core.auth) {
+          // Fallback vers l'ancien namespace
+          console.log("[DEBUG] Utilisation de MonHistoire.core.auth.sendReset (fallback)");
+          MonHistoire.core.auth.sendReset();
+        } else {
+          console.error("[ERROR] Aucun module auth disponible pour sendReset");
+        }
+      });
+    } else {
+      console.error("[ERROR] Bouton envoyer réinitialisation non trouvé (btn-send-reset)");
+    }
     
     // Formulaire de création d'histoire
     document.getElementById("form-generer-histoire")?.addEventListener("submit", (e) => {
@@ -288,11 +386,7 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     // Bouton Sauvegarder Histoire (protégé contre les clics multiples)
     protegerBouton("btn-sauvegarde", () => {
       if (MonHistoire.modules.stories && MonHistoire.modules.stories.management) {
-        const storyGetter =
-          MonHistoire.modules.stories.display &&
-          MonHistoire.modules.stories.display.getCurrentStory;
-        const story = typeof storyGetter === "function" ? storyGetter() : null;
-        MonHistoire.modules.stories.management.saveStory(story);
+        MonHistoire.modules.stories.management.sauvegarderHistoire();
       }
     });
     
@@ -305,8 +399,8 @@ MonHistoire.modules.ui = MonHistoire.modules.ui || {};
     
     // Bouton Export PDF (protégé contre les clics multiples)
     protegerBouton("btn-export-pdf", () => {
-      if (MonHistoire.modules.features && MonHistoire.modules.features.export) {
-        MonHistoire.modules.features.export.exporterHistoirePDF();
+      if (MonHistoire.modules.stories && MonHistoire.modules.stories.export) {
+        MonHistoire.modules.stories.export.exporterHistoirePDF();
       }
     });
     

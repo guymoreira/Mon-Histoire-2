@@ -87,21 +87,7 @@ MonHistoire.core.profiles = {
     if (typeof MonHistoire.updateFooterVisibility === 'function') {
       MonHistoire.updateFooterVisibility();
     }
-
-    // Mettre à jour l'affichage de l'utilisateur connecté pour
-    // que les boutons d'en-tête reflètent immédiatement
-    // les droits du nouveau profil (ex. accès à la messagerie)
-    const currentUser = firebase.auth().currentUser;
-    if (MonHistoire.core && MonHistoire.core.auth) {
-      if (currentUser &&
-          typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
-        MonHistoire.core.auth.afficherUtilisateurConnecté();
-      } else if (!currentUser &&
-                 typeof MonHistoire.core.auth.afficherUtilisateurDéconnecté === 'function') {
-        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
-      }
-    }
-
+    
     // Émet un événement pour informer les autres modules
     MonHistoire.events.emit("profilChange", nouveauProfil);
     
@@ -148,12 +134,10 @@ MonHistoire.core.profiles = {
       }
       
       // Le profil existe, on peut continuer
-      const data = profilDoc.data() || {};
       return this.changerProfil({
         type: "enfant",
         id: id,
-        prenom: prenom,
-        acces_messagerie: data.acces_messagerie === true
+        prenom: prenom
       });
     } catch (error) {
       console.error("Erreur lors du changement de profil:", error);
@@ -319,16 +303,9 @@ MonHistoire.core.profiles = {
       });
     }
     
-    // Mettre à jour l'interface en fonction de la connexion
-    const currentUser = firebase.auth().currentUser;
+    // Mettre à jour l'interface
     if (MonHistoire.core && MonHistoire.core.auth) {
-      if (currentUser &&
-          typeof MonHistoire.core.auth.afficherUtilisateurConnecté === 'function') {
-        MonHistoire.core.auth.afficherUtilisateurConnecté();
-      } else if (!currentUser &&
-                 typeof MonHistoire.core.auth.afficherUtilisateurDéconnecté === 'function') {
-        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
-      }
+      MonHistoire.core.auth.afficherUtilisateurConnecté();
     }
     
     // Mettre à jour la visibilité du footer

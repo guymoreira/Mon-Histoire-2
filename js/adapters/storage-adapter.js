@@ -15,165 +15,72 @@
   
   // Créer un proxy pour rediriger les appels
   MonHistoire.core.storage = {
-    // Méthode d'initialisation
-    init: function() {
-      console.log("[Adapter] Redirection de storage.init vers modules.core.storage.init");
-      return MonHistoire.modules.core.storage.init();
+    // Méthodes de récupération des histoires
+    getHistoiresSauvegardees: function() {
+      console.log("[Adapter] Redirection de getHistoiresSauvegardees vers modules.core.storage.getStories");
+      // Utiliser le module modularisé pour récupérer les histoires
+      return MonHistoire.modules.core.storage.getStories();
     },
     
-    // Méthodes pour les profils
-    createProfile: function(profileData) {
-      console.log("[Adapter] Redirection de createProfile vers modules.core.storage.createProfile");
-      return MonHistoire.modules.core.storage.createProfile(profileData);
+    getHistoireById: function(id) {
+      console.log("[Adapter] Redirection de getHistoireById vers modules.core.storage.getStory");
+      return MonHistoire.modules.core.storage.getStory(id);
     },
     
-    updateProfile: function(profileId, profileData) {
-      console.log("[Adapter] Redirection de updateProfile vers modules.core.storage.updateProfile");
-      return MonHistoire.modules.core.storage.updateProfile(profileId, profileData);
+    getHistoirePartagee: function(id) {
+      console.log("[Adapter] Redirection de getHistoirePartagee vers modules.core.storage.accessSharedStory");
+      return MonHistoire.modules.core.storage.accessSharedStory(id);
     },
     
-    deleteProfile: function(profileId) {
-      console.log("[Adapter] Redirection de deleteProfile vers modules.core.storage.deleteProfile");
-      return MonHistoire.modules.core.storage.deleteProfile(profileId);
+    // Méthodes de sauvegarde et suppression
+    sauvegarderHistoire: function(histoire) {
+      console.log("[Adapter] Redirection de sauvegarderHistoire vers modules.core.storage.saveStory");
+      return MonHistoire.modules.core.storage.saveStory(histoire);
     },
     
-    getProfile: function(profileId) {
-      console.log("[Adapter] Redirection de getProfile vers modules.core.storage.getProfile");
-      return MonHistoire.modules.core.storage.getProfile(profileId);
+    supprimerHistoire: function(id) {
+      console.log("[Adapter] Redirection de supprimerHistoire vers modules.core.storage.deleteStory");
+      return MonHistoire.modules.core.storage.deleteStory(id);
     },
     
-    getProfiles: function() {
-      console.log("[Adapter] Redirection de getProfiles vers modules.core.storage.getProfiles");
-      return MonHistoire.modules.core.storage.getProfiles();
-    },
-    
-    uploadProfileImage: function(profileId, file) {
-      console.log("[Adapter] Redirection de uploadProfileImage vers modules.core.storage.uploadProfileImage");
-      return MonHistoire.modules.core.storage.uploadProfileImage(profileId, file);
-    },
-    
-    // Méthodes pour les histoires
-    getStoryTemplates: function() {
-      console.log("[Adapter] Redirection de getStoryTemplates vers modules.core.storage.getStoryTemplates");
-      return MonHistoire.modules.core.storage.getStoryTemplates();
-    },
-    
-    generateStory: function(data) {
-      console.log("[Adapter] Redirection de generateStory vers modules.core.storage.generateStory");
-      return MonHistoire.modules.core.storage.generateStory(data);
-    },
-    
-    saveStory: function(storyData) {
-      console.log("[Adapter] Redirection de saveStory vers modules.core.storage.saveStory");
-      
-      // Vérifier si l'utilisateur est connecté
-      if (!firebase.auth().currentUser) {
-        console.error("[Adapter] Tentative de sauvegarde d'histoire sans être connecté");
-        return Promise.reject(new Error("Utilisateur non connecté"));
-      }
-      
-      // Vérifier si les données de l'histoire sont valides
-      if (!storyData) {
-        console.error("[Adapter] Données d'histoire invalides");
-        return Promise.reject(new Error("Données d'histoire invalides"));
-      }
-      
-      // Récupérer le profil actif
-      const profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
-        (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
-      
-      // Ajouter l'ID du profil actif si c'est un profil enfant
-      if (profilActif.type === 'enfant' && profilActif.id) {
-        storyData.profileId = profilActif.id;
-      }
-      
-      // Ajouter la date de création si elle n'existe pas
-      if (!storyData.createdAt) {
-        storyData.createdAt = new Date().toISOString();
-      }
-      
-      // Ajouter l'ID de l'utilisateur
-      storyData.userId = firebase.auth().currentUser.uid;
-      
-      // Appeler la fonction saveStory du module modularisé
-      return MonHistoire.modules.core.storage.saveStory(storyData)
-        .then(storyId => {
-          console.log("[Adapter] Histoire sauvegardée avec succès, ID:", storyId);
-          
-          // Mettre à jour le compteur d'histoires
-          if (profilActif.type === 'enfant' && profilActif.id) {
-            MonHistoire.modules.core.storage.recalculerNbHistoires && 
-              MonHistoire.modules.core.storage.recalculerNbHistoires();
-          }
-          
-          return storyId;
-        })
-        .catch(error => {
-          console.error("[Adapter] Erreur lors de la sauvegarde de l'histoire:", error);
-          throw error;
+    // Méthodes de vérification du quota
+    verifierQuotaHistoires: function() {
+      console.log("[Adapter] Redirection de verifierQuotaHistoires");
+      // Vérifier si le nombre d'histoires est inférieur au maximum autorisé
+      return MonHistoire.modules.core.storage.getStories()
+        .then(stories => {
+          const maxHistoires = MonHistoire.config && MonHistoire.config.MAX_HISTOIRES ? MonHistoire.config.MAX_HISTOIRES : 10;
+          return stories.length < maxHistoires;
         });
     },
     
-    updateStoryTitle: function(storyId, title) {
-      console.log("[Adapter] Redirection de updateStoryTitle vers modules.core.storage.updateStoryTitle");
-      return MonHistoire.modules.core.storage.updateStoryTitle(storyId, title);
-    },
-    
-    deleteStory: function(storyId) {
-      console.log("[Adapter] Redirection de deleteStory vers modules.core.storage.deleteStory");
-      return MonHistoire.modules.core.storage.deleteStory(storyId);
-    },
-    
-    getStory: function(storyId) {
-      console.log("[Adapter] Redirection de getStory vers modules.core.storage.getStory");
-      return MonHistoire.modules.core.storage.getStory(storyId);
-    },
-    
-    getStories: function(profileId) {
-      console.log("[Adapter] Redirection de getStories vers modules.core.storage.getStories");
-      return MonHistoire.modules.core.storage.getStories(profileId);
-    },
-    
-    uploadStoryImage: function(storyId, file) {
-      console.log("[Adapter] Redirection de uploadStoryImage vers modules.core.storage.uploadStoryImage");
-      return MonHistoire.modules.core.storage.uploadStoryImage(storyId, file);
-    },
-    
-    // Méthodes pour le partage
-    createShareLink: function(storyId, options) {
-      console.log("[Adapter] Redirection de createShareLink vers modules.core.storage.createShareLink");
-      return MonHistoire.modules.core.storage.createShareLink(storyId, options);
-    },
-    
-    deleteShareLink: function(shareId) {
-      console.log("[Adapter] Redirection de deleteShareLink vers modules.core.storage.deleteShareLink");
-      return MonHistoire.modules.core.storage.deleteShareLink(shareId);
-    },
-    
-    getShareLinks: function(storyId) {
-      console.log("[Adapter] Redirection de getShareLinks vers modules.core.storage.getShareLinks");
-      return MonHistoire.modules.core.storage.getShareLinks(storyId);
-    },
-    
-    accessSharedStory: function(shareId, password) {
-      console.log("[Adapter] Redirection de accessSharedStory vers modules.core.storage.accessSharedStory");
-      return MonHistoire.modules.core.storage.accessSharedStory(shareId, password);
-    },
-    
-    // Méthodes pour les quotas
-    verifierQuotaHistoires: function() {
-      console.log("[Adapter] Redirection de verifierQuotaHistoires vers modules.core.storage.verifierQuotaHistoires");
-      return MonHistoire.modules.core.storage.verifierQuotaHistoires();
-    },
-    
     verifierSeuilAlerteHistoires: function() {
-      console.log("[Adapter] Redirection de verifierSeuilAlerteHistoires vers modules.core.storage.verifierSeuilAlerteHistoires");
-      return MonHistoire.modules.core.storage.verifierSeuilAlerteHistoires();
+      console.log("[Adapter] Redirection de verifierSeuilAlerteHistoires");
+      // Vérifier si le nombre d'histoires approche du maximum autorisé
+      return MonHistoire.modules.core.storage.getStories()
+        .then(stories => {
+          const maxHistoires = MonHistoire.config && MonHistoire.config.MAX_HISTOIRES ? MonHistoire.config.MAX_HISTOIRES : 10;
+          const seuilAlerte = MonHistoire.config && MonHistoire.config.SEUIL_ALERTE_HISTOIRES ? MonHistoire.config.SEUIL_ALERTE_HISTOIRES : Math.floor(maxHistoires * 0.8);
+          return stories.length >= seuilAlerte && stories.length < maxHistoires;
+        });
     },
     
+    // Méthode de recalcul du nombre d'histoires
     recalculerNbHistoires: function() {
-      console.log("[Adapter] Redirection de recalculerNbHistoires vers modules.core.storage.recalculerNbHistoires");
-      return MonHistoire.modules.core.storage.recalculerNbHistoires();
+      console.log("[Adapter] Redirection de recalculerNbHistoires");
+      // Cette fonctionnalité n'a pas d'équivalent direct dans le nouveau module
+      // On peut simplement retourner une promesse résolue
+      return Promise.resolve();
+    },
+    
+    // Méthode d'initialisation (pour compatibilité)
+    init: function() {
+      console.log("[Adapter] Redirection de init vers modules.core.storage.init");
+      // Appeler la méthode d'initialisation du module modularisé
+      if (typeof MonHistoire.modules.core.storage.init === 'function') {
+        return MonHistoire.modules.core.storage.init();
+      }
+      return Promise.resolve();
     }
   };
   

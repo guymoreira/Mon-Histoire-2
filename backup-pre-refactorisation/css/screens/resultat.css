@@ -1,0 +1,139 @@
+/* Styles de l'écran de résultat */
+
+/* Conteneur principal du résultat */
+#resultat.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  overflow-y: auto;
+}
+
+/* Bloc central du résultat */
+#resultat .bloc-centre {
+  width: 100%;
+  max-width: 500px;
+  margin: 2vh auto;
+}
+
+/* Titre de l'histoire */
+.titre-histoire {
+  font-size: 1.8rem;
+  color: #000000;
+  margin-bottom: 1rem;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* Contenu de l'histoire */
+#histoire-content {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* Illustration du chapitre */
+.illustration-chapitre {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.illustration-chapitre img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Actions pour le résultat */
+.actions-resultat {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Boutons d'action */
+.actions-resultat .button {
+  max-width: 200px;
+  margin: 0.5rem;
+  flex: 0 0 calc(50% - 1rem);
+}
+
+/* Boutons d'action spécifiques */
+#btn-export-pdf.icon-action,
+#btn-audio.icon-action,
+#btn-partage.icon-action {
+  background: #fff;
+  color: #1161a5;
+  border-radius: 50%;
+  border: 2px solid #dde7f3;
+  width: 2.3em;
+  height: 2.3em;
+  min-width: 2.3em;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  margin-left: 0.7em;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(50,100,150,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
+  padding: 0;
+}
+
+#btn-export-pdf.icon-action:hover,
+#btn-audio.icon-action:hover,
+#btn-partage.icon-action:hover {
+  background: #f7fbff;
+  box-shadow: 0 0 12px rgba(16,97,165,0.18);
+}
+
+/* Bouton audio actif */
+#btn-audio.icon-action.active {
+  background: #e6f7ff;
+  border-color: #79d4e7;
+  box-shadow: 0 0 12px rgba(16,97,165,0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #resultat .bloc-centre {
+    max-width: 450px;
+  }
+  
+  .titre-histoire {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #resultat.screen {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  #resultat .bloc-centre {
+    width: 100%;
+    border-radius: 24px;
+    padding: 1rem;
+  }
+  
+  .titre-histoire {
+    font-size: 1.4rem;
+  }
+  
+  .actions-resultat {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .actions-resultat .button {
+    width: auto;
+    max-width: 45%;
+    flex: 0 0 calc(50% - 1rem);
+  }
+}

@@ -60,11 +60,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       if (MonHistoire.events) {
         MonHistoire.events.on('authStateChange', handleAuthStateChange);
       }
-
-      // Récupérer l'utilisateur actuellement authentifié si disponible
-      if (firebase.auth) {
-        currentUser = firebase.auth().currentUser;
-      }
       
       isInitialized = true;
       console.log("Module Storage initialisé");
@@ -90,17 +85,9 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
    */
   function _checkAuth() {
     if (!currentUser) {
-      if (firebase.auth) {
-        const user = firebase.auth().currentUser;
-        if (user) {
-          currentUser = user;
-        }
-      }
-    }
-    if (!currentUser) {
       throw new Error("Utilisateur non authentifié");
     }
-
+    
     return true;
   }
   
@@ -173,48 +160,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     }
     
     return content;
-  }
-
-  /**
-   * Retourne l'ID du profil actif s'il existe
-   * @returns {string|null} ID du profil actif ou null
-   * @private
-   */
-  function _getActiveProfileId() {
-    const profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
-      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : null);
-    if (profilActif && profilActif.type === 'enfant') {
-      return profilActif.id;
-    }
-    return null;
-  }
-
-  /**
-   * Retourne la référence de collection des histoires pour l'utilisateur courant
-   * @param {string} [profileId] - ID du profil enfant le cas échéant
-   * @returns {Object} Référence de collection Firestore
-   * @private
-   */
-  function _getStoriesRef(profileId) {
-    let ref = db.collection(COLLECTIONS.USERS).doc(currentUser.uid);
-    if (profileId) {
-      ref = ref.collection('profils_enfant').doc(profileId);
-    }
-    return ref.collection(COLLECTIONS.STORIES);
-  }
-
-  /**
-   * Récupère la référence de document d'une histoire via son ID
-   * @param {string} storyId - ID de l'histoire
-   * @returns {Promise<Object>} Promesse résolue avec la référence du document
-   * @private
-   */
-  function _getStoryDocRef(storyId) {
-    return db.collectionGroup(COLLECTIONS.STORIES)
-      .where(firebase.firestore.FieldPath.documentId(), '==', storyId)
-      .limit(1)
-      .get()
-      .then(snap => (snap.empty ? null : snap.docs[0].ref));
   }
   
   // ===== PROFILS =====
@@ -525,14 +470,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
    */
   function saveStory(storyData) {
     return new Promise((resolve, reject) => {
-      if (!isInitialized) {
-        init();
-      }
-      if (!db) {
-        console.error("Firestore n'est pas initialisé");
-        reject(new Error("Service de stockage non disponible"));
-        return;
-      }
       try {
         _checkAuth();
         
@@ -546,13 +483,9 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
           userId: currentUser.uid,
           updatedAt: new Date().toISOString()
         };
-
-        Object.keys(story).forEach(key => {
-          if (story[key] === undefined) delete story[key];
-        });
         
         // Sauvegarder l'histoire dans Firestore
-        _getStoriesRef(story.profileId)
+        db.collection(COLLECTIONS.STORIES)
           .doc(storyId)
           .set(story)
           .then(() => {
@@ -576,13 +509,12 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
-        _getStoryDocRef(storyId)
-          .then(ref => {
-            if (!ref) throw new Error('Histoire non trouvée');
-            return ref.update({
-              title: title,
-              updatedAt: new Date().toISOString()
-            });
+        // Mettre à jour le titre dans Firestore
+        db.collection(COLLECTIONS.STORIES)
+          .doc(storyId)
+          .update({
+            title: title,
+            updatedAt: new Date().toISOString()
           })
           .then(resolve)
           .catch(reject);
@@ -602,11 +534,10 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
-        _getStoryDocRef(storyId)
-          .then(ref => {
-            if (!ref) throw new Error('Histoire non trouvée');
-            return ref.delete();
-          })
+        // Supprimer l'histoire de Firestore
+        db.collection(COLLECTIONS.STORIES)
+          .doc(storyId)
+          .delete()
           .then(resolve)
           .catch(reject);
       } catch (error) {
@@ -625,10 +556,12 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       try {
         _checkAuth();
         
-        _getStoryDocRef(storyId)
-          .then(ref => ref ? ref.get() : null)
+        // Récupérer l'histoire de Firestore
+        db.collection(COLLECTIONS.STORIES)
+          .doc(storyId)
+          .get()
           .then(doc => {
-            resolve(doc ? _convertDoc(doc) : null);
+            resolve(_convertDoc(doc));
           })
           .catch(reject);
       } catch (error) {
@@ -648,7 +581,9 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
         _checkAuth();
         
         // Récupérer les histoires de Firestore
-        _getStoriesRef(profileId)
+        db.collection(COLLECTIONS.STORIES)
+          .where('userId', '==', currentUser.uid)
+          .where('profileId', '==', profileId)
           .orderBy('createdAt', 'desc')
           .get()
           .then(snapshot => {
@@ -690,13 +625,11 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
           })
           .then(url => {
             // Mettre à jour l'histoire avec l'URL de l'image
-            return _getStoryDocRef(storyId)
-              .then(ref => {
-                if (!ref) throw new Error('Histoire non trouvée');
-                return ref.update({
-                  imageUrl: url,
-                  updatedAt: new Date().toISOString()
-                });
+            return db.collection(COLLECTIONS.STORIES)
+              .doc(storyId)
+              .update({
+                imageUrl: url,
+                updatedAt: new Date().toISOString()
               })
               .then(() => url);
           })
@@ -880,10 +813,11 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
             });
           
           // Récupérer l'histoire
-          return _getStoryDocRef(share.storyId)
-            .then(ref => ref ? ref.get() : null)
+          return db.collection(COLLECTIONS.STORIES)
+            .doc(share.storyId)
+            .get()
             .then(storyDoc => {
-              const story = storyDoc ? _convertDoc(storyDoc) : null;
+              const story = _convertDoc(storyDoc);
               
               if (!story) {
                 reject(new Error("Histoire non trouvée"));
@@ -898,112 +832,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
             });
         })
         .catch(reject);
-    });
-  }
-
-  /**
-   * Vérifie si l'utilisateur a atteint son quota d'histoires
-   * @returns {Promise<boolean>} True si l'utilisateur peut encore sauvegarder
-   */
-  function verifierQuotaHistoires() {
-    const user = firebase.auth && firebase.auth().currentUser;
-    if (!user || !db) {
-      return Promise.resolve(false);
-    }
-
-    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
-                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
-
-    if (MonHistoire.state) {
-      MonHistoire.state.profilActif = profilActif;
-    }
-
-    let storiesRef;
-    if (profilActif.type === 'parent') {
-      storiesRef = db.collectionGroup(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid);
-    } else {
-      storiesRef = db.collectionGroup(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid)
-        .where('profileId', '==', profilActif.id);
-    }
-
-    return storiesRef.get().then(snap => {
-      const count = snap.size;
-      const maxHistoires = MonHistoire.config.MAX_HISTOIRES || 5;
-      return count < maxHistoires;
-    });
-  }
-
-  /**
-   * Vérifie si l'utilisateur approche de son quota d'histoires
-   * @returns {Promise<boolean>} True si le seuil est atteint
-   */
-  function verifierSeuilAlerteHistoires() {
-    const user = firebase.auth && firebase.auth().currentUser;
-    if (!user || !db) {
-      return Promise.resolve(false);
-    }
-
-    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
-                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
-
-    if (MonHistoire.state) {
-      MonHistoire.state.profilActif = profilActif;
-    }
-
-    let storiesRef;
-    if (profilActif.type === 'parent') {
-      storiesRef = db.collectionGroup(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid);
-    } else {
-      storiesRef = db.collectionGroup(COLLECTIONS.STORIES)
-        .where('userId', '==', user.uid)
-        .where('profileId', '==', profilActif.id);
-    }
-
-    return storiesRef.get().then(snap => {
-      const count = snap.size;
-      const maxHistoires = MonHistoire.config.MAX_HISTOIRES || 5;
-      const seuilAlerte = MonHistoire.config.SEUIL_ALERTE_HISTOIRES || 4;
-      return count >= seuilAlerte && count < maxHistoires;
-    });
-  }
-
-  /**
-   * Recalcule et met à jour le nombre d'histoires pour un profil enfant
-   * @returns {Promise<void>} Promise résolue une fois la mise à jour terminée
-   */
-  function recalculerNbHistoires() {
-    const user = firebase.auth && firebase.auth().currentUser;
-    if (!user || !db) {
-      return Promise.reject(new Error('Utilisateur non connecté'));
-    }
-
-    let profilActif = (MonHistoire.state && MonHistoire.state.profilActif) ||
-                      (localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' });
-
-    if (MonHistoire.state) {
-      MonHistoire.state.profilActif = profilActif;
-    }
-
-    if (profilActif.type !== 'enfant') {
-      return Promise.resolve();
-    }
-
-    const storiesRef = db.collection('users')
-      .doc(user.uid)
-      .collection('profils_enfant')
-      .doc(profilActif.id)
-      .collection('stories');
-
-    return storiesRef.get().then(snapshot => {
-      const count = snapshot.size;
-      const profilEnfantRef = db.collection('users')
-        .doc(user.uid)
-        .collection('profils_enfant')
-        .doc(profilActif.id);
-      return profilEnfantRef.update({ nb_histoires: count });
     });
   }
   
@@ -1033,11 +861,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     createShareLink: createShareLink,
     deleteShareLink: deleteShareLink,
     getShareLinks: getShareLinks,
-    accessSharedStory: accessSharedStory,
-
-    // Quotas
-    verifierQuotaHistoires: verifierQuotaHistoires,
-    verifierSeuilAlerteHistoires: verifierSeuilAlerteHistoires,
-    recalculerNbHistoires: recalculerNbHistoires
+    accessSharedStory: accessSharedStory
   };
 })();

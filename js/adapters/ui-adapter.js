@@ -7,10 +7,7 @@
   // Vérifier que les namespaces nécessaires existent
   window.MonHistoire = window.MonHistoire || {};
   MonHistoire.modules = MonHistoire.modules || {};
-  if (!MonHistoire.modules.app) {
-    MonHistoire.modules.app = {};
-    console.warn("[Adapter] Module app manquant dans MonHistoire.modules");
-  }
+  MonHistoire.modules.app = MonHistoire.modules.app || {};
   
   // Implémentation de la fonction closeMessageModal
   function closeMessageModalImpl() {

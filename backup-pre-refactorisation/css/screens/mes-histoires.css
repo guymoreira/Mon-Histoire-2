@@ -1,0 +1,188 @@
+/* Styles de l'écran "Mes Histoires" */
+
+/* Conteneur principal de Mes Histoires */
+#mes-histoires.screen {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  overflow-y: auto;
+}
+
+/* Bloc central de Mes Histoires */
+#mes-histoires .bloc-centre {
+  width: 100%;
+  max-width: 600px;
+  margin: 2vh auto;
+}
+
+/* Titre de Mes Histoires */
+#mes-histoires h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #000000;
+}
+
+/* Compteur d'histoires */
+#compteur-histoires {
+  background: none !important;
+  color: #1161a5;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 1.5em;
+  padding: 0.1em 0.7em;
+  margin-left: 0.5em;
+  transition: color 0.3s;
+  border: none !important;
+  display: inline-block;
+  box-shadow: none !important;
+}
+
+/* Alerte de quota */
+#compteur-histoires.quota-alerte {
+  background: none !important;
+  color: #b91c1c !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: quota-pulse 0.7s 1;
+}
+
+/* Liste des histoires */
+#liste-histoires {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+#liste-histoires li {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+#liste-histoires li .button {
+  width: 100%;
+  max-width: 300px;
+  min-height: 3.5rem;
+  font-size: 1rem;
+  text-align: center;
+  padding-right: 0;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Indicateur de sélection */
+#liste-histoires li.selected .button::after {
+  content: '✔';
+  color: red;
+  font-size: 1.5rem;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Actions pour Mes Histoires */
+#mes-histoires-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Boutons d'action */
+#mes-histoires-actions .button {
+  max-width: 200px;
+  margin: 0.5rem;
+}
+
+/* Bouton unique */
+#mes-histoires-actions.single .button {
+  flex: 0 0 48%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Bouton de renommage */
+#btn-renommer-histoire.icon-action {
+  background: #fff !important;
+  color: #1161a5 !important;
+  border-radius: 50%;
+  min-width: 56px;
+  min-height: 56px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  box-shadow: 0 0 6px rgba(50,100,150,0.10);
+  border: 2px solid #dde7f3;
+  margin: 0;
+  padding: 0;
+  transition: box-shadow 0.2s;
+}
+
+#btn-renommer-histoire.icon-action:hover {
+  box-shadow: 0 0 12px rgba(16,97,165,0.18);
+  background: #f7fbff !important;
+}
+
+/* Barre d'actions avec bouton renommer */
+.actions-footer.with-rename {
+  gap: 2rem !important;
+  justify-content: center;
+}
+
+/* Message "Aucune histoire" */
+#no-stories-message {
+  text-align: center;
+  color: #666;
+  margin: 2rem 0;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #mes-histoires .bloc-centre {
+    max-width: 500px;
+  }
+  
+  #liste-histoires li .button {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  #mes-histoires.screen {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  #mes-histoires .bloc-centre {
+    width: 100%;
+    border-radius: 24px;
+    padding: 1rem;
+  }
+  
+  #liste-histoires li .button {
+    max-width: none;
+  }
+  
+  #mes-histoires-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #mes-histoires-actions .button {
+    width: auto;
+    max-width: 45%;
+    flex: 0 0 calc(50% - 1rem);
+  }
+  
+  #mes-histoires-actions.single .button {
+    max-width: 200px;
+  }
+}

@@ -133,19 +133,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
         reject(new Error("E-mail et mot de passe requis"));
         return;
       }
-
-      // S'assurer que Firebase Auth est disponible
-      if (!auth) {
-        init();
-      }
-
-      // Après tentative d'initialisation, si "auth" est toujours indisponible
-      // on signale explicitement l'erreur à l'appelant
-      if (!auth) {
-        reject(new Error("Service d’authentification non disponible"));
-        return;
-      }
-
+      
       // Connecter l'utilisateur
       auth.signInWithEmailAndPassword(email, password)
         .then(userCredential => {
@@ -187,11 +175,6 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       }
       
       // Vérifier si Firebase Auth est initialisé
-      if (!auth) {
-        // Tenter une initialisation si ce n'est pas déjà fait
-        init();
-      }
-
       if (!auth) {
         console.error("Firebase Auth n'est pas initialisé");
         reject(new Error("Service d'authentification non disponible"));
@@ -384,16 +367,17 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
    * Affiche l'utilisateur connecté
    */
   function afficherUtilisateurConnecté() {
-    document.getElementById("user-icon").classList.remove("ui-hidden");
-    document.getElementById("login-button").classList.add("ui-hidden");
-    document.getElementById("my-stories-button").classList.remove("ui-hidden");
+    document.getElementById("user-icon").classList.remove("hidden");
+    document.getElementById("login-button").classList.add("hidden");
+    document.getElementById("my-stories-button").classList.remove("hidden");
 
     // → Si un profil enfant est actif, on court-circuite tout :
-    if (MonHistoire.state && MonHistoire.state.profilActif &&
-        MonHistoire.state.profilActif.type === 'enfant') {
-
-      const currentProfile = MonHistoire.state.profilActif;
-      if (currentProfile.prenom) {
+    if (MonHistoire.modules && MonHistoire.modules.user && 
+        MonHistoire.modules.user.profiles && 
+        MonHistoire.modules.user.profiles.getCurrentProfile) {
+      
+      const currentProfile = MonHistoire.modules.user.profiles.getCurrentProfile();
+      if (currentProfile && currentProfile.prenom) {
         // On met directement l'initiale de l'enfant
         document.getElementById("user-icon").textContent = currentProfile.prenom
           .trim()
@@ -408,23 +392,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       if (window.firebase && firebase.auth) {
         const user = firebase.auth().currentUser;
         if (user) {
-          firebase.firestore().collection("users").doc(user.uid).get()
-            .then((doc) => {
-              let initiale = "U"; // Valeur par défaut
-              if (doc.exists && doc.data().prenom) {
-                initiale = doc.data().prenom.trim().charAt(0).toUpperCase();
-              } else if (user.email) {
-                initiale = user.email.charAt(0).toUpperCase();
-              }
-              document.getElementById("user-icon").textContent = initiale;
-            })
-            .catch(() => {
-              if (user.email) {
-                document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
-              } else {
-                document.getElementById("user-icon").textContent = "U";
-              }
-            });
+          document.getElementById("user-icon").textContent = user.email.charAt(0).toUpperCase();
         } else {
           document.getElementById("user-icon").textContent = "U";
         }
@@ -446,9 +414,9 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
       const loginButton = document.getElementById("login-button");
       const myStoriesButton = document.getElementById("my-stories-button");
       
-      if (userIcon) userIcon.classList.add("ui-hidden");
-      if (loginButton) loginButton.classList.remove("ui-hidden");
-      if (myStoriesButton) myStoriesButton.classList.add("ui-hidden");
+      if (userIcon) userIcon.classList.add("hidden");
+      if (loginButton) loginButton.classList.remove("hidden");
+      if (myStoriesButton) myStoriesButton.classList.add("hidden");
       
       console.log("Interface utilisateur mise à jour pour l'utilisateur déconnecté");
     } catch (error) {
@@ -505,11 +473,6 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     
     // Vérifier si Firebase Auth est initialisé
     if (!auth) {
-      // Tenter une initialisation si ce n'est pas déjà fait
-      init();
-    }
-
-    if (!auth) {
       console.error("Firebase Auth n'est pas initialisé");
       if (MonHistoire.showMessageModal) {
         MonHistoire.showMessageModal("Service d'authentification non disponible. Veuillez réessayer plus tard.");
@@ -540,16 +503,6 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
           alert(msg);
         }
       });
-  }
-
-  /**
-   * Ferme la modale de déconnexion/changement de profil
-   */
-  function fermerLogoutModal() {
-    const modal = document.getElementById('logout-modal');
-    if (modal) {
-      modal.classList.remove('show');
-    }
   }
 
   /**
@@ -714,7 +667,7 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     
     console.log("[Module] Tentative de déconnexion");
     
-    return logout()
+    logout()
       .then(() => {
         console.log("[Module] Déconnexion réussie");
         
@@ -727,10 +680,8 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
         afficherUtilisateurDéconnecté();
         
         // Fermer la modale de déconnexion
-        if (MonHistoire.modules.user &&
-            MonHistoire.modules.user.auth &&
-            typeof MonHistoire.modules.user.auth.fermerLogoutModal === 'function') {
-          MonHistoire.modules.user.auth.fermerLogoutModal();
+        if (MonHistoire.core && MonHistoire.core.auth) {
+          MonHistoire.core.auth.fermerLogoutModal();
         }
         
         // Réinitialiser le profil actif
@@ -811,7 +762,6 @@ MonHistoire.modules.user = MonHistoire.modules.user || {};
     loginUser: loginUser,
     registerUser: registerUser,
     logoutUser: logoutUser,
-    logActivity: logActivity,
-    fermerLogoutModal: fermerLogoutModal
+    logActivity: logActivity
   };
 })();

@@ -142,8 +142,12 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       }
     } else {
       // Utilisateur déconnecté
-      navigateTo(SCREENS.HOME);
-
+      // Ne pas rediriger automatiquement vers l'écran de connexion
+      // sauf si l'utilisateur est sur un écran qui nécessite une authentification
+      if (requiresAuth(currentScreen)) {
+        navigateTo(SCREENS.HOME);
+      }
+      
       // Vider l'historique
       screenHistory = [];
     }
@@ -245,13 +249,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
    * @param {Object} params - Paramètres supplémentaires (optionnel)
    */
   function showScreen(screen, animate = true, params = {}) {
-    // Arrêter la lecture audio si elle est en cours
-    if (MonHistoire.modules.features &&
-        MonHistoire.modules.features.audio &&
-        typeof MonHistoire.modules.features.audio.stopPlayback === 'function') {
-      MonHistoire.modules.features.audio.stopPlayback();
-    }
-
     // Masquer tous les écrans
     const screens = document.querySelectorAll('.screen');
     screens.forEach(s => {
@@ -290,9 +287,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       if (MonHistoire.screens && MonHistoire.screens[screen] && typeof MonHistoire.screens[screen].init === 'function') {
         MonHistoire.screens[screen].init(params);
       }
-
-      // Gérer certains comportements spécifiques
-      handleSpecialScreenCases(screen);
     } else {
       console.error(`Écran non trouvé: ${screen}`);
     }
@@ -391,62 +385,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
       }
     }
   }
-
-  /**
-   * Gère certains cas particuliers lors de l'affichage d'un écran
-   * @param {string} screen - Écran affiché
-   */
-  function handleSpecialScreenCases(screen) {
-    if (screen === SCREENS.STORY_DISPLAY) {
-      const btn = document.getElementById('btn-sauvegarde');
-      if (btn) {
-        if (firebase.auth && firebase.auth().currentUser && MonHistoire.state && MonHistoire.state.resultatSource === 'formulaire') {
-          btn.style.display = 'inline-block';
-        } else {
-          btn.style.display = 'none';
-        }
-      }
-    }
-
-    if (screen === SCREENS.STORY_LIST) {
-      if (MonHistoire.modules.stories && MonHistoire.modules.stories.management &&
-          typeof MonHistoire.modules.stories.management.loadStories === 'function') {
-        MonHistoire.modules.stories.management.loadStories();
-      }
-      const btnAccueil = document.getElementById('btn-accueil-mes-histoires');
-      const group = document.getElementById('mes-histoires-actions');
-      if (btnAccueil && group) {
-        if (previousScreen === SCREENS.STORY_DISPLAY) {
-          btnAccueil.style.display = 'inline-block';
-          group.classList.remove('single');
-        } else {
-          btnAccueil.style.display = 'none';
-          group.classList.add('single');
-        }
-      }
-      marquerHistoiresCommeVues();
-    }
-
-    if (screen === SCREENS.HOME) {
-      const footer = document.querySelector('footer');
-      if (footer) {
-        if (MonHistoire.state && MonHistoire.state.profilActif && MonHistoire.state.profilActif.type === 'enfant') {
-          footer.style.display = 'none';
-        } else {
-          footer.style.display = 'block';
-        }
-      }
-    } else {
-      const footer = document.querySelector('footer');
-      if (footer) {
-        footer.style.display = 'none';
-      }
-    }
-
-    if (MonHistoire.events) {
-      MonHistoire.events.emit('screenChanged', { screen, previousScreen });
-    }
-  }
   
   /**
    * Vérifie si l'écran nécessite une authentification
@@ -515,77 +453,12 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     if (canGoBack()) {
       // Récupérer l'écran précédent
       const prevScreen = screenHistory.pop() || SCREENS.HOME;
-
+      
       // Naviguer vers l'écran précédent
       window.history.back();
-
+      
       // Mettre à jour l'écran courant
       currentScreen = prevScreen;
-    }
-  }
-
-  /**
-   * Retourne depuis l'écran de résultat vers la page appropriée
-   */
-  function retourDepuisResultat() {
-    if (MonHistoire.state && MonHistoire.state.resultatSource === 'mes-histoires') {
-      navigateTo(SCREENS.STORY_LIST);
-    } else {
-      navigateTo(SCREENS.STORY_CREATION);
-    }
-  }
-
-  /**
-   * Marque toutes les histoires comme vues pour le profil actif
-   */
-  function marquerHistoiresCommeVues() {
-    try {
-      const user = firebase.auth && firebase.auth().currentUser;
-      if (!user) return;
-
-      if (!MonHistoire.state || !MonHistoire.state.profilActif) {
-        MonHistoire.state = MonHistoire.state || {};
-        MonHistoire.state.profilActif = localStorage.getItem('profilActif') ? JSON.parse(localStorage.getItem('profilActif')) : { type: 'parent' };
-      }
-
-      const profilId = MonHistoire.state.profilActif.type === 'parent' ? 'parent' : MonHistoire.state.profilActif.id;
-
-      let storiesRef;
-      if (MonHistoire.state.profilActif.type === 'parent') {
-        storiesRef = firebase.firestore()
-          .collection('users')
-          .doc(user.uid)
-          .collection('stories')
-          .where('nouvelleHistoire', '==', true);
-      } else {
-        storiesRef = firebase.firestore()
-          .collection('users')
-          .doc(user.uid)
-          .collection('profils_enfant')
-          .doc(MonHistoire.state.profilActif.id)
-          .collection('stories')
-          .where('nouvelleHistoire', '==', true);
-      }
-
-      storiesRef.get().then(snapshot => {
-        if (snapshot.empty) return;
-        const batch = firebase.firestore().batch();
-        snapshot.forEach(doc => {
-          batch.update(doc.ref, {
-            nouvelleHistoire: false,
-            vueLe: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        });
-        return batch.commit();
-      }).then(() => {
-        if (MonHistoire.modules.sharing && MonHistoire.modules.sharing.notificationsNonLues) {
-          MonHistoire.modules.sharing.notificationsNonLues[profilId] = 0;
-        }
-      }).catch(err => {
-        console.error('Erreur lors du marquage des histoires comme vues:', err);
-      });
-    } catch (err) {
-      console.error('Erreur lors du marquage des histoires comme vues:', err);
     }
   }
   
@@ -627,8 +500,6 @@ MonHistoire.modules.core = MonHistoire.modules.core || {};
     navigateTo: navigateTo,
     showScreen: showScreen,
     goBack: goBack,
-    retourDepuisResultat: retourDepuisResultat,
-    marquerHistoiresCommeVues: marquerHistoiresCommeVues,
     getCurrentScreen: getCurrentScreen,
     getPreviousScreen: getPreviousScreen,
     getScreens: getScreens,

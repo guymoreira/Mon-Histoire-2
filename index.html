@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css?family=Fredoka:400,700&display=swap" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet"/>
   <link href="css/components/auth-forms.css" rel="stylesheet"/>
+  <link href="css/components/profiles.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
@@ -21,69 +22,47 @@
   
   <!-- Initialisation Firebase -->
   <script src="js/firebase-init.js"></script>
-
+  
+  <!-- Point d'entrée principal -->
+  <script src="js/index.js" defer></script>
+  
+  <!-- Fichiers de configuration -->
   <script src="js/config.js" defer></script>
 
-  <!-- Modules core -->
-  <script src="js/modules/core/config.js" defer></script>
-
-  <!-- Initialisation de l'application -->
-  <script src="js/ui.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <!-- Utilitaires communs -->
   <script src="js/common.js" defer></script>
 
-  <script src="js/modules/core/cookies.js" defer></script>
-  <script src="js/modules/core/navigation.js" defer></script>
-  <script src="js/modules/core/storage.js" defer></script>
+  <!-- Modules core -->
+  <script src="js/core/navigation.js" defer></script>
+  <script src="js/core/auth.js" defer></script>
+  <script src="js/core/profiles.js" defer></script>
+  <script src="js/core/storage.js" defer></script>
 
-  <!-- Modules utilisateur -->
-  <script src="js/modules/user/account.js" defer></script>
-  <script src="js/modules/user/activity.js" defer></script>
-  <script src="js/modules/user/auth.js" defer></script>
-  <script src="js/modules/user/profiles.js" defer></script>
+  <!-- Modules features -->
+  <script src="js/features/stories/generator.js" defer></script>
+  <script src="js/features/stories/display.js" defer></script>
+  <script src="js/features/stories/management.js" defer></script>
+  <script src="js/features/stories/notation.js" defer></script>
+  <!-- Module de partage modulaire -->
+  <script src="js/features/sharing.js" defer></script>
+  <script src="js/features/sharing/notifications.js" defer></script>
+  <script src="js/features/sharing/storage.js" defer></script>
+  <script src="js/features/sharing/ui.js" defer></script>
+  <!-- Modules de partage en temps réel -->
+  <script src="js/features/sharing/realtime/index.js" defer></script>
+  <script src="js/features/sharing/realtime/listeners.js" defer></script>
+  <script src="js/features/sharing/realtime/notifications.js" defer></script>
+  <!-- Point d'entrée du module de partage -->
+  <script src="js/features/sharing/index.js" defer></script>
+  <script src="js/features/export.js" defer></script>
+  <script src="js/features/audio.js" defer></script>
+  <script src="js/features/cookies.js" defer></script>
 
-  <!-- Modules histoires -->
-  <script src="js/modules/stories/generator.js" defer></script>
-  <script src="js/modules/stories/display.js" defer></script>
-  <script src="js/modules/stories/management.js" defer></script>
-  <script src="js/modules/stories/export.js" defer></script>
+  <!-- Interface utilisateur -->
+  <script src="js/ui.js" defer></script>
 
-  <!-- Modules fonctionnalités -->
-  <script src="js/modules/features/audio.js" defer></script>
-  <script src="js/modules/features/cookies.js" defer></script>
-  <script src="js/modules/features/export.js" defer></script>
-
-  <!-- Modules de partage -->
-  <script src="js/modules/sharing/ui.js" defer></script>
-  <script src="js/modules/sharing/notifications.js" defer></script>
-  <script src="js/modules/sharing/storage.js" defer></script>
-  <script src="js/modules/sharing/realtime/index.js" defer></script>
-  <script src="js/modules/sharing/realtime/listeners.js" defer></script>
-  <script src="js/modules/sharing/realtime/notifications.js" defer></script>
-  <script src="js/modules/sharing/index.js" defer></script>
-
-  <!-- Modules de messagerie -->
-  <script src="js/modules/messaging/storage.js" defer></script>
-  <script src="js/modules/messaging/realtime.js" defer></script>
-  <script src="js/modules/messaging/ui.js" defer></script>
-  <script src="js/modules/messaging/notifications.js" defer></script>
-  <script src="js/modules/messaging/index.js" defer></script>
-
-  <!-- Modules d'interface utilisateur -->
-  <script src="js/modules/ui/common.js" defer></script>
-  <script src="js/modules/ui/whitebar-fix.js" defer></script>
-  <script src="js/modules/ui/debug.js" defer></script>
-  <script src="js/modules/ui/modals.js" defer></script>
-  <script src="js/modules/ui/events.js" defer></script>
-
-  <!-- Module principal de l'application -->
-  <script src="js/modules/app.js" defer></script>
-
-  <!-- Nouvelle entrée pour la migration -->
-  <script src="js/adapters/index.js" defer></script>
-  
-  <!-- Script d'initialisation des modules -->
-  <script src="js/modules/init.js" defer></script>
+  <!-- Point d'entrée principal -->
+  <script src="js/app.js" defer></script>
 </head>
 <body>
   <!-- Accueil -->
@@ -94,7 +73,6 @@
         <button class="ui-button ui-button--primary ui-button--medium" id="create-button" data-screen="formulaire">Créer une histoire</button>
         <button class="ui-button ui-button--secondary ui-button--medium" id="login-button" data-screen="connexion">Me connecter</button>
         <button class="ui-button ui-button--secondary ui-button--medium ui-hidden" id="my-stories-button" data-screen="mes-histoires">Mes Histoires</button>
-        <button class="ui-button ui-button--secondary ui-button--medium ui-hidden" id="my-messages-button">Mes messages</button>
       </div>
     </div>
     <div id="user-icon" class="ui-hidden"></div>
@@ -329,70 +307,34 @@
   <img src="croix-cartoon.png" alt="Annuler" title="Annuler" style="height: 48px; cursor: pointer;" id="btn-annuler-renommer" />
   <img src="coche-verte-cartoon.png" alt="Valider" title="Valider" style="height: 48px; cursor: pointer;" id="btn-confirmer-renommer" />
 </div>
-</div>
-</div>
-<div class="ui-modal" id="delete-story-modal">
-  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
-    <p class="ui-text-center">Supprimer cette histoire ?</p>
-    <div class="ui-button-group ui-button-group--equal ui-mt-3">
-      <button class="ui-button ui-button--primary" id="confirm-delete-story">Oui</button>
-      <button class="ui-button ui-button--secondary" id="cancel-delete-story">Non</button>
-    </div>
-  </div>
-</div>
-<div class="ui-modal" id="rename-story-modal">
-  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
-    <h3 class="ui-text-center">Renommer l'histoire</h3>
-    <div class="ui-form-group">
-      <input id="story-new-title" type="text" class="ui-input" />
-    </div>
-    <div class="ui-button-group ui-button-group--center ui-mt-3">
-      <button class="ui-button ui-button--primary" id="confirm-rename-story">Valider</button>
-    </div>
   </div>
 </div>
 <!-- Mes Histoires -->
 <section class="screen" id="mes-histoires">
   <div class="ui-card ui-card--cream ui-card--large ui-card--padding-md">
-    <div id="stories-list-section">
-      <div class="ui-flex ui-justify-between ui-align-center">
-        <h2>Mes Histoires</h2>
-        <span id="compteur-histoires" style="font-size:1.1rem;"></span>
-      </div>
-      <div id="stories-container"></div>
-      <ul id="liste-histoires" class="ui-hidden"></ul>
-      <div class="actions-footer" id="barre-suppression" style="display:none;">
-        <img
-          src="corbeille-cartoon.png"
-          alt="Corbeille"
-          id="btn-corbeille"
-          class="ui-ml-2"
-        >
-        <button class="ui-button-icon" id="btn-renommer-histoire" style="display:none;">✏️</button>
-        <img
-          src="croix-cartoon.png"
-          alt="Annuler sélection"
-          id="btn-annuler-selection"
-          class="ui-ml-2"
-        >
-      </div>
-      <div class="ui-button-group ui-button-group--equal ui-mt-3" id="mes-histoires-actions">
-        <button class="ui-button ui-button--secondary" id="btn-retour-mes-histoires">Retour</button>
-        <button class="ui-button ui-button--secondary ui-hidden" id="btn-accueil-mes-histoires" data-screen="accueil">Accueil</button>
-        <button class="ui-button ui-button--secondary" id="refresh-stories-button">Rafraîchir</button>
-      </div>
+    <div class="ui-flex ui-justify-between ui-align-center">
+      <h2>Mes Histoires</h2>
+      <span id="compteur-histoires" style="font-size:1.1rem;"></span>
     </div>
-    <div id="story-display-section" class="hidden">
-      <button class="ui-button ui-button--secondary ui-mb-3" id="back-to-stories-button">Retour à la liste</button>
-      <h3 id="display-story-title"></h3>
-      <div id="display-story-image" class="hidden" style="margin-bottom:1em;"></div>
-      <div id="display-story-content"></div>
-      <div id="display-story-date" class="ui-mt-2"></div>
-      <div class="ui-button-group ui-button-group--equal ui-mt-3">
-        <button class="ui-button ui-button--secondary" id="export-story-button">Exporter</button>
-        <button class="ui-button ui-button--secondary" id="audio-story-button">Audio</button>
-        <button class="ui-button ui-button--secondary" id="share-story-button">Partager</button>
-      </div>
+    <ul id="liste-histoires"></ul>
+    <div class="actions-footer" id="barre-suppression" style="display:none;">
+      <img
+        src="corbeille-cartoon.png"
+        alt="Corbeille"
+        id="btn-corbeille"
+        class="ui-ml-2"
+      >
+      <button class="ui-button-icon" id="btn-renommer-histoire" style="display:none;">✏️</button>
+      <img
+        src="croix-cartoon.png"
+        alt="Annuler sélection"
+        id="btn-annuler-selection"
+        class="ui-ml-2"
+      >
+    </div>
+    <div class="ui-button-group ui-button-group--equal ui-mt-3" id="mes-histoires-actions">
+      <button class="ui-button ui-button--secondary" id="btn-retour-mes-histoires">Retour</button>
+      <button class="ui-button ui-button--secondary ui-hidden" id="btn-accueil-mes-histoires" data-screen="accueil">Accueil</button>
     </div>
   </div>
 </section>
@@ -499,8 +441,6 @@
   
 <footer style="text-align:center; margin:2em 0; opacity:0.7;">
   <a href="#" id="link-rgpd" style="font-size:1rem; margin-right: 1em;">Vie privée &amp; RGPD</a>
-  <a href="#" id="link-conditions" style="font-size:1rem; margin-right: 1em;">Conditions d’utilisation</a>
-  <a href="#" id="link-legal" style="font-size:1rem; margin-right: 1em;">Mentions légales</a>
   <a href="#" id="cookie-settings-link" style="font-size:1rem;">Paramètres des cookies</a>
 </footer>
 <!-- Modale de renommage de profil enfant -->
@@ -514,35 +454,6 @@
       <button class="ui-button ui-button--secondary" id="btn-annuler-renommer-profil">Annuler</button>
       <button class="ui-button ui-button--primary" id="btn-confirmer-renommer-profil">Valider</button>
     </div>
-</div>
-</div>
-
-<div class="ui-modal" id="modal-messages">
-  <div class="ui-modal-content ui-modal-content--medium ui-card--cream">
-    <h3 class="ui-text-center">Mes messages</h3>
-    <div id="liste-conversations"></div>
-    <button id="btn-nouveau-message" class="ui-button ui-button--primary ui-mt-3">+ Nouveau message</button>
-    <button id="btn-fermer-messages" class="ui-button ui-button--secondary ui-mt-3">Fermer</button>
-  </div>
-</div>
-
-<div class="ui-modal" id="modal-nouveau-message">
-  <div class="ui-modal-content ui-modal-content--small ui-card--cream">
-    <h3 class="ui-text-center">Nouveau message</h3>
-    <div id="liste-profils-message"></div>
-    <button id="btn-fermer-nouveau-message" class="ui-button ui-button--secondary ui-mt-3">Fermer</button>
-  </div>
-</div>
-
-<div class="ui-modal" id="modal-conversation">
-  <div class="ui-modal-content ui-modal-content--medium ui-card--cream" style="display:flex; flex-direction:column;">
-    <h3 id="conversation-contact" class="ui-text-center"></h3>
-    <div id="conversation-messages"></div>
-    <div id="zone-saisie-message">
-      <input id="input-message" class="ui-input" type="text" placeholder="Ton message..." />
-      <button id="btn-envoyer-message" class="ui-button ui-button--primary">Envoyer</button>
-    </div>
-    <button id="btn-fermer-conversation" class="ui-button ui-button--secondary ui-mt-3">Fermer</button>
   </div>
 </div>
 
@@ -564,18 +475,12 @@
         <h3>Politique de confidentialité</h3>
         <div style="text-align:left; font-size:0.98em;">
           <p>
-            Notre application enregistre les messages que vous rédigez ainsi que les métadonnées de vos conversations
-            (dates, heures, identifiant de profil, etc.). Ces informations sont stockées dans Firebase Firestore afin de vous
-            permettre de retrouver votre historique et d'améliorer le service.
+            Ici figurera la politique de confidentialité et les informations sur la gestion des données personnelles.<br>
+            <b>(Texte à compléter plus tard !)</b>
           </p>
-          <p>
-            Les messages et leurs métadonnées sont conservés tant que votre compte reste actif. La suppression d'un profil enfant
-            entraîne également l'effacement de tous les messages associés. Vous pouvez aussi demander leur suppression à tout moment.
-          </p>
-          <p>
-            Vous pouvez accéder à vos messages ou demander leur effacement à tout moment en nous contactant&nbsp;:
-            <a href="mailto:support@monhistoire.fr">support@monhistoire.fr</a>
-          </p>
+          <ul>
+            <li>Suppression ou rectification de vos données : <a href="mailto:support@monhistoire.fr">support@monhistoire.fr</a></li>
+          </ul>
         </div>
       </div>
       
@@ -603,7 +508,6 @@
         <p>Ces cookies permettent d'améliorer les fonctionnalités et la personnalisation de notre application.</p>
         <ul>
           <li><strong>Firebase Firestore Cache</strong> : Stocke temporairement vos données pour améliorer les performances et permettre l'utilisation hors ligne.</li>
-          <li><strong>Firebase Firestore (conversations)</strong> : Conserve les métadonnées de vos conversations (participants, dernier message) pour afficher l'historique.</li>
           <li><strong>Stockage local (localStorage)</strong> : Bien que techniquement différent des cookies, nous stockons certaines préférences comme votre profil actif et le prénom du héros de vos histoires.</li>
           <li><strong>Durée de conservation</strong> : Jusqu'à effacement manuel ou désinstallation de l'application</li>
         </ul>
@@ -692,31 +596,6 @@
   </div>
 </div>
 
-<div class="ui-modal" id="modal-conditions">
-  <div class="ui-modal-content ui-modal-content--large ui-card--cream" style="max-width:500px;">
-    <span class="ui-modal-close" onclick="document.getElementById('modal-conditions').classList.remove('show')">×</span>
-    <h3>Conditions d’utilisation</h3>
-    <p style="text-align:left; font-size:0.98em;">Consultez
-      <a href="/docs/conditions.pdf" target="_blank">les conditions d’utilisation complètes (PDF)</a>.
-    </p>
-    <div class="ui-button-group ui-button-group--center" style="margin-top: 20px;">
-      <button class="ui-button ui-button--secondary" onclick="document.getElementById('modal-conditions').classList.remove('show')">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<div class="ui-modal" id="modal-legal">
-  <div class="ui-modal-content ui-modal-content--large ui-card--cream" style="max-width:500px;">
-    <span class="ui-modal-close" onclick="document.getElementById('modal-legal').classList.remove('show')">×</span>
-    <h3>Mentions légales</h3>
-    <p style="text-align:left; font-size:0.98em;">Consultez
-      <a href="/docs/legal.pdf" target="_blank">les mentions légales complètes (PDF)</a>.
-    </p>
-    <div class="ui-button-group ui-button-group--center" style="margin-top: 20px;">
-      <button class="ui-button ui-button--secondary" onclick="document.getElementById('modal-legal').classList.remove('show')">Fermer</button>
-    </div>
-  </div>
-</div>
 
 <!-- Bannière de consentement aux cookies -->
 <div id="cookie-banner" class="cookie-banner">

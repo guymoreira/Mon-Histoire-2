@@ -11,6 +11,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
 (function() {
   // Variables privées
   let currentUser = null;
+  let currentProfile = null;
   let stories = [];
   let isInitialized = false;
   
@@ -29,11 +30,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       MonHistoire.events.on('profileSelected', handleProfileChange);
       MonHistoire.events.on('storyGenerated', handleStoryGenerated);
     }
-
-    // Récupère l'utilisateur courant si disponible
-    if (!currentUser && firebase.auth && firebase.auth().currentUser) {
-      currentUser = firebase.auth().currentUser;
-    }
     
     // Configurer les écouteurs d'événements pour les boutons
     setupListeners();
@@ -48,20 +44,18 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    */
   function handleAuthStateChange(user) {
     currentUser = user;
-
+    
     if (user) {
       // Utilisateur connecté, charger les histoires si un profil est sélectionné
-      if (MonHistoire.state.profilActif) {
+      if (currentProfile) {
         loadStories();
       }
-      initQuota();
     } else {
       // Utilisateur déconnecté, réinitialiser les histoires
       stories = [];
-
+      
       // Mettre à jour l'interface utilisateur
       updateUI();
-      initQuota();
     }
   }
   
@@ -70,8 +64,8 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * @param {Object} profile - Profil sélectionné
    */
   function handleProfileChange(profile) {
-    MonHistoire.state.profilActif = profile;
-
+    currentProfile = profile;
+    
     if (currentUser && profile) {
       // Charger les histoires du profil
       loadStories();
@@ -92,55 +86,9 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     // Ajouter l'histoire à la liste temporaire (non sauvegardée)
     const tempStory = { ...story, temporary: true };
     stories.unshift(tempStory);
-
+    
     // Mettre à jour l'interface utilisateur
     updateUI();
-    initQuota();
-  }
-
-  /**
-   * Initialise le quota d'histoires et met à jour l'affichage
-   */
-  function initQuota() {
-    const compteurEl = document.getElementById('compteur-histoires');
-    if (!compteurEl) {
-      return;
-    }
-
-    if (!currentUser || !MonHistoire.state.profilActif) {
-      compteurEl.textContent = '';
-      compteurEl.classList.remove('quota-alerte');
-      return;
-    }
-
-    compteurEl.textContent = 'Chargement...';
-    compteurEl.classList.remove('quota-alerte');
-
-    if (MonHistoire.modules.core && MonHistoire.modules.core.storage &&
-        typeof MonHistoire.modules.core.storage.getStories === 'function') {
-      MonHistoire.modules.core.storage
-        .getStories(MonHistoire.state.profilActif.id)
-        .then(storiesList => {
-          const maxHistoires = (MonHistoire.config &&
-            MonHistoire.config.MAX_HISTOIRES) ?
-            MonHistoire.config.MAX_HISTOIRES : 5;
-          const seuilAlerte = (MonHistoire.config &&
-            MonHistoire.config.SEUIL_ALERTE_HISTOIRES) ?
-            MonHistoire.config.SEUIL_ALERTE_HISTOIRES : Math.floor(maxHistoires * 0.8);
-
-          compteurEl.textContent = `${storiesList.length} / ${maxHistoires}`;
-
-          if (storiesList.length >= seuilAlerte) {
-            compteurEl.classList.add('quota-alerte');
-          } else {
-            compteurEl.classList.remove('quota-alerte');
-          }
-        })
-        .catch(error => {
-          console.error("Erreur lors de l'initialisation du quota:", error);
-          compteurEl.textContent = 'Erreur';
-        });
-    }
   }
   
   /**
@@ -198,7 +146,7 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    * Charge les histoires du profil actuel
    */
   function loadStories() {
-    if (!currentUser || !MonHistoire.state.profilActif) {
+    if (!currentUser || !currentProfile) {
       return;
     }
     
@@ -209,13 +157,12 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
     
     // Utiliser le module de stockage pour récupérer les histoires
     if (MonHistoire.modules.core && MonHistoire.modules.core.storage) {
-      MonHistoire.modules.core.storage.getStories(MonHistoire.state.profilActif.id)
+      MonHistoire.modules.core.storage.getStories(currentProfile.id)
         .then(loadedStories => {
           stories = loadedStories;
-
+          
           // Mettre à jour l'interface utilisateur
           updateUI();
-          initQuota();
           
           // Masquer le chargement
           if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
@@ -231,12 +178,11 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
           if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
             MonHistoire.modules.app.showLoading(false);
           }
-
+          
           // Afficher un message d'erreur
           if (MonHistoire.showMessageModal) {
             MonHistoire.showMessageModal("Erreur lors du chargement des histoires. Veuillez réessayer.");
           }
-          initQuota();
         });
     } else {
       console.error("Module de stockage non disponible");
@@ -245,7 +191,6 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
       if (MonHistoire.modules.app && MonHistoire.modules.app.showLoading) {
         MonHistoire.modules.app.showLoading(false);
       }
-      initQuota();
     }
   }
   
@@ -594,22 +539,16 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
    */
   function saveStory(story) {
     return new Promise((resolve, reject) => {
-      const user = currentUser || (firebase.auth && firebase.auth().currentUser);
-      if (!user || !MonHistoire.state.profilActif) {
-        if (MonHistoire.showMessageModal) {
-          MonHistoire.showMessageModal(
-            "Vous devez être connecté et avoir un profil sélectionné."
-          );
-        }
-        resolve();
+      if (!currentUser || !currentProfile) {
+        reject(new Error("Utilisateur ou profil non défini"));
         return;
       }
       
       // Préparer les données de l'histoire
       const storyData = {
         ...story,
-        userId: user.uid,
-        profileId: MonHistoire.state.profilActif.id,
+        userId: currentUser.uid,
+        profileId: currentProfile.id,
         createdAt: story.createdAt || new Date().toISOString()
       };
       
@@ -662,29 +601,13 @@ MonHistoire.modules.stories = MonHistoire.modules.stories || {};
   function getStoryById(storyId) {
     return stories.find(s => s.id === storyId) || null;
   }
-
-  /**
-   * Wrapper public pour supprimer une histoire avec confirmation
-   * @param {string} id - ID de l'histoire à supprimer
-   */
-  function supprimerHistoire(id) {
-    if (!id) {
-      return;
-    }
-
-    // Réutilise la logique existante de confirmation/suppression
-    showDeleteConfirmation(id);
-    // L'utilisateur devra confirmer via le modal qui déclenchera handleDeleteStory
-  }
   
   // API publique
   MonHistoire.modules.stories.management = {
     init: init,
-    initQuota: initQuota,
     loadStories: loadStories,
     saveStory: saveStory,
     getStories: getStories,
-    getStoryById: getStoryById,
-    supprimerHistoire: supprimerHistoire
+    getStoryById: getStoryById
   };
 })();

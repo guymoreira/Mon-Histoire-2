@@ -1,30 +1,31 @@
-// js/modules/sharing/notifications.js
+// js/features/sharing/notifications.js
 // Gestion des notifications de partage d'histoires
 
-// S'assurer que les namespaces existent
+// S'assurer que les objets nécessaires existent
 window.MonHistoire = window.MonHistoire || {};
-MonHistoire.modules = MonHistoire.modules || {};
-MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
+MonHistoire.features = MonHistoire.features || {};
+MonHistoire.features.sharing = MonHistoire.features.sharing || {};
 
-// Module de gestion des notifications
-(function() {
-  // Variables privées
-  let notificationsNonLues = {};
-  let notificationsTraitees = new Set();
-  let notificationTimeout = null;
-  let notificationSwipeStartX = 0;
-  let notificationSwipeStartY = 0;
-  let histoireNotifieeActuelle = null;
-  
+// Initialiser les variables de notification si elles n'existent pas
+MonHistoire.features.sharing.notificationsNonLues = MonHistoire.features.sharing.notificationsNonLues || {};
+MonHistoire.features.sharing.notificationsTraitees = MonHistoire.features.sharing.notificationsTraitees || new Set();
+MonHistoire.features.sharing.notificationTimeout = null;
+MonHistoire.features.sharing.notificationSwipeStartX = 0;
+MonHistoire.features.sharing.notificationSwipeStartY = 0;
+
+/**
+ * Module de gestion des notifications
+ * Responsable de l'affichage et de la gestion des notifications de partage
+ */
+MonHistoire.features.sharing.notifications = {
   // Compteur de tentatives d'initialisation des écouteurs
-  let initAttempts = 0;
+  initAttempts: 0,
   // Nombre maximal de tentatives
-  const maxInitAttempts = 10;
-  
+  maxInitAttempts: 10,
   /**
    * Initialisation du module
    */
-  function init() {
+  init() {
     if (MonHistoire.logger) {
       MonHistoire.logger.sharingInfo("Module de notifications de partage initialisé");
     } else {
@@ -35,28 +36,86 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
     try {
       const cachedNotifications = localStorage.getItem('notificationsTraitees');
       if (cachedNotifications) {
-        notificationsTraitees = new Set(JSON.parse(cachedNotifications));
+        MonHistoire.features.sharing.notificationsTraitees = new Set(JSON.parse(cachedNotifications));
       }
     } catch (e) {
       console.error("Erreur lors du chargement du cache des notifications", e);
     }
     
     // Initialiser les écouteurs d'événements pour les notifications
-    initNotificationListeners();
-  }
+    this.initNotificationListeners();
+    
+    // Exposer les fonctions importantes au module principal
+    if (MonHistoire.features.sharing) {
+      MonHistoire.features.sharing.mettreAJourIndicateurNotification = this.mettreAJourIndicateurNotification.bind(this);
+      MonHistoire.features.sharing.mettreAJourIndicateurNotificationProfilsListe = this.mettreAJourIndicateurNotificationProfilsListe.bind(this);
+    }
+  },
+  
+  /**
+   * Crée l'élément de notification s'il n'existe pas déjà
+   * @returns {HTMLElement} - L'élément de notification
+   */
+  creerElementNotification() {
+    // Vérifier si l'élément existe déjà
+    let notification = document.getElementById("notification-partage");
+    
+    // Si l'élément n'existe pas, le créer
+    if (!notification) {
+      notification = document.createElement("div");
+      notification.id = "notification-partage";
+      notification.className = "ui-notification";
+      
+      // Créer l'icône de la notification
+      const icon = document.createElement("div");
+      icon.className = "ui-notification-icon";
+      icon.textContent = "✓";
+      
+      // Créer le contenu de la notification
+      const content = document.createElement("div");
+      content.className = "ui-notification-content";
+      
+      // Créer le message de la notification (sans titre)
+      const message = document.createElement("div");
+      message.className = "ui-notification-message";
+      message.id = "notification-message";
+      
+      // Créer le bouton de fermeture
+      const closeButton = document.createElement("button");
+      closeButton.className = "ui-notification-close";
+      closeButton.textContent = "×";
+      
+      // Assembler les éléments (sans le titre)
+      content.appendChild(message);
+      
+      notification.appendChild(icon);
+      notification.appendChild(content);
+      notification.appendChild(closeButton);
+      
+      // Ajouter la notification au body
+      document.body.appendChild(notification);
+      
+      // Masquer la notification par défaut
+      notification.style.display = "none";
+    }
+    
+    return notification;
+  },
   
   /**
    * Initialise les écouteurs d'événements pour les notifications
    */
-  function initNotificationListeners() {
+  initNotificationListeners() {
     try {
+      // Créer ou récupérer l'élément de notification
+      const notification = this.creerElementNotification();
+      
       // Écouteur pour le clic sur la notification
-      const notification = document.getElementById("notification-partage");
       if (notification) {
         // Supprimer les anciens écouteurs pour éviter les doublons
-        notification.removeEventListener("click", clicNotificationPartage);
+        notification.removeEventListener("click", this.clicNotificationPartage);
         // Ajouter le nouvel écouteur
-        notification.addEventListener("click", clicNotificationPartage);
+        notification.addEventListener("click", this.clicNotificationPartage.bind(this));
       }
       
       // Vérifier la disponibilité du système d'événements
@@ -66,7 +125,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
           if (MonHistoire.logger) {
             MonHistoire.logger.sharingInfo("Attente du système d'événements pour les notifications", {
               waitMethod: "waitForEvents",
-              maxAttempts: maxInitAttempts
+              maxAttempts: this.maxInitAttempts
             });
           }
           
@@ -76,36 +135,36 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
               // Mettre à jour l'indicateur de notification après un court délai
               // pour laisser le temps aux données de se charger
               setTimeout(() => {
-                mettreAJourIndicateurNotification();
-                mettreAJourIndicateurNotificationProfilsListe();
+                this.mettreAJourIndicateurNotification();
+                this.mettreAJourIndicateurNotificationProfilsListe();
               }, 1000);
             });
             
             // Réinitialiser le compteur de tentatives
-            initAttempts = 0;
+            this.initAttempts = 0;
             
             if (MonHistoire.logger) {
               MonHistoire.logger.sharingInfo("Écouteurs d'événements de notifications initialisés avec succès après attente");
             }
-          }, maxInitAttempts);
+          }, this.maxInitAttempts);
         } else {
           // Fallback si MonHistoire.common n'est pas disponible
-          if (initAttempts < maxInitAttempts) {
-            initAttempts++;
+          if (this.initAttempts < this.maxInitAttempts) {
+            this.initAttempts++;
             
             if (MonHistoire.logger) {
               MonHistoire.logger.sharingInfo("Tentative d'initialisation des écouteurs de notifications", {
-                attempt: initAttempts,
-                maxAttempts: maxInitAttempts
+                attempt: this.initAttempts,
+                maxAttempts: this.maxInitAttempts
               });
             }
             
-            setTimeout(() => initNotificationListeners(), 200);
+            setTimeout(() => this.initNotificationListeners(), 200);
           } else {
             if (MonHistoire.logger) {
               MonHistoire.logger.sharingError("Système d'événements non disponible pour les notifications après plusieurs tentatives", {
-                attempts: initAttempts,
-                maxAttempts: maxInitAttempts
+                attempts: this.initAttempts,
+                maxAttempts: this.maxInitAttempts
               });
             } else {
               console.warn("Système d'événements non disponible pour les notifications");
@@ -119,13 +178,13 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
           // Mettre à jour l'indicateur de notification après un court délai
           // pour laisser le temps aux données de se charger
           setTimeout(() => {
-            mettreAJourIndicateurNotification();
-            mettreAJourIndicateurNotificationProfilsListe();
+            this.mettreAJourIndicateurNotification();
+            this.mettreAJourIndicateurNotificationProfilsListe();
           }, 1000);
         });
         
         // Réinitialiser le compteur de tentatives
-        initAttempts = 0;
+        this.initAttempts = 0;
       }
     } catch (error) {
       if (MonHistoire.logger) {
@@ -134,14 +193,14 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de l'initialisation des écouteurs de notifications:", error);
       }
     }
-  }
+  },
   
   /**
    * Initialise le compteur de notifications non lues pour le profil actif
    * @param {Object} user - L'utilisateur Firebase actuel
    * @returns {Promise} - Promise résolue quand l'initialisation est terminée
    */
-  async function initialiserCompteurNotifications(user) {
+  async initialiserCompteurNotifications(user) {
     try {
       // S'assurer que le profilActif est correctement initialisé
       if (!MonHistoire.state.profilActif) {
@@ -154,7 +213,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
       // Réinitialiser le compteur avant de compter les nouvelles notifications
-      notificationsNonLues[profilId] = 0;
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = 0;
       
       // Détermine la collection à vérifier selon le profil actif
       let storiesRef;
@@ -176,7 +235,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
 
       // Compte le nombre de notifications non lues
       const snapshot = await storiesRef.get();
-      notificationsNonLues[profilId] = snapshot.size;
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = snapshot.size;
       
       // Si le profil actif est le parent, compte aussi les notifications non lues pour chaque profil enfant
       if (MonHistoire.state.profilActif.type === "parent") {
@@ -189,7 +248,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         for (const profilDoc of profilsEnfantsSnapshot.docs) {
           const enfantProfilId = profilDoc.id;
           // Réinitialiser le compteur pour ce profil enfant
-          notificationsNonLues[enfantProfilId] = 0;
+          MonHistoire.features.sharing.notificationsNonLues[enfantProfilId] = 0;
           
           const storiesEnfantRef = firebase.firestore()
             .collection("users")
@@ -200,17 +259,17 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
             .where("nouvelleHistoire", "==", true);
             
           const storiesEnfantSnapshot = await storiesEnfantRef.get();
-          notificationsNonLues[enfantProfilId] = storiesEnfantSnapshot.size;
+          MonHistoire.features.sharing.notificationsNonLues[enfantProfilId] = storiesEnfantSnapshot.size;
         }
       }
       
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingInfo("Compteur de notifications initialisé", {
-          notificationsCount: Object.keys(notificationsNonLues).length,
+          notificationsCount: Object.keys(MonHistoire.features.sharing.notificationsNonLues).length,
           status: "OK"
         });
       } else {
-        console.log("Compteur de notifications initialisé:", notificationsNonLues);
+        console.log("Compteur de notifications initialisé:", MonHistoire.features.sharing.notificationsNonLues);
       }
     } catch (error) {
       if (MonHistoire.logger) {
@@ -219,96 +278,103 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de l'initialisation du compteur de notifications:", error);
       }
     }
-  }
+  },
   
   /**
    * Affiche la notification de partage
    * @param {string} prenomPartageur - Prénom de la personne qui a partagé l'histoire
    * @param {Object} histoireRef - Référence Firestore à l'histoire partagée
    */
-  function afficherNotificationPartage(prenomPartageur, histoireRef) {
-    const notification = document.getElementById("notification-partage");
+  afficherNotificationPartage(prenomPartageur, histoireRef) {
+    // Créer ou récupérer l'élément de notification
+    const notification = this.creerElementNotification();
     const message = document.getElementById("notification-message");
+    const closeButton = notification ? notification.querySelector(".ui-notification-close") : null;
     
     if (!notification || !message) return;
     
     // Stocke la référence à l'histoire pour pouvoir la marquer comme vue plus tard
-    histoireNotifieeActuelle = histoireRef;
+    MonHistoire.features.sharing.histoireNotifieeActuelle = histoireRef;
     
     // Définit le message
     message.textContent = `${prenomPartageur} t'a partagé une histoire`;
     
     // Supprime les anciens écouteurs d'événements pour éviter les doublons
-    notification.removeEventListener("touchstart", demarrerSwipeNotification);
-    notification.removeEventListener("touchmove", deplacerSwipeNotification);
-    notification.removeEventListener("touchend", terminerSwipeNotification);
-    notification.removeEventListener("mousedown", demarrerSwipeNotification);
-    notification.removeEventListener("mousemove", deplacerSwipeNotification);
-    notification.removeEventListener("mouseup", terminerSwipeNotification);
-    notification.removeEventListener("mouseleave", terminerSwipeNotification);
+    notification.removeEventListener("touchstart", this.demarrerSwipeNotification);
+    notification.removeEventListener("touchmove", this.deplacerSwipeNotification);
+    notification.removeEventListener("touchend", this.terminerSwipeNotification);
+    notification.removeEventListener("mousedown", this.demarrerSwipeNotification);
+    notification.removeEventListener("mousemove", this.deplacerSwipeNotification);
+    notification.removeEventListener("mouseup", this.terminerSwipeNotification);
+    notification.removeEventListener("mouseleave", this.terminerSwipeNotification);
     
     // Ajoute les écouteurs d'événements pour le swipe
-    notification.addEventListener("touchstart", demarrerSwipeNotification, { passive: true });
-    notification.addEventListener("touchmove", deplacerSwipeNotification, { passive: true });
-    notification.addEventListener("touchend", terminerSwipeNotification, { passive: true });
-    notification.addEventListener("mousedown", demarrerSwipeNotification);
-    notification.addEventListener("mousemove", deplacerSwipeNotification);
-    notification.addEventListener("mouseup", terminerSwipeNotification);
-    notification.addEventListener("mouseleave", terminerSwipeNotification);
+    notification.addEventListener("touchstart", this.demarrerSwipeNotification.bind(this), { passive: true });
+    notification.addEventListener("touchmove", this.deplacerSwipeNotification.bind(this), { passive: true });
+    notification.addEventListener("touchend", this.terminerSwipeNotification.bind(this), { passive: true });
+    notification.addEventListener("mousedown", this.demarrerSwipeNotification.bind(this));
+    notification.addEventListener("mousemove", this.deplacerSwipeNotification.bind(this));
+    notification.addEventListener("mouseup", this.terminerSwipeNotification.bind(this));
+    notification.addEventListener("mouseleave", this.terminerSwipeNotification.bind(this));
     
-    // Annule le timeout précédent s'il existe
-    if (notificationTimeout) {
-      clearTimeout(notificationTimeout);
-      notificationTimeout = null;
+    // Ajoute un écouteur d'événement pour le bouton de fermeture
+    if (closeButton) {
+      closeButton.removeEventListener("click", this.fermerNotificationPartage);
+      closeButton.addEventListener("click", (e) => {
+        e.stopPropagation(); // Empêche la propagation au conteneur de notification
+        this.fermerNotificationPartage();
+      });
     }
     
-    // Affiche la notification avec animation
-    notification.classList.remove("show", "animate-out");
-    notification.classList.add("animate-in");
+    // Annule le timeout précédent s'il existe
+    if (MonHistoire.features.sharing.notificationTimeout) {
+      clearTimeout(MonHistoire.features.sharing.notificationTimeout);
+      MonHistoire.features.sharing.notificationTimeout = null;
+    }
     
-    // Supprime la classe d'animation après qu'elle soit terminée
-    setTimeout(() => {
-      notification.classList.remove("animate-in");
-      notification.classList.add("show");
-    }, 500);
+    // S'assurer que la notification est visible
+    notification.style.display = "flex";
+    
+    // Réinitialiser les classes d'animation si nécessaire
+    notification.classList.remove("ui-notification--closing");
     
     // Ferme automatiquement la notification après 5 secondes
-    notificationTimeout = setTimeout(() => {
-      fermerNotificationPartage();
+    MonHistoire.features.sharing.notificationTimeout = setTimeout(() => {
+      this.fermerNotificationPartage();
     }, 5000);
-  }
+  },
   
   /**
    * Ferme la notification de partage
    * @param {boolean} marquerCommeVue - Si true, marque l'histoire comme vue
    */
-  function fermerNotificationPartage(marquerCommeVue = true) {
+  fermerNotificationPartage(marquerCommeVue = true) {
     const notification = document.getElementById("notification-partage");
     if (!notification) return;
     
     // Annule le timeout si existant
-    if (notificationTimeout) {
-      clearTimeout(notificationTimeout);
-      notificationTimeout = null;
+    if (MonHistoire.features.sharing.notificationTimeout) {
+      clearTimeout(MonHistoire.features.sharing.notificationTimeout);
+      MonHistoire.features.sharing.notificationTimeout = null;
     }
     
     // Marque l'histoire comme vue si demandé et si une histoire est en cours de notification
-    if (marquerCommeVue && histoireNotifieeActuelle) {
+    if (marquerCommeVue && MonHistoire.features.sharing.histoireNotifieeActuelle) {
       // Récupère l'ID du profil actif
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
       // Décrémente le compteur de notifications non lues
-      if (notificationsNonLues[profilId] && notificationsNonLues[profilId] > 0) {
-        notificationsNonLues[profilId]--;
+      if (MonHistoire.features.sharing.notificationsNonLues[profilId] && MonHistoire.features.sharing.notificationsNonLues[profilId] > 0) {
+        MonHistoire.features.sharing.notificationsNonLues[profilId]--;
       }
       
       try {
         // Vérifier que histoireNotifieeActuelle est valide avant d'appeler get()
-        if (histoireNotifieeActuelle && 
-            typeof histoireNotifieeActuelle.get === 'function') {
+        if (MonHistoire.features.sharing.histoireNotifieeActuelle && 
+            typeof MonHistoire.features.sharing.histoireNotifieeActuelle.get === 'function') {
           
           // Met à jour le document Firestore
-          histoireNotifieeActuelle.get().then(doc => {
+          MonHistoire.features.sharing.histoireNotifieeActuelle.get().then(doc => {
             if (doc.exists) {
               const data = doc.data();
               
@@ -325,11 +391,11 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
               const nouvelleHistoire = vueParProfils.length < 2; // Simplifié pour l'instant
               
               // Vérifier que histoireNotifieeActuelle est toujours valide avant d'appeler update()
-              if (histoireNotifieeActuelle && 
-                  typeof histoireNotifieeActuelle.update === 'function') {
+              if (MonHistoire.features.sharing.histoireNotifieeActuelle && 
+                  typeof MonHistoire.features.sharing.histoireNotifieeActuelle.update === 'function') {
                 
                 // Met à jour le document
-                histoireNotifieeActuelle.update({ 
+                MonHistoire.features.sharing.histoireNotifieeActuelle.update({ 
                   nouvelleHistoire: nouvelleHistoire,
                   vueParProfils: vueParProfils,
                   vueLe: firebase.firestore.FieldValue.serverTimestamp()
@@ -359,67 +425,67 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       
       // Réinitialise la référence
-      histoireNotifieeActuelle = null;
+      MonHistoire.features.sharing.histoireNotifieeActuelle = null;
       
       // Sauvegarder le cache des notifications traitées
       try {
         localStorage.setItem('notificationsTraitees', 
-          JSON.stringify([...notificationsTraitees]));
+          JSON.stringify([...MonHistoire.features.sharing.notificationsTraitees]));
       } catch (e) {
         console.error("Erreur lors de la sauvegarde du cache des notifications", e);
       }
       
       // Met à jour l'indicateur de notification
-      mettreAJourIndicateurNotification();
+      this.mettreAJourIndicateurNotification();
     }
     
     // Ajoute l'animation de sortie
-    notification.classList.remove("show");
-    notification.classList.add("animate-out");
+    notification.classList.add("ui-notification--closing");
     
     // Supprime les classes et les écouteurs après l'animation
     setTimeout(() => {
-      notification.classList.remove("animate-out");
+      notification.classList.remove("ui-notification--closing");
+      notification.style.display = "none";
       
       // Supprime les écouteurs d'événements
-      notification.removeEventListener("touchstart", demarrerSwipeNotification);
-      notification.removeEventListener("touchmove", deplacerSwipeNotification);
-      notification.removeEventListener("touchend", terminerSwipeNotification);
-      notification.removeEventListener("mousedown", demarrerSwipeNotification);
-      notification.removeEventListener("mousemove", deplacerSwipeNotification);
-      notification.removeEventListener("mouseup", terminerSwipeNotification);
-      notification.removeEventListener("mouseleave", terminerSwipeNotification);
-    }, 500);
-  }
+      notification.removeEventListener("touchstart", this.demarrerSwipeNotification);
+      notification.removeEventListener("touchmove", this.deplacerSwipeNotification);
+      notification.removeEventListener("touchend", this.terminerSwipeNotification);
+      notification.removeEventListener("mousedown", this.demarrerSwipeNotification);
+      notification.removeEventListener("mousemove", this.deplacerSwipeNotification);
+      notification.removeEventListener("mouseup", this.terminerSwipeNotification);
+      notification.removeEventListener("mouseleave", this.terminerSwipeNotification);
+    }, 300);
+  },
   
   /**
    * Gestion du swipe - Début
    * @param {Event} e - Événement de début de swipe
    */
-  function demarrerSwipeNotification(e) {
+  demarrerSwipeNotification(e) {
     // Annule le timeout automatique
-    if (notificationTimeout) {
-      clearTimeout(notificationTimeout);
-      notificationTimeout = null;
+    if (MonHistoire.features.sharing.notificationTimeout) {
+      clearTimeout(MonHistoire.features.sharing.notificationTimeout);
+      MonHistoire.features.sharing.notificationTimeout = null;
     }
     
     // Enregistre la position de départ
     if (e.type === "touchstart") {
-      notificationSwipeStartX = e.touches[0].clientX;
-      notificationSwipeStartY = e.touches[0].clientY;
+      MonHistoire.features.sharing.notificationSwipeStartX = e.touches[0].clientX;
+      MonHistoire.features.sharing.notificationSwipeStartY = e.touches[0].clientY;
     } else {
-      notificationSwipeStartX = e.clientX;
-      notificationSwipeStartY = e.clientY;
+      MonHistoire.features.sharing.notificationSwipeStartX = e.clientX;
+      MonHistoire.features.sharing.notificationSwipeStartY = e.clientY;
     }
-  }
+  },
   
   /**
    * Gestion du swipe - Déplacement
    * @param {Event} e - Événement de déplacement
    */
-  function deplacerSwipeNotification(e) {
+  deplacerSwipeNotification(e) {
     // Ne fait rien si on n'a pas commencé un swipe
-    if (notificationSwipeStartX === 0 && notificationSwipeStartY === 0) return;
+    if (MonHistoire.features.sharing.notificationSwipeStartX === 0 && MonHistoire.features.sharing.notificationSwipeStartY === 0) return;
     
     let currentX, currentY;
     
@@ -432,50 +498,50 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
     }
     
     // Calcule la distance parcourue
-    const distanceX = Math.abs(currentX - notificationSwipeStartX);
-    const distanceY = Math.abs(currentY - notificationSwipeStartY);
+    const distanceX = Math.abs(currentX - MonHistoire.features.sharing.notificationSwipeStartX);
+    const distanceY = Math.abs(currentY - MonHistoire.features.sharing.notificationSwipeStartY);
     
     // Si la distance est suffisante, ferme la notification
     if (distanceX > 50 || distanceY > 50) {
-      fermerNotificationPartage();
+      this.fermerNotificationPartage();
       
       // Réinitialise les positions
-      notificationSwipeStartX = 0;
-      notificationSwipeStartY = 0;
+      MonHistoire.features.sharing.notificationSwipeStartX = 0;
+      MonHistoire.features.sharing.notificationSwipeStartY = 0;
     }
-  }
+  },
   
   /**
    * Gestion du swipe - Fin
    */
-  function terminerSwipeNotification() {
+  terminerSwipeNotification() {
     // Réinitialise les positions
-    notificationSwipeStartX = 0;
-    notificationSwipeStartY = 0;
-  }
+    MonHistoire.features.sharing.notificationSwipeStartX = 0;
+    MonHistoire.features.sharing.notificationSwipeStartY = 0;
+  },
   
   /**
    * Gestion du clic sur la notification
    * @param {Event} e - Événement de clic
    */
-  function clicNotificationPartage(e) {
+  clicNotificationPartage(e) {
     // Empêche la propagation du clic
     e.preventDefault();
     e.stopPropagation();
     
     // Ferme la notification
-    fermerNotificationPartage();
+    this.fermerNotificationPartage();
     
     // Redirige vers "Mes histoires"
-    if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
-      MonHistoire.modules.core.navigation.showScreen("mes-histoires");
+    if (MonHistoire.core && MonHistoire.core.navigation) {
+      MonHistoire.core.navigation.showScreen("mes-histoires");
     }
-  }
+  },
   
   /**
    * Met à jour l'indicateur de notification dans l'interface utilisateur
    */
-  function mettreAJourIndicateurNotification() {
+  mettreAJourIndicateurNotification() {
     try {
       // S'assurer que l'état est correctement initialisé
       if (!MonHistoire.state || !MonHistoire.state.profilActif) {
@@ -487,36 +553,37 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       const profilId = MonHistoire.state.profilActif.type === "parent" ? "parent" : MonHistoire.state.profilActif.id;
       
       // S'assurer que les notifications non lues sont initialisées
-      if (!notificationsNonLues) {
-        notificationsNonLues = {};
+      if (!MonHistoire.features.sharing.notificationsNonLues) {
+        MonHistoire.features.sharing.notificationsNonLues = {};
       }
       
       // Récupère le nombre de notifications non lues pour ce profil
-      const nbNotifs = notificationsNonLues[profilId] || 0;
+      const nbNotifs = MonHistoire.features.sharing.notificationsNonLues[profilId] || 0;
       
-      // Récupère l'élément d'icône utilisateur (où on affichera l'indicateur)
-      const userIcon = document.getElementById("user-icon");
-      
-      // Si l'élément existe et qu'il y a des notifications non lues
-      if (userIcon && nbNotifs > 0) {
-        // Vérifie si l'indicateur existe déjà
-        let indicateur = userIcon.querySelector(".notification-indicator");
-        
+      // Récupère le bouton "Mes Histoires" (où on affichera l'indicateur)
+      const storiesButton = document.getElementById("my-stories-button");
+
+      // Si le bouton existe et qu'il y a des notifications non lues
+      if (storiesButton && nbNotifs > 0) {
+        // Vérifie si l'indicateur existe déjà (chercher les deux classes possibles)
+        let indicateur = storiesButton.querySelector(".notification-indicator") || storiesButton.querySelector(".ui-notification-badge");
+
         // Si l'indicateur n'existe pas, on le crée
         if (!indicateur) {
           indicateur = document.createElement("span");
-          indicateur.className = "notification-indicator";
-          userIcon.appendChild(indicateur);
+          // Utiliser les deux classes pour assurer la compatibilité
+          indicateur.className = "notification-indicator ui-notification-badge";
+          storiesButton.appendChild(indicateur);
         }
-        
+
         // Met à jour le contenu de l'indicateur
         indicateur.textContent = nbNotifs > 9 ? "9+" : nbNotifs.toString();
         indicateur.style.display = "flex";
-      } 
-      // Si l'élément existe mais qu'il n'y a pas de notifications non lues
-      else if (userIcon) {
-        // Récupère l'indicateur s'il existe
-        const indicateur = userIcon.querySelector(".notification-indicator");
+      }
+      // Si le bouton existe mais qu'il n'y a pas de notifications non lues
+      else if (storiesButton) {
+        // Récupère l'indicateur s'il existe (chercher les deux classes possibles)
+        const indicateur = storiesButton.querySelector(".notification-indicator") || storiesButton.querySelector(".ui-notification-badge");
         
         // Si l'indicateur existe, on le masque
         if (indicateur) {
@@ -525,7 +592,7 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       
       // Mettre à jour également l'indicateur dans la liste des profils du modal de déconnexion
-      mettreAJourIndicateurNotificationProfilsListe();
+      this.mettreAJourIndicateurNotificationProfilsListe();
       
       // Émettre un événement pour informer les autres modules
       if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
@@ -541,20 +608,20 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         console.error("Erreur lors de la mise à jour de l'indicateur de notification:", error);
       }
     }
-  }
+  },
   
   /**
    * Recalcule le nombre de notifications non lues pour un profil spécifique
    * @param {string} profilId - ID du profil pour lequel recalculer les notifications
    * @returns {Promise} - Promise résolue quand le recalcul est terminé
    */
-  async function recalculerNotificationsNonLues(profilId) {
+  async recalculerNotificationsNonLues(profilId) {
     try {
       const user = firebase.auth().currentUser;
       if (!user) return 0;
       
       // Réinitialiser le compteur
-      notificationsNonLues[profilId] = 0;
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = 0;
       
       // Déterminer la collection à vérifier
       let storiesRef;
@@ -576,20 +643,20 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       
       // Compter le nombre de notifications non lues
       const snapshot = await storiesRef.get();
-      notificationsNonLues[profilId] = snapshot.size;
+      MonHistoire.features.sharing.notificationsNonLues[profilId] = snapshot.size;
       
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingInfo("Notifications recalculées pour le profil", {
           profilId: profilId,
-          count: notificationsNonLues[profilId]
+          count: MonHistoire.features.sharing.notificationsNonLues[profilId]
         });
       }
       
       // Mettre à jour l'indicateur
-      mettreAJourIndicateurNotification();
-      mettreAJourIndicateurNotificationProfilsListe();
+      this.mettreAJourIndicateurNotification();
+      this.mettreAJourIndicateurNotificationProfilsListe();
       
-      return notificationsNonLues[profilId];
+      return MonHistoire.features.sharing.notificationsNonLues[profilId];
     } catch (error) {
       if (MonHistoire.logger) {
         MonHistoire.logger.sharingError("Erreur lors du recalcul des notifications non lues", error);
@@ -598,16 +665,16 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
       return 0;
     }
-  }
+  },
   
   /**
    * Met à jour les indicateurs de notification dans la liste des profils du modal de déconnexion
    */
-  function mettreAJourIndicateurNotificationProfilsListe() {
+  mettreAJourIndicateurNotificationProfilsListe() {
     try {
       // S'assurer que les notifications non lues sont initialisées
-      if (!notificationsNonLues) {
-        notificationsNonLues = {};
+      if (!MonHistoire.features.sharing.notificationsNonLues) {
+        MonHistoire.features.sharing.notificationsNonLues = {};
       }
       
       // Récupère la liste des profils dans le modal de déconnexion
@@ -623,22 +690,23 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
         const profilId = item.dataset.profilId;
         
         // Si l'ID existe et qu'il y a des notifications non lues pour ce profil
-        if (profilId && notificationsNonLues[profilId] && notificationsNonLues[profilId] > 0) {
-          // Récupère ou crée l'indicateur de notification
-          let indicateur = item.querySelector(".notification-indicator");
+        if (profilId && MonHistoire.features.sharing.notificationsNonLues[profilId] && MonHistoire.features.sharing.notificationsNonLues[profilId] > 0) {
+          // Récupère ou crée l'indicateur de notification (chercher les deux classes possibles)
+          let indicateur = item.querySelector(".notification-indicator") || item.querySelector(".ui-notification-badge");
           
           if (!indicateur) {
             indicateur = document.createElement("span");
-            indicateur.className = "notification-indicator";
+            // Utiliser les deux classes pour assurer la compatibilité
+            indicateur.className = "notification-indicator ui-notification-badge";
             item.appendChild(indicateur);
           }
           
           // Met à jour le contenu de l'indicateur
-          indicateur.textContent = notificationsNonLues[profilId] > 9 ? "9+" : notificationsNonLues[profilId].toString();
+          indicateur.textContent = MonHistoire.features.sharing.notificationsNonLues[profilId] > 9 ? "9+" : MonHistoire.features.sharing.notificationsNonLues[profilId].toString();
           indicateur.style.display = "flex";
         } else {
-          // Si pas de notifications, masque l'indicateur s'il existe
-          const indicateur = item.querySelector(".notification-indicator");
+          // Si pas de notifications, masque l'indicateur s'il existe (chercher les deux classes possibles)
+          const indicateur = item.querySelector(".notification-indicator") || item.querySelector(".ui-notification-badge");
           if (indicateur) {
             indicateur.style.display = "none";
           }
@@ -652,15 +720,4 @@ MonHistoire.modules.sharing = MonHistoire.modules.sharing || {};
       }
     }
   }
-
-  // API publique
-  MonHistoire.modules.sharing.notifications = {
-    init: init,
-    initialiserCompteurNotifications: initialiserCompteurNotifications,
-    afficherNotificationPartage: afficherNotificationPartage,
-    fermerNotificationPartage: fermerNotificationPartage,
-    mettreAJourIndicateurNotification: mettreAJourIndicateurNotification,
-    mettreAJourIndicateurNotificationProfilsListe: mettreAJourIndicateurNotificationProfilsListe,
-    recalculerNotificationsNonLues: recalculerNotificationsNonLues
-  };
-})();
+};

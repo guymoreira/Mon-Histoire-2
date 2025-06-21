@@ -88,8 +88,8 @@ MonHistoire.core.auth = {
       MonHistoire.state.histoiresPartageesListener();
       MonHistoire.state.histoiresPartageesListener = null;
     }
-
-    return firebase.auth().signOut().then(() => {
+    
+    firebase.auth().signOut().then(() => {
       this.logActivite("deconnexion"); // LOG : Déconnexion
       this.afficherUtilisateurDéconnecté();
       this.fermerLogoutModal();
@@ -111,12 +111,6 @@ MonHistoire.core.auth = {
       }
       
       MonHistoire.core.navigation.showScreen("accueil");
-    }).catch(error => {
-      console.error("Erreur lors de la déconnexion:", error);
-      if (MonHistoire.showMessageModal) {
-        MonHistoire.showMessageModal("Erreur lors de la déconnexion. Veuillez réessayer.");
-      }
-      throw error;
     });
   },
   
@@ -176,11 +170,6 @@ MonHistoire.core.auth = {
     document.getElementById("user-icon").classList.remove("ui-hidden");
     document.getElementById("login-button").classList.add("ui-hidden");
     document.getElementById("my-stories-button").classList.remove("ui-hidden");
-    if (MonHistoire.state.profilActif.type === "enfant" && MonHistoire.state.profilActif.acces_messagerie === false) {
-      document.getElementById("my-messages-button").classList.add("ui-hidden");
-    } else {
-      document.getElementById("my-messages-button").classList.remove("ui-hidden");
-    }
 
     // → Si un profil enfant est actif, on court-circuite tout :
     if (MonHistoire.state.profilActif.type === "enfant") {
@@ -220,7 +209,6 @@ MonHistoire.core.auth = {
     document.getElementById("user-icon").classList.add("ui-hidden");
     document.getElementById("login-button").classList.remove("ui-hidden");
     document.getElementById("my-stories-button").classList.add("ui-hidden");
-    document.getElementById("my-messages-button").classList.add("ui-hidden");
   },
   
   // Ouvre la modale de déconnexion
@@ -481,8 +469,8 @@ MonHistoire.core.auth = {
         }
         
         // Afficher les profils enfants
-        if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.modals && MonHistoire.modules.ui.modals.afficherProfilsEnfants) {
-          MonHistoire.modules.ui.modals.afficherProfilsEnfants();
+        if (MonHistoire.ui && MonHistoire.ui.afficherProfilsEnfants) {
+          MonHistoire.ui.afficherProfilsEnfants();
         }
       });
   },
@@ -520,14 +508,14 @@ MonHistoire.core.auth = {
     
     // Si nous avons des modifications de profils enfants, les enregistrer d'abord
     // puis continuer avec les modifications du profil parent
-    if (hasChildProfileChanges && MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.modals && MonHistoire.modules.ui.modals.enregistrerModificationsProfils) {
+    if (hasChildProfileChanges && MonHistoire.ui && MonHistoire.ui.enregistrerModificationsProfils) {
       // Nous allons gérer les modifications du profil parent après avoir enregistré les profils enfants
       // Cette fonction sera appelée par enregistrerModificationsProfils une fois terminée
       this.continuerModificationCompte(prenom, email, modal);
-
+      
       // Enregistrer les modifications des profils enfants
       // Note: cette fonction va appeler continuerModificationCompte après avoir terminé
-      MonHistoire.modules.ui.modals.enregistrerModificationsProfils(true);
+      MonHistoire.ui.enregistrerModificationsProfils(true);
       return;
     }
     

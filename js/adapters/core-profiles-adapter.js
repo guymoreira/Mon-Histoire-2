@@ -45,58 +45,6 @@
       console.log("[Adapter] Redirection de deleteProfile vers modules.user.profiles.deleteProfile");
       return MonHistoire.modules.user.profiles.deleteProfile(profileId);
     },
-
-    // Vérifie l'existence du profil actif
-    verifierExistenceProfil: async function() {
-      console.log("[Adapter] Execution de verifierExistenceProfil");
-
-      const user = firebase.auth().currentUser;
-      if (!user) return;
-
-      // Si le profil actif est un profil enfant
-      if (MonHistoire.state && MonHistoire.state.profilActif && MonHistoire.state.profilActif.type === "enfant") {
-        const profilId = MonHistoire.state.profilActif.id;
-        try {
-          const profilDoc = await firebase.firestore()
-            .collection("users")
-            .doc(user.uid)
-            .collection("profils_enfant")
-            .doc(profilId)
-            .get();
-
-          if (!profilDoc.exists) {
-            console.log("[Adapter] Profil enfant supprimé détecté");
-            if (typeof MonHistoire.showMessageModal === 'function') {
-              MonHistoire.showMessageModal(
-                "Ce profil a été supprimé par le compte parent. Vous allez être redirigé vers le profil parent.",
-                {
-                  callback: () => {
-                    if (MonHistoire.core && MonHistoire.core.profiles && typeof MonHistoire.core.profiles.forcerRetourProfilParent === 'function') {
-                      MonHistoire.core.profiles.forcerRetourProfilParent();
-                    } else if (MonHistoire.modules && MonHistoire.modules.user && MonHistoire.modules.user.profiles && typeof MonHistoire.modules.user.profiles.passerAuProfilParent === 'function') {
-                      MonHistoire.modules.user.profiles.passerAuProfilParent();
-                    }
-                  }
-                }
-              );
-            }
-          } else if (MonHistoire.core && MonHistoire.core.profiles && typeof MonHistoire.core.profiles.updateLastActiveTimestamp === 'function') {
-            // Mettre à jour le timestamp de dernière activité si disponible
-            MonHistoire.core.profiles.updateLastActiveTimestamp(MonHistoire.state.profilActif);
-          }
-        } catch (error) {
-          if (MonHistoire.logger && MonHistoire.logger.error) {
-            MonHistoire.logger.error("Erreur lors de la vérification du profil:", error);
-          } else {
-            console.error("Erreur lors de la vérification du profil:", error);
-          }
-        }
-      } else if (MonHistoire.state && MonHistoire.state.profilActif && MonHistoire.state.profilActif.type === "parent") {
-        if (MonHistoire.core && MonHistoire.core.profiles && typeof MonHistoire.core.profiles.updateLastActiveTimestamp === 'function') {
-          MonHistoire.core.profiles.updateLastActiveTimestamp(MonHistoire.state.profilActif);
-        }
-      }
-    },
     
     // Méthode d'initialisation (pour compatibilité)
     init: function() {

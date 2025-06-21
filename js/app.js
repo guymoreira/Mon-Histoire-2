@@ -239,7 +239,7 @@ MonHistoire.logger = {
 
 // Gestion de la reconnexion
 MonHistoire.handleReconnection = function() {
-  MonHistoire.logger.info(MonHistoire.logger.PREFIXES.CONNECTION, "Connexion rétablie");
+  MonHistoire.logger.info("Connexion rétablie");
   
   // Mettre à jour l'état de connexion
   MonHistoire.state.isConnected = true;
@@ -252,9 +252,7 @@ MonHistoire.handleReconnection = function() {
   // Réinitialiser les écouteurs de notifications avec un délai pour s'assurer que Firebase est prêt
   if (this.features && this.features.sharing) {
     setTimeout(() => {
-      if (typeof this.features.sharing.verifierHistoiresPartagees === 'function') {
-        this.features.sharing.verifierHistoiresPartagees();
-      }
+      this.features.sharing.verifierHistoiresPartagees();
     }, 1000);
   }
   
@@ -269,7 +267,7 @@ MonHistoire.handleReconnection = function() {
 
 // Gestion de la déconnexion
 MonHistoire.handleDisconnection = function() {
-  MonHistoire.logger.warning(MonHistoire.logger.PREFIXES.CONNECTION, "Connexion perdue");
+  MonHistoire.logger.warning("Connexion perdue");
   MonHistoire.state.isConnected = false;
   
   // Émettre un événement pour informer les autres modules
@@ -334,16 +332,8 @@ MonHistoire.processOfflineQueue = function() {
     // Exécuter l'opération selon son type
     switch(item.operation) {
       case 'partageHistoire':
-        if (MonHistoire.features && MonHistoire.features.sharing &&
-            typeof MonHistoire.features.sharing.processOfflinePartage === 'function') {
+        if (MonHistoire.features && MonHistoire.features.sharing) {
           MonHistoire.features.sharing.processOfflinePartage(item.data);
-        }
-        break;
-      case 'sendMessage':
-        if (MonHistoire.features && MonHistoire.features.messaging &&
-            MonHistoire.features.messaging.storage &&
-            typeof MonHistoire.features.messaging.storage.processOfflineMessage === 'function') {
-          MonHistoire.features.messaging.storage.processOfflineMessage(item.data);
         }
         break;
       // Autres types d'opérations...
@@ -375,16 +365,7 @@ MonHistoire.init = function() {
   
   // Initialiser Firebase
   console.log("[DEBUG] Initialisation de Firebase");
-  if (
-    MonHistoire.config &&
-    typeof MonHistoire.config.initFirebase === "function"
-  ) {
-    MonHistoire.config.initFirebase();
-  } else {
-    console.warn(
-      "initFirebase() non disponible - Firebase déjà initialisé ?"
-    );
-  }
+  this.config.initFirebase();
   
   // Configurer les écouteurs d'état de connexion
   window.addEventListener('online', () => {
@@ -493,13 +474,7 @@ MonHistoire.init = function() {
   }
   if (this.features && this.features.sharing) {
     console.log("[DEBUG] Initialisation du module sharing");
-    if (typeof this.features.sharing.init === 'function') {
-      this.features.sharing.init();
-    }
-  }
-  if (this.features && this.features.messaging) {
-    console.log("[DEBUG] Initialisation du module messaging");
-    this.features.messaging.init();
+    this.features.sharing.init();
   }
   if (this.features && this.features.export) {
     console.log("[DEBUG] Initialisation du module export");
@@ -522,9 +497,6 @@ MonHistoire.init = function() {
   console.log("[DEBUG] Configuration de l'écouteur d'authentification Firebase");
   firebase.auth().onAuthStateChanged(function(user) {
     console.log("[DEBUG] Changement d'état d'authentification:", user ? "Connecté" : "Non connecté");
-    if (MonHistoire.events && typeof MonHistoire.events.emit === 'function') {
-      MonHistoire.events.emit('authStateChange', user);
-    }
     if (user) {
       // Vérifier si une vérification d'email est en cours
       const emailVerificationPending = localStorage.getItem("emailVerificationPending");
@@ -543,13 +515,8 @@ MonHistoire.init = function() {
         );
       }
       
-      const authCore = MonHistoire.core && MonHistoire.core.auth;
-      const authModule = MonHistoire.modules?.user?.auth;
-
-      if (authCore?.afficherUtilisateurConnecté) {
-        authCore.afficherUtilisateurConnecté();
-      } else if (authModule?.afficherUtilisateurConnecté) {
-        authModule.afficherUtilisateurConnecté();
+      if (MonHistoire.core && MonHistoire.core.auth) {
+        MonHistoire.core.auth.afficherUtilisateurConnecté();
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après connexion");
@@ -557,31 +524,20 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
-        MonHistoire.modules.ui.events.bindLongPress();
+      if (MonHistoire.ui) {
+        MonHistoire.ui.bindLongPress();
       }
       // Vérifie s'il y a des histoires partagées
       if (MonHistoire.features && MonHistoire.features.sharing) {
         console.log("[DEBUG] Vérification des histoires partagées après connexion");
         // Utilise setTimeout pour s'assurer que la vérification se fait après l'initialisation complète
         setTimeout(() => {
-          if (typeof MonHistoire.features.sharing.verifierHistoiresPartagees === 'function') {
-            MonHistoire.features.sharing.verifierHistoiresPartagees();
-          }
+          MonHistoire.features.sharing.verifierHistoiresPartagees();
         }, 500);
       }
     } else {
-      const authCore = MonHistoire.core && MonHistoire.core.auth;
-      const authModule = MonHistoire.modules?.user?.auth;
-
-      if (authCore?.afficherUtilisateurDéconnecté) {
-        authCore.afficherUtilisateurDéconnecté();
-      } else if (authModule?.afficherUtilisateurDéconnecté) {
-        authModule.afficherUtilisateurDéconnecté();
-      }
-
-      if (MonHistoire.core && MonHistoire.core.navigation) {
-        MonHistoire.core.navigation.showScreen('accueil');
+      if (MonHistoire.core && MonHistoire.core.auth) {
+        MonHistoire.core.auth.afficherUtilisateurDéconnecté();
       }
       if (MonHistoire.features && MonHistoire.features.stories) {
         console.log("[DEBUG] Appel à afficherHistoiresSauvegardees() après déconnexion");
@@ -589,8 +545,8 @@ MonHistoire.init = function() {
       } else {
         console.log("[DEBUG] ERREUR: Module stories non disponible pour afficher les histoires");
       }
-      if (MonHistoire.modules && MonHistoire.modules.ui && MonHistoire.modules.ui.events) {
-        MonHistoire.modules.ui.events.bindLongPress();
+      if (MonHistoire.ui) {
+        MonHistoire.ui.bindLongPress();
       }
     }
   });
@@ -658,39 +614,14 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('modal-rgpd').classList.add('show');
     };
   }
-
-  const conditionsLink = document.getElementById('link-conditions');
-  if (conditionsLink) {
-    conditionsLink.onclick = function(e) {
-      e.preventDefault();
-      document.getElementById('modal-conditions').classList.add('show');
-    };
-  }
-
-  const legalLink = document.getElementById('link-legal');
-  if (legalLink) {
-    legalLink.onclick = function(e) {
-      e.preventDefault();
-      document.getElementById('modal-legal').classList.add('show');
-    };
-  }
   
   // Nous ne définissons pas d'écouteur d'événement ici pour éviter les conflits
   // L'écouteur est défini dans js/ui.js ou js/modules/ui/common.js
   
   // Vérifier l'état de connexion initial
   MonHistoire.state.isConnected = navigator.onLine;
-
+  
   // Initialiser l'application
-  if (
-    MonHistoire.modules &&
-    MonHistoire.modules.core &&
-    MonHistoire.modules.core.config &&
-    typeof MonHistoire.modules.core.config.init === 'function'
-  ) {
-    MonHistoire.modules.core.config.init();
-  }
-
   MonHistoire.init();
   
   // Gérer la visibilité du footer en fonction du profil actif

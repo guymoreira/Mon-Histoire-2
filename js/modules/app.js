@@ -11,6 +11,7 @@ MonHistoire.modules = MonHistoire.modules || {};
   // Variables privées
   let isInitialized = false;
   let currentScreen = null;
+  let currentProfile = null;
   
   /**
    * Initialise le module principal
@@ -323,7 +324,7 @@ MonHistoire.modules = MonHistoire.modules || {};
     }
     
     if (createStoryButton) {
-      createStoryButton.classList.toggle('hidden', !isLoggedIn || !MonHistoire.state.profilActif);
+      createStoryButton.classList.toggle('hidden', !isLoggedIn || !currentProfile);
     }
     
     if (settingsButton) {
@@ -376,7 +377,7 @@ MonHistoire.modules = MonHistoire.modules || {};
           option.value = profile.id;
           option.textContent = profile.name;
           
-          if (MonHistoire.state.profilActif && profile.id === MonHistoire.state.profilActif.id) {
+          if (currentProfile && profile.id === currentProfile.id) {
             option.selected = true;
           }
           
@@ -407,7 +408,7 @@ MonHistoire.modules = MonHistoire.modules || {};
         MonHistoire.modules.user.profiles.getCurrentProfile()
           .then(profile => {
             if (profile) {
-              MonHistoire.state.profilActif = profile;
+              currentProfile = profile;
               
               // Émettre un événement pour informer que le profil est sélectionné
               if (MonHistoire.events) {
@@ -429,7 +430,7 @@ MonHistoire.modules = MonHistoire.modules || {};
       console.log("Utilisateur déconnecté");
       
       // Réinitialiser le profil courant
-      MonHistoire.state.profilActif = null;
+      currentProfile = null;
       
       // Naviguer vers l'écran de connexion
       if (MonHistoire.modules.core && MonHistoire.modules.core.navigation) {
@@ -444,7 +445,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    * @param {Object} profile - Profil sélectionné
    */
   function handleProfileSelected(profile) {
-    MonHistoire.state.profilActif = profile;
+    currentProfile = profile;
     
     // Mettre à jour l'interface utilisateur
     updateHeaderState();
@@ -469,8 +470,8 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleProfileUpdated(profile) {
     // Mettre à jour le profil courant si nécessaire
-    if (MonHistoire.state.profilActif && profile.id === MonHistoire.state.profilActif.id) {
-      MonHistoire.state.profilActif = profile;
+    if (currentProfile && profile.id === currentProfile.id) {
+      currentProfile = profile;
     }
     
     // Mettre à jour le sélecteur de profil
@@ -485,8 +486,8 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleProfileDeleted(profileId) {
     // Réinitialiser le profil courant si nécessaire
-    if (MonHistoire.state.profilActif && profileId === MonHistoire.state.profilActif.id) {
-      MonHistoire.state.profilActif = null;
+    if (currentProfile && profileId === currentProfile.id) {
+      currentProfile = null;
     }
     
     // Mettre à jour le sélecteur de profil
@@ -513,7 +514,7 @@ MonHistoire.modules = MonHistoire.modules || {};
       if (MonHistoire.modules.user && MonHistoire.modules.user.profiles) {
         MonHistoire.modules.user.profiles.selectProfile(profileId)
           .then(profile => {
-            MonHistoire.state.profilActif = profile;
+            currentProfile = profile;
             
             // Émettre un événement pour informer que le profil est sélectionné
             if (MonHistoire.events) {
@@ -619,37 +620,29 @@ MonHistoire.modules = MonHistoire.modules || {};
       MonHistoire.showConfirmModal("Êtes-vous sûr de vouloir vous déconnecter ?")
         .then(confirmed => {
           if (confirmed && MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-            const result = MonHistoire.modules.user.auth.logoutUser();
-
-            if (result && typeof result.then === 'function') {
-              result
-                .then(() => {
-                  console.log("Déconnexion réussie");
-                })
-                .catch(error => {
-                  console.error("Erreur lors de la déconnexion:", error);
-
-                  if (MonHistoire.showError) {
-                    MonHistoire.showError("Une erreur est survenue lors de la déconnexion.");
-                  }
-                });
-            }
+            MonHistoire.modules.user.auth.logout()
+              .then(() => {
+                console.log("Déconnexion réussie");
+              })
+              .catch(error => {
+                console.error("Erreur lors de la déconnexion:", error);
+                
+                if (MonHistoire.showError) {
+                  MonHistoire.showError("Une erreur est survenue lors de la déconnexion.");
+                }
+              });
           }
         });
     } else if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
       if (MonHistoire.modules.user && MonHistoire.modules.user.auth) {
-        const result = MonHistoire.modules.user.auth.logoutUser();
-
-        if (result && typeof result.then === 'function') {
-          result
-            .then(() => {
-              console.log("Déconnexion réussie");
-            })
-            .catch(error => {
-              console.error("Erreur lors de la déconnexion:", error);
-              alert("Une erreur est survenue lors de la déconnexion.");
-            });
-        }
+        MonHistoire.modules.user.auth.logout()
+          .then(() => {
+            console.log("Déconnexion réussie");
+          })
+          .catch(error => {
+            console.error("Erreur lors de la déconnexion:", error);
+            alert("Une erreur est survenue lors de la déconnexion.");
+          });
       }
     }
   }
@@ -659,7 +652,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    */
   function handleCreateStory() {
     // Vérifier si un profil est sélectionné
-    if (!MonHistoire.state.profilActif) {
+    if (!currentProfile) {
       if (MonHistoire.showWarning) {
         MonHistoire.showWarning("Veuillez sélectionner un profil pour créer une histoire.");
       }
@@ -708,7 +701,7 @@ MonHistoire.modules = MonHistoire.modules || {};
    * @returns {Object} Profil sélectionné ou null
    */
   function getCurrentProfile() {
-    return MonHistoire.state.profilActif;
+    return currentProfile;
   }
   
   /**
