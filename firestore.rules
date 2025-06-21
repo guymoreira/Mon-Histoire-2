@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Les utilisateurs authentifiés peuvent lire et écrire leurs propres données
+    // dans /users/{userId} ainsi que dans toutes les sous-collections
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
