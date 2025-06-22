@@ -277,3 +277,37 @@ Pour déployer ces règles vers votre projet Firebase, utilisez la commande suiv
 ```bash
 firebase deploy --only firestore:rules
 ```
+
+## Système de Journalisation
+
+Le fichier `js/app.js` introduit un **logger** centralisé accessible via `MonHistoire.logger`. Ce système standardise l'affichage dans la console et l'enregistrement des erreurs importantes dans Firestore.
+
+### Niveaux de log
+
+Le logger gère plusieurs niveaux de gravité :
+
+- `DEBUG`
+- `INFO`
+- `WARNING`
+- `ERROR`
+- `FIREBASE` : réservé aux messages provenant des services Firebase.
+
+### Préfixes
+
+Chaque message peut recevoir un préfixe pour identifier sa provenance (Firestore, Auth, profil, partage, etc.). Les principaux sont : `FIREBASE_REALTIME`, `FIREBASE_FIRESTORE`, `FIREBASE_AUTH`, `STORY`, `SHARING` …
+
+### Format et affichage
+
+La méthode principale `log()` ajoute un horodatage ISO et affiche `[niveau] [préfixe] message` suivi des données formatées dans la console. Les données sont passées à `_formatData()` qui tronque par exemple le contenu d’une histoire trop long ou extrait uniquement le code et le message d’une erreur Firebase.
+
+### Sauvegarde dans Firestore
+
+Seuls les messages de niveau `ERROR` ou `WARNING` sont persistantés. Lorsque l’utilisateur est authentifié, `_saveToFirestore()` crée un document sous `users/{uid}/error_logs/` contenant :
+
+- `level`, `prefix` et `message`
+- `data` : version formatée des données supplémentaires
+- `timestamp` : horodatage serveur Firestore
+- `deviceInfo` : informations sur le navigateur, l’identifiant d’appareil et l’état de connexion (en ligne, connexion à Realtime DB…)
+
+Cette approche permet de conserver un historique succinct des incidents tout en évitant de stocker des données volumineuses ou sensibles.
+
