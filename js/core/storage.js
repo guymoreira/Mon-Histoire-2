@@ -555,8 +555,55 @@ MonHistoire.core.storage = {
           });
         }
         
-        return docRef.id;
+      return docRef.id;
       });
+  },
+
+  // Met à jour le titre d'une histoire
+  updateStoryTitle(id, titre) {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      return Promise.reject(new Error("Utilisateur non connecté"));
+    }
+
+    // Vérifier le profil actif - Récupérer depuis localStorage si non disponible dans MonHistoire.state
+    let profilActif;
+    if (MonHistoire.state && MonHistoire.state.profilActif) {
+      profilActif = MonHistoire.state.profilActif;
+    } else {
+      // Récupérer directement depuis localStorage comme fallback
+      profilActif = localStorage.getItem("profilActif")
+        ? JSON.parse(localStorage.getItem("profilActif"))
+        : { type: "parent" };
+
+      // Mettre à jour MonHistoire.state si possible
+      if (MonHistoire.state) {
+        MonHistoire.state.profilActif = profilActif;
+      }
+    }
+
+    // Déterminer la référence en fonction du profil actif
+    let storyRef;
+    if (profilActif.type === "parent") {
+      storyRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("stories")
+        .doc(id);
+    } else {
+      storyRef = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("profils_enfant")
+        .doc(profilActif.id)
+        .collection("stories")
+        .doc(id);
+    }
+
+    return storyRef.update({
+      titre: titre,
+      updatedAt: new Date().toISOString()
+    });
   },
   
   // Supprime une histoire
