@@ -71,6 +71,10 @@
   background-color: #fffef9 !important;
 }
 
+#modal-renommer .ui-modal-content {
+  background-color: #fff8e1 !important;
+}
+
 #message-modal .bloc-centre {
   width: 60%;
   max-width: 400px;
