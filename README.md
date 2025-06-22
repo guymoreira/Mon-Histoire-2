@@ -89,40 +89,12 @@ css/
 | js/app.js | Cr\xc3\xa9e l'objet global et le state |
 ## Organisation des Modules
 
-### Modules de Base (core)
+La structure modulaire actuelle s'appuie uniquement sur deux dossiers principaux :
 
-- **config.js** : Gestion de la configuration de l'application
-- **cookies.js** : Gestion du consentement aux cookies et des préférences utilisateur
-- **navigation.js** : Navigation entre les différentes sections de l'application
-- **storage.js** : Interaction avec Firebase Firestore et Storage
+- **`js/core`** : contient les modules fondamentaux (configuration, navigation, authentification, stockage…).
+- **`js/features`** : regroupe les fonctionnalités métier telles que la génération et le partage d'histoires, la lecture audio ou encore la gestion des cookies.
 
-### Modules Utilisateur (user)
-
-- **auth.js** : Authentification des utilisateurs (inscription, connexion, déconnexion)
-- **profiles.js** : Gestion des profils utilisateur
-- **account.js** : Gestion du compte utilisateur (paramètres, suppression)
-
-### Modules d'Interface Utilisateur (ui)
-
-- **common.js** : Composants d'interface utilisateur communs (modals, notifications)
-
-### Modules d'Histoires (stories)
-
-- **generator.js** : Génération d'histoires à partir de templates et de données utilisateur
-- **management.js** : Gestion des histoires (sauvegarde, suppression, liste)
-- **display.js** : Affichage des histoires
-- **export.js** : Exportation des histoires (PDF, image)
-
-### Modules de Fonctionnalités (features)
-
-- **audio.js** : Lecture audio des histoires (synthèse vocale)
-- **notation.js** : Gestion de la notation des histoires. Ce module affiche la note stockée dans Firebase, gère la sélection des étoiles et expose la méthode `reset()` pour masquer le bloc de notation lors de la génération d'une nouvelle histoire.
-
-### Modules de Partage (sharing)
-
-- **index.js** : Point d'entrée du module de partage
-- **notifications.js** : Gestion des notifications de partage
-- **storage.js** : Stockage des données de partage
+Les anciens sous-répertoires `js/modules/*` et `js/adapters/*` restent présents dans le dépôt mais ne sont plus pris en compte par l'application.
 
 ### Système de notation des histoires
 
