@@ -80,6 +80,29 @@ MonHistoire.features.stories.management = {
         document.getElementById("delete-modal").classList.remove("show");
       });
     }
+
+    // Bouton Renommer (barre d'actions)
+    const btnRenommer = document.getElementById("btn-renommer-histoire");
+    if (btnRenommer) {
+      btnRenommer.addEventListener("click", () => {
+        this.afficherModaleRenommer();
+      });
+    }
+
+    // Boutons de la modale de renommage
+    const btnAnnulerRenommer = document.getElementById("btn-annuler-renommer");
+    if (btnAnnulerRenommer) {
+      btnAnnulerRenommer.addEventListener("click", () => {
+        this.fermerModaleRenommer();
+      });
+    }
+
+    const btnConfirmerRenommer = document.getElementById("btn-confirmer-renommer");
+    if (btnConfirmerRenommer) {
+      btnConfirmerRenommer.addEventListener("click", () => {
+        this.confirmerRenommer();
+      });
+    }
   },
   
   // Sauvegarde l'histoire actuellement affichée
@@ -646,6 +669,8 @@ MonHistoire.features.stories.management = {
     if (histoiresSelectionnees.length === 0 && barreSuppr) {
       barreSuppr.style.display = "none";
     }
+
+    this.mettreAJourBoutonRenommer();
   },
   
   // Annule la sélection de toutes les histoires
@@ -667,6 +692,8 @@ MonHistoire.features.stories.management = {
     if (barreSuppr) {
       barreSuppr.style.display = "none";
     }
+
+    this.mettreAJourBoutonRenommer();
   },
   
   // Affiche la modale de confirmation pour supprimer les histoires sélectionnées
@@ -708,7 +735,7 @@ MonHistoire.features.stories.management = {
       if (barreSuppr) {
         barreSuppr.style.display = "none";
       }
-      
+
       // Forcer une mise à jour complète du quota
       this.initQuota();
       
@@ -717,11 +744,77 @@ MonHistoire.features.stories.management = {
       
       // Affiche un message de confirmation
       MonHistoire.showMessageModal("Histoires supprimées avec succès !");
+
+      this.mettreAJourBoutonRenommer();
     })
     .catch(error => {
       console.error("Erreur lors de la suppression des histoires:", error);
       MonHistoire.showMessageModal("Erreur lors de la suppression des histoires.");
     });
+  },
+
+  // Met à jour la visibilité du bouton Renommer selon la sélection
+  mettreAJourBoutonRenommer() {
+    const btn = document.getElementById("btn-renommer-histoire");
+    const barre = document.getElementById("barre-suppression");
+    if (!btn || !barre) return;
+    const nb = document.querySelectorAll(".histoire-card.selected, .button.selected").length;
+    if (nb === 1) {
+      btn.style.display = "inline-block";
+      barre.classList.add("with-rename");
+    } else {
+      btn.style.display = "none";
+      barre.classList.remove("with-rename");
+    }
+  },
+
+  // Affiche la modale de renommage pour l'histoire sélectionnée
+  afficherModaleRenommer() {
+    const selected = document.querySelector(".histoire-card.selected, .button.selected");
+    if (!selected) return;
+    const storyId = selected.dataset.id;
+    const modal = document.getElementById("modal-renommer");
+    const input = document.getElementById("input-nouveau-titre");
+    if (modal && input) {
+      const labelEl = selected.querySelector('div');
+      const titre = labelEl ? labelEl.textContent : selected.textContent;
+      input.value = titre.trim();
+      modal.dataset.storyId = storyId;
+      modal.classList.add("show");
+    }
+  },
+
+  fermerModaleRenommer() {
+    const modal = document.getElementById("modal-renommer");
+    if (modal) {
+      modal.classList.remove("show");
+      delete modal.dataset.storyId;
+    }
+  },
+
+  confirmerRenommer() {
+    const modal = document.getElementById("modal-renommer");
+    if (!modal) return;
+    const storyId = modal.dataset.storyId;
+    if (!storyId) return;
+    const newTitle = document.getElementById("input-nouveau-titre").value.trim();
+    if (!newTitle) {
+      MonHistoire.showMessageModal("Le titre ne peut pas être vide.");
+      return;
+    }
+    if (MonHistoire.core && MonHistoire.core.storage) {
+      MonHistoire.core.storage.updateStoryTitle(storyId, newTitle)
+        .then(() => {
+          this.afficherHistoiresSauvegardees();
+          this.annulerSelectionHistoires();
+          MonHistoire.showMessageModal("Titre modifié !");
+        })
+        .catch(error => {
+          console.error("Erreur lors du renommage:", error);
+          MonHistoire.showMessageModal("Erreur lors du renommage de l'histoire.");
+        });
+    }
+    modal.classList.remove("show");
   }
 };
 
