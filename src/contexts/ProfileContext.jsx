@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { firestore } from '../firebase/config';
 import { useAuth } from './AuthContext';
 
@@ -33,47 +33,28 @@ export function ProfileProvider({ children }) {
     try {
       setLoading(true);
       
-      // Get child profiles
-      const profilesRef = collection(firestore, "users", currentUser.uid, "profils_enfant");
-      const profilesSnapshot = await getDocs(profilesRef);
-      
-      const profiles = [];
-      profilesSnapshot.forEach(doc => {
-        profiles.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-      
-      setChildProfiles(profiles);
-      
-      // Check if there's a stored active profile
-      const storedProfile = localStorage.getItem('profilActif');
-      if (storedProfile) {
-        const parsedProfile = JSON.parse(storedProfile);
-        
-        if (parsedProfile.type === 'enfant') {
-          // Find the profile in the loaded profiles
-          const foundProfile = profiles.find(p => p.id === parsedProfile.id);
-          if (foundProfile) {
-            setCurrentProfile({
-              type: 'enfant',
-              ...foundProfile
-            });
-          } else {
-            // Profile not found, reset to parent
-            setCurrentProfile({ type: 'parent' });
-            localStorage.setItem('profilActif', JSON.stringify({ type: 'parent' }));
-          }
-        } else {
-          // Parent profile
-          setCurrentProfile({ type: 'parent' });
+      // For demo purposes, create mock profiles
+      const mockProfiles = [
+        {
+          id: 'child1',
+          prenom: 'Emma',
+          nb_histoires: 3,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'child2',
+          prenom: 'Lucas',
+          nb_histoires: 2,
+          createdAt: new Date().toISOString()
         }
-      } else {
-        // No stored profile, default to parent
-        setCurrentProfile({ type: 'parent' });
-        localStorage.setItem('profilActif', JSON.stringify({ type: 'parent' }));
-      }
+      ];
+      
+      setChildProfiles(mockProfiles);
+      
+      // Set parent profile as default
+      setCurrentProfile({ type: 'parent' });
+      localStorage.setItem('profilActif', JSON.stringify({ type: 'parent' }));
+      
     } catch (error) {
       console.error("Error loading profiles:", error);
     } finally {
@@ -86,29 +67,17 @@ export function ProfileProvider({ children }) {
     if (!currentUser) throw new Error("User not authenticated");
     
     try {
-      // Create a new document reference
-      const profilesRef = collection(firestore, "users", currentUser.uid, "profils_enfant");
-      const newProfileRef = doc(profilesRef);
-      
-      // Prepare profile data
+      // For demo purposes, create a mock profile
       const newProfile = {
+        id: `child${childProfiles.length + 1}`,
         prenom: profileData.prenom,
-        createdAt: new Date().toISOString(),
-        nb_histoires: 0
+        nb_histoires: 0,
+        createdAt: new Date().toISOString()
       };
       
-      // Save to Firestore
-      await setDoc(newProfileRef, newProfile);
+      setChildProfiles(prev => [...prev, newProfile]);
       
-      // Add to local state
-      const profileWithId = {
-        id: newProfileRef.id,
-        ...newProfile
-      };
-      
-      setChildProfiles(prev => [...prev, profileWithId]);
-      
-      return newProfileRef.id;
+      return newProfile.id;
     } catch (error) {
       console.error("Error creating child profile:", error);
       throw error;
@@ -120,14 +89,7 @@ export function ProfileProvider({ children }) {
     if (!currentUser) throw new Error("User not authenticated");
     
     try {
-      // Update in Firestore
-      const profileRef = doc(firestore, "users", currentUser.uid, "profils_enfant", profileId);
-      await updateDoc(profileRef, {
-        prenom: profileData.prenom,
-        updatedAt: new Date().toISOString()
-      });
-      
-      // Update local state
+      // Update in local state
       setChildProfiles(prev => 
         prev.map(profile => 
           profile.id === profileId 
@@ -161,10 +123,6 @@ export function ProfileProvider({ children }) {
     if (!currentUser) throw new Error("User not authenticated");
     
     try {
-      // Delete from Firestore
-      const profileRef = doc(firestore, "users", currentUser.uid, "profils_enfant", profileId);
-      await deleteDoc(profileRef);
-      
       // Remove from local state
       setChildProfiles(prev => prev.filter(profile => profile.id !== profileId));
       
@@ -206,21 +164,6 @@ export function ProfileProvider({ children }) {
     localStorage.setItem('profilActif', JSON.stringify(parentProfile));
   }
 
-  // Check if a profile exists
-  async function checkProfileExists(profileId) {
-    if (!currentUser) return false;
-    
-    try {
-      const profileRef = doc(firestore, "users", currentUser.uid, "profils_enfant", profileId);
-      const profileDoc = await getDoc(profileRef);
-      
-      return profileDoc.exists();
-    } catch (error) {
-      console.error("Error checking profile existence:", error);
-      return false;
-    }
-  }
-
   const value = {
     childProfiles,
     currentProfile,
@@ -230,8 +173,7 @@ export function ProfileProvider({ children }) {
     updateChildProfile,
     deleteChildProfile,
     switchToChildProfile,
-    switchToParentProfile,
-    checkProfileExists
+    switchToParentProfile
   };
 
   return (

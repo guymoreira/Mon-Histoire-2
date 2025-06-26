@@ -1,7 +1,7 @@
-import { forwardRef } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
-const Button = forwardRef(({
+function Button({
   children,
   variant = 'primary',
   size = 'medium',
@@ -11,7 +11,7 @@ const Button = forwardRef(({
   type = 'button',
   onClick,
   ...props
-}, ref) => {
+}) {
   const buttonClasses = classNames(
     'ui-button',
     {
@@ -26,7 +26,6 @@ const Button = forwardRef(({
 
   return (
     <button
-      ref={ref}
       className={buttonClasses}
       disabled={disabled}
       type={type}
@@ -36,8 +35,6 @@ const Button = forwardRef(({
       {children}
     </button>
   );
-});
-
-Button.displayName = 'Button';
+}
 
 export default Button;

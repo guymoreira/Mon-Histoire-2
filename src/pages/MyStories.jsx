@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../contexts/StoryContext';
 import Card from '../components/ui/Card';
@@ -55,7 +55,7 @@ function MyStories() {
 
   return (
     <div className="flex justify-center">
-      <Card className="bg-white/90 backdrop-blur-sm border-4 border-primary-light rounded-3xl shadow-xl">
+      <Card className="w-full max-w-2xl bg-white/90 backdrop-blur-sm border-4 border-primary-light rounded-3xl shadow-xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-primary-dark">
             Mes Histoires

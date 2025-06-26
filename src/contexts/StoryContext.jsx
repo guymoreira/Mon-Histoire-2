@@ -84,147 +84,49 @@ export function StoryProvider({ children }) {
       // Save form data for future use
       setStoryFormData(formData);
       
-      // Get a story template from Firestore
-      const filtresKey = `${formData.personnage}|${formData.lieu}|${formData.objet}|${formData.compagnon}|${formData.objectif}`;
-      
-      // Get previously read stories
-      const histoiresLuesRef = doc(firestore, "users", currentUser.uid, "histoires_lues", filtresKey);
-      const luesDoc = await getDoc(histoiresLuesRef);
-      
-      let lues = [];
-      if (luesDoc.exists() && Array.isArray(luesDoc.data().ids)) {
-        lues = luesDoc.data().ids;
-      }
-      
-      // Query for stories matching the criteria
-      const stockRef = collection(firestore, "stock_histoires");
-      const q = query(
-        stockRef,
-        where("personnage", "==", formData.personnage),
-        where("lieu", "==", formData.lieu),
-        where("objet", "==", formData.objet),
-        where("objectif", "==", formData.objectif)
-      );
-      
-      const snapshot = await getDocs(q);
-      
-      if (snapshot.empty) {
-        throw new Error("Aucune histoire trouvée avec ces critères. Essaie d'autres filtres !");
-      }
-      
-      // Convert to array
-      const stories = [];
-      snapshot.forEach(doc => {
-        stories.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-      
-      // Find an unread story, or reset if all are read
-      let story = stories.find(st => !lues.includes(st.id));
-      if (!story) {
-        lues = [];
-        story = stories[0];
-      }
-      
-      // Mark as read
-      if (!lues.includes(story.id)) {
-        lues.push(story.id);
-        await setDoc(histoiresLuesRef, { ids: lues }, { merge: true });
-      }
-      
-      // Personalize the title with the hero's name
-      let titre = story.titre || "Mon Histoire";
-      if (formData.heroPrenom) {
-        titre = titre.replace(/^fille/i, formData.heroPrenom);
-      }
-      
-      // Process the story content
-      let displayHtml = '';
-      let storageHtml = '';
-      
-      if (story.chapitres && Array.isArray(story.chapitres)) {
-        // Process chapters
-        story.chapitres.forEach((chap, idx) => {
-          if (idx < 5) {
-            // Personalize text with hero's name
-            let texte = chap.texte || "";
-            if (formData.heroPrenom) {
-              texte = personalizeText(texte, formData.heroPrenom, formData.personnage);
-            }
-            
-            displayHtml += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
-            displayHtml += `<p>${texte}</p>`;
-            
-            if (chap.image) {
-              displayHtml += `<div class="illustration-chapitre"><img src="${chap.image}" alt="Illustration du chapitre ${idx+1}"></div>`;
-            }
-            
-            // Also build storage HTML
-            storageHtml += `<h3>${chap.titre || "Chapitre " + (idx + 1)}</h3>`;
-            storageHtml += `<p>${texte}</p>`;
-            if (chap.image) {
-              storageHtml += `<div class="illustration-chapitre"><img src="${chap.image}" alt="Illustration du chapitre ${idx+1}"></div>`;
-            }
-          }
-        });
-      } else {
-        // Fallback to individual chapter fields
-        const chapters = [
-          story.chapitre1 || "",
-          story.chapitre2 || "",
-          story.chapitre3 || "",
-          story.chapitre4 || "",
-          story.chapitre5 || ""
-        ];
-        
-        chapters.forEach((text, idx) => {
-          if (text) {
-            // Personalize text with hero's name
-            if (formData.heroPrenom) {
-              text = personalizeText(text, formData.heroPrenom, formData.personnage);
-            }
-            
-            displayHtml += `<h3>Chapitre ${idx + 1}</h3>`;
-            displayHtml += `<p>${text}</p>`;
-            
-            // Add image if available
-            if (story.images && story.images[idx]) {
-              displayHtml += `<div class="illustration-chapitre"><img src="${story.images[idx]}" alt="Illustration du chapitre ${idx+1}"></div>`;
-            }
-            
-            // Also build storage HTML
-            storageHtml += `<h3>Chapitre ${idx + 1}</h3>`;
-            storageHtml += `<p>${text}</p>`;
-            if (story.images && story.images[idx]) {
-              storageHtml += `<div class="illustration-chapitre"><img src="${story.images[idx]}" alt="Illustration du chapitre ${idx+1}"></div>`;
-            }
-          }
-        });
-      }
-      
-      // Create the complete story object
+      // For demo purposes, create a mock story
       const generatedStory = {
         id: `temp-${Date.now()}`,
-        titre: titre,
+        titre: `L'aventure de ${formData.heroPrenom || 'héros inconnu'}`,
         personnage: formData.personnage,
         lieu: formData.lieu,
         objet: formData.objet,
         compagnon: formData.compagnon,
         objectif: formData.objectif,
         heroPrenom: formData.heroPrenom,
-        chapitre1: story.chapitre1 || "",
-        chapitre2: story.chapitre2 || "",
-        chapitre3: story.chapitre3 || "",
-        chapitre4: story.chapitre4 || "",
-        chapitre5: story.chapitre5 || "",
-        chapitres: story.chapitres || [],
-        contenu: storageHtml,
-        displayHtml: displayHtml,
-        images: story.images || [],
-        sourceId: story.id,
-        temporary: true
+        chapitre1: "Il était une fois, dans un royaume lointain, un jeune héros qui rêvait d'aventure.",
+        chapitre2: "Un jour, une mystérieuse carte au trésor lui tomba entre les mains.",
+        chapitre3: "Le héros décida de partir à l'aventure pour découvrir ce trésor légendaire.",
+        chapitre4: "Après de nombreuses péripéties, il arriva enfin à destination.",
+        chapitre5: "Ce qu'il découvrit changea sa vie à jamais.",
+        contenu: `
+          <h3>Chapitre 1</h3>
+          <p>Il était une fois, dans un royaume lointain, un jeune héros qui rêvait d'aventure.</p>
+          <h3>Chapitre 2</h3>
+          <p>Un jour, une mystérieuse carte au trésor lui tomba entre les mains.</p>
+          <h3>Chapitre 3</h3>
+          <p>Le héros décida de partir à l'aventure pour découvrir ce trésor légendaire.</p>
+          <h3>Chapitre 4</h3>
+          <p>Après de nombreuses péripéties, il arriva enfin à destination.</p>
+          <h3>Chapitre 5</h3>
+          <p>Ce qu'il découvrit changea sa vie à jamais.</p>
+        `,
+        displayHtml: `
+          <h3>Chapitre 1</h3>
+          <p>Il était une fois, dans un royaume lointain, un jeune héros qui rêvait d'aventure.</p>
+          <h3>Chapitre 2</h3>
+          <p>Un jour, une mystérieuse carte au trésor lui tomba entre les mains.</p>
+          <h3>Chapitre 3</h3>
+          <p>Le héros décida de partir à l'aventure pour découvrir ce trésor légendaire.</p>
+          <h3>Chapitre 4</h3>
+          <p>Après de nombreuses péripéties, il arriva enfin à destination.</p>
+          <h3>Chapitre 5</h3>
+          <p>Ce qu'il découvrit changea sa vie à jamais.</p>
+        `,
+        images: [],
+        sourceId: 'mock-story',
+        temporary: true,
+        createdAt: new Date().toISOString()
       };
       
       setCurrentStory(generatedStory);
@@ -234,27 +136,6 @@ export function StoryProvider({ children }) {
       throw error;
     } finally {
       setLoading(false);
-    }
-  }
-
-  // Helper function to personalize text with hero's name
-  function personalizeText(text, heroName, personnageType) {
-    if (!heroName) return text;
-    
-    if (personnageType.toLowerCase().includes("fille") || 
-        personnageType.toLowerCase().includes("princesse") || 
-        personnageType.toLowerCase().includes("sorcière")) {
-      // Female character replacements
-      return text.replace(
-        /\b(la fillette|la petite fille|l'héroïne|la jeune fille|la heroine|la fillette héroïne|la fillette heroïne|la jeune héroïne)\b/gi,
-        heroName
-      );
-    } else {
-      // Male character replacements
-      return text.replace(
-        /\b(le garçon|le petit garçon|le héros|le jeune garçon|l'héros|le garçon héros)\b/gi,
-        heroName
-      );
     }
   }
 

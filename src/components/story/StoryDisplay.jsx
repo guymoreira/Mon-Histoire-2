@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../../contexts/StoryContext';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../ui/Button';
 import Rating from '../ui/Rating';
 import ShareModal from './ShareModal';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 
 function StoryDisplay() {
   const { currentStory, saveStory } = useStory();
@@ -88,53 +86,25 @@ function StoryDisplay() {
     }
   };
 
-  const handleExportPDF = async () => {
+  const handleExportPDF = () => {
     if (!currentStory) return;
     
     try {
       setIsExporting(true);
       
-      // Create a temporary div for rendering
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif;">
-          <h1 style="text-align: center; color: #395872;">${currentStory.titre}</h1>
-          ${currentStory.displayHtml || currentStory.contenu}
-        </div>
-      `;
-      document.body.appendChild(tempDiv);
+      // Create a simple PDF export
+      const content = `${currentStory.titre}\n\n${currentStory.chapitre1}\n\n${currentStory.chapitre2}\n\n${currentStory.chapitre3}\n\n${currentStory.chapitre4}\n\n${currentStory.chapitre5}`;
       
-      // Convert to canvas
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true
-      });
-      
-      // Remove the temporary div
-      document.body.removeChild(tempDiv);
-      
-      // Create PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-      
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-      
-      // Save the PDF
-      pdf.save(`${currentStory.titre || 'histoire'}.pdf`);
+      // Create a blob and download it
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentStory.titre || 'histoire'}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       
       // Log activity
       if (logActivity) {

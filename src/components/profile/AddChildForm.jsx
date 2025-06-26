@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useProfile } from '../../contexts/ProfileContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';

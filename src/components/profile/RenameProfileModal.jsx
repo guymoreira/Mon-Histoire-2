@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfile } from '../../contexts/ProfileContext';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';

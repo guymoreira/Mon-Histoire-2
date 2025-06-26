@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../../contexts/StoryContext';
-import Rating from '../ui/Rating';
 
 function StoryCard({ story, selected = false, onSelect }) {
   const { deleteStory, updateStoryTitle, setCurrentStory } = useStory();
@@ -19,12 +18,12 @@ function StoryCard({ story, selected = false, onSelect }) {
     }
   };
   
-  const handleDelete = async (e) => {
+  const handleDelete = (e) => {
     e.stopPropagation();
     
     if (confirm("Es-tu sûr de vouloir supprimer cette histoire ?")) {
       try {
-        await deleteStory(story.id);
+        deleteStory(story.id);
       } catch (error) {
         console.error("Error deleting story:", error);
         window.showMessageModal("Erreur lors de la suppression de l'histoire.");
@@ -37,7 +36,7 @@ function StoryCard({ story, selected = false, onSelect }) {
     setShowRenameModal(true);
   };
   
-  const handleRenameSubmit = async (e) => {
+  const handleRenameSubmit = (e) => {
     e.preventDefault();
     
     if (!newTitle.trim()) {
@@ -46,7 +45,7 @@ function StoryCard({ story, selected = false, onSelect }) {
     }
     
     try {
-      await updateStoryTitle(story.id, newTitle.trim());
+      updateStoryTitle(story.id, newTitle.trim());
       setShowRenameModal(false);
     } catch (error) {
       console.error("Error renaming story:", error);
@@ -67,12 +66,6 @@ function StoryCard({ story, selected = false, onSelect }) {
         data-id={story.id}
       >
         <div className="font-bold">{story.titre || 'Histoire sans titre'}</div>
-        
-        {story.note !== undefined && (
-          <div className="mt-1">
-            <Rating storyId={story.id} readOnly size="small" />
-          </div>
-        )}
         
         {story.partageParPrenom && (
           <div className="text-sm opacity-90 mt-1">

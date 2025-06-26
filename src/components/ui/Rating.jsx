@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStory } from '../../contexts/StoryContext';
 
 function Rating({ storyId, readOnly = false, size = 'large' }) {

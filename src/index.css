@@ -34,7 +34,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Fredoka', Arial, sans-serif;
-  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%);
+  background: url('/illustration-accueil.jpg') no-repeat center center fixed;
   background-size: cover;
   background-attachment: fixed;
   overflow-x: hidden;
@@ -228,4 +228,9 @@ body {
 
 .nouvelle-histoire {
   animation: shake 0.6s ease-in-out 2;
+}
+
+/* Fix for the cream background */
+.bg-cream {
+  background-color: #fff8e1;
 }

@@ -1,7 +1,7 @@
-import { forwardRef, useState } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 
-const Input = forwardRef(({
+function Input({
   type = 'text',
   label,
   id,
@@ -9,7 +9,7 @@ const Input = forwardRef(({
   error,
   showPasswordToggle = false,
   ...props
-}, ref) => {
+}) {
   const [showPassword, setShowPassword] = useState(false);
   
   const inputClasses = classNames(
@@ -32,7 +32,6 @@ const Input = forwardRef(({
       
       <div className={showPasswordToggle ? "ui-input-group" : undefined}>
         <input
-          ref={ref}
           type={showPasswordToggle ? (showPassword ? 'text' : 'password') : type}
           id={id}
           className={inputClasses}
@@ -57,8 +56,6 @@ const Input = forwardRef(({
       )}
     </div>
   );
-});
-
-Input.displayName = 'Input';
+}
 
 export default Input;

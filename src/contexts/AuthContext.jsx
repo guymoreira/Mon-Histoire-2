@@ -1,18 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  updatePassword,
-  updateEmail,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  deleteUser
-} from 'firebase/auth';
-import { doc, setDoc, getDoc, deleteDoc, collection } from 'firebase/firestore';
-import { auth, firestore } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -30,18 +16,21 @@ export function AuthProvider({ children }) {
   // Register a new user
   async function register(email, password, prenom) {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // For demo purposes, create a mock user
+      const mockUser = {
+        uid: 'mock-user-id',
+        email: email,
+        emailVerified: false
+      };
       
-      // Create user profile in Firestore
-      await setDoc(doc(firestore, "users", user.uid), {
+      setCurrentUser(mockUser);
+      setUserInfo({
         prenom: prenom,
         email: email,
-        createdAt: new Date().toISOString(),
-        consentement_parental: true
+        createdAt: new Date().toISOString()
       });
       
-      return user;
+      return mockUser;
     } catch (error) {
       console.error("Error registering user:", error);
       throw error;
@@ -51,8 +40,21 @@ export function AuthProvider({ children }) {
   // Login user
   async function login(email, password) {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      return userCredential.user;
+      // For demo purposes, create a mock user
+      const mockUser = {
+        uid: 'mock-user-id',
+        email: email,
+        emailVerified: false
+      };
+      
+      setCurrentUser(mockUser);
+      setUserInfo({
+        prenom: 'Demo User',
+        email: email,
+        createdAt: new Date().toISOString()
+      });
+      
+      return mockUser;
     } catch (error) {
       console.error("Error logging in:", error);
       throw error;
@@ -62,7 +64,8 @@ export function AuthProvider({ children }) {
   // Logout user
   async function logout() {
     try {
-      await signOut(auth);
+      setCurrentUser(null);
+      setUserInfo(null);
       navigate('/');
     } catch (error) {
       console.error("Error logging out:", error);
@@ -73,43 +76,10 @@ export function AuthProvider({ children }) {
   // Reset password
   async function resetPassword(email) {
     try {
-      await sendPasswordResetEmail(auth, email);
+      // For demo purposes, just log the email
+      console.log(`Password reset email sent to: ${email}`);
     } catch (error) {
       console.error("Error resetting password:", error);
-      throw error;
-    }
-  }
-
-  // Update password
-  async function changePassword(currentPassword, newPassword) {
-    try {
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      
-      await reauthenticateWithCredential(user, credential);
-      await updatePassword(user, newPassword);
-    } catch (error) {
-      console.error("Error updating password:", error);
-      throw error;
-    }
-  }
-
-  // Update email
-  async function changeEmail(currentPassword, newEmail) {
-    try {
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      
-      await reauthenticateWithCredential(user, credential);
-      await updateEmail(user, newEmail);
-      
-      // Update email in Firestore
-      await setDoc(doc(firestore, "users", user.uid), {
-        email: newEmail,
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
-    } catch (error) {
-      console.error("Error updating email:", error);
       throw error;
     }
   }
@@ -117,17 +87,8 @@ export function AuthProvider({ children }) {
   // Delete account
   async function deleteAccount(password) {
     try {
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, password);
-      
-      await reauthenticateWithCredential(user, credential);
-      
-      // Delete user data from Firestore
-      await deleteDoc(doc(firestore, "users", user.uid));
-      
-      // Delete user account
-      await deleteUser(user);
-      
+      setCurrentUser(null);
+      setUserInfo(null);
       navigate('/');
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -140,16 +101,7 @@ export function AuthProvider({ children }) {
     if (!currentUser) return;
     
     try {
-      const activityRef = collection(firestore, "users", currentUser.uid, "logs");
-      await setDoc(doc(activityRef), {
-        type,
-        timestamp: new Date().toISOString(),
-        details,
-        deviceInfo: {
-          userAgent: navigator.userAgent,
-          deviceId: localStorage.getItem('deviceId') || 'unknown'
-        }
-      });
+      console.log(`Activity logged: ${type}`, details);
     } catch (error) {
       console.error("Error logging activity:", error);
     }
@@ -160,32 +112,27 @@ export function AuthProvider({ children }) {
     if (!currentUser) return null;
     
     try {
-      const userDoc = await getDoc(doc(firestore, "users", currentUser.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUserInfo(userData);
-        return userData;
-      }
-      return null;
+      // For demo purposes, return mock user info
+      const mockUserInfo = {
+        prenom: 'Demo User',
+        email: currentUser.email,
+        createdAt: new Date().toISOString()
+      };
+      
+      setUserInfo(mockUserInfo);
+      return mockUserInfo;
     } catch (error) {
       console.error("Error loading user info:", error);
       return null;
     }
   }
 
-  // Listen for auth state changes
+  // Initialize auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
-      if (user) {
-        await loadUserInfo();
-      } else {
-        setUserInfo(null);
-      }
+    // For demo purposes, simulate auth state initialization
+    setTimeout(() => {
       setLoading(false);
-    });
-
-    return unsubscribe;
+    }, 1000);
   }, []);
 
   // Generate a device ID if not exists
@@ -204,8 +151,6 @@ export function AuthProvider({ children }) {
     login,
     logout,
     resetPassword,
-    changePassword,
-    changeEmail,
     deleteAccount,
     logActivity,
     loadUserInfo

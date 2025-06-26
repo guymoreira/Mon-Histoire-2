@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
 
@@ -12,8 +12,6 @@ function Modal({
   closeOnOutsideClick = true,
   ...props 
 }) {
-  const modalRef = useRef(null);
-
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -33,7 +31,7 @@ function Modal({
   }, [show, onClose]);
 
   const handleOutsideClick = (e) => {
-    if (closeOnOutsideClick && modalRef.current && !modalRef.current.contains(e.target)) {
+    if (closeOnOutsideClick && e.target === e.currentTarget) {
       onClose();
     }
   };
@@ -60,7 +58,6 @@ function Modal({
   return createPortal(
     <div className={modalClasses} onClick={handleOutsideClick}>
       <div 
-        ref={modalRef}
         className={contentClasses} 
         {...props}
       >

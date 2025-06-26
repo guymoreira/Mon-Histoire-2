@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useProfile } from '../../contexts/ProfileContext';
 import RenameProfileModal from './RenameProfileModal';
 
