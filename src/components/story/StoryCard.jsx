@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../../contexts/StoryContext';
-import { motion } from 'framer-motion';
 import Rating from '../ui/Rating';
 
 function StoryCard({ story, selected = false, onSelect }) {
@@ -57,17 +56,15 @@ function StoryCard({ story, selected = false, onSelect }) {
 
   return (
     <>
-      <motion.div 
+      <div 
         className={`
           relative w-full max-w-xs mx-auto 
           ${selected ? 'bg-primary-light' : 'bg-primary-light'} 
           text-primary rounded-full py-3 px-6 text-center font-bold cursor-pointer
-          shadow-md hover:shadow-lg transition-shadow
+          shadow-md hover:shadow-lg transition-shadow hover:scale-[1.03] active:scale-[0.98]
         `}
         onClick={handleClick}
         data-id={story.id}
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.98 }}
       >
         <div className="font-bold">{story.titre || 'Histoire sans titre'}</div>
         
@@ -84,16 +81,13 @@ function StoryCard({ story, selected = false, onSelect }) {
         )}
         
         {selected && (
-          <motion.span 
+          <span 
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-500 text-xl"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 500, damping: 15 }}
           >
             ✓
-          </motion.span>
+          </span>
         )}
-      </motion.div>
+      </div>
       
       {/* Rename Modal */}
       {showRenameModal && (
@@ -105,11 +99,8 @@ function StoryCard({ story, selected = false, onSelect }) {
             }
           }}
         >
-          <motion.div 
+          <div 
             className="bg-cream rounded-3xl p-6 w-80 border-4 border-primary-light shadow-xl"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
           >
             <h3 className="text-2xl font-bold mb-4 text-center text-primary-dark">Renommer l'histoire</h3>
             
@@ -123,27 +114,23 @@ function StoryCard({ story, selected = false, onSelect }) {
               />
               
               <div className="flex justify-center gap-8 mt-6">
-                <motion.img 
+                <img 
                   src="/croix-cartoon.png" 
                   alt="Annuler" 
                   title="Annuler" 
-                  className="h-14 cursor-pointer" 
+                  className="h-14 cursor-pointer hover:scale-110 active:scale-90 transition-transform" 
                   onClick={() => setShowRenameModal(false)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                 />
-                <motion.img 
+                <img 
                   src="/coche-verte-cartoon.png" 
                   alt="Valider" 
                   title="Valider" 
-                  className="h-14 cursor-pointer" 
+                  className="h-14 cursor-pointer hover:scale-110 active:scale-90 transition-transform" 
                   onClick={handleRenameSubmit}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                 />
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
     </>
