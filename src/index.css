@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Couleurs principales */
+  --color-primary: #395872;
+  --color-primary-light: #79d4e7;
+  --color-primary-dark: #0a3d62;
+  
+  --color-secondary: #5c4683;
+  --color-secondary-light: #d5b8f6;
+  --color-secondary-dark: #4a3669;
+  
+  --color-success: #43a047;
+  --color-warning: #ffa000;
+  --color-danger: #e53935;
+  --color-info: #039be5;
+  
+  /* Couleurs de texte */
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-text-lighter: #999999;
+  --color-text-dark: #111111;
+  
+  /* Couleurs de fond */
+  --color-background: #ffffff;
+  --color-background-light: #f5f5f5;
+  --color-background-dark: #e0e0e0;
+  --color-background-cream: #fff8e1;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Fredoka', Arial, sans-serif;
+  background: url('/illustration-accueil.jpg') no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+@layer components {
+  .ui-button {
+    @apply block w-full my-1 py-3 border-none rounded-full text-lg font-bold text-center cursor-pointer shadow-md transition-all duration-200 font-fredoka;
+  }
+  
+  .ui-button--primary {
+    @apply bg-primary-light text-primary shadow-lg;
+  }
+  
+  .ui-button--secondary {
+    @apply bg-secondary-light text-secondary shadow-lg;
+  }
+  
+  .ui-button:active {
+    @apply transform scale-[0.97] shadow-sm;
+  }
+  
+  .ui-card {
+    @apply bg-cream rounded-xl p-4 w-[90%] max-w-xl mx-auto my-2 shadow-card;
+  }
+  
+  .ui-card--white {
+    @apply bg-white;
+  }
+  
+  .ui-card--cream {
+    @apply bg-cream;
+  }
+  
+  .ui-modal {
+    @apply fixed inset-0 bg-black/50 flex justify-center items-center z-50 opacity-0 pointer-events-none transition-all duration-300 transform scale-95;
+  }
+  
+  .ui-modal.show {
+    @apply opacity-100 pointer-events-auto transform scale-100;
+  }
+  
+  .ui-modal-content {
+    @apply bg-white rounded-xl p-8 text-center w-[90%] max-w-md shadow-lg;
+  }
+  
+  .ui-input {
+    @apply block w-full py-3 px-4 my-2 border-2 border-gray-200 rounded-lg font-fredoka text-base bg-white transition-colors duration-200;
+  }
+  
+  .ui-input:focus {
+    @apply outline-none border-primary-light shadow-sm;
+  }
+  
+  .ui-input-group {
+    @apply relative w-full;
+  }
+  
+  .ui-input-icon {
+    @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer text-xl z-10;
+  }
+  
+  .ui-label {
+    @apply block font-bold mt-3 mb-1 text-primary;
+  }
+  
+  .ui-notification {
+    @apply fixed top-0 left-0 right-0 py-3 px-4 bg-primary-light text-primary font-bold text-center cursor-pointer shadow-lg z-50 flex items-center justify-center;
+  }
+  
+  .notation-container {
+    @apply text-center mt-8;
+  }
+  
+  .notation .etoile {
+    @apply text-5xl cursor-pointer mx-1.5 select-none text-yellow-400 transition-transform duration-200 ease-in-out;
+  }
+  
+  .notation .etoile:hover {
+    @apply transform scale-110;
+  }
+  
+  .notation .etoile.selected {
+    @apply transform scale-125;
+  }
+  
+  .notation--small .etoile {
+    @apply text-base mx-0.5 pointer-events-none;
+  }
+  
+  .screen-transition-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  
+  .screen-transition-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 300ms, transform 300ms;
+  }
+  
+  .screen-transition-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .screen-transition-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 250ms, transform 250ms;
+  }
+  
+  .notification-indicator {
+    @apply absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold shadow-md z-50;
+  }
+}
+
+/* Animation pour les écrans */
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes screen-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Animation pour l'indicateur de chargement */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animation pour l'icône audio pendant la lecture */
+@keyframes audio-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Classe pour les éléments cachés */
+.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
