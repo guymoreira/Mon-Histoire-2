@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../../contexts/StoryContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { motion } from 'framer-motion';
 import Button from '../ui/Button';
 import Rating from '../ui/Rating';
 import ShareModal from './ShareModal';
@@ -154,79 +153,51 @@ function StoryDisplay() {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto"
-    >
-      <motion.div 
-        className="flex items-center justify-center mb-8"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+    <div className="w-full max-w-2xl mx-auto">
+      <div className="flex items-center justify-center mb-8">
         <h3 className="text-2xl font-bold text-primary-dark m-0">{currentStory.titre}</h3>
         
         <div className="flex ml-3">
-          <motion.button 
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button 
+            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl hover:scale-110 active:scale-90 transition-transform"
             onClick={handleAudioToggle}
             title={isPlaying ? (isPaused ? "Reprendre la lecture" : "Mettre en pause") : "Écouter l'histoire"}
           >
             <span className={isPlaying ? "animate-pulse" : ""}>
               {isPlaying ? (isPaused ? "▶️" : "⏸️") : "🔊"}
             </span>
-          </motion.button>
+          </button>
           
-          <motion.button 
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button 
+            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl hover:scale-110 active:scale-90 transition-transform"
             onClick={handleExportPDF}
             title="Télécharger en PDF"
             disabled={isExporting}
           >
             {isExporting ? "⏳" : "⬇️"}
-          </motion.button>
+          </button>
           
-          <motion.button 
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button 
+            className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md ml-2 text-xl hover:scale-110 active:scale-90 transition-transform"
             onClick={() => setShowShareModal(true)}
             title="Partager l'histoire"
           >
             🔄
-          </motion.button>
+          </button>
         </div>
-      </motion.div>
+      </div>
       
-      <motion.div 
+      <div 
         id="histoire"
         className="mb-8 prose prose-lg max-w-none"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 }}
         dangerouslySetInnerHTML={{ __html: currentStory.displayHtml || currentStory.contenu }}
       />
       
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
+      <div>
         <Rating storyId={currentStory.id} />
-      </motion.div>
+      </div>
       
-      <motion.div 
-        className="mt-10"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-      >
+      <div className="mt-10">
         {currentStory.temporary && (
           <Button 
             onClick={handleSaveStory}
@@ -263,14 +234,14 @@ function StoryDisplay() {
             Accueil
           </Button>
         </div>
-      </motion.div>
+      </div>
       
       <ShareModal 
         show={showShareModal} 
         onClose={() => setShowShareModal(false)} 
         story={currentStory}
       />
-    </motion.div>
+    </div>
   );
 }
 

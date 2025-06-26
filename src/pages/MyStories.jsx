@@ -82,6 +82,7 @@ function MyStories() {
               <li 
                 key={story.id} 
                 className={story.nouvelleHistoire ? 'nouvelle-histoire' : ''}
+                data-id={story.id}
               >
                 <StoryCard 
                   story={story} 
