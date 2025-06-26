@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStory } from '../../contexts/StoryContext';
+import { motion } from 'framer-motion';
 import Rating from '../ui/Rating';
 
 function StoryCard({ story, selected = false, onSelect }) {
@@ -56,15 +57,17 @@ function StoryCard({ story, selected = false, onSelect }) {
 
   return (
     <>
-      <div 
+      <motion.div 
         className={`
-          relative w-full max-w-xs mx-auto mb-2 
+          relative w-full max-w-xs mx-auto 
           ${selected ? 'bg-primary-light' : 'bg-primary-light'} 
-          text-primary rounded-full py-3 px-4 text-center font-bold cursor-pointer
+          text-primary rounded-full py-3 px-6 text-center font-bold cursor-pointer
           shadow-md hover:shadow-lg transition-shadow
         `}
         onClick={handleClick}
         data-id={story.id}
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
       >
         <div className="font-bold">{story.titre || 'Histoire sans titre'}</div>
         
@@ -81,9 +84,16 @@ function StoryCard({ story, selected = false, onSelect }) {
         )}
         
         {selected && (
-          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-500 text-xl">✓</span>
+          <motion.span 
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-500 text-xl"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 15 }}
+          >
+            ✓
+          </motion.span>
         )}
-      </div>
+      </motion.div>
       
       {/* Rename Modal */}
       {showRenameModal && (
@@ -95,36 +105,45 @@ function StoryCard({ story, selected = false, onSelect }) {
             }
           }}
         >
-          <div className="bg-cream rounded-xl p-6 w-80">
-            <h3 className="text-xl font-bold mb-4 text-center">Renommer l'histoire</h3>
+          <motion.div 
+            className="bg-cream rounded-3xl p-6 w-80 border-4 border-primary-light shadow-xl"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <h3 className="text-2xl font-bold mb-4 text-center text-primary-dark">Renommer l'histoire</h3>
             
             <form onSubmit={handleRenameSubmit}>
               <input
                 type="text"
-                className="ui-input"
+                className="ui-input border-2 border-primary-light focus:border-primary focus:ring-2 focus:ring-primary-light/50 rounded-xl"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 maxLength={50}
               />
               
               <div className="flex justify-center gap-8 mt-6">
-                <img 
+                <motion.img 
                   src="/croix-cartoon.png" 
                   alt="Annuler" 
                   title="Annuler" 
-                  className="h-12 cursor-pointer" 
+                  className="h-14 cursor-pointer" 
                   onClick={() => setShowRenameModal(false)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 />
-                <img 
+                <motion.img 
                   src="/coche-verte-cartoon.png" 
                   alt="Valider" 
                   title="Valider" 
-                  className="h-12 cursor-pointer" 
+                  className="h-14 cursor-pointer" 
                   onClick={handleRenameSubmit}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 />
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
     </>

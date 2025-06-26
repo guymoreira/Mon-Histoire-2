@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useStory } from '../../contexts/StoryContext';
 
 function Rating({ storyId, readOnly = false, size = 'large' }) {
@@ -19,27 +20,58 @@ function Rating({ storyId, readOnly = false, size = 'large' }) {
     rateStory(storyId, value);
   };
 
-  const starClasses = `
-    ${size === 'small' ? 'text-base mx-0.5' : 'text-5xl mx-1.5'} 
-    cursor-pointer select-none text-yellow-400 transition-transform duration-200 ease-in-out
-  `;
+  const starVariants = {
+    initial: { scale: 1 },
+    hover: { scale: 1.2 },
+    tap: { scale: 0.9 },
+    selected: { scale: 1.3 }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
   return (
     <div className={`notation-container ${size === 'small' ? 'notation--small' : ''}`}>
-      {!readOnly && <p><strong>Tu as aimé cette histoire ?</strong></p>}
-      <div className="notation">
+      {!readOnly && (
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <strong>Tu as aimé cette histoire ?</strong>
+        </motion.p>
+      )}
+      <motion.div 
+        className="notation"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {[1, 2, 3, 4, 5].map((value) => (
-          <span
+          <motion.span
             key={value}
-            className={`etoile ${value <= rating ? 'selected' : ''} ${starClasses}`}
+            className={`etoile ${value <= rating ? 'selected' : ''} ${
+              size === 'small' ? 'text-base mx-0.5' : 'text-5xl mx-1.5'
+            } cursor-pointer select-none text-yellow-400`}
             onClick={() => handleRatingClick(value)}
             onMouseEnter={() => !readOnly && setHoveredRating(value)}
             onMouseLeave={() => !readOnly && setHoveredRating(0)}
+            variants={starVariants}
+            animate={value <= rating ? "selected" : "initial"}
+            whileHover={!readOnly ? "hover" : ""}
+            whileTap={!readOnly ? "tap" : ""}
           >
             {value <= (hoveredRating || rating) ? '★' : '☆'}
-          </span>
+          </motion.span>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

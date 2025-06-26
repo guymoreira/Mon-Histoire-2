@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { useProfile } from '../../contexts/ProfileContext';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -25,9 +26,14 @@ function Header() {
     <header className="absolute top-0 right-0 p-4 z-10">
       {currentUser ? (
         <div className="relative">
-          <button 
-            className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-primary-dark text-2xl font-bold shadow-md"
+          <motion.button 
+            className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-primary-dark text-2xl font-bold shadow-lg border-4 border-primary-light"
             onClick={() => setShowUserMenu(!showUserMenu)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 15 }}
           >
             {currentProfile?.type === 'parent' 
               ? (currentUser.email?.charAt(0).toUpperCase() || 'U')
@@ -35,23 +41,36 @@ function Header() {
             }
             
             {notificationCount > 0 && (
-              <span className="notification-indicator">
+              <motion.span 
+                className="notification-indicator"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              >
                 {notificationCount > 9 ? '9+' : notificationCount}
-              </span>
+              </motion.span>
             )}
-          </button>
+          </motion.button>
           
-          {showUserMenu && (
-            <UserMenu onClose={() => setShowUserMenu(false)} />
-          )}
+          <AnimatePresence>
+            {showUserMenu && (
+              <UserMenu onClose={() => setShowUserMenu(false)} />
+            )}
+          </AnimatePresence>
         </div>
       ) : (
-        <Link 
-          to="/login" 
-          className="ui-button ui-button--primary w-auto px-6 py-2"
+        <motion.div
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
         >
-          Me connecter
-        </Link>
+          <Link 
+            to="/login" 
+            className="ui-button ui-button--primary w-auto px-6 py-2 bg-gradient-to-r from-primary-light to-blue-400 hover:from-blue-400 hover:to-primary-light shadow-md rounded-full"
+          >
+            Me connecter
+          </Link>
+        </motion.div>
       )}
     </header>
   );

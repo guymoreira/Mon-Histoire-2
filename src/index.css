@@ -34,8 +34,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Fredoka', Arial, sans-serif;
-  background: url('/illustration-accueil.jpg') no-repeat center center fixed;
+  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%);
   background-size: cover;
+  background-attachment: fixed;
   overflow-x: hidden;
   min-height: 100vh;
 }
@@ -58,7 +59,7 @@ body {
   }
   
   .ui-card {
-    @apply bg-cream rounded-xl p-4 w-[90%] max-w-xl mx-auto my-2 shadow-card;
+    @apply bg-cream rounded-3xl p-6 w-[90%] max-w-xl mx-auto my-2 shadow-card;
   }
   
   .ui-card--white {
@@ -78,11 +79,11 @@ body {
   }
   
   .ui-modal-content {
-    @apply bg-white rounded-xl p-8 text-center w-[90%] max-w-md shadow-lg;
+    @apply bg-white rounded-3xl p-8 text-center w-[90%] max-w-md shadow-xl border-4 border-primary-light;
   }
   
   .ui-input {
-    @apply block w-full py-3 px-4 my-2 border-2 border-gray-200 rounded-lg font-fredoka text-base bg-white transition-colors duration-200;
+    @apply block w-full py-3 px-4 my-2 border-2 border-gray-200 rounded-xl font-fredoka text-base bg-white transition-colors duration-200;
   }
   
   .ui-input:focus {
@@ -150,6 +151,10 @@ body {
   .notification-indicator {
     @apply absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold shadow-md z-50;
   }
+  
+  .ui-button-icon {
+    @apply w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-xl border-2 border-primary-light hover:bg-gray-50 transition-colors;
+  }
 }
 
 /* Animation pour les écrans */
@@ -194,4 +199,33 @@ body {
   opacity: 0 !important;
   pointer-events: none !important;
   position: absolute !important;
+}
+
+/* Styles pour les illustrations de chapitres */
+.illustration-chapitre {
+  @apply my-6 flex justify-center;
+}
+
+.illustration-chapitre img {
+  @apply rounded-xl shadow-md max-w-full h-auto border-4 border-primary-light;
+}
+
+/* Styles pour le contenu de l'histoire */
+#histoire h3 {
+  @apply text-xl font-bold text-primary-dark mt-6 mb-3;
+}
+
+#histoire p {
+  @apply text-gray-800 leading-relaxed mb-4;
+}
+
+/* Animation pour signaler une nouvelle histoire */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.nouvelle-histoire {
+  animation: shake 0.6s ease-in-out 2;
 }

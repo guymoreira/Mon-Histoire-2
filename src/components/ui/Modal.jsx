@@ -48,7 +48,9 @@ function Modal({
     {
       'max-w-sm': size === 'small',
       'max-w-md': size === 'medium',
-      'max-w-lg': size === 'large'
+      'max-w-lg': size === 'large',
+      'bg-cream': variant === 'cream',
+      'bg-white': variant === 'white'
     },
     className
   );
