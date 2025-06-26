@@ -4,13 +4,18 @@ import { useStory } from '../../contexts/StoryContext';
 function Rating({ storyId, readOnly = false, size = 'large' }) {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const { rateStory, currentStory } = useStory();
+  const { rateStory, currentStory, stories } = useStory();
 
   useEffect(() => {
-    if (currentStory && currentStory.id === storyId && currentStory.note) {
+    // Try to find the story in the stories array first
+    const story = stories.find(s => s.id === storyId);
+    
+    if (story && typeof story.note === 'number') {
+      setRating(story.note);
+    } else if (currentStory && currentStory.id === storyId && typeof currentStory.note === 'number') {
       setRating(currentStory.note);
     }
-  }, [currentStory, storyId]);
+  }, [currentStory, storyId, stories]);
 
   const handleRatingClick = (value) => {
     if (readOnly) return;
@@ -22,7 +27,7 @@ function Rating({ storyId, readOnly = false, size = 'large' }) {
   return (
     <div className={`notation-container ${size === 'small' ? 'notation--small' : ''}`}>
       {!readOnly && (
-        <p className="animate-fade-in-up">
+        <p>
           <strong>Tu as aimé cette histoire ?</strong>
         </p>
       )}
@@ -30,9 +35,7 @@ function Rating({ storyId, readOnly = false, size = 'large' }) {
         {[1, 2, 3, 4, 5].map((value) => (
           <span
             key={value}
-            className={`etoile ${value <= rating ? 'selected' : ''} ${
-              size === 'small' ? 'text-base mx-0.5' : 'text-5xl mx-1.5'
-            } cursor-pointer select-none text-yellow-400 hover:scale-110 transition-transform`}
+            className={`etoile ${value <= rating ? 'selected' : ''}`}
             onClick={() => handleRatingClick(value)}
             onMouseEnter={() => !readOnly && setHoveredRating(value)}
             onMouseLeave={() => !readOnly && setHoveredRating(0)}

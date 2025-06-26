@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { useProfile } from '../../contexts/ProfileContext';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -69,116 +68,49 @@ function UserMenu({ onClose }) {
     return notifications[profileId] || 0;
   };
 
-  const menuVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: -20 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 25,
-        staggerChildren: 0.1
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.9, 
-      y: -20,
-      transition: { duration: 0.2 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 25 }
-    }
-  };
-
-  const passwordModalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { type: "spring", stiffness: 300, damping: 25 }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.8,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
     <>
-      <motion.div 
+      <div 
         ref={menuRef}
         className="absolute right-0 top-20 w-64 bg-white rounded-3xl shadow-xl p-4 z-50 border-4 border-primary-light"
-        variants={menuVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
       >
-        <motion.p 
-          className="text-center font-bold mb-4 text-primary-dark text-lg"
-          variants={itemVariants}
-        >
+        <p className="text-center font-bold mb-4 text-primary-dark text-lg">
           {currentProfile?.type === 'parent' 
             ? 'Profil Parent' 
             : currentProfile?.prenom
           }
-        </motion.p>
+        </p>
         
         <div className="space-y-2 mb-4">
           {currentProfile?.type === 'parent' ? (
             // Show child profiles
             childProfiles.map(profile => (
-              <motion.button
+              <button
                 key={profile.id}
                 className="ui-button ui-button--primary relative bg-gradient-to-r from-primary-light to-blue-400 hover:from-blue-400 hover:to-primary-light shadow-md"
                 onClick={() => handleProfileSwitch(profile.id)}
-                variants={itemVariants}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
               >
                 {profile.prenom}
                 {getNotificationCount(profile.id) > 0 && (
-                  <motion.span 
-                    className="notification-indicator"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                  >
+                  <span className="notification-indicator">
                     {getNotificationCount(profile.id) > 9 ? '9+' : getNotificationCount(profile.id)}
-                  </motion.span>
+                  </span>
                 )}
-              </motion.button>
+              </button>
             ))
           ) : (
             // Show parent profile
-            <motion.button
+            <button
               className="ui-button ui-button--primary relative bg-gradient-to-r from-primary-light to-blue-400 hover:from-blue-400 hover:to-primary-light shadow-md"
               onClick={handleParentSwitch}
-              variants={itemVariants}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
             >
               Parent
               {getNotificationCount('parent') > 0 && (
-                <motion.span 
-                  className="notification-indicator"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                >
+                <span className="notification-indicator">
                   {getNotificationCount('parent') > 9 ? '9+' : getNotificationCount('parent')}
-                </motion.span>
+                </span>
               )}
-            </motion.button>
+            </button>
           )}
           
           {/* Show other child profiles if on a child profile */}
@@ -186,32 +118,24 @@ function UserMenu({ onClose }) {
             childProfiles
               .filter(profile => profile.id !== currentProfile.id)
               .map(profile => (
-                <motion.button
+                <button
                   key={profile.id}
                   className="ui-button ui-button--primary relative bg-gradient-to-r from-primary-light to-blue-400 hover:from-blue-400 hover:to-primary-light shadow-md"
                   onClick={() => handleProfileSwitch(profile.id)}
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
                 >
                   {profile.prenom}
                   {getNotificationCount(profile.id) > 0 && (
-                    <motion.span 
-                      className="notification-indicator"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                    >
+                    <span className="notification-indicator">
                       {getNotificationCount(profile.id) > 9 ? '9+' : getNotificationCount(profile.id)}
-                    </motion.span>
+                    </span>
                   )}
-                </motion.button>
+                </button>
               ))
           }
         </div>
         
         {currentProfile?.type === 'parent' && (
-          <motion.div variants={itemVariants}>
+          <div>
             <Button 
               variant="secondary" 
               className="mb-3 bg-gradient-to-r from-secondary-light to-purple-400 hover:from-purple-400 hover:to-secondary-light shadow-md"
@@ -219,11 +143,11 @@ function UserMenu({ onClose }) {
             >
               Mon Compte
             </Button>
-          </motion.div>
+          </div>
         )}
         
         <div className="flex justify-between gap-4">
-          <motion.div variants={itemVariants} className="flex-1">
+          <div className="flex-1">
             <Button 
               variant="secondary" 
               onClick={onClose}
@@ -231,10 +155,10 @@ function UserMenu({ onClose }) {
             >
               Annuler
             </Button>
-          </motion.div>
+          </div>
           
           {currentProfile?.type === 'parent' && (
-            <motion.div variants={itemVariants} className="flex-1">
+            <div className="flex-1">
               <Button 
                 variant="primary" 
                 onClick={handleLogout}
@@ -242,21 +166,15 @@ function UserMenu({ onClose }) {
               >
                 Déconnecter
               </Button>
-            </motion.div>
+            </div>
           )}
         </div>
-      </motion.div>
+      </div>
       
       {/* Parent password modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <motion.div 
-            className="bg-white rounded-3xl p-6 w-80 border-4 border-primary-light shadow-xl"
-            variants={passwordModalVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
+          <div className="bg-white rounded-3xl p-6 w-80 border-4 border-primary-light shadow-xl">
             <h3 className="text-xl font-bold mb-4 text-center text-primary-dark">Mot de passe parent</h3>
             <p className="mb-4 text-center">
               Pour des raisons de sécurité, veuillez saisir le mot de passe du compte parent pour changer de profil.
@@ -290,7 +208,7 @@ function UserMenu({ onClose }) {
                 </Button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
       
