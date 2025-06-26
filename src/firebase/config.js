@@ -3,38 +3,117 @@
 
 // Mock Firestore
 const firestore = {
-  collection: () => ({
-    doc: () => ({
-      collection: () => ({
-        doc: () => ({
+  collection: (path) => {
+    return {
+      doc: (id) => {
+        return {
+          collection: (subPath) => {
+            return {
+              doc: (subId) => {
+                return {
+                  collection: (subSubPath) => {
+                    return {
+                      doc: (subSubId) => {
+                        return {
+                          get: () => Promise.resolve({
+                            exists: true,
+                            data: () => ({}),
+                            id: 'mock-doc-id'
+                          }),
+                          set: () => Promise.resolve(),
+                          update: () => Promise.resolve(),
+                          delete: () => Promise.resolve()
+                        };
+                      },
+                      add: () => Promise.resolve({ id: 'mock-doc-id' }),
+                      get: () => Promise.resolve({
+                        empty: false,
+                        docs: [],
+                        forEach: (callback) => {}
+                      }),
+                      where: () => ({
+                        get: () => Promise.resolve({
+                          empty: false,
+                          docs: [],
+                          forEach: (callback) => {}
+                        }),
+                        orderBy: () => ({
+                          get: () => Promise.resolve({
+                            empty: false,
+                            docs: [],
+                            forEach: (callback) => {}
+                          })
+                        })
+                      }),
+                      orderBy: () => ({
+                        get: () => Promise.resolve({
+                          empty: false,
+                          docs: [],
+                          forEach: (callback) => {}
+                        })
+                      })
+                    };
+                  },
+                  get: () => Promise.resolve({
+                    exists: true,
+                    data: () => ({}),
+                    id: 'mock-doc-id'
+                  }),
+                  set: () => Promise.resolve(),
+                  update: () => Promise.resolve(),
+                  delete: () => Promise.resolve()
+                };
+              },
+              add: () => Promise.resolve({ id: 'mock-doc-id' }),
+              get: () => Promise.resolve({
+                empty: false,
+                docs: [],
+                forEach: (callback) => {}
+              }),
+              where: () => ({
+                get: () => Promise.resolve({
+                  empty: false,
+                  docs: [],
+                  forEach: (callback) => {}
+                }),
+                orderBy: () => ({
+                  get: () => Promise.resolve({
+                    empty: false,
+                    docs: [],
+                    forEach: (callback) => {}
+                  })
+                })
+              }),
+              orderBy: () => ({
+                get: () => Promise.resolve({
+                  empty: false,
+                  docs: [],
+                  forEach: (callback) => {}
+                })
+              })
+            };
+          },
           get: () => Promise.resolve({
-            exists: () => true,
+            exists: true,
             data: () => ({}),
             id: 'mock-doc-id'
           }),
           set: () => Promise.resolve(),
           update: () => Promise.resolve(),
           delete: () => Promise.resolve()
-        }),
-        add: () => Promise.resolve({ id: 'mock-doc-id' }),
+        };
+      },
+      add: () => Promise.resolve({ id: 'mock-doc-id' }),
+      get: () => Promise.resolve({
+        empty: false,
+        docs: [],
+        forEach: (callback) => {}
+      }),
+      where: () => ({
         get: () => Promise.resolve({
           empty: false,
           docs: [],
           forEach: (callback) => {}
-        }),
-        where: () => ({
-          get: () => Promise.resolve({
-            empty: false,
-            docs: [],
-            forEach: (callback) => {}
-          }),
-          orderBy: () => ({
-            get: () => Promise.resolve({
-              empty: false,
-              docs: [],
-              forEach: (callback) => {}
-            })
-          })
         }),
         orderBy: () => ({
           get: () => Promise.resolve({
@@ -44,27 +123,6 @@ const firestore = {
           })
         })
       }),
-      get: () => Promise.resolve({
-        exists: () => true,
-        data: () => ({}),
-        id: 'mock-doc-id'
-      }),
-      set: () => Promise.resolve(),
-      update: () => Promise.resolve(),
-      delete: () => Promise.resolve()
-    }),
-    add: () => Promise.resolve({ id: 'mock-doc-id' }),
-    get: () => Promise.resolve({
-      empty: false,
-      docs: [],
-      forEach: (callback) => {}
-    }),
-    where: () => ({
-      get: () => Promise.resolve({
-        empty: false,
-        docs: [],
-        forEach: (callback) => {}
-      }),
       orderBy: () => ({
         get: () => Promise.resolve({
           empty: false,
@@ -72,28 +130,8 @@ const firestore = {
           forEach: (callback) => {}
         })
       })
-    }),
-    orderBy: () => ({
-      get: () => Promise.resolve({
-        empty: false,
-        docs: [],
-        forEach: (callback) => {}
-      })
-    })
-  })
-};
-
-// Mock Realtime Database
-const database = {
-  ref: () => ({
-    on: () => {},
-    once: () => Promise.resolve({
-      exists: () => false,
-      forEach: () => {}
-    }),
-    push: () => Promise.resolve(),
-    set: () => Promise.resolve()
-  })
+    };
+  }
 };
 
 // Mock Storage
@@ -116,4 +154,4 @@ const analytics = {
 
 console.log("Firebase mock initialized");
 
-export { firestore, database, storage, analytics };
+export { firestore, storage, analytics };
