@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProfileProvider } from './contexts/ProfileContext'
 import { NotificationProvider } from './contexts/NotificationContext'
+import { StoryProvider } from './contexts/StoryContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <ProfileProvider>
           <NotificationProvider>
-            <App />
+            <StoryProvider>
+              <App />
+            </StoryProvider>
           </NotificationProvider>
         </ProfileProvider>
       </AuthProvider>
