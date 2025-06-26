@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { collection, query, where, getDocs, updateDoc, doc, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { ref, onValue, set, push } from 'firebase/database';
 import { firestore, database } from '../firebase/config';
 import { useAuth } from './AuthContext';
@@ -216,9 +216,13 @@ export function NotificationProvider({ children }) {
     
     try {
       // Determine sender info
-      const senderName = currentProfile.type === 'parent' 
-        ? (await getDoc(doc(firestore, "users", currentUser.uid))).data().prenom || 'Parent'
-        : currentProfile.prenom;
+      let senderName;
+      if (currentProfile.type === 'parent') {
+        const userDoc = await getDoc(doc(firestore, "users", currentUser.uid));
+        senderName = userDoc.exists() ? (userDoc.data().prenom || 'Parent') : 'Parent';
+      } else {
+        senderName = currentProfile.prenom;
+      }
       
       // Create notification in Realtime Database
       const notificationsRef = ref(database, `users/${currentUser.uid}/notifications/${targetProfileId}`);

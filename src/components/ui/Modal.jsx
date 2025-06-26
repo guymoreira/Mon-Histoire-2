@@ -58,10 +58,9 @@ function Modal({
 
   return createPortal(
     <div className={modalClasses} onClick={handleOutsideClick}>
-      <Card 
+      <div 
         ref={modalRef}
         className={contentClasses} 
-        variant={variant}
         {...props}
       >
         {children}
@@ -72,7 +71,7 @@ function Modal({
         >
           ×
         </button>
-      </Card>
+      </div>
     </div>,
     document.body
   );
