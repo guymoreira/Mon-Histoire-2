@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { collection, query, where, getDocs, updateDoc, doc, onSnapshot, getDoc, addDoc } from 'firebase/firestore';
-import { ref, onValue, set, push } from 'firebase/database';
-import { firestore, database } from '../firebase/config';
+import { firestore } from '../firebase/config';
 import { useAuth } from './AuthContext';
 import { useProfile } from './ProfileContext';
 
@@ -34,15 +33,6 @@ export function NotificationProvider({ children }) {
         console.error("Error loading processed notifications:", error);
       }
     }
-    
-    return () => {
-      // Clean up listeners
-      if (currentUser) {
-        const profileId = currentProfile?.type === 'parent' ? 'parent' : currentProfile?.id;
-        const notificationsRef = ref(database, `users/${currentUser.uid}/notifications/${profileId}`);
-        onValue(notificationsRef, () => {});
-      }
-    };
   }, [currentUser, currentProfile]);
 
   // Initialize notifications count

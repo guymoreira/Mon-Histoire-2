@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, setDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, setDoc } from 'firebase/firestore';
 import { firestore } from '../firebase/config';
 import { useAuth } from './AuthContext';
 import { useProfile } from './ProfileContext';
@@ -43,20 +43,18 @@ export function StoryProvider({ children }) {
       
       let storiesRef;
       if (currentProfile.type === 'parent') {
-        storiesRef = collection(firestore, "users", currentUser.uid, "stories");
+        storiesRef = firestore.collection("users").doc(currentUser.uid).collection("stories");
       } else {
-        storiesRef = collection(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories"
-        );
+        storiesRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories");
       }
       
-      const q = query(storiesRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
+      const q = storiesRef.orderBy("createdAt", "desc");
+      const snapshot = await q.get();
       
       const loadedStories = [];
       snapshot.forEach(doc => {
@@ -178,31 +176,27 @@ export function StoryProvider({ children }) {
       // Save to Firestore
       let storiesRef;
       if (currentProfile.type === 'parent') {
-        storiesRef = collection(firestore, "users", currentUser.uid, "stories");
+        storiesRef = firestore.collection("users").doc(currentUser.uid).collection("stories");
       } else {
-        storiesRef = collection(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories"
-        );
+        storiesRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories");
       }
       
-      const docRef = await addDoc(storiesRef, storyData);
+      const docRef = await storiesRef.add(storyData);
       
       // If it's a child profile, update the story count
       if (currentProfile.type === 'enfant') {
-        const profileRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id
-        );
+        const profileRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id);
         
-        await updateDoc(profileRef, {
+        await profileRef.update({
           nb_histoires: (currentProfile.nb_histoires || 0) + 1
         });
       }
@@ -234,32 +228,28 @@ export function StoryProvider({ children }) {
       // Delete from Firestore
       let storyRef;
       if (currentProfile.type === 'parent') {
-        storyRef = doc(firestore, "users", currentUser.uid, "stories", storyId);
+        storyRef = firestore.collection("users").doc(currentUser.uid).collection("stories").doc(storyId);
       } else {
-        storyRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories", 
-          storyId
-        );
+        storyRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories")
+          .doc(storyId);
       }
       
-      await deleteDoc(storyRef);
+      await storyRef.delete();
       
       // If it's a child profile, update the story count
       if (currentProfile.type === 'enfant') {
-        const profileRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id
-        );
+        const profileRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id);
         
-        await updateDoc(profileRef, {
+        await profileRef.update({
           nb_histoires: Math.max(0, (currentProfile.nb_histoires || 0) - 1)
         });
       }
@@ -289,20 +279,18 @@ export function StoryProvider({ children }) {
       // Update in Firestore
       let storyRef;
       if (currentProfile.type === 'parent') {
-        storyRef = doc(firestore, "users", currentUser.uid, "stories", storyId);
+        storyRef = firestore.collection("users").doc(currentUser.uid).collection("stories").doc(storyId);
       } else {
-        storyRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories", 
-          storyId
-        );
+        storyRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories")
+          .doc(storyId);
       }
       
-      await updateDoc(storyRef, {
+      await storyRef.update({
         titre: newTitle,
         updatedAt: new Date().toISOString()
       });
@@ -339,20 +327,18 @@ export function StoryProvider({ children }) {
       // Update in Firestore
       let storyRef;
       if (currentProfile.type === 'parent') {
-        storyRef = doc(firestore, "users", currentUser.uid, "stories", storyId);
+        storyRef = firestore.collection("users").doc(currentUser.uid).collection("stories").doc(storyId);
       } else {
-        storyRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories", 
-          storyId
-        );
+        storyRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories")
+          .doc(storyId);
       }
       
-      await updateDoc(storyRef, {
+      await storyRef.update({
         note: rating
       });
       
@@ -395,22 +381,20 @@ export function StoryProvider({ children }) {
       // Get from Firestore
       let storyRef;
       if (currentProfile.type === 'parent') {
-        storyRef = doc(firestore, "users", currentUser.uid, "stories", storyId);
+        storyRef = firestore.collection("users").doc(currentUser.uid).collection("stories").doc(storyId);
       } else {
-        storyRef = doc(
-          firestore, 
-          "users", 
-          currentUser.uid, 
-          "profils_enfant", 
-          currentProfile.id, 
-          "stories", 
-          storyId
-        );
+        storyRef = firestore
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("profils_enfant")
+          .doc(currentProfile.id)
+          .collection("stories")
+          .doc(storyId);
       }
       
-      const storyDoc = await getDoc(storyRef);
+      const storyDoc = await storyRef.get();
       
-      if (!storyDoc.exists()) {
+      if (!storyDoc.exists) {
         throw new Error("Story not found");
       }
       
