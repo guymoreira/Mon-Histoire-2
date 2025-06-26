@@ -134,7 +134,7 @@ export function StoryProvider({ children }) {
         await setDoc(histoiresLuesRef, { ids: lues }, { merge: true });
       }
       
-      // Personalize the story with the hero's name
+      // Personalize the title with the hero's name
       let titre = story.titre || "Mon Histoire";
       if (formData.heroPrenom) {
         titre = titre.replace(/^fille/i, formData.heroPrenom);
